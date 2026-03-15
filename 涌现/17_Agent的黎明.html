@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第十七章：Agent的黎明 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第五部分：深水区（2024-2025）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第十七章</div>
+  <h1 class="chapter-title">Agent的黎明</h1>
+  <div class="chapter-epigraph">
+    "语言模型只是大脑，而大脑需要身体——工具、记忆、感知、行动。Agent是让AI真正活动起来的那一步。"
+    <cite>—— Andrej Karpathy，2024年演讲</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#what-agent">什么是Agent</a></li>
+      <li><a href="#auto-gpt">AutoGPT的爆红与局限</a></li>
+      <li><a href="#tools">工具调用：通向世界的桥梁</a></li>
+      <li><a href="#devin">Devin与SWE-bench</a></li>
+      <li><a href="#computer-use">操控计算机：Claude的突破</a></li>
+      <li><a href="#future-agent">Agent的现实与未来</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="what-agent">什么是Agent</h2>
+  <p>
+    在AI语境里，"Agent"（代理/智能体）指的是能够自主规划、决策和行动以完成目标的AI系统——不只是回答一个问题，而是执行一系列步骤，调用各种工具，与外部世界互动，来完成一个更复杂的任务。
+  </p>
+  <p>
+    如果说语言模型是大脑，那Agent就是让大脑装上手脚的系统：搜索网络、读写文件、操控浏览器、调用API、执行代码、发送邮件……在一个明确目标的驱动下，自主地规划步骤，执行，观察结果，调整计划，继续执行。
+  </p>
+  <p>
+    这个概念，在2023-2024年成了整个AI行业最热的讨论话题。因为它代表着AI从"回答问题"到"完成工作"的关键跨越——也是离"威胁工作岗位"最近的一步。
+  </p>
+
+  <h2 id="auto-gpt">AutoGPT的爆红与局限</h2>
+  <p>
+    2023年3月，一个名为AutoGPT的开源项目在GitHub上爆火，几乎在一夜之间获得了数万个Star，成为当时增长最快的GitHub项目之一。
+  </p>
+  <p>
+    AutoGPT的想法很简单也很大胆：让GPT-4给自己设定子目标，然后自主循环执行——每次执行后，把结果反馈给GPT-4，让它规划下一步，如此循环直到任务完成。
+  </p>
+    <p>
+    人们兴奋地把各种任务交给AutoGPT：研究一个竞争对手、写一个完整的Web应用、制定一个商业计划……演示视频在推特上疯传，"AI自主完成复杂任务"的标题令人振奋。
+  </p>
+  <p>
+    但很快，人们发现了它的局限：AutoGPT经常陷入循环，做一些没有意义的重复操作；它很容易偏离目标；它的"规划"常常是短视的，几步之后就失控了；API成本急剧攀升（因为模型调用次数多）……
+  </p>
+  <p>
+    AutoGPT展示了Agent的潜力，但同时也暴露了2023年模型在长期规划和自我修正上的真实局限。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2023 年 3 月</div>
+    <div class="event">AutoGPT 爆火</div>
+    <div class="desc">开源项目AutoGPT一周内获得5万GitHub Star，成为"自主AI代理"概念的第一次大规模公众验证，同时也引发了关于AI自主性边界的广泛讨论。</div>
+  </div>
+
+  <h2 id="tools">工具调用：通向世界的桥梁</h2>
+  <p>
+    让语言模型能够使用工具（Tool Use / Function Calling），是实现Agent的关键技术基础。
+  </p>
+  <p>
+    2023年，OpenAI在GPT-4的API中引入了Function Calling功能——你可以定义一组函数，告诉模型这些函数的用途和参数，模型会在合适的时候决定调用哪个函数，并给出参数。之后由外部代码执行函数，把结果返回给模型，模型继续推理……
+  </p>
+  <p>
+    这看起来是一个技术细节，但它从根本上改变了模型的能力边界。一个会搜索网络的模型，可以访问实时信息；一个会执行代码的模型，可以做精确计算；一个会查数据库的模型，可以访问企业内部知识……工具调用，把语言模型从一个"封闭的知识库"变成了一个"会使用工具的推理引擎"。
+  </p>
+
+  <blockquote>
+    "Function Calling是2023年最被低估的技术进步。它把大语言模型从对话者变成了工作者。"
+    <cite>—— 一位AI创业工程师，2024年回顾</cite>
+  </blockquote>
+
+  <h2 id="devin">Devin与SWE-bench</h2>
+  <p>
+    2024年3月，Cognition AI发布了Devin，宣称是"第一个AI软件工程师"。Devin可以接收一个软件开发任务，自主地在终端里打代码、在浏览器里查文档、Debug、部署……SWE-bench是一个用真实GitHub Issue来评测AI编程能力的基准，Devin据称能够自主解决其中约13.86%的问题（之前最好的模型约为1.96%）。
+  </p>
+  <p>
+    Devin的发布，引发了整个工程师社区的强烈反应——从惊讶、怀疑，到担忧，再到对基准测试方法的仔细审查。后续的独立评测发现，Devin的实际表现比发布时的数字更为有限，很多任务还需要大量人工干预。
+  </p>
+  <p>
+    但Devin事件的意义，不在于它真实能力的高低，而在于它代表了一种明确的方向信号：AI软件开发者，不是遥远的科幻幻想，而是正在接近的现实。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2024 年 3 月</div>
+    <div class="event">Devin 发布</div>
+    <div class="desc">Cognition AI发布"AI软件工程师"Devin，在SWE-bench上以13.86%解决率创新记录。同期，OpenAI发布Operator，Anthropic发布计算机使用（Computer Use）功能。</div>
+  </div>
+
+  <h2 id="computer-use">操控计算机：Claude的突破</h2>
+  <p>
+    2024年10月，Anthropic发布了Claude 3.5 Sonnet的一项新功能：Computer Use（计算机使用）。这个功能，允许Claude直接控制一台电脑——移动鼠标、点击屏幕、输入键盘、截图分析……就像一个真人在远程操控计算机。
+  </p>
+  <p>
+    这在技术上是一个重要跨越：之前的AI工具调用，依赖于程序接口（API）。但Computer Use意味着AI可以操作任何有屏幕的软件——包括那些没有API的遗留系统。它能打开任何应用，读取任何界面，执行任何点击……
+  </p>
+  <p>
+    演示视频展示了Claude自主完成各种任务：在Calendar里安排日程、在PowerPoint里创建演示文稿、在CRM系统里更新客户信息……这些是真实的办公室工作，不是为AI特别设计的接口。
+  </p>
+  <p>
+    这一功能，让"数字工人"（Digital Worker）的概念从概念走向可测试的原型。
+  </p>
+
+  <h2 id="future-agent">Agent的现实与未来</h2>
+  <p>
+    2024年底，Agent的实际落地情况，仍然是"充满潜力但并不成熟"。
+  </p>
+  <p>
+    最成功的Agent应用，集中在相对受控的场景：客服自动化（处理标准问题）、代码审查（有明确输入输出）、数据提取（从文档中结构化信息）……在这些场景里，任务边界清晰，失败代价低，有人工兜底。
+  </p>
+  <p>
+    在开放场景（"帮我完成这个月的所有工作"）里，Agent仍然非常脆弱：容易失控，代价昂贵，不可预测。
+  </p>
+  <p>
+    但研究的进展是显著的。从AutoGPT的原始尝试，到Devin的代码工程，到Claude的Computer Use，再到各大公司的Operator、Copilot Studio……每隔几个月就有实质性进步。这个进步，指向一个清晰的未来：AI不只是助手，而是工作者。而这个未来，比大多数人想象的来得更快。
+  </p>
+
+  <div class="highlight-box">
+    🤖 <strong>Agent发展路线图</strong>：2023年 ChatGPT插件（早期工具调用）→ AutoGPT（自主循环）→ 2024年 Function Calling成熟化 → Devin（编程Agent）→ Computer Use（桌面控制）→ 2025年 多Agent协作（多个AI实例相互配合完成复杂任务）。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="16_O1时刻.html" class="nav-btn">← 第十六章</a>
+  <a href="18_DeepSeek震撼.html" class="nav-btn">第十八章：DeepSeek震撼 →</a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第1章 预训练数据总论 · 数据珠玑</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2e7dbe;
+    --light-bg: #f5f8fc;
+    --text: #2c3e50;
+    --muted: #7f8c9a;
+    --border: #d0dce8;
+    --highlight: #fff8e1;
+    --green-bg: #f0faf4;
+    --green-border: #68c98a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', 'Noto Serif SC', serif; background: #fff; color: var(--text); line-height: 1.9; font-size: 17px; }
+  .book-header { background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 60%, #2e5f8a 100%); color: #fff; padding: 40px 5%; text-align: center; }
+  .book-title { font-size: 1.8em; letter-spacing: 0.1em; }
+  .book-subtitle { font-size: 0.95em; color: #a8c4dc; margin-top: 6px; }
+  .chapter-header { padding: 48px 5% 32px; border-bottom: 2px solid var(--border); background: var(--light-bg); }
+  .chapter-label { color: var(--accent); font-size: 0.85em; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; font-family: sans-serif; }
+  .chapter-title { font-size: 2.2em; color: var(--primary); line-height: 1.3; }
+  .chapter-intro { font-size: 1.05em; color: #445; margin-top: 16px; max-width: 680px; font-style: italic; }
+  .main-content { max-width: 860px; margin: 0 auto; padding: 40px 5%; }
+  h2 { font-size: 1.5em; color: var(--primary); margin: 52px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 1.15em; color: #1a5080; margin: 32px 0 12px; }
+  h4 { font-size: 1em; color: var(--primary); margin: 20px 0 8px; }
+  p { margin-bottom: 1.2em; }
+  blockquote { border-left: 4px solid var(--accent); background: var(--light-bg); padding: 16px 24px; margin: 24px 0; font-style: italic; color: #445566; border-radius: 0 6px 6px 0; }
+  .highlight-box { background: var(--highlight); border: 1px solid #f0d060; border-radius: 6px; padding: 20px 24px; margin: 24px 0; }
+  .highlight-box strong { color: #8b6914; }
+  .info-box { background: var(--light-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 24px 0; }
+  .info-box h4 { color: var(--accent); margin-bottom: 8px; font-family: sans-serif; }
+  .success-box { background: var(--green-bg); border: 1px solid var(--green-border); border-radius: 8px; padding: 20px 24px; margin: 24px 0; }
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; font-family: sans-serif; font-size: 0.88em; }
+  th { background: var(--primary); color: #fff; padding: 10px 14px; text-align: left; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) td { background: var(--light-bg); }
+  .formula-box { background: #f8f4ff; border: 1px solid #c9b8f0; border-radius: 6px; padding: 16px 24px; margin: 20px 0; font-family: 'Courier New', monospace; font-size: 0.95em; color: #3d1f7a; }
+  .timeline { margin: 24px 0; }
+  .timeline-item { display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
+  .timeline-year { min-width: 60px; background: var(--accent); color: #fff; border-radius: 4px; padding: 2px 8px; font-family: sans-serif; font-size: 0.85em; font-weight: bold; text-align: center; margin-top: 2px; }
+  .timeline-content { flex: 1; }
+  .footnote { font-size: 0.82em; color: var(--muted); font-family: sans-serif; border-top: 1px solid var(--border); margin-top: 40px; padding-top: 16px; }
+  .nav-bar { border-top: 1px solid var(--border); padding: 24px 5%; display: flex; justify-content: space-between; font-family: sans-serif; font-size: 0.9em; }
+  .nav-bar a { color: var(--accent); text-decoration: none; }
+  .nav-bar a:hover { text-decoration: underline; }
+  .section-tag { display: inline-block; background: var(--accent); color: #fff; font-size: 0.7em; font-family: sans-serif; padding: 2px 8px; border-radius: 3px; margin-right: 8px; vertical-align: middle; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第一部分：预训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 1 · Pre-training Data Overview</div>
+  <div class="chapter-title">第1章 预训练数据总论</div>
+  <div class="chapter-intro">从数据的本质定义出发，理解规模演进、最优配比法则，以及贯穿整个预训练阶段的核心权衡。</div>
+</div>
+
+<div class="main-content">
+
+  <!-- 1.1 -->
+  <h2>1.1 预训练数据的本质：语言分布的近似</h2>
+
+  <p>理解预训练数据，需要先理解语言模型在做什么。从数学角度，语言模型的核心目标是学习一个概率分布 P(w₁, w₂, ..., wₙ)——即自然语言的联合概率分布。预训练，就是在海量文本上最大化这个分布的似然函数。</p>
+
+  <div class="formula-box">
+    <strong>语言建模目标（自回归）：</strong><br>
+    max Σ log P(wₜ | w₁, w₂, ..., wₜ₋₁; θ)<br><br>
+    <strong>直觉解读：</strong>模型参数 θ 本质上是在"压缩"训练数据所代表的语言分布。
+  </div>
+
+  <p>这个看似简单的目标，蕴含了一个深刻的哲学命题：<strong>训练数据的分布，就是模型所学习的"世界的样子"</strong>。模型不会比它见过的文本更聪明，也无法超越训练数据的知识边界——它只能在训练数据所代表的语言空间中进行插值和有限的外推。</p>
+
+  <h3>语言分布的三个维度</h3>
+
+  <p>当我们说"训练数据是语言分布的近似"时，这个近似至少包含三个维度：</p>
+
+  <p><strong>1. 主题分布（Topic Distribution）</strong>：训练数据覆盖了哪些主题领域？比例如何？如果网络爬取数据中，科技话题占 40%，娱乐占 20%，医疗占 5%，那么模型在这些领域的知识深度大体上也会呈现相似的比例关系。</p>
+
+  <p><strong>2. 文体分布（Style Distribution）</strong>：包括正式文本与口语、长文与短文、结构化与非结构化、编辑性文本（书籍、新闻）与用户生成内容（社交媒体、论坛）等维度。文体分布直接影响模型的写作风格、指令遵从能力和格式化输出能力。</p>
+
+  <p><strong>3. 时间分布（Temporal Distribution）</strong>：训练数据的时间跨度决定了模型的知识截止时间，也影响模型对不同历史时期事件的了解程度。</p>
+
+  <div class="highlight-box">
+    <strong>核心命题：</strong>预训练数据工程的本质，是对人类知识与语言的有意识采样。每一个数据决策——选哪些源、排除哪些内容、各自占多少比例——都是在塑造模型将要内化的"世界模型"。这不是纯粹的技术问题，也是认识论和价值观的问题。
+  </div>
+
+  <h3>涌现能力与数据的关系</h3>
+
+  <p>2022 年 Wei et al. 提出的"涌现能力"（Emergent Abilities）现象表明，某些能力在模型规模超过某个阈值后会突然出现。后续研究逐渐揭示：涌现能力不仅取决于模型规模，也取决于训练数据中是否包含足够多的相关任务示例。例如，代码生成能力的涌现，与训练数据中代码比例高度相关；多步推理能力的出现，与数学和逻辑文本的充分覆盖密不可分。</p>
+
+  <!-- 1.2 -->
+  <h2>1.2 数据规模的演进：从 GB 到 Trillion Token</h2>
+
+  <p>过去五年，预训练数据规模经历了指数级增长。这一增长不是线性的，而是伴随着理论认知的进步和工程能力的突破，呈现出几个清晰的跃迁节点。</p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-year">2018</div>
+      <div class="timeline-content"><strong>GPT-1：</strong>BooksCorpus，约 5GB、8 亿 Token。奠定了预训练+微调的范式，但数据规模极其有限。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2019</div>
+      <div class="timeline-content"><strong>GPT-2：</strong>WebText，约 40GB、100 亿 Token。引入网络爬取数据，首次展示了数据规模对生成质量的显著提升。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2020</div>
+      <div class="timeline-content"><strong>GPT-3：</strong>~570GB 过滤后文本，约 3000 亿 Token。首次将书籍、维基百科、网页爬取数据混合，并公开了数据配比（WebText2 22%、Books1 8%、Books2 8%、Wikipedia 3%、CommonCrawl 60%）。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2022</div>
+      <div class="timeline-content"><strong>PaLM / Chinchilla：</strong>Chinchilla 用 1.4 万亿 Token 训练 700 亿参数模型；PaLM 使用约 7800 亿 Token。数据规模开始以 Trillion 为单位描述。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2023</div>
+      <div class="timeline-content"><strong>LLaMA-1/2：</strong>LLaMA-1 使用约 1.4 万亿 Token；LLaMA-2 约 2 万亿 Token。开源社区开始主动构建 RedPajama、Dolma 等对应的开放数据集，推动了透明度。</div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-year">2024</div>
+      <div class="timeline-content"><strong>LLaMA-3 / Mistral / DeepSeek：</strong>LLaMA-3 使用约 15 万亿 Token，FineWeb 等公开数据集跨越 15T Token。DeepSeek-V3 训练数据达 14.8 万亿 Token，并引入质量分类和复杂推理数据增强。</div>
+    </div>
+  </div>
+
+  <table>
+    <thead>
+      <tr><th>模型</th><th>发布年份</th><th>训练 Token 数</th><th>参数量</th><th>Token/参数 比</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>GPT-2</td><td>2019</td><td>~10B</td><td>1.5B</td><td>~6.7</td></tr>
+      <tr><td>GPT-3</td><td>2020</td><td>300B</td><td>175B</td><td>~1.7</td></tr>
+      <tr><td>Chinchilla</td><td>2022</td><td>1.4T</td><td>70B</td><td>~20</td></tr>
+      <tr><td>LLaMA-1 7B</td><td>2023</td><td>1T</td><td>7B</td><td>~143</td></tr>
+      <tr><td>LLaMA-3 8B</td><td>2024</td><td>15T</td><td>8B</td><td>~1875</td></tr>
+      <tr><td>DeepSeek-V3</td><td>2024</td><td>14.8T</td><td>671B(MoE)</td><td>~22</td></tr>
+    </tbody>
+  </table>
+
+  <p>值得注意的是，Token/参数比这一指标正在快速上升。LLaMA-3 的 8B 模型训练了 15T Token，是 Chinchilla 最优比例的近百倍。这背后是一个实用主义的转变：<strong>对于推理部署而言，模型越小越好；但要让小模型尽可能智能，就需要更多数据</strong>。这一趋势被称为"过训练"（Overtraining）或"计算最优以外的数据密集训练"。</p>
+
+  <!-- 1.3 -->
+  <h2>1.3 数据与算力的最优配比：Chinchilla 法则及其争议</h2>
+
+  <p>2022 年，DeepMind 的 Hoffman 等人发表了《Training Compute-Optimal Large Language Models》（又称"Chinchilla 论文"），在 LLM 领域引发了一场范式地震。</p>
+
+  <h3>Chinchilla 法则的核心结论</h3>
+
+  <p>在固定计算预算（FLOPs）下，模型参数量（N）和训练 Token 数（D）应该<strong>等比例扩展</strong>——每个参数对应约 20 个 Token 的训练量，才是计算效率最优的配置。</p>
+
+  <div class="formula-box">
+    <strong>Chinchilla 最优配比（近似）：</strong><br>
+    N_opt ∝ C^0.5<br>
+    D_opt ∝ C^0.5<br><br>
+    其中 C 是总计算量（FLOPs）。约束条件：D ≈ 20 × N<br><br>
+    <strong>对比 Kaplan 等人（2020）的结论：</strong>D ∝ C^0.27（大幅低估了数据需求）
+  </div>
+
+  <p>这个结论的冲击力在于：它说明 GPT-3（1750 亿参数，3000 亿 Token）<strong>严重欠训练（undertrained）</strong>——按 Chinchilla 配比，同等算力应当训练一个约 70 亿参数的模型，使用 1.4 万亿 Token。DeepMind 随即验证：70B 的 Chinchilla 模型在大多数基准上超越了 280B 的 Gopher。</p>
+
+  <h3>法则的局限与争议</h3>
+
+  <div class="info-box">
+    <h4>⚠️ Chinchilla 法则的五个重要局限</h4>
+    <p><strong>1. 以训练损失为优化目标，非推理效率</strong>：Chinchilla 的"最优"是在固定算力下最小化验证集损失，但工业界的实际目标通常是"固定推理成本下最大化能力"。这一差异导致 LLaMA 系列有意选择比 Chinchilla 更小的模型、更多的数据。</p>
+    <p><strong>2. 数据质量假设过于理想</strong>：Chinchilla 实验使用的 MassiveText 数据集质量相对均匀。现实中，数据质量差异巨大，低质量 Token 不等于高质量 Token。</p>
+    <p><strong>3. 未考虑数据重复的影响</strong>：Muennighoff et al.（2023）发现，当优质数据不足时，对数据进行多次 Epoch 重复训练，可以部分弥补数据量的不足，且损失可控。</p>
+    <p><strong>4. 仅适用于标准自回归预训练</strong>：对于 MoE 架构、多模态模型，Chinchilla 法则的适用性存疑。</p>
+    <p><strong>5. 幂律指数可能随数据分布变化</strong>：不同数据混合比例下，Scaling 曲线的斜率可能不同，导致最优配比发生漂移。</p>
+  </div>
+
+  <p>2024 年，随着 LLaMA-3 等"过训练"模型的成功，业界对 Chinchilla 法则的理解逐渐成熟：它描述的是<strong>训练计算效率的最优点</strong>，而非模型能力的绝对上限。在数据充足的前提下，超出 Chinchilla 最优点继续训练，仍能提升模型能力，只是边际算力回报递减。</p>
+
+  <!-- 1.4 -->
+  <h2>1.4 数据质量 vs 数据数量的权衡</h2>
+
+  <p>如果说 Chinchilla 法则解决了"数量"的问题，那么数据质量则是预训练数据工程中最难量化、争议最多的维度。</p>
+
+  <h3>质量的多义性</h3>
+
+  <p>"数据质量"在不同语境下指代不同的事物：</p>
+
+  <p><strong>信息密度（Informativeness）</strong>：每 Token 包含多少有效信息？一篇经过编辑的百科全书文章，信息密度通常远高于重复率高的网页广告文本。</p>
+
+  <p><strong>语言规范性（Linguistic Quality）</strong>：是否存在大量语法错误、乱码、机器翻译痕迹？</p>
+
+  <p><strong>事实准确性（Factual Accuracy）</strong>：训练文本中的事实性内容是否可靠？这对模型的"幻觉"（Hallucination）率有直接影响。</p>
+
+  <p><strong>多样性（Diversity）</strong>：训练数据是否覆盖了足够多样化的主题、风格、观点？高质量不等于同质化——单一的"高质量"数据来源可能造成能力偏窄。</p>
+
+  <h3>几个典型的质量-数量权衡案例</h3>
+
+  <div class="success-box">
+    <p><strong>案例一：phi-1 与"教科书级数据"（Textbooks Are All You Need）</strong></p>
+    <p>微软 2023 年发布的 phi-1 仅用约 6.7B Token 的精选合成数据（模拟教科书质量）和 Python 代码，训练出了在 HumanEval 上超越大多数依赖数百亿 Token 的代码模型的性能。这一工作最直接地证明了：高质量数据可以在很大程度上抵消数量劣势。</p>
+  </div>
+
+  <div class="success-box">
+    <p><strong>案例二：FineWeb 与大规模质量过滤</strong></p>
+    <p>Hugging Face 2024 年发布的 FineWeb 数据集（15 万亿 Token）通过多轮质量过滤（去重 + 基于 fastText 的质量分类器），在保持超大规模的同时，使 MMLU、HellaSwag 等基准上的模型性能明显优于未过滤的同量数据。FineWeb 的实验表明：质量过滤和规模扩展并非二选一，可以协同实现。</p>
+  </div>
+
+  <div class="success-box">
+    <p><strong>案例三：DCLM 的跨数据集比较</strong></p>
+    <p>DataComp for Language Models（DCLM，2024）是一个系统性的数据集对比研究，在控制算力的前提下，比较了不同过滤策略的数据集所训练出的模型性能。结论显示：使用基于分类器的质量过滤（而非纯粹的启发式规则）可以带来显著的下游性能提升，且效果稳定跨越多个评测集。</p>
+  </div>
+
+  <h3>质量与数量的非线性关系</h3>
+
+  <p>研究表明，数据质量对模型性能的影响呈现明显的非线性特征：</p>
+
+  <ul style="margin: 16px 0 16px 24px; line-height: 2;">
+    <li>极低质量的数据（垃圾文本、重复内容、无意义序列）对训练有负向影响，"减去"这些数据比"加入"等量高质量数据带来的增益更大。</li>
+    <li>在"基本可用"的数据范围内，数量与质量的互补性较强——可以用更多数据弥补质量的不足，也可以用更高质量数据减少数量需求。</li>
+    <li>但在追求极端性能（state-of-the-art）时，质量的作用呈现超线性增益——顶尖模型通常都会对数据质量进行极为细致的控制。</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>实践原则：</strong>对于资源有限的团队，数据质量优先于数据数量。清洗 100B 高质量 Token 训练的模型，通常优于用 1T 低质量 Token 训练的同规模模型。但对于资源充足、追求前沿性能的团队，两者都需要极致——质量过滤 + 规模扩展是目前最有效的组合路径。
+  </div>
+
+  <h3>章节小结</h3>
+  <p>本章建立了理解预训练数据的基础框架：数据是语言分布的近似，其规模从 GB 演进到 Trillion Token；Chinchilla 法则提供了算力-数据配比的理论指导，但工业实践已超越这一框架；数据质量与数量之间存在复杂的权衡关系，最优策略因资源约束和目标而异。后续章节将在这一框架基础上，深入探讨数据来源、清洗、配比和前沿问题。</p>
+
+  <div class="footnote">
+    <p><strong>参考文献要点：</strong>Kaplan et al. (2020) "Scaling Laws for Neural Language Models"；Hoffmann et al. (2022) "Training Compute-Optimal LLMs (Chinchilla)"；Touvron et al. (2023) "LLaMA 1/2"；Gunasekar et al. (2023) "Textbooks Are All You Need (phi-1)"；Penedo et al. (2024) "The FineWeb Datasets"；Li et al. (2024) "DataComp-LM (DCLM)"；Meta AI (2024) "The LLaMA 3 Herd of Models"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="00_序言.html">← 序言</a>
+  <a href="02_第二章_原始数据来源.html">第2章 原始数据来源 →</a>
+</div>
+
+</body>
+</html>

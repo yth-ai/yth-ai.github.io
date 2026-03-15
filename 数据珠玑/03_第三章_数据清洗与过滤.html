@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第3章 数据清洗与过滤 · 数据珠玑</title>
+<style>
+  :root { --primary: #1a3a5c; --accent: #2e7dbe; --light-bg: #f5f8fc; --text: #2c3e50; --muted: #7f8c9a; --border: #d0dce8; --highlight: #fff8e1; --green-bg: #f0faf4; --green-border: #68c98a; --red-bg: #fff5f5; --red-border: #e88; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia','Noto Serif SC',serif; background:#fff; color:var(--text); line-height:1.9; font-size:17px; }
+  .book-header { background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 60%,#2e5f8a 100%); color:#fff; padding:40px 5%; text-align:center; }
+  .book-title { font-size:1.8em; letter-spacing:0.1em; }
+  .book-subtitle { font-size:0.95em; color:#a8c4dc; margin-top:6px; }
+  .chapter-header { padding:48px 5% 32px; border-bottom:2px solid var(--border); background:var(--light-bg); }
+  .chapter-label { color:var(--accent); font-size:0.85em; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; font-family:sans-serif; }
+  .chapter-title { font-size:2.2em; color:var(--primary); line-height:1.3; }
+  .chapter-intro { font-size:1.05em; color:#445; margin-top:16px; max-width:680px; font-style:italic; }
+  .main-content { max-width:860px; margin:0 auto; padding:40px 5%; }
+  h2 { font-size:1.5em; color:var(--primary); margin:52px 0 16px; padding-bottom:8px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:1.15em; color:#1a5080; margin:32px 0 12px; }
+  h4 { font-size:1em; color:var(--primary); margin:20px 0 8px; }
+  p { margin-bottom:1.2em; }
+  ul,ol { margin:12px 0 16px 24px; line-height:2; }
+  blockquote { border-left:4px solid var(--accent); background:var(--light-bg); padding:16px 24px; margin:24px 0; font-style:italic; color:#445566; border-radius:0 6px 6px 0; }
+  .highlight-box { background:var(--highlight); border:1px solid #f0d060; border-radius:6px; padding:20px 24px; margin:24px 0; }
+  .highlight-box strong { color:#8b6914; }
+  .info-box { background:var(--light-bg); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .info-box h4 { color:var(--accent); margin-bottom:8px; font-family:sans-serif; }
+  .warning-box { background:var(--red-bg); border:1px solid var(--red-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .warning-box h4 { color:#c0392b; margin-bottom:8px; font-family:sans-serif; }
+  .success-box { background:var(--green-bg); border:1px solid var(--green-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  table { width:100%; border-collapse:collapse; margin:24px 0; font-family:sans-serif; font-size:0.88em; }
+  th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--light-bg); }
+  .formula-box { background:#f8f4ff; border:1px solid #c9b8f0; border-radius:6px; padding:16px 24px; margin:20px 0; font-family:'Courier New',monospace; font-size:0.92em; color:#3d1f7a; }
+  .pipeline { margin:24px 0; }
+  .pipeline-step { display:flex; gap:16px; margin-bottom:12px; align-items:flex-start; }
+  .step-num { min-width:36px; height:36px; background:var(--accent); color:#fff; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:sans-serif; font-weight:bold; font-size:0.9em; flex-shrink:0; }
+  .step-content { flex:1; padding-top:4px; }
+  .case-header { font-family:sans-serif; font-size:0.82em; color:var(--accent); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:4px; }
+  .footnote { font-size:0.82em; color:var(--muted); font-family:sans-serif; border-top:1px solid var(--border); margin-top:40px; padding-top:16px; }
+  .nav-bar { border-top:1px solid var(--border); padding:24px 5%; display:flex; justify-content:space-between; font-family:sans-serif; font-size:0.9em; }
+  .nav-bar a { color:var(--accent); text-decoration:none; }
+  .nav-bar a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第一部分：预训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 3 · Data Cleaning and Filtering</div>
+  <div class="chapter-title">第3章 数据清洗与过滤</div>
+  <div class="chapter-intro">从去重到质量过滤，从毒性检测到偏差校正——构建高质量预训练语料库的核心工程实践。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>3.1 去重策略：精确去重与模糊去重（MinHash LSH）</h2>
+
+  <p>数据重复是预训练语料库中最普遍、危害最深的问题之一。Lee et al.（2022）的研究表明，未去重的 Common Crawl 数据中，相同或高度相似的文档可能以数十至数百次的频率重复出现，这会导致模型过拟合这些重复片段，并降低泛化能力。</p>
+
+  <blockquote>
+    "如果你的训练数据中，'巴黎是法国的首都'这句话出现了 50000 次，而'布鲁塞尔是比利时的首都'只出现了 500 次，模型对这两个事实的'确信程度'是截然不同的。" — 数据重复的直觉解释
+  </blockquote>
+
+  <h3>精确去重（Exact Deduplication）</h3>
+
+  <p>精确去重通过计算文档或片段的哈希值来识别完全相同的内容。常用方法：</p>
+  <ul>
+    <li><strong>文档级哈希</strong>：对整个文档内容计算 MD5 或 SHA-256，相同哈希值即为重复文档</li>
+    <li><strong>URL 去重</strong>：对于网页数据，相同 URL 的不同爬取版本通常保留最新的一份</li>
+    <li><strong>段落级哈希</strong>：对固定大小的文本窗口计算哈希，识别文档内部的重复段落（如导航栏、版权声明等模板化内容）</li>
+  </ul>
+
+  <p>精确去重的局限在于：只能处理完全相同的内容，无法识别近似重复（如同一篇文章在不同网站上的轻微改编版本）。</p>
+
+  <h3>模糊去重：MinHash LSH</h3>
+
+  <p>MinHash LSH（Locality Sensitive Hashing）是目前最主流的大规模近似去重算法，用于识别语义上高度相似但不完全相同的文档对。</p>
+
+  <div class="formula-box">
+    <strong>MinHash 核心原理：</strong><br>
+    1. 将文档分解为 n-gram 集合（通常使用 5-gram）<br>
+    2. 对 n-gram 集合应用 k 个随机哈希函数，取每个函数的最小哈希值，构成长度为 k 的 MinHash 签名<br>
+    3. Jaccard 相似度 J(A,B) ≈ P(minhash(A) == minhash(B))<br>
+    4. 使用 LSH 将签名分组为 band，相同 band 的文档对即为候选重复对<br>
+    5. 验证候选对的实际 Jaccard 相似度，超过阈值（如 0.8）则标记为重复<br><br>
+    <strong>复杂度：</strong>O(n) 而非 O(n²)，使得 100T+ Token 规模的去重成为可能
+  </div>
+
+  <h3>去重粒度的权衡</h3>
+
+  <table>
+    <thead><tr><th>去重粒度</th><th>优势</th><th>劣势</th><th>典型使用场景</th></tr></thead>
+    <tbody>
+      <tr><td>文档级</td><td>计算效率高，不破坏文档完整性</td><td>无法处理段落级重复</td><td>初步去重</td></tr>
+      <tr><td>段落/句子级</td><td>去除模板文本更彻底</td><td>可能破坏文档上下文连贯性</td><td>精细化清洗</td></tr>
+      <tr><td>n-gram 级</td><td>最细粒度，去除几乎所有重复</td><td>计算开销大，可能过度删除</td><td>高质量精选数据集</td></tr>
+    </tbody>
+  </table>
+
+  <div class="highlight-box">
+    <strong>研究发现（Lee et al., 2022）：</strong>对训练数据进行去重后，在相同 Token 数下，模型的困惑度（Perplexity）下降明显，且在下游任务的 few-shot 性能上提升显著——去重效果等效于增加约 15-20% 的数据量。
+  </div>
+
+  <!-- 3.2 -->
+  <h2>3.2 质量过滤：启发式规则 vs 分类器过滤</h2>
+
+  <p>质量过滤是预训练数据工程中决策空间最大、对模型性能影响最直接的步骤之一。根据实现复杂度，可分为两大类：启发式规则过滤和基于机器学习的分类器过滤。</p>
+
+  <h3>启发式规则过滤</h3>
+
+  <p>启发式规则基于文档的统计特征，无需训练模型，计算成本低，可解释性强，但对边界案例处理能力有限。</p>
+
+  <table>
+    <thead><tr><th>规则类别</th><th>具体规则示例</th><th>针对的问题</th></tr></thead>
+    <tbody>
+      <tr><td>文档长度</td><td>字词数 &lt; 50 或 &gt; 100000</td><td>过短碎片 / 异常长文</td></tr>
+      <tr><td>字母比例</td><td>字母字符比例 &lt; 0.7</td><td>乱码 / 链接堆积</td></tr>
+      <tr><td>停用词覆盖</td><td>常见停用词比例过低</td><td>非自然语言文本</td></tr>
+      <tr><td>行长度</td><td>平均行长度 &gt; 300 字符（含 Minified JS 等）</td><td>机器生成代码混入</td></tr>
+      <tr><td>重复行比例</td><td>重复行占比 &gt; 0.3</td><td>模板化低质量页面</td></tr>
+      <tr><td>特殊字符</td><td>标点比例异常高 / HTML 标签残留</td><td>不完整的文本提取</td></tr>
+      <tr><td>数字比例</td><td>数字比例 &gt; 0.15</td><td>数据表格 / 代码混入</td></tr>
+    </tbody>
+  </table>
+
+  <p>C4（Google，2020）是使用纯启发式过滤的典型案例，规则包括：仅保留以标点符号结尾的行、删除包含特定敏感词汇的行、删除 JavaScript 包含行、删除"lorem ipsum"等占位符等。虽然规则简单，但 C4 的质量在业界仍被认可，说明合理的启发式规则有其价值。</p>
+
+  <h3>基于分类器的质量过滤</h3>
+
+  <p>分类器过滤通过训练一个二分类模型来区分"高质量"与"低质量"文档，能够捕捉启发式规则难以处理的复杂质量信号。</p>
+
+  <h4>基于困惑度的过滤（Perplexity Filtering）</h4>
+  <p>使用一个小型、已知高质量语料训练的语言模型（如 KenLM 训练在维基百科上），对候选文档计算困惑度。困惑度过高表明文档与高质量语言分布偏离过大，应被过滤。这一方法被 CCNet（Grave et al., 2020）广泛使用。</p>
+
+  <div class="formula-box">
+    <strong>困惑度过滤阈值设定（CCNet 方法）：</strong><br>
+    将文档按困惑度排序，保留困惑度在 10th~50th 百分位（即中等困惑度）的文档<br>
+    过低：可能是模板化重复内容（如词汇表）<br>
+    过高：可能是乱码或非目标语言内容
+  </div>
+
+  <h4>基于 fastText 的质量分类器</h4>
+  <p>训练一个 fastText 分类器，正样本为"高质量参考文本"（如维基百科、精选书籍），负样本为"低质量随机网页"，对 CC 数据中的每个文档打分。Gopher、LLaMA 等模型均使用了类似的质量分类器。</p>
+
+  <h4>基于 LLM 的质量评分（新趋势）</h4>
+  <p>FineWeb-Edu 使用 Llama-3-70B 对文档的"教育价值"进行 0~5 分打分，然后训练一个更小的分类器（基于 Llama-3.2-1B）来模拟 LLM 的打分行为，以可接受的成本对整个 FineWeb（15T Token）进行评分。这代表了"LLM-as-quality-judge"的最新趋势。</p>
+
+  <div class="success-box">
+    <p><strong>关键对比（来自 DCLM，2024）：</strong>在相同数据规模下，使用基于 fastText 的质量分类器过滤的数据集，训练出的模型在 MMLU（5-shot）上得分比纯启发式过滤提升约 4-7 个百分点。这证明分类器过滤在质量上明显优于启发式方法，代价是需要预先准备高质量正样本。</p>
+  </div>
+
+  <!-- 3.3 -->
+  <h2>3.3 毒性内容过滤与安全考量</h2>
+
+  <p>互联网数据中包含大量仇恨言论、歧视内容、色情内容、暴力内容和个人隐私信息。这些内容如果进入预训练语料，会使模型学习到有害的语言模式，在后续使用中产生安全风险。</p>
+
+  <h3>毒性内容的主要类型</h3>
+  <ul>
+    <li><strong>仇恨言论（Hate Speech）</strong>：针对种族、宗教、性别、性取向等的歧视性表达</li>
+    <li><strong>有害信息（Harmful Information）</strong>：武器制造、自杀方法、毒品制作等</li>
+    <li><strong>色情内容（Adult Content）</strong>：明确性描述，特别是涉及未成年人的内容</li>
+    <li><strong>个人隐私（PII）</strong>：姓名+电话/地址组合、身份证号码、医疗记录等</li>
+    <li><strong>错误信息（Misinformation）</strong>：已被证伪的谣言、阴谋论等</li>
+  </ul>
+
+  <h3>毒性过滤的工程方法</h3>
+
+  <p><strong>词汇黑名单过滤</strong>：维护一个包含几千到几万条有害词汇/短语的黑名单，过滤包含这些内容的文档。这是最简单、速度最快的方法，但误报率（将正常内容过滤掉）和漏报率都较高。</p>
+
+  <p><strong>专用毒性分类器</strong>：Perspective API（Google）、Detoxify、HateBERT 等专门训练的毒性检测模型，能识别更微妙的有害表达，但计算成本高，不适合直接用于 TB 级数据的全量过滤，通常用于抽样验证。</p>
+
+  <p><strong>URL 域名黑名单</strong>：维护已知的成人内容网站、极端主义论坛等的域名黑名单，在 URL 级别过滤，是效率最高的大规模毒性内容过滤手段之一。LDNOOBW（List of Dirty, Naughty, Obscene, and Otherwise Bad Words）等公开词表被广泛使用。</p>
+
+  <h3>安全与多样性的张力</h3>
+
+  <div class="warning-box">
+    <h4>⚠️ 过度过滤的风险</h4>
+    <p>毒性过滤存在显著的过度过滤风险：基于词汇黑名单的方法会将"癌症"、"枪支历史"、"性别研究"等合法内容误删；基于主题的过滤可能不成比例地删除边缘群体（LGBTQ+）的内容，加剧代表性偏差。Welbl et al.（2021）的研究表明，激进的毒性过滤会使模型对少数群体话题的了解能力显著下降。</p>
+  </div>
+
+  <p>目前业界的主流实践是：<strong>对明显有害内容（儿童性剥削、武器制造指南等）采取零容忍过滤，而对灰色地带内容（如涉及暴力的文学作品、批评性讨论歧视现象的文章等）采取更保守的过滤策略，并在后训练阶段通过 RLHF 和安全微调来处理行为对齐问题。</strong></p>
+
+  <!-- 3.4 -->
+  <h2>3.4 数据集代表性偏差的识别与校正</h2>
+
+  <p>即使完成了去重和毒性过滤，预训练数据仍可能携带严重的代表性偏差——某些群体、观点、文化或语言在数据中被过度或不足表示，导致模型学习到不公平的关联或刻板印象。</p>
+
+  <h3>主要偏差类型</h3>
+
+  <p><strong>性别偏差</strong>：互联网文本中，"护士"与"女性"、"工程师"与"男性"等强关联大量存在，模型可能习得这些刻板印象。Bolukbasi et al.（2016）的开创性工作揭示了词向量中的性别偏差，这一问题在 LLM 时代更为复杂。</p>
+
+  <p><strong>地理与文化偏差</strong>：互联网内容高度集中于英语国家和发达地区，模型对这些地区的文化、历史和价值观的理解远深于其他地区。</p>
+
+  <p><strong>时间偏差</strong>：历史上，互联网普及之前的知识（前 2000 年代）在数字文本中的表示较少，导致模型对近代史和当代事件的了解远超古代历史。</p>
+
+  <p><strong>观点与立场偏差</strong>：如果训练数据中特定政治立场的内容显著多于其他立场，模型会表现出偏向。</p>
+
+  <h3>偏差的识别方法</h3>
+  <ul>
+    <li><strong>词共现分析</strong>：分析敏感属性词（性别、种族词汇）与职业/特征词的共现频率</li>
+    <li><strong>模板化测试集</strong>：使用 WinoBias、StereoSet 等专门设计的偏差评测集评估模型行为</li>
+    <li><strong>话题分布分析</strong>：对训练数据进行主题建模，量化不同话题的覆盖比例</li>
+    <li><strong>地理与人口统计分析</strong>：分析文本所提及的地名、人名的地理分布</li>
+  </ul>
+
+  <h3>校正策略的局限性</h3>
+
+  <div class="highlight-box">
+    <strong>现实认知：</strong>完全消除预训练数据中的偏差在技术上是不可能的——任何数据集都是对真实世界的采样，而真实世界本身就存在不平等和不均匀分布。预训练阶段的"偏差校正"更多是缓解最严重的偏差，真正的行为对齐需要在后训练（RLHF、安全微调）阶段进行。这也是预训练数据工程与对齐研究之间的分工边界。
+  </div>
+
+  <!-- 3.5 -->
+  <h2>3.5 清洗流水线工程实践：Dolma、RedPajama、FineWeb 案例</h2>
+
+  <p>将上述各类过滤技术组合为高效、可扩展的清洗流水线，是预训练数据工程的核心挑战。以下三个代表性开源项目提供了完整的工程参考。</p>
+
+  <div class="case-header">案例一</div>
+  <div class="info-box">
+    <h4>Dolma（Allen Institute for AI，2024）</h4>
+    <p><strong>规模：</strong>约 3 万亿 Token，用于训练 OLMo 系列模型</p>
+    <p><strong>数据源构成：</strong>Common Crawl（67%）、The Stack（11%）、C4（10%）、Reddit（5%）、维基百科/Wikibooks（4%）、arXiv（3%）</p>
+    <p><strong>核心清洗步骤：</strong></p>
+    <div class="pipeline">
+      <div class="pipeline-step"><div class="step-num">1</div><div class="step-content"><strong>URL 过滤</strong>：UTI（Uniform Tags for Identification）格式的 URL 黑名单，覆盖成人、垃圾、钓鱼等分类</div></div>
+      <div class="pipeline-step"><div class="step-num">2</div><div class="step-content"><strong>语言过滤</strong>：fastText 模型，保留英语为主</div></div>
+      <div class="pipeline-step"><div class="step-num">3</div><div class="step-content"><strong>质量过滤</strong>：基于 Gopher 规则的启发式过滤 + fastText 质量分类器双重过滤</div></div>
+      <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>毒性过滤</strong>：Jigsaw Perspective API 采样验证 + 词汇黑名单全量过滤</div></div>
+      <div class="pipeline-step"><div class="step-num">5</div><div class="step-content"><strong>PII 脱敏</strong>：正则表达式识别并替换电话号码、邮件地址、IP 地址等</div></div>
+      <div class="pipeline-step"><div class="step-num">6</div><div class="step-content"><strong>模糊去重</strong>：Bloom Filter + MinHash LSH 两阶段去重</div></div>
+    </div>
+    <p><strong>工程亮点：</strong>所有工具以 Python 包形式开源发布，支持分布式处理；提供详细的数据审查报告（每个数据子集的统计信息、过滤率）。</p>
+  </div>
+
+  <div class="case-header">案例二</div>
+  <div class="info-box">
+    <h4>RedPajama-v2（Together AI，2023）</h4>
+    <p><strong>规模：</strong>约 30 万亿原始 Token（最大规模的公开 CC 处理数据集），附带质量信号注释</p>
+    <p><strong>创新设计：</strong>RedPajama-v2 的独特之处在于，它提供了原始文档 + 多维质量信号（约 40 项）的分离存储，允许下游用户根据自己的需要自定义过滤阈值，而不必重新处理原始数据。质量信号包括：</p>
+    <ul>
+      <li>困惑度分（基于 CCNet KenLM 模型）</li>
+      <li>自然语言比例（Natural Language Score）</li>
+      <li>多项启发式质量指标（行重复比例、特殊字符比例等）</li>
+      <li>DSIR（Data Selection via Importance Resampling）相似度分</li>
+    </ul>
+    <p><strong>工程价值：</strong>将"数据存储"与"过滤策略"解耦，是大规模数据集分发的重要创新，允许研究社区在同一个数据集上进行不同过滤策略的对比实验。</p>
+  </div>
+
+  <div class="case-header">案例三</div>
+  <div class="info-box">
+    <h4>FineWeb（Hugging Face，2024）</h4>
+    <p><strong>规模：</strong>15 万亿 Token（FineWeb）+ 1.3 万亿 Token（FineWeb-Edu）</p>
+    <p><strong>核心清洗流水线（datatrove 框架）：</strong></p>
+    <div class="pipeline">
+      <div class="pipeline-step"><div class="step-num">1</div><div class="step-content"><strong>高质量 HTML 解析</strong>：使用 trafilatura 重新解析 WARC 文件（而非直接使用 WET），显著提升文本抽取质量</div></div>
+      <div class="pipeline-step"><div class="step-num">2</div><div class="step-content"><strong>URL 黑名单 + 语言过滤</strong>：fastText 语言识别，保留英语（FineWeb）或多语言（FineWeb-2）</div></div>
+      <div class="pipeline-step"><div class="step-num">3</div><div class="step-content"><strong>Gopher 质量规则</strong>：约 20 项启发式规则，过滤明显低质量文档</div></div>
+      <div class="pipeline-step"><div class="step-num">4</div><div class="step-content"><strong>C4 质量规则</strong>：补充 C4 的过滤规则集</div></div>
+      <div class="pipeline-step"><div class="step-num">5</div><div class="step-content"><strong>MinHash 文档级去重</strong>：5-gram MinHash，Jaccard 相似度阈值 0.7</div></div>
+      <div class="pipeline-step"><div class="step-num">6</div><div class="step-content"><strong>（FineWeb-Edu 附加）LLM 教育质量评分</strong>：Llama-3-70B 打分，训练 1B 分类器模拟推断</div></div>
+    </div>
+    <p><strong>Ablation 研究：</strong>FineWeb 发布了完整的消融实验，证明每个过滤步骤对最终模型性能的贡献，是业界罕见的透明度示范。</p>
+  </div>
+
+  <h3>流水线设计的通用原则</h3>
+
+  <div class="highlight-box">
+    <strong>工程最佳实践总结：</strong>
+    <ol style="margin:12px 0 0 20px; line-height:2;">
+      <li><strong>先粗后细：</strong>先用低成本的 URL 黑名单和启发式规则大量过滤，再用高成本的分类器精细处理</li>
+      <li><strong>记录保存过滤日志：</strong>每步过滤保留被删除文档的统计信息，便于后续分析和调整</li>
+      <li><strong>去重放在最后：</strong>在质量过滤完成后再去重，避免将低质量版本保留而删除高质量版本</li>
+      <li><strong>消融实验验证：</strong>每个过滤步骤应通过小规模训练实验验证其对模型性能的实际贡献</li>
+      <li><strong>分布式处理架构：</strong>使用 Apache Spark、Dask 或 datatrove 等框架，确保处理流水线可横向扩展至 PB 级数据</li>
+    </ol>
+  </div>
+
+  <div class="footnote">
+    <p><strong>参考文献要点：</strong>Lee et al. (2022) "Deduplicating Training Data Makes Language Models Better"；Gao et al. (2020) "The Pile"；Wenzek et al. (2020) "CCNet"；Dolma (Soldaini et al., 2024)；Penedo et al. (2024) "FineWeb"；RedPajama-v2 (2023)；Welbl et al. (2021) "Challenges in Detoxifying Language Models"；Gehman et al. (2020) "RealToxicityPrompts"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="02_第二章_原始数据来源.html">← 第2章</a>
+  <a href="04_第四章_数据配比与混合策略.html">第4章 数据配比与混合策略 →</a>
+</div>
+
+</body>
+</html>

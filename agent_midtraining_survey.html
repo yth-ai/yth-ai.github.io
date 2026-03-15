@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中训练 × 通用 Agent 能力：数据视角系统综述</title>
+<style>
+:root {
+  --bg: #0e1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --text-dim: #6e7681;
+  --blue: #3b82f6;
+  --blue-dim: #1d4ed8;
+  --green: #22c55e;
+  --green-dim: #15803d;
+  --purple: #a855f7;
+  --purple-dim: #7e22ce;
+  --amber: #f59e0b;
+  --amber-dim: #b45309;
+  --red: #ef4444;
+  --red-dim: #b91c1c;
+  --nav-h: 56px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  height: var(--nav-h);
+  background: rgba(14,17,23,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  padding: 0 24px;
+  gap: 24px;
+}
+nav .brand {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--text);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+nav .brand .logo { font-size: 20px; }
+nav .nav-links {
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  flex: 1;
+}
+nav .nav-links::-webkit-scrollbar { display: none; }
+nav .nav-links a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 13px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+  transition: color .15s, background .15s;
+}
+nav .nav-links a:hover { color: var(--text); background: rgba(255,255,255,.06); }
+nav .badge {
+  margin-left: auto;
+  background: linear-gradient(135deg, var(--blue-dim), var(--purple-dim));
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(160deg, #0e1117 0%, #111827 40%, #0f172a 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 72px 24px 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 800px;
+  height: 400px;
+  background: radial-gradient(ellipse, rgba(59,130,246,.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-block;
+  background: rgba(59,130,246,.15);
+  border: 1px solid rgba(59,130,246,.3);
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(24px, 4vw, 40px);
+  font-weight: 800;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #e6edf3 30%, #8b949e);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  color: var(--text-muted);
+  font-size: 16px;
+  max-width: 640px;
+  margin: 0 auto 32px;
+}
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 32px;
+  flex-wrap: wrap;
+}
+.stat {
+  text-align: center;
+}
+.stat .num {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--blue), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.stat .label {
+  font-size: 12px;
+  color: var(--text-dim);
+  margin-top: 4px;
+}
+
+/* ── LAYOUT ── */
+.container {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+section {
+  padding: 56px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-header {
+  margin-bottom: 32px;
+}
+.section-num {
+  display: inline-block;
+  background: var(--card);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 4px;
+  margin-bottom: 10px;
+}
+.section-header h2 {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 700;
+  letter-spacing: -.01em;
+}
+.section-header p {
+  color: var(--text-muted);
+  margin-top: 8px;
+  max-width: 700px;
+}
+
+/* ── CARDS ── */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 16px;
+  transition: border-color .2s;
+}
+.card:hover { border-color: #484f58; }
+
+.paper-card {
+  border-left: 4px solid transparent;
+  border-radius: 10px;
+  padding: 24px;
+  margin-bottom: 20px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left-width: 4px;
+  transition: transform .15s, border-color .2s;
+}
+.paper-card:hover { transform: translateX(3px); }
+
+.paper-card.blue  { border-left-color: var(--blue); }
+.paper-card.green { border-left-color: var(--green); }
+.paper-card.purple{ border-left-color: var(--purple); }
+.paper-card.amber { border-left-color: var(--amber); }
+.paper-card.red   { border-left-color: var(--red); }
+
+.paper-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.paper-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 9px;
+  border-radius: 12px;
+  letter-spacing: .04em;
+}
+.tag.blue   { background: rgba(59,130,246,.18); color: #93c5fd; border: 1px solid rgba(59,130,246,.3); }
+.tag.green  { background: rgba(34,197,94,.15); color: #86efac; border: 1px solid rgba(34,197,94,.3); }
+.tag.purple { background: rgba(168,85,247,.15); color: #d8b4fe; border: 1px solid rgba(168,85,247,.3); }
+.tag.amber  { background: rgba(245,158,11,.15); color: #fcd34d; border: 1px solid rgba(245,158,11,.3); }
+.tag.red    { background: rgba(239,68,68,.15); color: #fca5a5; border: 1px solid rgba(239,68,68,.3); }
+.tag.gray   { background: rgba(139,148,158,.12); color: var(--text-muted); border: 1px solid var(--border); }
+
+.arxiv-link {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: monospace;
+}
+
+.paper-body p { color: var(--text-muted); margin-bottom: 10px; }
+.paper-body p:last-child { margin-bottom: 0; }
+.paper-body strong { color: var(--text); }
+
+.tech-list {
+  list-style: none;
+  margin: 8px 0;
+  padding: 0;
+}
+.tech-list li {
+  display: flex;
+  gap: 10px;
+  padding: 6px 0;
+  color: var(--text-muted);
+  border-bottom: 1px solid rgba(48,54,61,.5);
+  font-size: 14px;
+}
+.tech-list li:last-child { border-bottom: none; }
+.tech-list .step-num {
+  display: inline-block;
+  min-width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: center;
+  line-height: 22px;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+.blue .step-num  { background: rgba(59,130,246,.2); color: #93c5fd; }
+.green .step-num { background: rgba(34,197,94,.2); color: #86efac; }
+.purple .step-num{ background: rgba(168,85,247,.2); color: #d8b4fe; }
+.amber .step-num { background: rgba(245,158,11,.2); color: #fcd34d; }
+.red .step-num   { background: rgba(239,68,68,.2); color: #fca5a5; }
+
+.highlight-box {
+  background: rgba(59,130,246,.06);
+  border: 1px solid rgba(59,130,246,.2);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: var(--text-muted);
+}
+.highlight-box.green { background: rgba(34,197,94,.05); border-color: rgba(34,197,94,.2); }
+.highlight-box.purple{ background: rgba(168,85,247,.05); border-color: rgba(168,85,247,.2); }
+.highlight-box.amber { background: rgba(245,158,11,.05); border-color: rgba(245,158,11,.2); }
+.highlight-box.red   { background: rgba(239,68,68,.05); border-color: rgba(239,68,68,.2); }
+.highlight-box strong { color: var(--text); }
+
+/* ── TRAINING PIPELINE ── */
+.pipeline {
+  display: flex;
+  gap: 0;
+  margin: 24px 0;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+.pipeline-stage {
+  flex: 1;
+  padding: 20px 18px;
+  border-right: 1px solid var(--border);
+  position: relative;
+}
+.pipeline-stage:last-child { border-right: none; }
+.pipeline-stage.mid { background: linear-gradient(135deg, rgba(59,130,246,.08), rgba(168,85,247,.06)); }
+.pipeline-stage .stage-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  margin-bottom: 6px;
+}
+.pipeline-stage .stage-name {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.pipeline-stage .stage-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+.pipeline-stage.pre .stage-name { color: var(--amber); }
+.pipeline-stage.mid .stage-name { color: var(--blue); }
+.pipeline-stage.post .stage-name { color: var(--green); }
+.pipeline-arrow {
+  display: none;
+}
+
+/* ── NECESSITY CARDS ── */
+.necessity-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.necessity-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.necessity-item .ni-num {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 14px;
+  margin-bottom: 12px;
+}
+.n1 .ni-num { background: rgba(239,68,68,.15); color: #fca5a5; }
+.n2 .ni-num { background: rgba(245,158,11,.15); color: #fcd34d; }
+.n3 .ni-num { background: rgba(168,85,247,.15); color: #d8b4fe; }
+.necessity-item h4 { font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+.necessity-item p { font-size: 13px; color: var(--text-muted); }
+
+/* ── DATA SOURCES ── */
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 16px;
+}
+.source-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+}
+.source-card .sc-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.sc-icon {
+  width: 38px; height: 38px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.sc-blue  { background: rgba(59,130,246,.15); }
+.sc-green { background: rgba(34,197,94,.12); }
+.sc-purple{ background: rgba(168,85,247,.12); }
+.sc-amber { background: rgba(245,158,11,.12); }
+.sc-id {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  color: var(--text-dim);
+}
+.sc-title { font-size: 15px; font-weight: 700; }
+.source-item {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(48,54,61,.6);
+}
+.source-item:last-child { border-bottom: none; padding-bottom: 0; }
+.source-item h5 { font-size: 13.5px; font-weight: 600; margin-bottom: 4px; }
+.source-item p { font-size: 13px; color: var(--text-muted); }
+.source-item .ref {
+  display: inline-block;
+  font-size: 11px;
+  font-family: monospace;
+  color: var(--blue);
+  margin-top: 3px;
+}
+
+/* ── COMPARISON TABLE ── */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13.5px;
+  min-width: 760px;
+}
+thead tr {
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid var(--border);
+}
+th {
+  padding: 12px 14px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: .04em;
+  white-space: nowrap;
+}
+th:first-child { text-align: left; }
+td {
+  padding: 11px 14px;
+  text-align: center;
+  border-bottom: 1px solid rgba(48,54,61,.5);
+  color: var(--text-muted);
+}
+td:first-child { text-align: left; font-weight: 600; color: var(--text); }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(255,255,255,.02); }
+
+.method-row-name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.method-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.check-green    { color: #22c55e; font-size: 15px; }
+.check-dgreen   { color: #16a34a; font-size: 15px; font-weight: 800; }
+.check-warn     { color: #f59e0b; font-size: 15px; }
+.check-red      { color: #ef4444; font-size: 15px; }
+.check-high     { color: #22c55e; font-weight: 800; font-size: 13px; }
+.check-mid      { color: #f59e0b; font-size: 13px; }
+.check-low      { color: #ef4444; font-size: 13px; }
+
+/* ── QUADRANT ── */
+.quadrant-wrap {
+  display: grid;
+  grid-template-columns: auto 1fr 1fr;
+  grid-template-rows: 1fr 1fr auto;
+  gap: 3px;
+  margin: 24px 0;
+  max-width: 780px;
+}
+.q-y-label {
+  grid-row: 1 / 3;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  color: var(--text-dim);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding-right: 8px;
+  gap: 10px;
+}
+.q-cell {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 18px;
+  min-height: 130px;
+}
+.q-cell .q-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.qA .q-label { background: rgba(34,197,94,.12); color: #86efac; }
+.qB .q-label { background: rgba(59,130,246,.12); color: #93c5fd; }
+.qC .q-label { background: rgba(245,158,11,.12); color: #fcd34d; }
+.qD .q-label { background: rgba(168,85,247,.12); color: #d8b4fe; }
+.q-cell ul { list-style: none; padding: 0; }
+.q-cell ul li {
+  font-size: 13px;
+  color: var(--text-muted);
+  padding: 3px 0;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+.q-cell ul li::before { content: '·'; opacity: .5; flex-shrink: 0; }
+.q-x-labels {
+  grid-column: 2 / 4;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3px;
+  padding-top: 4px;
+}
+.q-x-label {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-dim);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+.q-axis-center {
+  grid-column: 2 / 4;
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding: 4px 0;
+}
+
+/* ── INSIGHTS ── */
+.insights-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 24px;
+}
+.insight-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  position: relative;
+  overflow: hidden;
+}
+.insight-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+}
+.insight-card.i1::before { background: linear-gradient(90deg, var(--blue), var(--purple)); }
+.insight-card.i2::before { background: linear-gradient(90deg, var(--green), var(--blue)); }
+.insight-card.i3::before { background: linear-gradient(90deg, var(--amber), var(--red)); }
+.insight-card .ins-num {
+  font-size: 36px;
+  font-weight: 900;
+  line-height: 1;
+  opacity: .08;
+  position: absolute;
+  top: 12px; right: 16px;
+  font-family: serif;
+}
+.insight-card h4 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+.insight-card p  { font-size: 13.5px; color: var(--text-muted); }
+
+/* ── FRONTIER ── */
+.frontier-list { display: flex; flex-direction: column; gap: 16px; }
+.frontier-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  display: flex;
+  gap: 18px;
+}
+.frontier-icon {
+  width: 44px; height: 44px;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 22px;
+  flex-shrink: 0;
+}
+.f1 .frontier-icon { background: rgba(59,130,246,.12); }
+.f2 .frontier-icon { background: rgba(168,85,247,.12); }
+.f3 .frontier-icon { background: rgba(245,158,11,.12); }
+.frontier-content h4 { font-size: 15px; font-weight: 700; margin-bottom: 8px; }
+.frontier-content p  { font-size: 13.5px; color: var(--text-muted); }
+.open-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+.f1 .open-badge { background: rgba(59,130,246,.15); color: #93c5fd; }
+.f2 .open-badge { background: rgba(168,85,247,.15); color: #d8b4fe; }
+.f3 .open-badge { background: rgba(245,158,11,.15); color: #fcd34d; }
+
+/* ── FOOTER ── */
+footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 32px 24px;
+  text-align: center;
+}
+footer p {
+  font-size: 13px;
+  color: var(--text-dim);
+  max-width: 700px;
+  margin: 0 auto 6px;
+}
+footer .footer-links {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-top: 14px;
+}
+footer .footer-links span {
+  font-size: 12px;
+  color: var(--text-dim);
+  font-family: monospace;
+}
+footer .footer-links .dot { color: var(--border); }
+
+/* ── UTIL ── */
+.divider { border: none; border-top: 1px solid var(--border); margin: 20px 0; }
+.mt8 { margin-top: 8px; }
+.mt16 { margin-top: 16px; }
+.mt24 { margin-top: 24px; }
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 16px;
+}
+
+@media (max-width: 768px) {
+  .pipeline { flex-direction: column; }
+  .pipeline-stage { border-right: none; border-bottom: 1px solid var(--border); }
+  .pipeline-stage:last-child { border-bottom: none; }
+  .source-grid { grid-template-columns: 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+  .quadrant-wrap { display: block; }
+  .q-y-label { display: none; }
+  .q-cell { margin-bottom: 8px; }
+  .q-x-labels { display: none; }
+  nav .badge { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="brand" href="#top">
+    <span class="logo">🤖</span>
+    <span>Agent Mid-training 综述</span>
+  </a>
+  <div class="nav-links">
+    <a href="#s0">背景</a>
+    <a href="#s1">数据来源</a>
+    <a href="#s2">核心论文</a>
+    <a href="#s3">对比矩阵</a>
+    <a href="#s4">方法论</a>
+    <a href="#s5">前沿方向</a>
+  </div>
+  <span class="badge">2024 – 2026</span>
+</nav>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-tag">数据视角系统综述</div>
+  <h1>中训练 × 通用 Agent 能力</h1>
+  <p class="hero-sub">
+    Mid-training 阶段如何通过数据挖掘与合成，定向强化大模型的规划、工具使用与执行能力——
+    覆盖 2024–2026 年学术论文与工业实践
+  </p>
+  <div class="hero-stats">
+    <div class="stat">
+      <div class="num">7</div>
+      <div class="label">核心论文/系统</div>
+    </div>
+    <div class="stat">
+      <div class="num">4</div>
+      <div class="label">数据来源范式</div>
+    </div>
+    <div class="stat">
+      <div class="num">4</div>
+      <div class="label">象限方法论</div>
+    </div>
+    <div class="stat">
+      <div class="num">2024–2026</div>
+      <div class="label">覆盖时间跨度</div>
+    </div>
+  </div>
+</div>
+
+<!-- SECTION 0 -->
+<section id="s0">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">Section 0</div>
+      <h2>定义与背景：为什么需要 Mid-training for Agent？</h2>
+      <p>大模型训练三阶段定位，以及 Agent 中训练的核心必要性</p>
+    </div>
+
+    <!-- Pipeline -->
+    <div class="pipeline">
+      <div class="pipeline-stage pre">
+        <div class="stage-label">Stage 1</div>
+        <div class="stage-name">Pre-training</div>
+        <div class="stage-desc">
+          <strong style="color:#e6edf3">Foundational Knowledge</strong><br>
+          通用知识与语言能力。在万亿 token 网络文本上学习语言模式、世界知识、基础推理。数据规模大，但几乎不含 Agent 执行轨迹。
+        </div>
+      </div>
+      <div class="pipeline-stage mid">
+        <div class="stage-label">Stage 2 ← 本文聚焦</div>
+        <div class="stage-name">Mid-training</div>
+        <div class="stage-desc">
+          <strong style="color:#93c5fd">Specialized Skills</strong><br>
+          定向强化 Agent 所需的规划/工具/执行能力。通过大规模 agentic data（轨迹、工具调用、推理链）填补 distribution gap，是 SFT 的前置增强。
+        </div>
+      </div>
+      <div class="pipeline-stage post">
+        <div class="stage-label">Stage 3</div>
+        <div class="stage-name">Post-training</div>
+        <div class="stage-desc">
+          <strong style="color:#86efac">Alignment</strong><br>
+          SFT + RL 对齐指令跟随与偏好。数据量相对小，依赖 mid-training 已奠定的能力基础，进行最终行为对齐。
+        </div>
+      </div>
+    </div>
+
+    <!-- Necessity -->
+    <div class="section-header mt24">
+      <h2 style="font-size:20px">Agent Mid-training 的三重必要性</h2>
+    </div>
+    <div class="necessity-grid">
+      <div class="necessity-item n1">
+        <div class="ni-num">1</div>
+        <h4>分布鸿沟（Distribution Gap）</h4>
+        <p>自然爬取文本 vs. Agent 执行轨迹之间存在巨大 distribution gap。SFT 阶段数据量有限（万级），难以弥补预训练阶段造成的能力空洞。Mid-training 用百亿级 agentic token 填补这一空白。</p>
+      </div>
+      <div class="necessity-item n2">
+        <div class="ni-num">2</div>
+        <h4>隐式知识不足</h4>
+        <p>工具使用规范、API 调用格式、错误处理范式在通用预训练数据中极为稀疏。模型不知道"如何调用工具"不是智力问题，而是分布问题——需要专项数据注入。</p>
+      </div>
+      <div class="necessity-item n3">
+        <div class="ni-num">3</div>
+        <h4>规划能力是"学出来"的</h4>
+        <p>多步规划、自我反思、工具串联等核心 Agent 能力，需要大规模轨迹数据才能激活。研究表明这些能力在 mid-training 后呈现显著的 emergent gain，而非靠 SFT 微调可达。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 1 -->
+<section id="s1">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">Section 1</div>
+      <h2>数据来源维度：四大类范式</h2>
+      <p>从数据获取角度，Agent mid-training 数据可分为四大类型，覆盖真实挖掘到合成生成</p>
+    </div>
+
+    <div class="source-grid">
+      <!-- 1A -->
+      <div class="source-card">
+        <div class="sc-header">
+          <div class="sc-icon sc-blue">🌐</div>
+          <div>
+            <div class="sc-id">1A · Real Trajectory Mining</div>
+            <div class="sc-title">真实轨迹挖掘</div>
+          </div>
+        </div>
+        <div class="source-item">
+          <h5>Web Agent 轨迹</h5>
+          <p>从网页交互日志（Click/Type/Scroll/Navigate 序列）中提取 GUI 操作轨迹，天然包含用户意图→操作序列映射。</p>
+          <span class="ref">AgentTrek (arXiv:2412.09605) · 数万条高质量 GUI 轨迹</span>
+        </div>
+        <div class="source-item">
+          <h5>代码执行轨迹</h5>
+          <p>GitHub PR/Issue/Commit 序列，天然包含"问题→分析→修复→验证"的 agent 范式，是最丰富的免费 agentic data 来源。</p>
+          <span class="ref">KAT-Coder (2025) · 20B GitHub tokens</span>
+        </div>
+        <div class="source-item">
+          <h5>工具调用日志</h5>
+          <p>从 API 使用文档、Stack Overflow 答案、Jupyter Notebook 中提取工具调用序列，覆盖真实使用场景。</p>
+          <span class="ref">ToolBench / APIBench</span>
+        </div>
+      </div>
+
+      <!-- 1B -->
+      <div class="source-card">
+        <div class="sc-header">
+          <div class="sc-icon sc-green">🏗️</div>
+          <div>
+            <div class="sc-id">1B · Synthetic Trajectory Generation</div>
+            <div class="sc-title">合成轨迹生成</div>
+          </div>
+        </div>
+        <div class="source-item">
+          <h5>基于 LLM 的轨迹合成</h5>
+          <p>用强模型（GPT-4/Claude）在模拟环境中执行任务生成完整轨迹。优势：可规模化、质量可控；挑战：hallucinated tool calls、impossible actions。</p>
+        </div>
+        <div class="source-item">
+          <h5>基于环境的执行验证</h5>
+          <p>在真实/模拟环境中执行生成的轨迹，保留成功轨迹作为训练数据——执行验证是关键质量门控。</p>
+          <span class="ref">ScaleEnv (arXiv:2602.06820, 2026) · 从零构建合成环境</span>
+        </div>
+        <div class="source-item">
+          <h5>PAO 循环（Plan-Action-Observation）</h5>
+          <p>结构化合成"Plan → Action → Observation → Reflect"四元组序列，是当前工业界最广泛采用的 agent 数据格式。</p>
+          <span class="ref">KAT-Coder / GLM4.5 均采用此范式</span>
+        </div>
+      </div>
+
+      <!-- 1C -->
+      <div class="source-card">
+        <div class="sc-header">
+          <div class="sc-icon sc-amber">🔧</div>
+          <div>
+            <div class="sc-id">1C · Tool & API Knowledge Mining</div>
+            <div class="sc-title">工具/文档知识挖掘</div>
+          </div>
+        </div>
+        <div class="source-item">
+          <h5>工具文档合成 QA</h5>
+          <p>从 API 文档生成"如何使用此工具解决 X 问题"的 QA 对。ToolDoc → ToolQA：覆盖工具选择/参数理解/错误处理多视角。</p>
+        </div>
+        <div class="source-item">
+          <h5>工具 Schema 理解训练</h5>
+          <p>JSON schema、OpenAPI spec 格式理解训练；工具描述→调用格式对齐，让模型学会"读懂"工具定义并正确调用。</p>
+        </div>
+        <div class="source-item">
+          <h5>跨工具组合训练</h5>
+          <p>从单工具调用渐进到多工具串联，进一步构建工具依赖图（哪些工具需要组合使用），提升工具编排能力。</p>
+        </div>
+      </div>
+
+      <!-- 1D -->
+      <div class="source-card">
+        <div class="sc-header">
+          <div class="sc-icon sc-purple">🧠</div>
+          <div>
+            <div class="sc-id">1D · Reasoning & Reflection Data</div>
+            <div class="sc-title">推理链/反思数据</div>
+          </div>
+        </div>
+        <div class="source-item">
+          <h5>自我反思轨迹</h5>
+          <p>模型执行失败后的 retry + correction 序列。Reflexion (Shinn et al., 2023)：failure → verbal reflection → retry，提供负例驱动的修正数据。</p>
+        </div>
+        <div class="source-item">
+          <h5>多步推理 CoT（工具×推理混合链）</h5>
+          <p>在 agent 上下文中的 chain-of-thought，包含工具使用中间步骤——不是纯数学 CoT，而是"工具调用嵌入推理链"的混合格式。</p>
+        </div>
+        <div class="source-item">
+          <h5>Agent 自进化轨迹</h5>
+          <p>通过 Reasoning Memory 机制让 agent 积累推理经验，用于生成更高质量的后续训练数据，实现闭环自我提升。</p>
+          <span class="ref">ReasoningBank (Ouyang et al., 2025)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 2 -->
+<section id="s2">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">Section 2</div>
+      <h2>核心方法论文详情</h2>
+      <p>7 篇代表性论文/系统，覆盖 Web 轨迹、环境合成、工业实践、自进化等方向</p>
+    </div>
+
+    <!-- Paper 1: AgentTrek -->
+    <div class="paper-card blue">
+      <div class="paper-meta">
+        <span class="paper-title">1. AgentTrek</span>
+        <span class="tag blue">轨迹合成</span>
+        <span class="tag gray">Web GUI</span>
+        <span class="arxiv-link">arXiv:2412.09605</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">Xu et al., 2024 · Web GUI 轨迹自动合成</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>从互联网 web tutorial 文章（"如何操作 XXX 网站"类教程）自动解析出操作步骤，用 VLM 在真实浏览器环境执行并验证，生成高质量 instruction-trajectory 对，无需人工标注。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>Tutorial Crawling → Step Extraction</strong>：NLP 解析教程文章，提取结构化操作步骤序列（"点击→输入→提交"）</span></li>
+          <li><span class="step-num">b</span><span><strong>VLM-driven Execution</strong>：在真实浏览器中执行提取的步骤，VLM 负责截图理解与操作验证</span></li>
+          <li><span class="step-num">c</span><span><strong>自动质量过滤</strong>：过滤执行失败、步骤不完整或环境异常的轨迹，仅保留端到端成功的 trajectory</span></li>
+        </ul>
+        <div class="highlight-box">
+          <strong>意义：</strong>证明"用教程文档自动生成训练轨迹"技术路线可行。开辟了无需人工标注的大规模 web trajectory 获取新路径，GUI agent 能力显著提升。
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 2: ScaleEnv -->
+    <div class="paper-card green">
+      <div class="paper-meta">
+        <span class="paper-title">2. ScaleEnv</span>
+        <span class="tag green">工具/环境</span>
+        <span class="tag gray">合成环境</span>
+        <span class="arxiv-link">arXiv:2602.06820</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">2026 · 环境合成 × 通用工具使用 Agent 中训练</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>不依赖预设 benchmark 环境，从零自动生成多样化交互环境，并在其中合成训练轨迹，训练通用 interactive tool-use agent。解决高质量 agentic 训练环境稀缺的根本问题。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>自动环境生成</strong>：自动设计任务空间 + 工具空间 + 状态转移规则，生成多样化交互环境（不依赖 WebArena/OSWorld 等现有环境）</span></li>
+          <li><span class="step-num">b</span><span><strong>环境内轨迹采集</strong>：在生成的环境中运行 LLM agent 收集执行轨迹，覆盖成功/失败/部分成功等多种状态</span></li>
+          <li><span class="step-num">c</span><span><strong>成功率过滤 + 多样性保证</strong>：按成功率阈值过滤，同时保证环境和任务的多样性覆盖</span></li>
+        </ul>
+        <div class="highlight-box green">
+          <strong>意义：</strong>在多个 agent benchmark 上超越仅用真实数据训练的基线。环境合成是轨迹合成的前提，ScaleEnv 从根本上解决了"哪里来足够多、足够多样的训练环境"这一开放问题。
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 3: Qwen CPT -->
+    <div class="paper-card red">
+      <div class="paper-meta">
+        <span class="paper-title">3. Qwen Agent Continual Pre-training</span>
+        <span class="tag red">工业实践</span>
+        <span class="tag gray">多源混合</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">Qwen Team, 2025 · 工业规模中训练 · Scaling Agents via CPT</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>在 Qwen base 模型上通过 continual pre-training 系统性提升 agent 能力，核心是构建工业规模的 agentic data pipeline，多源数据融合训练。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>多源 Agentic Data</strong>：Web 轨迹 + 代码执行序列 + 工具调用日志 + PAO 循环，构成多维度 agent 能力覆盖</span></li>
+          <li><span class="step-num">b</span><span><strong>数据配比搜索</strong>：系统性搜索 reasoning 数据与 agent 轨迹数据的最优混合比例，避免某类能力退化</span></li>
+          <li><span class="step-num">c</span><span><strong>专项能力评估</strong>：在 agent benchmark 上进行专项测试，量化 mid-training 前后的 delta gain</span></li>
+        </ul>
+        <div class="highlight-box red">
+          <strong>意义：</strong>工业级验证 mid-training 对 agent 能力的增益可测量且显著。证明 continual pre-training 是比 SFT-only 更有效的 agent 能力提升路径。
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 4: KAT-Coder -->
+    <div class="paper-card blue">
+      <div class="paper-meta">
+        <span class="paper-title">4. KAT-Coder</span>
+        <span class="tag blue">轨迹合成</span>
+        <span class="tag gray">代码 Agent</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">2025 · 代码 Agent 专项中训练</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>针对 coding agent 能力，构建四类专项 mid-training 数据，覆盖真实软件工程轨迹、推理链、agentic 循环与指令遵循，系统性提升代码修复与执行能力。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>Real-world SWE 数据</strong>：20B token GitHub PR / Issue / Commit 序列，天然包含"问题发现→根因分析→代码修复→验证"的完整 agent 轨迹</span></li>
+          <li><span class="step-num">b</span><span><strong>Reasoning CoT</strong>：code / STEM / logic 推理链，强化模型在代码场景下的多步推理能力</span></li>
+          <li><span class="step-num">c</span><span><strong>Agentic Data</strong>：Plan-Action-Observation 循环，结构化编程 agent 执行范式</span></li>
+          <li><span class="step-num">d</span><span><strong>Complex Instruction Following</strong>：多约束指令遵循数据，提升模型处理复杂编程规范和约束的能力</span></li>
+        </ul>
+        <div class="highlight-box">
+          <strong>效果：</strong>在 SWE-bench 类代码修复任务上大幅提升，证明针对特定 agent 场景的专项数据构建策略的有效性。
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 5: GLM4.5 -->
+    <div class="paper-card red">
+      <div class="paper-meta">
+        <span class="paper-title">5. GLM4.5 Mid-training 实践</span>
+        <span class="tag red">工业实践</span>
+        <span class="tag gray">多能力</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">Zhipu AI, 2025 · 推理 × 长文档 × Agent 三维 mid-training</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>系统性 mid-training，同时覆盖推理能力、长文档处理、agent 执行三个维度，采用精细化数据工程策略保证长轨迹数据完整性。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>Repo-level Data</strong>：仓库原始文件 + PR + Issue + Commit，提供代码 agent 所需的仓库级上下文理解</span></li>
+          <li><span class="step-num">b</span><span><strong>Reasoning Data</strong>：math / science / coding competitions 数据，合成 reasoning CoT，覆盖 STEM 推理场景</span></li>
+          <li><span class="step-num">c</span><span><strong>Long Context & Agent Data</strong>：上采样长文档 + agentic trajectory；采用 <strong>best-fit packing</strong> 策略，避免长轨迹在 sequence packing 时被截断</span></li>
+        </ul>
+        <div class="highlight-box red">
+          <strong>工程洞察：</strong>Best-fit packing 是 mid-training 阶段处理长轨迹数据的关键工程细节——传统 random packing 会截断长轨迹，导致训练信号不完整，对 agent 能力影响显著。
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 6: Diverse Synthesis -->
+    <div class="paper-card amber">
+      <div class="paper-meta">
+        <span class="paper-title">6. Large-Scale Diverse Synthesis for Mid-Training</span>
+        <span class="tag amber">跨域/通用</span>
+        <span class="tag gray">系统性研究</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">2025 · 学术系统性综述与实验</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>专门为 mid-training 设计大规模多样合成数据 pipeline，通过系统性实验评估各类合成策略对不同下游能力的增益，建立 mid-training 数据合成的方法论框架。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>系统性框架建立</strong>：对 mid-training 数据合成的类型、质量标准、评估体系进行系统梳理，建立可复用的 pipeline 设计规范</span></li>
+          <li><span class="step-num">b</span><span><strong>能力增益对比</strong>：对比不同合成策略（指令多样性、难度分布、领域覆盖）对各下游 agent 能力的 delta gain</span></li>
+          <li><span class="step-num">c</span><span><strong>多样性度量</strong>：提出数据多样性对 mid-training 效果的重要性度量，量化覆盖度与增益的关系</span></li>
+        </ul>
+        <div class="highlight-box amber">
+          <strong>贡献：</strong>为工业界和学术界提供了 mid-training 数据工程的参考标准，明确了数据多样性是影响 mid-training 效果的核心变量之一。
+        </div>
+      </div>
+    </div>
+
+    <!-- Paper 7: ReasoningBank -->
+    <div class="paper-card purple">
+      <div class="paper-meta">
+        <span class="paper-title">7. ReasoningBank</span>
+        <span class="tag purple">推理/规划</span>
+        <span class="tag gray">自进化</span>
+      </div>
+      <div class="paper-meta" style="margin-bottom:14px; margin-top:-4px;">
+        <span style="font-size:12px; color:var(--text-dim)">Ouyang et al., 2025 · Agent Self-Evolving with Reasoning Memory</span>
+      </div>
+      <div class="paper-body">
+        <p><strong>核心思路：</strong>通过 Reasoning Memory 机制让 agent 在任务执行中积累历史推理路径，用于生成更高质量的自进化轨迹数据——模型用自己的经验训练自己，无需外部 oracle。</p>
+        <ul class="tech-list">
+          <li><span class="step-num">a</span><span><strong>Reasoning Memory</strong>：存储历史推理路径（成功/失败路径及其结果），作为未来执行时的上下文参考，避免重复失败模式</span></li>
+          <li><span class="step-num">b</span><span><strong>Self-evolving Data Generation</strong>：模型利用积累的推理记忆生成更高质量的新训练轨迹，数据质量随迭代轮次提升</span></li>
+          <li><span class="step-num">c</span><span><strong>闭环自我提升</strong>：无需外部 teacher model 或人工反馈，形成自主改进循环</span></li>
+        </ul>
+        <div class="highlight-box purple">
+          <strong>意义：</strong>指向未来"模型自己合成自己的训练数据"这一重要范式。ReasoningBank 证明了 reasoning memory 是驱动 agent 自进化的有效机制，但同时也引出了自进化数据质量控制的开放问题。
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- SECTION 3 -->
+<section id="s3">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">Section 3</div>
+      <h2>方法对比矩阵</h2>
+      <p>7 种方法 × 8 个维度的系统性对比——从数据来源到能力覆盖</p>
+    </div>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left; min-width:140px">方法</th>
+            <th>数据来源</th>
+            <th>执行环境</th>
+            <th>无监督程度</th>
+            <th>规模化难度</th>
+            <th>工具使用</th>
+            <th>规划能力</th>
+            <th>代码 Agent</th>
+            <th>通用 Agent</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--blue)"></div>
+                AgentTrek
+              </div>
+            </td>
+            <td>Web 教程</td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green" style="font-size:12px">低</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-red">✗</span></td>
+            <td><span class="check-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--green)"></div>
+                ScaleEnv
+              </div>
+            </td>
+            <td>合成环境</td>
+            <td><span class="check-dgreen">✓✓</span><span style="font-size:11px; color:var(--text-dim)"> 自建</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-warn" style="font-size:12px">中</span></td>
+            <td><span class="check-dgreen">✓✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-red">✗</span></td>
+            <td><span class="check-dgreen">✓✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--red)"></div>
+                Qwen CPT
+              </div>
+            </td>
+            <td>多源混合</td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-green" style="font-size:12px">低</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--blue)"></div>
+                KAT-Coder
+              </div>
+            </td>
+            <td>GitHub+合成</td>
+            <td><span class="check-red">✗</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-green" style="font-size:12px">低</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-dgreen">✓✓</span></td>
+            <td><span class="check-warn">△</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--red)"></div>
+                GLM4.5
+              </div>
+            </td>
+            <td>多源混合</td>
+            <td><span class="check-red">✗</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-green" style="font-size:12px">低</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--amber)"></div>
+                Diverse Synthesis
+              </div>
+            </td>
+            <td>合成为主</td>
+            <td><span class="check-red">✗</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-green" style="font-size:12px">低</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-green">✓</span></td>
+          </tr>
+          <tr>
+            <td>
+              <div class="method-row-name">
+                <div class="method-dot" style="background:var(--purple)"></div>
+                ReasoningBank
+              </div>
+            </td>
+            <td>自进化</td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-dgreen">✓✓</span></td>
+            <td><span class="check-red" style="font-size:12px">高</span></td>
+            <td><span class="check-green">✓</span></td>
+            <td><span class="check-dgreen">✓✓</span></td>
+            <td><span class="check-warn">△</span></td>
+            <td><span class="check-green">✓</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div style="margin-top:14px; display:flex; gap:20px; flex-wrap:wrap;">
+      <span style="font-size:12px; color:var(--text-dim)"><span class="check-dgreen">✓✓</span> 强覆盖</span>
+      <span style="font-size:12px; color:var(--text-dim)"><span class="check-green">✓</span> 良好覆盖</span>
+      <span style="font-size:12px; color:var(--text-dim)"><span class="check-warn">△</span> 部分/有限</span>
+      <span style="font-size:12px; color:var(--text-dim)"><span class="check-red">✗</span> 不适用/弱</span>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 4 -->
+<section id="s4">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">Section 4</div>
+      <h2>数据构建方法论：四象限框架</h2>
+      <p>以"数据来源（真实 vs 合成）"为横轴、"知识类型（工具/环境 vs 推理/规划）"为纵轴，构建四象限分析框架</p>
+    </div>
+
+    <!-- Quadrant -->
+    <div style="overflow-x:auto;">
+      <div class="quadrant-wrap">
+        <!-- Y label -->
+        <div class="q-y-label">
+          <span style="color:var(--amber)">推理/规划能力 ↑</span>
+          <span style="color:var(--green)">↓ 工具/环境知识</span>
+        </div>
+
+        <!-- Q-C: 真实 + 推理规划 (top-left) -->
+        <div class="q-cell qC">
+          <div class="q-label">象限 C · 真实 × 推理规划</div>
+          <ul>
+            <li>真实 SWE 修复轨迹</li>
+            <li>人工标注 agent 执行日志</li>
+            <li>反思 + 修正序列</li>
+          </ul>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-dim)">稀缺、高质量、难规模化</div>
+        </div>
+
+        <!-- Q-D: 合成 + 推理规划 (top-right) -->
+        <div class="q-cell qD">
+          <div class="q-label">象限 D · 合成 × 推理规划</div>
+          <ul>
+            <li>PAO 循环合成</li>
+            <li>Reflexion 反思链</li>
+            <li>Self-evolving 轨迹（ReasoningBank）</li>
+          </ul>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-dim)">可规模化、需质量验证</div>
+        </div>
+
+        <!-- Q-A: 真实 + 工具知识 (bottom-left) -->
+        <div class="q-cell qA">
+          <div class="q-label">象限 A · 真实 × 工具知识</div>
+          <ul>
+            <li>Web 轨迹挖掘（AgentTrek）</li>
+            <li>API 文档 QA</li>
+            <li>GitHub 代码执行序列</li>
+          </ul>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-dim)">可获取、但受真实环境限制</div>
+        </div>
+
+        <!-- Q-B: 合成 + 工具知识 (bottom-right) -->
+        <div class="q-cell qB">
+          <div class="q-label">象限 B · 合成 × 工具知识</div>
+          <ul>
+            <li>ScaleEnv 环境合成</li>
+            <li>ToolDoc QA 生成</li>
+            <li>工具 Schema 理解训练</li>
+          </ul>
+          <div style="margin-top:10px; font-size:11px; color:var(--text-dim)">规模化最强、潜力最大</div>
+        </div>
+
+        <!-- X labels -->
+        <div class="q-x-labels">
+          <div class="q-x-label" style="color:var(--green)">← 真实数据</div>
+          <div class="q-x-label" style="color:var(--blue)">合成数据 →</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="section-header mt24">
+      <h2 style="font-size:20px">三条关键洞察</h2>
+    </div>
+    <div class="insights-grid">
+      <div class="insight-card i1">
+        <span class="ins-num">1</span>
+        <h4>🔵 合成优于真实（规模角度）</h4>
+        <p>真实轨迹稀缺且噪声大；合成轨迹可控、可验证。Qwen / GLM 工业实践表明，最终训练数据中合成比例可安全达到 <strong style="color:var(--text)">70%+</strong>，且效果不逊于全真实数据。</p>
+      </div>
+      <div class="insight-card i2">
+        <span class="ins-num">2</span>
+        <h4>🟢 执行验证是关键质量门控</h4>
+        <p>在真实/模拟环境中执行验证，可将合成轨迹错误率从 <strong style="color:var(--text)">~40%</strong> 降低到 <strong style="color:var(--text)">~10%</strong>。无验证的合成轨迹会引入大量 hallucinated tool calls，损害训练效果。</p>
+      </div>
+      <div class="insight-card i3">
+        <span class="ins-num">3</span>
+        <h4>🟡 PAO 循环是通用范式</h4>
+        <p>Plan → Action → Observation 三元组是当前工业界最广泛采用的 agent 数据格式。KAT-Coder、GLM4.5、Qwen CPT 均采用此结构，可作为 agent mid-training 数据的标准化格式。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECTION 5 -->
+<section id="s5">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-num">Section 5</div>
+      <h2>前沿方向与开放问题</h2>
+      <p>当前 Agent Mid-training 领域三个重要的未解决挑战</p>
+    </div>
+
+    <div class="frontier-list">
+      <div class="frontier-item f1">
+        <div class="frontier-icon">🌍</div>
+        <div class="frontier-content">
+          <div class="open-badge">Open Problem 1</div>
+          <h4>环境合成的 Scaling 与真实感</h4>
+          <p>ScaleEnv 开辟了"自动生成训练环境"的路径，但如何自动生成足够多样且具备"真实感"的交互环境仍是难题。当前合成环境与真实 Web/OS 环境之间存在 sim-to-real gap——模型在合成环境中训练后，未必能在真实环境中泛化。如何缩小这一 gap，同时保持环境生成的可规模化，是关键开放挑战。</p>
+        </div>
+      </div>
+      <div class="frontier-item f2">
+        <div class="frontier-icon">🔄</div>
+        <div class="frontier-content">
+          <div class="open-badge">Open Problem 2</div>
+          <h4>自进化数据的质量控制与错误防扩散</h4>
+          <p>ReasoningBank 等自进化框架面临"错误自我强化"风险：如果 agent 积累了错误的推理记忆，会生成有缺陷的训练数据，进而强化错误行为，形成恶性循环。目前缺乏有效的自进化轨迹质量检测机制——如何在无外部 oracle 的情况下，识别并过滤低质量或错误的自进化轨迹，是保证自进化可靠性的关键问题。</p>
+        </div>
+      </div>
+      <div class="frontier-item f3">
+        <div class="frontier-icon">⚖️</div>
+        <div class="frontier-content">
+          <div class="open-badge">Open Problem 3</div>
+          <h4>Mid-training vs RL 的能力边界划分</h4>
+          <p>哪些 Agent 能力更适合通过 mid-training（大规模数据注入）习得？哪些更适合通过 RL（环境交互探索）获得？目前缺乏系统性的比较研究。初步观察表明：工具格式理解、API 调用规范等"知识型"能力适合 mid-training；而长程规划、动态策略调整等"探索型"能力可能更适合 RL。厘清这一边界将指导未来 agent 训练资源的最优分配。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>本页面为学术综述性内容，总结 2024–2026 年 Agent Mid-training 领域数据视角的研究进展。</p>
+  <p>内容覆盖 arXiv 预印本及工业实践报告，论文信息以原始发表为准。</p>
+  <div class="footer-links">
+    <span>AgentTrek · arXiv:2412.09605</span>
+    <span class="dot">·</span>
+    <span>ScaleEnv · arXiv:2602.06820</span>
+    <span class="dot">·</span>
+    <span>ReasoningBank · Ouyang et al., 2025</span>
+    <span class="dot">·</span>
+    <span>KAT-Coder · 2025</span>
+    <span class="dot">·</span>
+    <span>GLM4.5 · Zhipu AI, 2025</span>
+  </div>
+  <p style="margin-top:16px; font-size:11px; color:var(--text-dim)">
+    2026
+  </p>
+</footer>
+
+</body>
+</html>

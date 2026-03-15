@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>附录 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.1rem; color: var(--accent); margin: 1.5rem 0 0.5rem; }
+p { margin-bottom: 1.2rem; }
+ul, ol { padding-left: 1.8rem; margin-bottom: 1.2rem; }
+li { margin: 0.5rem 0; }
+.timeline-table { width: 100%; border-collapse: collapse; margin: 1.5rem 0; }
+.timeline-table th { background: var(--accent2); color: #fff; padding: 0.7rem 1rem; text-align: left; font-size: 0.9rem; }
+.timeline-table td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); font-size: 0.9rem; vertical-align: top; }
+.timeline-table tr:nth-child(even) td { background: var(--card-bg); }
+.timeline-table tr:hover td { background: var(--highlight); }
+.person-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.2rem; margin: 0.8rem 0; }
+.person-name { font-weight: bold; color: var(--accent); font-size: 1rem; }
+.person-desc { font-size: 0.9rem; color: var(--text-muted); margin-top: 0.3rem; }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">附录</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">附录</div>
+  <h1 class="chapter-title">大事年表 · 人物表 · 术语表</h1>
+</div>
+
+<div class="container">
+
+  <nav class="toc">
+    <h3>附录内容</h3>
+    <ol>
+      <li><a href="#timeline">大事年表（2017-2025）</a></li>
+      <li><a href="#people">关键人物简介</a></li>
+      <li><a href="#models">重要模型谱系</a></li>
+      <li><a href="#glossary">核心术语表</a></li>
+      <li><a href="#reading">延伸阅读</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="timeline">大事年表（2017-2025）</h2>
+  <table class="timeline-table">
+    <thead>
+      <tr><th>时间</th><th>事件</th><th>意义</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>2017年6月</td><td>《Attention Is All You Need》发表</td><td>Transformer架构诞生，奠定所有大模型的基础</td></tr>
+      <tr><td>2018年6月</td><td>GPT-1发布</td><td>预训练+微调范式的开创性实验</td></tr>
+      <tr><td>2018年10月</td><td>BERT发布（谷歌）</td><td>双向预训练模型，NLP基准刷新</td></tr>
+      <tr><td>2019年2月</td><td>GPT-2发布（部分）</td><td>首次"因太危险拒绝发布"的AI争论</td></tr>
+      <tr><td>2019年7月</td><td>微软投资OpenAI 10亿美元</td><td>OpenAI商业化转型关键节点</td></tr>
+      <tr><td>2020年1月</td><td>规模定律论文发表（OpenAI）</td><td>证明性能可预测性随规模增长</td></tr>
+      <tr><td>2020年5月</td><td>GPT-3论文发布</td><td>1750亿参数，少样本学习震撼全球</td></tr>
+      <tr><td>2020年9月</td><td>微软获得GPT-3独家商业授权</td><td>Bing + Office的AI集成伏笔</td></tr>
+      <tr><td>2021年1月</td><td>DALL-E 1发布（OpenAI）</td><td>文字生成图像进入大众视野</td></tr>
+      <tr><td>2021年6月</td><td>GitHub Copilot技术预览</td><td>首个真正商业成功的AI编程工具</td></tr>
+      <tr><td>2021年10月</td><td>Facebook改名Meta，押注元宇宙</td><td>与AI赛道的判断分歧</td></tr>
+      <tr><td>2021年底</td><td>Anthropic由OpenAI离职员工创立</td><td>AI安全独立研究路线的开始</td></tr>
+      <tr><td>2022年1月</td><td>InstructGPT论文发布</td><td>RLHF技术公开，对齐研究里程碑</td></tr>
+      <tr><td>2022年4月</td><td>DALL-E 2发布</td><td>图像AI进入新阶段</td></tr>
+      <tr><td>2022年4月</td><td>Chinchilla法则论文（DeepMind）</td><td>训练效率理论的重大修正</td></tr>
+      <tr><td>2022年6月</td><td>GitHub Copilot正式发布</td><td>AI编程工具开始规模化商业落地</td></tr>
+      <tr><td>2022年7月</td><td>Midjourney公测</td><td>图像AI进入普通用户日常</td></tr>
+      <tr><td>2022年8月</td><td>Stable Diffusion开源</td><td>图像AI开源，极大降低创作门槛</td></tr>
+      <tr><td>2022年11月</td><td>ChatGPT上线</td><td>历史性时刻，AI进入主流公众意识</td></tr>
+      <tr><td>2023年1月</td><td>微软追加投资OpenAI约100亿美元</td><td>AI产业最大单笔投资，Bing集成ChatGPT</td></tr>
+      <tr><td>2023年2月</td><td>谷歌Bard发布（含事实错误事故）</td><td>谷歌反击，但首发失误引发股价下跌</td></tr>
+      <tr><td>2023年2月</td><td>Meta发布LLaMA</td><td>开源大模型时代的起点</td></tr>
+      <tr><td>2023年3月</td><td>GPT-4发布</td><td>多模态、推理大幅提升，律师/医学考试超越人均</td></tr>
+      <tr><td>2023年3月</td><td>"暂停AI训练6个月"公开信</td><td>AI安全担忧进入主流公众视野</td></tr>
+      <tr><td>2023年5月</td><td>Geoffrey Hinton离开谷歌并发出警告</td><td>深度学习奠基人的AI危机表态</td></tr>
+      <tr><td>2023年7月</td><td>Meta开源Llama 2（含商用授权）</td><td>开源LLM的分水岭</td></tr>
+      <tr><td>2023年9月</td><td>Mistral 7B发布（法国）</td><td>欧洲AI力量的展示</td></tr>
+      <tr><td>2023年11月</td><td>OpenAI董事会政变与Altman回归</td><td>AI公司治理危机，行业权力格局的测试</td></tr>
+      <tr><td>2024年3月</td><td>Devin发布（Cognition AI）</td><td>"AI软件工程师"的概念验证</td></tr>
+      <tr><td>2024年9月</td><td>OpenAI o1发布</td><td>推理时计算规模化，推理能力代际突破</td></tr>
+      <tr><td>2024年10月</td><td>Claude 3.5 Computer Use发布</td><td>AI可以操控任意电脑界面</td></tr>
+      <tr><td>2024年12月</td><td>DeepSeek V3发布</td><td>600B参数，训练成本仅约557万美元，震惊行业</td></tr>
+      <tr><td>2025年1月</td><td>DeepSeek R1发布（开源）</td><td>媲美o1的推理能力，1/20价格，Nvidia股价单日跌17%</td></tr>
+    </tbody>
+  </table>
+
+  <h2 id="people">关键人物简介</h2>
+
+  <div class="person-card">
+    <div class="person-name">Vaswani, Ashish 及 Transformer八人组</div>
+    <div class="person-desc">《Attention Is All You Need》的八位联合作者，在谷歌大脑/谷歌工作期间发表了奠定现代AI基础的Transformer论文。大多数后来离开谷歌各自创业。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">Sutskever, Ilya</div>
+    <div class="person-desc">深度学习先驱，Hinton的学生，AlexNet联合作者。OpenAI联合创始人兼首席科学家，是"规模定律有效"最坚定的早期信念者。2023年底参与OpenAI董事会政变事件，2024年离开OpenAI创立Safe Superintelligence Inc.。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">Altman, Sam</div>
+    <div class="person-desc">OpenAI CEO，前Y Combinator总裁。ChatGPT时代最具影响力的AI布道者，同时也是AI风险最直接的承认者。2023年底被董事会短暂解职后回归，巩固了对OpenAI的控制权。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">Amodei, Dario & Daniela</div>
+    <div class="person-desc">兄妹档，前OpenAI核心成员，因AI安全方向分歧离职创立Anthropic。Dario任CEO，Daniela任总裁。Anthropic开发了Claude系列模型，以AI安全研究著称。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">Hinton, Geoffrey</div>
+    <div class="person-desc">深度学习之父，图灵奖得主，反向传播算法的推动者。在谷歌工作多年后，于2023年5月辞职，公开表达对AI发展风险的担忧，被广泛认为是AI安全讨论的重要转折点。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">LeCun, Yann</div>
+    <div class="person-desc">深度学习三巨头之一，卷积神经网络的主要发明人，图灵奖得主，Meta首席AI科学家。对大语言模型的能力持持续批评态度，认为LLM不是通往AGI的正确路线。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">Karpathy, Andrej</div>
+    <div class="person-desc">深度学习知名教育者（nanoGPT、CS231n课程），OpenAI创始成员之一，曾任特斯拉AI总监，多次往返OpenAI与其他工作。以深入浅出的AI科普内容闻名。</div>
+  </div>
+
+  <div class="person-card">
+    <div class="person-name">Radford, Alec</div>
+    <div class="person-desc">OpenAI研究员，GPT-1、GPT-2的主要推动者，CLIP多模态模型的联合作者。相对低调但对OpenAI早期方向有决定性影响。</div>
+  </div>
+
+  <h2 id="models">重要模型谱系</h2>
+
+  <h3>OpenAI 系列</h3>
+  <ul>
+    <li><strong>GPT-1</strong>（2018）：1.17亿参数，预训练+微调范式的开创</li>
+    <li><strong>GPT-2</strong>（2019）：15亿参数，"因太危险拒绝发布"争议</li>
+    <li><strong>GPT-3</strong>（2020）：1750亿参数，少样本学习震惊行业</li>
+    <li><strong>InstructGPT</strong>（2022）：RLHF对齐训练的里程碑</li>
+    <li><strong>ChatGPT</strong>（2022）：GPT-3.5+RLHF，1亿月活的爆炸式增长</li>
+    <li><strong>GPT-4</strong>（2023）：多模态，律师/医学考试超越人均水平</li>
+    <li><strong>o1</strong>（2024）：推理时计算，数学/科学能力代际跃升</li>
+    <li><strong>GPT-4o</strong>（2024）：更快更便宜的多模态旗舰</li>
+  </ul>
+
+  <h3>Meta 开源系列</h3>
+  <ul>
+    <li><strong>LLaMA 1</strong>（2023年2月）：7B-65B，泄露后引发开源浪潮</li>
+    <li><strong>Llama 2</strong>（2023年7月）：7B-70B，正式开源含商用授权</li>
+    <li><strong>Llama 3 / 3.1</strong>（2024）：405B最大版本，能力接近闭源顶级模型</li>
+  </ul>
+
+  <h3>其他重要模型</h3>
+  <ul>
+    <li><strong>Claude 系列</strong>（Anthropic）：Claude 1/2/3 Opus/Sonnet/Haiku，以安全性和长上下文著称</li>
+    <li><strong>Gemini 系列</strong>（谷歌）：原生多模态，Ultra/Pro/Flash分级</li>
+    <li><strong>Mistral 系列</strong>（法国）：7B/8x7B MoE，效率优先的开源路线</li>
+    <li><strong>DeepSeek系列</strong>（中国）：V3/R1，以极低训练成本和开源策略震惊行业</li>
+    <li><strong>Qwen 系列</strong>（阿里云）：多语言优化，中文能力突出</li>
+  </ul>
+
+  <h2 id="glossary">核心术语表</h2>
+
+  <h3>基础概念</h3>
+  <ul>
+    <li><strong>Transformer</strong>：基于自注意力机制的神经网络架构，现代大语言模型的基础</li>
+    <li><strong>自注意力（Self-Attention）</strong>：让序列中每个元素都能"关注"所有其他元素，计算相互关系</li>
+    <li><strong>大语言模型（LLM）</strong>：Large Language Model，在大规模文本数据上训练的超大型语言模型</li>
+    <li><strong>预训练（Pre-training）</strong>：在大规模无标注数据上进行初始训练，建立通用语言能力</li>
+    <li><strong>微调（Fine-tuning）</strong>：在预训练基础上，用特定数据进行针对性训练</li>
+    <li><strong>涌现（Emergence）</strong>：随着规模增长，模型突然获得未被显式训练的新能力</li>
+  </ul>
+
+  <h3>训练与对齐</h3>
+  <ul>
+    <li><strong>RLHF</strong>：Reinforcement Learning from Human Feedback，从人类反馈中强化学习</li>
+    <li><strong>规模定律（Scaling Law）</strong>：性能与参数量、数据量、计算量的幂律关系</li>
+    <li><strong>幻觉（Hallucination）</strong>：模型以高度自信语气生成不正确信息的现象</li>
+    <li><strong>对齐（Alignment）</strong>：使AI系统的行为与人类意图和价值观保持一致</li>
+    <li><strong>LoRA</strong>：Low-Rank Adaptation，参数高效微调技术，大幅降低微调成本</li>
+  </ul>
+
+  <h3>应用与产品</h3>
+    <ul>
+    <li><strong>Prompt Engineering</strong>：提示词工程，通过设计输入来引导模型输出</li>
+    <li><strong>RAG</strong>：Retrieval Augmented Generation，检索增强生成，将外部知识库与LLM结合</li>
+    <li><strong>Agent</strong>：能够自主规划、使用工具、完成复杂任务的AI系统</li>
+    <li><strong>Function Calling</strong>：让语言模型调用预定义外部函数/工具的能力</li>
+    <li><strong>MoE</strong>：Mixture of Experts，混合专家架构，大幅提升参数量但降低计算成本</li>
+  </ul>
+
+  <h2 id="reading">延伸阅读</h2>
+
+  <h3>重要论文</h3>
+  <ul>
+    <li>Vaswani et al.（2017）<em>Attention Is All You Need</em></li>
+    <li>Radford et al.（2018）<em>Improving Language Understanding by Generative Pre-Training</em>（GPT-1）</li>
+    <li>Brown et al.（2020）<em>Language Models are Few-Shot Learners</em>（GPT-3）</li>
+    <li>Kaplan et al.（2020）<em>Scaling Laws for Neural Language Models</em></li>
+    <li>Ouyang et al.（2022）<em>Training language models to follow instructions with human feedback</em>（InstructGPT）</li>
+    <li>Wei et al.（2022）<em>Chain-of-Thought Prompting Elicits Reasoning in Large Language Models</em></li>
+    <li>Bubeck et al.（2023）<em>Sparks of Artificial General Intelligence</em>（微软，GPT-4评估）</li>
+    <li>DeepSeek-AI（2025）<em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</em></li>
+  </ul>
+
+  <h3>推荐书单</h3>
+  <ul>
+    <li>《浪潮之巅》— 吴军，科技商业历史的参考框架</li>
+    <li>《硅谷钢铁侠》— Ashlee Vance，技术创业者传记的叙事风格参考</li>
+    <li>《人工智能：一种现代方法》— Russell & Norvig，AI领域经典教科书</li>
+    <li>《思考，快与慢》— Daniel Kahneman，理解AI推理能力的人类认知背景</li>
+    <li>《超级智能》— Nick Bostrom，AI长期风险的经典思考框架</li>
+  </ul>
+
+</div>
+
+<nav class="chapter-nav">
+  <a href="22_结语_涌现还在继续.html" class="nav-btn">← 结语</a>
+  <a href="00_序言.html" class="nav-btn">↑ 回到序言</a>
+</nav>
+
+</body>
+</html>

@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第七章：中场的迷雾 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第二部分：震惊（2020-2022）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第七章</div>
+  <h1 class="chapter-title">中场的迷雾</h1>
+  <div class="chapter-epigraph">
+    "2022年上半年，是我们觉得自己快到终点，却又不知道终点在哪里的时候。"
+    <cite>—— OpenAI某研究员，2023年回忆（匿名）</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#google-internal">谷歌的内部恐慌</a></li>
+      <li><a href="#image-ai">图像AI的另一场革命</a></li>
+      <li><a href="#alignment-crisis">对齐危机的浮现</a></li>
+      <li><a href="#anthropic">Anthropic的出走</a></li>
+      <li><a href="#race">真正的竞赛开始了</a></li>
+      <li><a href="#before-storm">暴风雨前的寂静</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="google-internal">谷歌的内部恐慌</h2>
+  <p>
+    2022年，谷歌的内部，笼罩着一种奇特的焦虑。
+  </p>
+  <p>
+    谷歌拥有世界上最多的AI研究人才：Transformer的八位作者里，绝大多数都出自谷歌；LaMDA是谷歌的；BERT是谷歌的；PaLM是谷歌的……但与此同时，谷歌的产品战略却陷入了一种特殊的瘫痪。
+  </p>
+  <p>
+    谷歌的核心商业模式，建立在搜索广告之上。每年数百亿美元的收入，依赖于用户用关键词搜索、点击广告。如果一个AI助手可以直接回答用户的问题，而不是给出一页链接……谷歌的广告模式会发生什么？
+  </p>
+  <p>
+    这个问题，在谷歌内部被称为"搜索的奥本海默时刻"——他们有能力造出一颗炸弹，但引爆它，可能先炸掉自己。内部讨论激烈，发布决策一再推迟。
+  </p>
+
+  <blockquote>
+    "谷歌处在一个奇怪的位置：他们知道怎么做，他们有技术，但他们不知道该不该做。"
+    <cite>—— 一位前谷歌研究员，2023年接受媒体采访</cite>
+  </blockquote>
+
+  <div class="timeline-card">
+    <div class="date">2022 年</div>
+    <div class="event">谷歌的"红色代码"</div>
+    <div class="desc">据报道，谷歌创始人拉里·佩奇和谢尔盖·布林在2022年底重新参与公司事务，协助应对ChatGPT带来的搜索威胁，内部启动"红色代码"响应计划。</div>
+  </div>
+
+  <h2 id="image-ai">图像AI的另一场革命</h2>
+  <p>
+    就在语言模型的进展逐渐进入公众视野的同时，2022年还爆发了另一场AI革命——图像生成。
+  </p>
+  <p>
+    DALL-E 2（OpenAI，2022年4月）、Midjourney（2022年7月开放测试）、Stable Diffusion（Stability AI，2022年8月开源）——三款产品在几个月内接连出现，让"输入文字生成图像"这件事，从科幻概念变成了任何人都能玩的玩具。
+  </p>
+  <p>
+    Stable Diffusion的开源，是其中最具爆炸性的事件。它让任何有一台配置不太差的电脑的人，都能在本地运行一个图像生成模型。GitHub上的各种fine-tune版本如雨后春笋，从写实人像到动漫风格，从建筑设计到游戏素材……
+  </p>
+  <p>
+    这场图像AI革命，和语言AI革命几乎同步发生，共同构成了"AI元年"的轮廓。但这两个方向并不是孤立的——Transformer架构在视觉领域的成功（ViT、DALL-E都基于类似原理），进一步验证了"统一架构"的可行性。
+  </p>
+
+  <h2 id="alignment-crisis">对齐危机的浮现</h2>
+  <p>
+    2022年，"AI对齐"（AI Alignment）这个话题从一个小众的安全研究话题，开始进入更广泛的讨论。
+  </p>
+  <p>
+    一个核心问题浮出水面：随着语言模型能力的增强，如何确保它们的行为是我们希望的，而不是我们不希望的？
+  </p>
+  <p>
+    不只是明显的有害内容（仇恨言论、暴力指导……），更微妙的问题包括：模型在不确定时应该怎么表达不确定性？模型应该如何对待有争议的话题？当用户的意图和更广泛的社会利益冲突时，模型应该偏向哪边？
+  </p>
+  <p>
+    这些问题没有简单答案。但它们驱动了一个新的研究方向：RLHF（Reinforcement Learning from Human Feedback）——通过让人类评估者给模型的输出打分，训练一个"奖励模型"，再用这个奖励模型来微调基础模型的行为。
+  </p>
+
+  <h2 id="anthropic">Anthropic的出走</h2>
+  <p>
+    2021年，OpenAI发生了一次重要的"人才出走"。
+  </p>
+  <p>
+    Dario Amodei，OpenAI的研究副总裁，和他的姐姐Daniela Amodei，以及另外约十一名OpenAI的核心研究员，集体离职，创立了Anthropic。
+  </p>
+  <p>
+    官方原因是：在AI安全研究的方向和优先级上，与OpenAI管理层存在分歧。他们认为，随着模型能力的快速提升，安全研究需要被放在更核心的位置，而不是作为产品化之后的补丁。
+  </p>
+  <p>
+    Anthropic很快获得了大量资金，并开始开发自己的模型系列——Claude。Anthropic的"宪法AI"（Constitutional AI）方法，也成为了对齐领域的一个重要技术路线。
+  </p>
+
+  <blockquote>
+    "我们离开不是因为我们不相信这项工作的重要性，而是因为我们相信它太重要了，需要以不同的方式来做。"
+    <cite>—— Dario Amodei，Anthropic CEO，创立时的公开声明（意译）</cite>
+  </blockquote>
+
+  <h2 id="race">真正的竞赛开始了</h2>
+  <p>
+    2022年，以大型科技公司、OpenAI、Anthropic为代表的玩家，都在以越来越快的速度推进。
+  </p>
+  <p>
+    参数量越来越大，训练数据越来越多，算力消耗越来越惊人。整个行业对Nvidia GPU的需求开始超过供给，等待期拉长到数月。各公司的算力采购成了战略机密，"谁有多少H100"变成了衡量实力的隐性指标。
+  </p>
+  <p>
+    但更重要的，是"能力"的竞争——模型能做什么，不能做什么。每个团队都在问：能力的下一个突破口在哪里？是更大的规模？是更好的指令跟随？是多模态的整合？是推理能力的增强？
+  </p>
+  <p>
+    没有人知道答案，但每个人都确信：下一个重要突破，即将到来。
+  </p>
+
+  <h2 id="before-storm">暴风雨前的寂静</h2>
+  <p>
+    2022年秋天，这种感觉变得更加强烈。在OpenAI内部，一个基于RLHF训练的新模型，在内部测试中表现出了令人惊讶的能力。
+  </p>
+  <p>
+    它叫InstructGPT，但团队在它的基础上，正在做一个更大、更好、更适合对话的版本。
+  </p>
+  <p>
+    测试它的人，都感受到了某种不一样的东西。之前的语言模型，回答问题时像是一个复读机，把相关的文字拼凑在一起。这个新模型，感觉像是……在思考。它会追问你的意图，会承认不确定，会主动说"我不知道"，会在给出答案后解释原因……
+  </p>
+  <p>
+    这不只是一个更好的语言模型。这是一个不同性质的东西。
+  </p>
+  <p>
+    团队决定：把它开放给公众。
+  </p>
+  <p>
+    发布日期定在2022年11月30日。
+  </p>
+
+  <div class="highlight-box">
+    ⚡ <strong>2022年的AI产品地图</strong>：DALL-E 2（4月）、Midjourney公测（7月）、Stable Diffusion开源（8月）、Whisper语音识别开源（9月）、ChatGPT（11月30日）……2022年是AI历史上产品密度最高的一年。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="06_Codex与GitHub_Copilot.html" class="nav-btn">← 第六章</a>
+  <a href="08_InstructGPT的秘密.html" class="nav-btn">第八章：InstructGPT的秘密 →</a>
+</nav>
+
+</body>
+</html>

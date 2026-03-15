@@ -1,0 +1,1509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SimpleQA 失效之谜：为何 LLM 在"见过"的知识上也频繁答错</title>
+<style>
+  :root {
+    --bg-primary: #0e1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --bg-card: #1c2128;
+    --border: #30363d;
+    --border-muted: #21262d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --text-muted: #6e7681;
+    --accent-blue: #58a6ff;
+    --accent-green: #3fb950;
+    --accent-red: #f85149;
+    --accent-orange: #d29922;
+    --accent-purple: #bc8cff;
+    --accent-cyan: #39d353;
+    --accent-yellow: #e3b341;
+    --color-1: #58a6ff;
+    --color-2: #bc8cff;
+    --color-3: #3fb950;
+    --color-4: #ff7b72;
+    --color-5: #ffa657;
+    --color-6: #39d353;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans', Helvetica, Arial, sans-serif;
+    line-height: 1.6;
+    font-size: 15px;
+  }
+
+  a { color: var(--accent-blue); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* ── Nav ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(14,17,23,0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .nav-home {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: color .2s;
+  }
+  .nav-home:hover { color: var(--text-primary); text-decoration: none; }
+  .nav-links {
+    display: flex;
+    gap: 20px;
+    list-style: none;
+  }
+  .nav-links a {
+    color: var(--text-secondary);
+    font-size: 13px;
+    transition: color .2s;
+  }
+  .nav-links a:hover { color: var(--accent-blue); text-decoration: none; }
+
+  /* ── Hero ── */
+  .hero {
+    background: linear-gradient(135deg, #0e1117 0%, #161b22 40%, #1a1f2e 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 72px 24px 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 50% 0%, rgba(88,166,255,.08) 0%, transparent 60%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-block;
+    background: rgba(88,166,255,.12);
+    border: 1px solid rgba(88,166,255,.3);
+    color: var(--accent-blue);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    font-weight: 800;
+    line-height: 1.2;
+    letter-spacing: -.02em;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e6edf3 0%, #8b949e 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .hero-badges {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+  }
+  .badge {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 28px;
+    min-width: 160px;
+    text-align: center;
+    transition: transform .2s, border-color .2s;
+  }
+  .badge:hover { transform: translateY(-2px); border-color: var(--accent-blue); }
+  .badge-value {
+    font-size: 2.2rem;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .badge-label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    font-weight: 500;
+  }
+  .badge.correct .badge-value { color: var(--accent-green); }
+  .badge.wrong .badge-value { color: var(--accent-red); }
+  .badge.count .badge-value { color: var(--accent-blue); }
+
+  /* ── Container ── */
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ── Section ── */
+  .section {
+    padding: 56px 0;
+    border-bottom: 1px solid var(--border-muted);
+  }
+  .section:last-child { border-bottom: none; }
+
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    line-height: 1.3;
+  }
+  .section-desc {
+    margin-top: 10px;
+    color: var(--text-secondary);
+    font-size: 14px;
+    max-width: 680px;
+  }
+
+  /* ── Info Cards ── */
+  .info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .info-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .info-card h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .info-card ul {
+    list-style: none;
+    padding: 0;
+  }
+  .info-card ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+  }
+  .info-card ul li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--accent-blue);
+  }
+
+  /* ── Answer type bars ── */
+  .answer-types {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .answer-types h4 {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    margin-bottom: 16px;
+  }
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .bar-label {
+    width: 80px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    background: var(--bg-tertiary);
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width .6s ease;
+  }
+  .bar-pct {
+    width: 40px;
+    font-size: 12px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  /* ── Scoring cards ── */
+  .scoring-cards {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .scoring-pill {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+  .scoring-pill strong { color: var(--accent-blue); }
+
+  /* ── Table ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-top: 8px;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  thead th {
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody tr {
+    border-bottom: 1px solid var(--border-muted);
+    transition: background .15s;
+  }
+  tbody tr:nth-child(even) { background: rgba(255,255,255,.02); }
+  tbody tr:hover { background: rgba(88,166,255,.06); }
+  tbody tr:last-child { border-bottom: none; }
+  td {
+    padding: 12px 16px;
+    color: var(--text-secondary);
+    vertical-align: middle;
+  }
+  td:first-child { color: var(--text-primary); font-weight: 500; }
+  .td-correct { color: var(--accent-green); font-weight: 600; }
+  .td-wrong { color: var(--accent-red); font-weight: 600; }
+  .td-neutral { color: var(--accent-yellow); font-weight: 600; }
+  .td-fscore { color: var(--accent-blue); font-weight: 700; }
+  .model-badge {
+    display: inline-block;
+    background: rgba(88,166,255,.1);
+    border: 1px solid rgba(88,166,255,.2);
+    color: var(--accent-blue);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-left: 8px;
+    vertical-align: middle;
+  }
+
+  .paradox-box {
+    background: linear-gradient(135deg, rgba(255,123,114,.08), rgba(188,140,255,.08));
+    border: 1px solid rgba(255,123,114,.3);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .paradox-icon { font-size: 24px; flex-shrink: 0; }
+  .paradox-text strong { color: var(--accent-red); display: block; margin-bottom: 4px; font-size: 15px; }
+  .paradox-text p { color: var(--text-secondary); font-size: 13px; }
+
+  /* ── Cause Cards ── */
+  .cause-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    border-left: 4px solid;
+    position: relative;
+    overflow: hidden;
+  }
+  .cause-card::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    background: linear-gradient(135deg, var(--card-glow) 0%, transparent 50%);
+    opacity: .04;
+    pointer-events: none;
+  }
+  .cause-card.c1 { border-left-color: var(--color-1); --card-glow: var(--color-1); }
+  .cause-card.c2 { border-left-color: var(--color-2); --card-glow: var(--color-2); }
+  .cause-card.c3 { border-left-color: var(--color-3); --card-glow: var(--color-3); }
+  .cause-card.c4 { border-left-color: var(--color-4); --card-glow: var(--color-4); }
+  .cause-card.c5 { border-left-color: var(--color-5); --card-glow: var(--color-5); }
+  .cause-card.c6 { border-left-color: var(--accent-cyan); --card-glow: var(--accent-cyan); }
+
+  .cause-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+  .cause-num {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .c1 .cause-num { background: rgba(88,166,255,.15); color: var(--color-1); }
+  .c2 .cause-num { background: rgba(188,140,255,.15); color: var(--color-2); }
+  .c3 .cause-num { background: rgba(63,185,80,.15); color: var(--color-3); }
+  .c4 .cause-num { background: rgba(255,123,114,.15); color: var(--color-4); }
+  .c5 .cause-num { background: rgba(255,166,87,.15); color: var(--color-5); }
+  .c6 .cause-num { background: rgba(57,211,83,.15); color: var(--accent-cyan); }
+
+  .cause-title-wrap {}
+  .cause-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .cause-subtitle { font-size: 12px; color: var(--text-muted); }
+
+  .cause-body { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 640px) { .cause-body { grid-template-columns: 1fr; } }
+
+  .cause-section {}
+  .cause-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .cause-section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border-muted);
+  }
+  .cause-section ul {
+    list-style: none;
+    padding: 0;
+  }
+  .cause-section ul li {
+    font-size: 13px;
+    color: var(--text-secondary);
+    padding: 4px 0;
+    padding-left: 16px;
+    position: relative;
+    line-height: 1.5;
+  }
+  .cause-section ul li::before {
+    content: '•';
+    position: absolute;
+    left: 2px;
+    color: var(--border);
+  }
+
+  /* ── Long-tail Chart ── */
+  .longtail-chart {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-muted);
+    border-radius: 8px;
+    padding: 16px;
+    margin-top: 16px;
+    height: 120px;
+    position: relative;
+    overflow: hidden;
+  }
+  .longtail-svg {
+    width: 100%;
+    height: 100%;
+  }
+  .longtail-chart .lbl {
+    position: absolute;
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+  .longtail-chart .lbl.left { top: 8px; left: 12px; }
+  .longtail-chart .lbl.right { bottom: 28px; right: 12px; color: var(--accent-red); }
+
+  /* ── Comparison row ── */
+  .compare-row {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+    flex-wrap: wrap;
+  }
+  .compare-item {
+    flex: 1;
+    min-width: 180px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-muted);
+    border-radius: 8px;
+    padding: 12px 14px;
+    font-size: 12px;
+  }
+  .compare-item .ci-label { color: var(--text-muted); margin-bottom: 4px; }
+  .compare-item .ci-content { font-family: 'SF Mono', 'Fira Code', monospace; color: var(--text-primary); font-size: 11px; line-height: 1.5; }
+  .compare-item.wiki .ci-label::before { content: '📖 '; }
+  .compare-item.qa .ci-label::before { content: '❓ '; }
+
+  /* ── Calibration bar ── */
+  .calib-bars {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .calib-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 12px;
+  }
+  .calib-model { width: 130px; color: var(--text-secondary); flex-shrink: 0; }
+  .calib-segments {
+    flex: 1;
+    height: 22px;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+  }
+  .seg { height: 100%; display: flex; align-items: center; justify-content: center; font-size: 10px; color: rgba(255,255,255,.8); font-weight: 600; transition: width .5s ease; }
+  .seg.correct { background: var(--accent-green); }
+  .seg.wrong { background: var(--accent-red); }
+  .seg.notried { background: var(--accent-yellow); }
+
+  /* ── Type Grid ── */
+  .type-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 640px) { .type-grid { grid-template-columns: 1fr 1fr; } }
+
+  .type-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 16px;
+    text-align: center;
+    transition: transform .2s, border-color .2s, box-shadow .2s;
+    cursor: default;
+  }
+  .type-card:hover {
+    transform: translateY(-3px);
+    border-color: var(--tc-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  }
+  .type-icon { font-size: 2rem; margin-bottom: 10px; }
+  .type-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+  }
+  .type-pct {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-bottom: 8px;
+    background: rgba(255,255,255,.06);
+    color: var(--tc-color, var(--text-muted));
+  }
+  .type-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+  .type-card:nth-child(1) { --tc-color: var(--color-1); }
+  .type-card:nth-child(2) { --tc-color: var(--color-2); }
+  .type-card:nth-child(3) { --tc-color: var(--color-3); }
+  .type-card:nth-child(4) { --tc-color: var(--color-4); }
+  .type-card:nth-child(5) { --tc-color: var(--color-5); }
+  .type-card:nth-child(6) { --tc-color: var(--accent-cyan); }
+
+  /* ── Case Cards ── */
+  .case-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 680px) { .case-grid { grid-template-columns: 1fr; } }
+
+  .case-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .case-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,.4);
+  }
+  .case-header {
+    background: var(--bg-tertiary);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-muted);
+  }
+  .case-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .case-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+  .case-body { padding: 16px; }
+
+  .case-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 13px;
+    align-items: flex-start;
+  }
+  .case-row:last-child { margin-bottom: 0; }
+  .case-row-label {
+    flex-shrink: 0;
+    width: 72px;
+    color: var(--text-muted);
+    font-size: 11px;
+    padding-top: 2px;
+    font-weight: 600;
+    letter-spacing: .04em;
+  }
+  .case-row-val {
+    flex: 1;
+    color: var(--text-primary);
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .answer-correct { color: var(--accent-green); font-weight: 600; }
+  .answer-wrong { color: var(--accent-red); font-weight: 600; }
+  .tag-lt { background: rgba(88,166,255,.15); color: var(--color-1); }
+  .tag-conf { background: rgba(255,166,87,.15); color: var(--color-5); }
+  .tag-ent { background: rgba(188,140,255,.15); color: var(--color-2); }
+  .tag-prec { background: rgba(255,123,114,.15); color: var(--color-4); }
+  .tag-syn { background: rgba(63,185,80,.15); color: var(--color-3); }
+
+  .case-analysis {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid var(--border-muted);
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .case-analysis strong { color: var(--text-secondary); }
+
+  /* ── Improve Cards ── */
+  .improve-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (max-width: 540px) { .improve-grid { grid-template-columns: 1fr; } }
+
+  .improve-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+    border-top: 3px solid;
+    transition: transform .2s, box-shadow .2s;
+  }
+  .improve-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,.3);
+  }
+  .improve-card:nth-child(1) { border-top-color: var(--color-1); }
+  .improve-card:nth-child(2) { border-top-color: var(--color-2); }
+  .improve-card:nth-child(3) { border-top-color: var(--color-4); }
+  .improve-card:nth-child(4) { border-top-color: var(--color-3); }
+  .improve-icon { font-size: 1.8rem; margin-bottom: 12px; }
+  .improve-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 8px;
+  }
+  .improve-desc {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+  .improve-example {
+    margin-top: 10px;
+    background: var(--bg-tertiary);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-left: 2px solid var(--border);
+  }
+
+  /* ── Footer ── */
+  .footer {
+    background: var(--bg-secondary);
+    border-top: 1px solid var(--border);
+    padding: 28px 24px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+  .footer a { color: var(--accent-blue); }
+
+  /* ── Misc utils ── */
+  .tag {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 2px;
+    font-weight: 600;
+  }
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 4px 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border-muted);
+    margin: 24px 0;
+  }
+  .callout {
+    background: rgba(88,166,255,.08);
+    border: 1px solid rgba(88,166,255,.2);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    margin-top: 16px;
+  }
+  .callout strong { color: var(--accent-blue); }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <a href="index.html" class="nav-home">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M6.906.664a1.749 1.749 0 0 1 2.187 0l5.25 4.2c.415.332.657.835.657 1.367v7.019A1.75 1.75 0 0 1 13.25 15h-3.5a.75.75 0 0 1-.75-.75V9H7v5.25a.75.75 0 0 1-.75.75h-3.5A1.75 1.75 0 0 1 1 13.25V6.23c0-.531.242-1.034.657-1.366l5.25-4.2Zm1.25 1.171a.25.25 0 0 0-.312 0l-5.25 4.2a.25.25 0 0 0-.094.196v7.019c0 .138.112.25.25.25H5.5V8.25a.75.75 0 0 1 .75-.75h3.5a.75.75 0 0 1 .75.75v5.25h2.75a.25.25 0 0 0 .25-.25V6.23a.25.25 0 0 0-.094-.195Z"/></svg>
+    返回首页
+  </a>
+  <ul class="nav-links">
+    <li><a href="#intro">基准介绍</a></li>
+    <li><a href="#causes">失效分析</a></li>
+    <li><a href="#taxonomy">分类框架</a></li>
+    <li><a href="#cases">Case 分析</a></li>
+    <li><a href="#improve">改善方向</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">深度分析报告 · SimpleQA · 2024</div>
+  <h1>SimpleQA 失效之谜<br>为何 LLM 在"见过"的知识上也频繁答错</h1>
+  <p class="hero-subtitle">4,326 道题答案都在维基百科，GPT-4o 却只答对 38% —— 这背后有哪六个系统性根因？</p>
+  <div class="hero-badges">
+    <div class="badge correct">
+      <div class="badge-value">38.2%</div>
+      <div class="badge-label">GPT-4o 正确率</div>
+    </div>
+    <div class="badge wrong">
+      <div class="badge-value">58.5%</div>
+      <div class="badge-label">GPT-4o 错误率</div>
+    </div>
+    <div class="badge count">
+      <div class="badge-value">4,326</div>
+      <div class="badge-label">数据集题目数</div>
+    </div>
+  </div>
+</section>
+
+<!-- § 1 INTRO -->
+<div class="container">
+<section class="section" id="intro">
+  <div class="section-header">
+    <div class="section-label">§ 1 &nbsp;基准简介</div>
+    <h2 class="section-title">什么是 SimpleQA？</h2>
+    <p class="section-desc">OpenAI 于 2024 年 11 月发布的短形式事实问答基准（arXiv:2411.04368），专门测试模型对确定性事实的精确记忆能力。</p>
+  </div>
+
+  <div class="info-grid">
+    <div class="info-card">
+      <h4>🎯 设计目标</h4>
+      <ul>
+        <li>专测短形式事实问答，不含推理复杂性</li>
+        <li>对抗性出题（adversarially collected against GPT-4）</li>
+        <li>题目专门挑 GPT-4 会答错的问题</li>
+        <li>答案需精确匹配，无法靠"大概说对"得分</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>📚 数据来源</h4>
+      <ul>
+        <li>Wikipedia（占主体，约 3,500/4,326 题）</li>
+        <li>Fandom.com（影视/游戏领域）</li>
+        <li>其他可验证的网络来源</li>
+        <li>每题由两名标注员独立核验答案</li>
+      </ul>
+    </div>
+    <div class="info-card">
+      <h4>🗂 话题分布</h4>
+      <ul>
+        <li>科技 19.8% &nbsp;·&nbsp; 政治 16.4%</li>
+        <li>艺术 12.7% &nbsp;·&nbsp; 历史 11.0%</li>
+        <li>娱乐 10.0% &nbsp;·&nbsp; 地理 9.0%</li>
+        <li>科学、运动等其他 ~21%</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Answer type distribution -->
+  <div class="answer-types">
+    <h4>答案类型分布</h4>
+    <div class="bar-row">
+      <div class="bar-label">📅 日期</div>
+      <div class="bar-track"><div class="bar-fill" style="width:32.8%;background:#58a6ff;"></div></div>
+      <div class="bar-pct">32.8%</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">👤 人名</div>
+      <div class="bar-track"><div class="bar-fill" style="width:24.1%;background:#bc8cff;"></div></div>
+      <div class="bar-pct">24.1%</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">🔢 数字</div>
+      <div class="bar-track"><div class="bar-fill" style="width:15.3%;background:#3fb950;"></div></div>
+      <div class="bar-pct">15.3%</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">📍 地名</div>
+      <div class="bar-track"><div class="bar-fill" style="width:9.9%;background:#ffa657;"></div></div>
+      <div class="bar-pct">9.9%</div>
+    </div>
+    <div class="bar-row">
+      <div class="bar-label">🔖 其他</div>
+      <div class="bar-track"><div class="bar-fill" style="width:18%;background:#6e7681;"></div></div>
+      <div class="bar-pct">18.0%</div>
+    </div>
+  </div>
+
+  <!-- Scoring -->
+  <hr class="divider">
+  <div class="section-header" style="margin-bottom:16px;">
+    <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);">评分机制</h3>
+  </div>
+  <div class="scoring-cards">
+    <div class="scoring-pill">✅ <strong>Correct</strong> — 精确匹配正确答案</div>
+    <div class="scoring-pill">❌ <strong>Incorrect</strong> — 给出错误答案</div>
+    <div class="scoring-pill">🤷 <strong>Not Attempted</strong> — 主动拒绝回答，承认不确定</div>
+    <div class="scoring-pill">📊 <strong>F-score</strong> — Correct率 与 Attempted中Correct率的调和均值</div>
+  </div>
+
+  <hr class="divider">
+  <div class="section-header" style="margin-bottom:16px;">
+    <h3 style="font-size:1.1rem;font-weight:700;color:var(--text-primary);">各模型成绩对比（2024年10月）</h3>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>模型</th>
+          <th>正确率</th>
+          <th>错误率</th>
+          <th>未尝试率</th>
+          <th>F-score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>o1-preview <span class="model-badge">🏆 最佳</span></td>
+          <td class="td-correct">42.7%</td>
+          <td class="td-wrong">29.8%</td>
+          <td class="td-neutral">27.5%</td>
+          <td class="td-fscore">44.8</td>
+        </tr>
+        <tr>
+          <td>GPT-4o</td>
+          <td class="td-correct">38.2%</td>
+          <td class="td-wrong">59.0%</td>
+          <td class="td-neutral">2.8%</td>
+          <td class="td-fscore">38.5</td>
+        </tr>
+        <tr>
+          <td>Claude-3.5-Sonnet</td>
+          <td class="td-correct">28.9%</td>
+          <td class="td-wrong">36.1%</td>
+          <td class="td-neutral">35.0%</td>
+          <td class="td-fscore">~32</td>
+        </tr>
+        <tr>
+          <td>Claude-3-Opus</td>
+          <td class="td-correct">23.5%</td>
+          <td class="td-wrong">40.5%</td>
+          <td class="td-neutral">36.0%</td>
+          <td class="td-fscore">~28</td>
+        </tr>
+        <tr>
+          <td>GPT-4o-mini</td>
+          <td class="td-correct">8.6%</td>
+          <td class="td-wrong">76.6%</td>
+          <td class="td-neutral">14.8%</td>
+          <td class="td-fscore">~10</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="paradox-box">
+    <div class="paradox-icon">🤔</div>
+    <div class="paradox-text">
+      <strong>核心悖论</strong>
+      <p>题目答案大多来自维基百科——而维基百科几乎必然出现在每一个主流 LLM 的训练数据里。如果模型"见过"这些知识，为什么还会答错超过一半？本报告接下来系统回答这个问题。</p>
+    </div>
+  </div>
+</section>
+
+<!-- § 2 CAUSES -->
+<section class="section" id="causes">
+  <div class="section-header">
+    <div class="section-label">§ 2 &nbsp;系统性失效原因分析</div>
+    <h2 class="section-title">六大根因深度解析</h2>
+    <p class="section-desc">这六个根因相互叠加、共同作用，解释了为什么在训练数据存在的情况下，模型仍会系统性地答错。</p>
+  </div>
+
+  <!-- Cause 1 -->
+  <div class="cause-card c1">
+    <div class="cause-header">
+      <div class="cause-num">1</div>
+      <div class="cause-title-wrap">
+        <div class="cause-title">长尾知识的记忆不对称</div>
+        <div class="cause-subtitle">Long-tail Memorization Gap</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-section">
+        <div class="cause-section-label">现象</div>
+        <ul>
+          <li>LLM 对高频知识（热门人物、重大事件）准确率高</li>
+          <li>对低频知识（冷门艺术家获奖年份、次要政治人物任职时间）准确率急剧下降</li>
+          <li>SimpleQA 专门挑 GPT-4 会答错的题，天然偏向长尾知识</li>
+        </ul>
+      </div>
+      <div class="cause-section">
+        <div class="cause-section-label">机制</div>
+        <ul>
+          <li>训练数据遵循 Zipf 分布：少数事实出现百万次，大多数只出现几次</li>
+          <li>模型"记忆"一个事实需要在不同上下文中反复见到</li>
+          <li>罕见事实在训练数据中出现 1–5 次，记忆极不稳定</li>
+          <li>ACL 2023 研究：必须放大训练规模数个量级才能改善长尾</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Long-tail chart -->
+    <div class="longtail-chart">
+      <svg class="longtail-svg" viewBox="0 0 400 80" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="ltGrad" x1="0" x2="1" y1="0" y2="0">
+            <stop offset="0%" stop-color="#58a6ff" stop-opacity=".6"/>
+            <stop offset="60%" stop-color="#58a6ff" stop-opacity=".2"/>
+            <stop offset="100%" stop-color="#f85149" stop-opacity=".3"/>
+          </linearGradient>
+        </defs>
+        <!-- curve -->
+        <path d="M10,10 C40,10 60,12 90,20 C130,32 180,55 250,65 C310,72 360,74 390,75" stroke="#58a6ff" stroke-width="2" fill="none" opacity=".8"/>
+        <!-- fill under curve -->
+        <path d="M10,10 C40,10 60,12 90,20 C130,32 180,55 250,65 C310,72 360,74 390,75 L390,78 L10,78 Z" fill="url(#ltGrad)"/>
+        <!-- simpleqa zone -->
+        <rect x="220" y="5" width="170" height="70" fill="rgba(248,81,73,0.07)" rx="3"/>
+        <line x1="220" y1="5" x2="220" y2="75" stroke="#f85149" stroke-width="1" stroke-dasharray="3,3"/>
+      </svg>
+      <span class="lbl left">热门事实<br>（高准确率）</span>
+      <span class="lbl right">SimpleQA 题目<br>集中在这里 →</span>
+    </div>
+  </div>
+
+  <!-- Cause 2 -->
+  <div class="cause-card c2">
+    <div class="cause-header">
+      <div class="cause-num">2</div>
+      <div class="cause-title-wrap">
+        <div class="cause-title">知识干扰与混淆</div>
+        <div class="cause-subtitle">Interference & Confounding</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-section">
+        <div class="cause-section-label">现象</div>
+        <ul>
+          <li>"A 国的 X 是谁"和"B 国的 X 是谁"互相混淆</li>
+          <li>知名人物 A 的属性被类似人物 B 的属性覆盖</li>
+          <li>"日期混淆"：同一人不同年份的头衔/事件互相干扰</li>
+        </ul>
+      </div>
+      <div class="cause-section">
+        <div class="cause-section-label">机制</div>
+        <ul>
+          <li>LLM 存储事实不像数据库，而是分布在参数空间中</li>
+          <li>高度相似的事实共享参数，更新一个可能污染另一个</li>
+          <li>同一人物在1986年是X、1992年是Y，两者互相干扰</li>
+          <li>"类别混淆"：相似实体（同名不同人）互相污染</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      📌 <strong>典型案例：</strong>诺贝尔物理学奖每年都有得主，1965（Feynman）和周边年份的数据在参数中高度重叠，off-by-one 错误极为常见。
+    </div>
+  </div>
+
+  <!-- Cause 3 -->
+  <div class="cause-card c3">
+    <div class="cause-header">
+      <div class="cause-num">3</div>
+      <div class="cause-title-wrap">
+        <div class="cause-title">句法模式捷径</div>
+        <div class="cause-subtitle">Syntactic Shortcut Learning</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-section">
+        <div class="cause-section-label">现象（MIT 2025 研究）</div>
+        <ul>
+          <li>LLM 将问句的语法结构与答案域关联，而非真正理解语义</li>
+          <li>换成乱码词，只要语法结构相同，仍给出同类别答案</li>
+          <li>相同意思换种语法表达，模型可能答错</li>
+        </ul>
+      </div>
+      <div class="cause-section">
+        <div class="cause-section-label">机制（arXiv:2509.21155）</div>
+        <ul>
+          <li>"副词/动词/专有名词/动词"句式 → 模型关联"国家"类答案</li>
+          <li>SimpleQA 题目措辞往往非标准，触发捷径失效</li>
+          <li>本质：学到了表面相关性，未学到深层语义</li>
+          <li>NeurIPS 2025 实验：词性序列比词义更影响答案类别</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cause 4 -->
+  <div class="cause-card c4">
+    <div class="cause-header">
+      <div class="cause-num">4</div>
+      <div class="cause-title-wrap">
+        <div class="cause-title">训练-推理分布偏移</div>
+        <div class="cause-subtitle">Train-Inference Distribution Shift</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-section">
+        <div class="cause-section-label">现象</div>
+        <ul>
+          <li>Wikipedia 以说明性散文呈现知识</li>
+          <li>SimpleQA 以直接问答形式提问</li>
+          <li>即使同一事实，呈现方式不同就可能导致提取失败</li>
+        </ul>
+      </div>
+      <div class="cause-section">
+        <div class="cause-section-label">机制</div>
+        <ul>
+          <li>模型需从叙述性文本中提取特定实体并精确匹配</li>
+          <li>RLHF/SFT 偏好训练强化"流畅自信答案"，抑制不确定性</li>
+          <li>需要完美的注意力机制对齐——实践中很难保证</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Compare -->
+    <div class="compare-row">
+      <div class="compare-item wiki">
+        <div class="ci-label">Wikipedia 原文</div>
+        <div class="ci-content">"Wout Weghorst scored in the 83rd minute to bring the Netherlands level with a stunning header..."</div>
+      </div>
+      <div class="compare-item qa">
+        <div class="ci-label">SimpleQA 问题</div>
+        <div class="ci-content">"Which Dutch player scored an open-play goal in the 2022 Netherlands vs Argentina game?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cause 5 -->
+  <div class="cause-card c5">
+    <div class="cause-header">
+      <div class="cause-num">5</div>
+      <div class="cause-title-wrap">
+        <div class="cause-title">过度自信与校准失败</div>
+        <div class="cause-subtitle">Overconfidence & Calibration Failure</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-section">
+        <div class="cause-section-label">现象</div>
+        <ul>
+          <li>GPT-4o 仅 2.8% 未尝试率，但错误率高达 58.5%</li>
+          <li>模型对自己的错误没有察觉（不知道自己不知道）</li>
+          <li>Claude-3.5-Sonnet 有 35% 未尝试，F-score 体现更好校准</li>
+          <li>o1-preview 通过推理链主动检查，27.5% 未尝试，F-score 最高</li>
+        </ul>
+      </div>
+      <div class="cause-section">
+        <div class="cause-section-label">机制</div>
+        <ul>
+          <li>RLHF 强化"给出明确答案"的行为</li>
+          <li>人类偏好评分偏向自信的答案（即使错误）</li>
+          <li>抑制了"表达不确定性"的正确行为</li>
+          <li>训练信号系统性地破坏了置信度校准</li>
+        </ul>
+      </div>
+    </div>
+    <!-- Calibration bars -->
+    <div class="calib-bars">
+      <div class="calib-row">
+        <div class="calib-model">o1-preview</div>
+        <div class="calib-segments">
+          <div class="seg correct" style="width:42.7%">43%</div>
+          <div class="seg wrong" style="width:29.8%">30%</div>
+          <div class="seg notried" style="width:27.5%">27%</div>
+        </div>
+      </div>
+      <div class="calib-row">
+        <div class="calib-model">GPT-4o</div>
+        <div class="calib-segments">
+          <div class="seg correct" style="width:38.2%">38%</div>
+          <div class="seg wrong" style="width:59%">59%</div>
+          <div class="seg notried" style="width:2.8%"></div>
+        </div>
+      </div>
+      <div class="calib-row">
+        <div class="calib-model">Claude-3.5</div>
+        <div class="calib-segments">
+          <div class="seg correct" style="width:28.9%">29%</div>
+          <div class="seg wrong" style="width:36.1%">36%</div>
+          <div class="seg notried" style="width:35%">35%</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;gap:14px;margin-top:10px;font-size:11px;color:var(--text-muted);">
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent-green);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>正确</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent-red);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>错误</span>
+      <span><span style="display:inline-block;width:10px;height:10px;background:var(--accent-yellow);border-radius:2px;margin-right:4px;vertical-align:middle;"></span>未尝试（好的校准）</span>
+    </div>
+  </div>
+
+  <!-- Cause 6 -->
+  <div class="cause-card c6">
+    <div class="cause-header">
+      <div class="cause-num">6</div>
+      <div class="cause-title-wrap">
+        <div class="cause-title">精确性要求极高</div>
+        <div class="cause-subtitle">Precision Mismatch</div>
+      </div>
+    </div>
+    <div class="cause-body">
+      <div class="cause-section">
+        <div class="cause-section-label">现象</div>
+        <ul>
+          <li>要求"哪一天"而非"哪一年"</li>
+          <li>要求"第几季第几集"而非"这部剧"</li>
+          <li>答案类型中 32.8% 是日期，精确到天</li>
+          <li>人名需完整（含中间名、头衔、精确拼写）</li>
+        </ul>
+      </div>
+      <div class="cause-section">
+        <div class="cause-section-label">机制</div>
+        <ul>
+          <li>LLM 倾向输出更高层次的"近似正确"答案</li>
+          <li>模型知道大致范围，但给不出精确值</li>
+          <li>评分器严格匹配，"2023年3月5日"和"3月15日"都算错</li>
+          <li>泛化与精确性之间存在天然张力</li>
+        </ul>
+      </div>
+    </div>
+    <div class="callout">
+      📌 <strong>精度悖论：</strong>"近似正确"在日常对话中是好答案，在 SimpleQA 评分体系中与"完全错误"无异。模型被训练为有用的对话助手，而非精确记忆数据库。
+    </div>
+  </div>
+</section>
+
+<!-- § 3 TAXONOMY -->
+<section class="section" id="taxonomy">
+  <div class="section-header">
+    <div class="section-label">§ 3 &nbsp;失效类型分类框架</div>
+    <h2 class="section-title">六类失效模式一览</h2>
+    <p class="section-desc">这六种失效类型并非相互独立——同一道题往往同时触发多种失效机制，累积效应导致高错误率。</p>
+  </div>
+
+  <div class="type-grid">
+    <div class="type-card">
+      <div class="type-icon">🎯</div>
+      <div class="type-name">长尾知识缺失</div>
+      <div class="type-pct">占比最高 ≈ 40%</div>
+      <div class="type-desc">事实训练不足，参数空间中痕迹太浅。Zipf 分布导致大量稀有知识几乎未被记忆。</div>
+    </div>
+    <div class="type-card">
+      <div class="type-icon">🔀</div>
+      <div class="type-name">实体/属性混淆</div>
+      <div class="type-pct">常见 ≈ 25%</div>
+      <div class="type-desc">相似实体互相干扰，提取出错误关联。同类实体的属性在参数空间中高度重叠。</div>
+    </div>
+    <div class="type-card">
+      <div class="type-icon">📝</div>
+      <div class="type-name">句法捷径失效</div>
+      <div class="type-pct">低估 ≈ 15%</div>
+      <div class="type-desc">依赖句式模式而非语义理解。非标准措辞触发捷径失效，答案类别推断错误。</div>
+    </div>
+    <div class="type-card">
+      <div class="type-icon">📅</div>
+      <div class="type-name">精度不匹配</div>
+      <div class="type-pct">高发 ≈ 30%</div>
+      <div class="type-desc">知道大概，给不出精确值。日期类题目尤其严重，off-by-one 是最常见错误形式。</div>
+    </div>
+    <div class="type-card">
+      <div class="type-icon">😤</div>
+      <div class="type-name">过度自信</div>
+      <div class="type-pct">放大器 ≈ 58%</div>
+      <div class="type-desc">不知道自己不知道，不说"我不确定"。RLHF 系统性地破坏了置信度校准。</div>
+    </div>
+    <div class="type-card">
+      <div class="type-icon">🔄</div>
+      <div class="type-name">格式/分布偏移</div>
+      <div class="type-pct">普遍 ≈ 20%</div>
+      <div class="type-desc">训练中见的是散文，测试是直接问答。同一事实因呈现形式不同导致提取失败。</div>
+    </div>
+  </div>
+</section>
+
+<!-- § 4 CASES -->
+<section class="section" id="cases">
+  <div class="section-header">
+    <div class="section-label">§ 4 &nbsp;实际 Case 分析</div>
+    <h2 class="section-title">六个典型失效案例</h2>
+    <p class="section-desc">每个案例展示一种或多种失效机制的具体作用，帮助直观理解为什么"见过"不等于"答对"。</p>
+  </div>
+
+  <div class="case-grid">
+
+    <!-- Case 1 -->
+    <div class="case-card">
+      <div class="case-header">
+        <span class="case-num">Case 1 — 长尾日期混淆</span>
+        <span class="case-tag tag-lt">长尾知识 + 日期混淆</span>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">❓ 问题</div>
+          <div class="case-row-val">What year did Richard Feynman receive the Nobel Prize in Physics?</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">✅ 正确</div>
+          <div class="case-row-val answer-correct">1965</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">❌ 典型错</div>
+          <div class="case-row-val answer-wrong">1967 或 1969</div>
+        </div>
+        <div class="case-analysis">
+          <strong>分析：</strong>诺贝尔物理学奖每年都有得主，不同年份的得主在训练数据中高度相似。1965 年的 Feynman 与周边年份（1967 年 Hans Bethe、1969 年 Murray Gell-Mann）的数据在参数空间中相互干扰，导致 off-by-one 甚至 off-by-several 的系统性错误。
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 2 -->
+    <div class="case-card">
+      <div class="case-header">
+        <span class="case-num">Case 2 — 精确性失败</span>
+        <span class="case-tag tag-prec">精度不匹配 + 长尾</span>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">❓ 问题</div>
+          <div class="case-row-val">In what year was the novel "One Hundred Years of Solitude" first published?</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">✅ 正确</div>
+          <div class="case-row-val answer-correct">1967</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">❌ 典型错</div>
+          <div class="case-row-val answer-wrong">1968 或 1966</div>
+        </div>
+        <div class="case-analysis">
+          <strong>分析：</strong>模型知道这是马尔克斯的经典作品，知道出版于60年代末，但具体年份不确定时，倾向输出接近但错误的年份。这是"近似记忆"与"精确评分"之间的典型冲突。
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 3 -->
+    <div class="case-card">
+      <div class="case-header">
+        <span class="case-num">Case 3 — 实体属性混淆 <span style="font-size:10px;color:var(--accent-blue);">原题</span></span>
+        <span class="case-tag tag-ent">实体混淆 + 细节丢失</span>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">❓ 问题</div>
+          <div class="case-row-val">Which Dutch player scored an open-play goal in the 2022 Netherlands vs Argentina game in the men's FIFA World Cup?</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">✅ 正确</div>
+          <div class="case-row-val answer-correct">Wout Weghorst</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">❌ 典型错</div>
+          <div class="case-row-val answer-wrong">Memphis Depay 或 Daley Blind</div>
+        </div>
+        <div class="case-analysis">
+          <strong>分析：</strong>模型知道那场著名比赛，知道荷兰球员列表，但进球细节（open-play vs penalty，具体进球者）被混淆。这道题来自论文 Table 2，是 SimpleQA 对细节精确性要求的典型体现。
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 4 -->
+    <div class="case-card">
+      <div class="case-header">
+        <span class="case-num">Case 4 — 冷知识长尾</span>
+        <span class="case-tag tag-lt">长尾细节 + 精度不匹配</span>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">❓ 问题</div>
+          <div class="case-row-val">What is the name of the Starbucks founders' first store location in Seattle?</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">✅ 正确</div>
+          <div class="case-row-val answer-correct">Pike Place Market</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">❌ 典型错</div>
+          <div class="case-row-val answer-wrong">First and Pike Street 或 Pike Place</div>
+        </div>
+        <div class="case-analysis">
+          <strong>分析：</strong>Starbucks 创始故事人尽皆知，但具体地点的精确名称（Pike Place Market 而非 Pike Place 或 1st Ave）需要精确记忆。模型给出"邻近但错误"的答案，体现了地理细节的长尾性。
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 5 -->
+    <div class="case-card">
+      <div class="case-header">
+        <span class="case-num">Case 5 — 人名混淆</span>
+        <span class="case-tag tag-ent">实体混淆 + 长尾</span>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">❓ 问题</div>
+          <div class="case-row-val">Who directed the 1975 film "Nashville"?</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">✅ 正确</div>
+          <div class="case-row-val answer-correct">Robert Altman</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">❌ 典型错</div>
+          <div class="case-row-val answer-wrong">Sidney Lumet 或 Hal Ashby</div>
+        </div>
+        <div class="case-analysis">
+          <strong>分析：</strong>1975 年有多部重要美国电影（"热天午后"是 Lumet 导演）。模型混淆了时代+类型相近的导演，同时代著名导演的名字在参数空间中互相污染，句法捷径也可能将"1975年 + 美国电影 + 导演"映射到错误实体。
+        </div>
+      </div>
+    </div>
+
+    <!-- Case 6 -->
+    <div class="case-card">
+      <div class="case-header">
+        <span class="case-num">Case 6 — 过度自信捏造</span>
+        <span class="case-tag tag-conf">过度自信 + 精度不匹配</span>
+      </div>
+      <div class="case-body">
+        <div class="case-row">
+          <div class="case-row-label">❓ 问题</div>
+          <div class="case-row-val">What was the original air date of Season 2, Episode 3 of "Breaking Bad"?</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">✅ 正确</div>
+          <div class="case-row-val answer-correct">April 5, 2009</div>
+        </div>
+        <div class="case-row">
+          <div class="case-row-label">❌ 典型错</div>
+          <div class="case-row-val answer-wrong">给出看似合理但完全错误的日期，且不表达任何不确定性</div>
+        </div>
+        <div class="case-analysis">
+          <strong>分析：</strong>剧集精确播出日期属于极度长尾细节，训练数据中可能根本没有精确记录。但模型基于"Breaking Bad Season 2 播出于2009年"推断一个看似合理的日期——这是过度自信与精度不匹配双重失效的典型案例。
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- § 5 IMPROVE -->
+<section class="section" id="improve">
+  <div class="section-header">
+    <div class="section-label">§ 5 &nbsp;启示与改善方向</div>
+    <h2 class="section-title">如何改善 LLM 的事实准确性</h2>
+    <p class="section-desc">六大根因对应四个改善方向，每个方向都需要从训练数据、训练目标或推理策略上做出系统性调整。</p>
+  </div>
+
+  <div class="improve-grid">
+    <div class="improve-card">
+      <div class="improve-icon">🎯</div>
+      <div class="improve-title">改善校准（Calibration）</div>
+      <div class="improve-desc">
+        训练模型表达不确定性——不确定时宁可说"我不确定"，而非自信地给出错误答案。o1 系列通过推理链自我验证，显著提升了 F-score。
+      </div>
+      <div class="improve-example">
+        对比：GPT-4o 未尝试率 2.8%（过度自信）vs. Claude-3.5 未尝试率 35%（更好校准）
+      </div>
+    </div>
+    <div class="improve-card">
+      <div class="improve-icon">📚</div>
+      <div class="improve-title">长尾知识增强</div>
+      <div class="improve-desc">
+        重复注入低频知识，或用知识蒸馏/继续预训练专门强化长尾事实。针对罕见事实的数据增强可以在不扩大整体模型规模的情况下改善记忆。
+      </div>
+      <div class="improve-example">
+        方向：Targeted continual pre-training on tail facts + retrieval augmentation at inference time
+      </div>
+    </div>
+    <div class="improve-card">
+      <div class="improve-icon">📅</div>
+      <div class="improve-title">精确性专项训练</div>
+      <div class="improve-desc">
+        在 SFT 数据中加入更多精确日期/数字问答对，强化"给不出精确值就说不确定"的行为模式，减少 off-by-one 类错误。
+      </div>
+      <div class="improve-example">
+        方向：构建精确事实 QA 数据集用于 SFT，奖励"承认不精确"的输出
+      </div>
+    </div>
+    <div class="improve-card">
+      <div class="improve-icon">🔀</div>
+      <div class="improve-title">去捷径训练</div>
+      <div class="improve-desc">
+        训练数据中多样化语法结构，避免模型学到句法-答案域的错误关联。同一事实用不同表达方式反复训练，减少句法捷径依赖。
+      </div>
+      <div class="improve-example">
+        方向：数据增强（paraphrase diversity）+ 对比学习排除句法偏见
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary box -->
+  <div style="margin-top:28px;background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:24px;">
+    <h4 style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:14px;">📊 核心结论：SimpleQA 是一面镜子</h4>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;margin-bottom:12px;">
+      SimpleQA 的设计揭示了一个深刻的事实：<strong style="color:var(--text-primary);">"见过"≠"记住"，"记住"≠"能答对"</strong>。
+      LLM 的知识存储本质上是统计性的、分布式的、近似的——而非像数据库那样精确的。
+    </p>
+    <p style="font-size:13px;color:var(--text-secondary);line-height:1.7;">
+      六大根因共同作用，解释了为什么即使是 GPT-4o 这样的顶级模型，在这个看似"只需背维基百科"的任务上也只能答对 38%。
+      这不仅是一个技术问题，更揭示了当前 LLM 范式的根本局限：<strong style="color:var(--accent-blue);">参数化记忆无法替代符号化精确存储</strong>，
+      事实密集型任务仍需要检索增强（RAG）或混合方法。
+    </p>
+  </div>
+</section>
+
+</div><!-- /container -->
+
+<!-- FOOTER -->
+<footer class="footer">
+  <p style="margin-bottom:8px;">
+    <a href="index.html">← 返回首页</a>
+    &nbsp;·&nbsp;
+    基于 <a href="https://arxiv.org/abs/2411.04368" target="_blank">arXiv:2411.04368</a> (SimpleQA, OpenAI 2024)
+    &nbsp;·&nbsp;
+    MIT 研究 <a href="https://arxiv.org/abs/2509.21155" target="_blank">arXiv:2509.21155</a>
+  </p>
+  <p style="color:var(--text-muted);">
+    深度分析报告 &nbsp;·&nbsp; 数据截至 2024 年 10 月
+  </p>
+</footer>
+
+</body>
+</html>

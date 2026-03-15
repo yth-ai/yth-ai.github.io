@@ -1,0 +1,3146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LLM Benchmark 综述报告 2024</title>
+<style>
+:root {
+  --bg1: #0a0f1a;
+  --bg2: #0f1726;
+  --card: #131e30;
+  --border: #1e2e44;
+  --accent1: #3a7bd5;
+  --accent2: #2ec4a0;
+  --accent3: #f59e0b;
+  --accent4: #e94560;
+  --accent5: #a78bfa;
+  --accent6: #fb923c;
+  --accent7: #34d399;
+  --accent8: #f472b6;
+  --text1: #cdd9e5;
+  --text2: #5a7090;
+  --nav-width: 260px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  background: var(--bg1);
+  color: var(--text1);
+  line-height: 1.7;
+}
+
+/* ===== LEFT NAV ===== */
+#sidebar {
+  position: fixed;
+  top: 0; left: 0;
+  width: var(--nav-width);
+  height: 100vh;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+}
+
+#sidebar::-webkit-scrollbar { width: 4px; }
+#sidebar::-webkit-scrollbar-track { background: transparent; }
+#sidebar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.nav-logo {
+  padding: 20px 20px 16px;
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo h2 {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--accent1);
+  letter-spacing: 0.5px;
+}
+.nav-logo p {
+  font-size: 11px;
+  color: var(--text2);
+  margin-top: 4px;
+}
+
+.nav-section {
+  padding: 12px 0 4px 16px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text2);
+}
+
+.nav-item {
+  display: block;
+  padding: 7px 16px 7px 20px;
+  font-size: 13px;
+  color: var(--text2);
+  text-decoration: none;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+  cursor: pointer;
+}
+.nav-item:hover {
+  color: var(--text1);
+  background: rgba(58,123,213,0.08);
+  border-left-color: var(--accent1);
+}
+.nav-item.active {
+  color: var(--accent1);
+  border-left-color: var(--accent1);
+  background: rgba(58,123,213,0.1);
+}
+.nav-badge {
+  display: inline-block;
+  font-size: 10px;
+  padding: 1px 5px;
+  border-radius: 10px;
+  margin-left: 6px;
+  background: rgba(58,123,213,0.2);
+  color: var(--accent1);
+  vertical-align: middle;
+}
+
+/* ===== MAIN CONTENT ===== */
+#main {
+  margin-left: var(--nav-width);
+  min-height: 100vh;
+}
+
+.hero {
+  background: linear-gradient(135deg, #0f1726 0%, #0a1628 50%, #0d1420 100%);
+  padding: 60px 48px 48px;
+  border-bottom: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(58,123,213,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-tag {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent1);
+  background: rgba(58,123,213,0.1);
+  border: 1px solid rgba(58,123,213,0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: 36px;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #cdd9e5 0%, #3a7bd5 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero p {
+  font-size: 15px;
+  color: var(--text2);
+  max-width: 700px;
+  line-height: 1.8;
+}
+.hero-stats {
+  display: flex;
+  gap: 32px;
+  margin-top: 32px;
+}
+.hero-stat {
+  text-align: center;
+}
+.hero-stat .num {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--accent1);
+}
+.hero-stat .label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+section {
+  padding: 48px;
+  border-bottom: 1px solid var(--border);
+}
+
+h2.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text1);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+h2.section-title .icon {
+  font-size: 20px;
+}
+.section-desc {
+  font-size: 14px;
+  color: var(--text2);
+  margin-bottom: 28px;
+}
+
+/* ===== TABLE ===== */
+.table-wrap {
+  overflow-x: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+thead tr {
+  background: rgba(58,123,213,0.15);
+}
+thead th {
+  padding: 12px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent1);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr {
+  border-bottom: 1px solid rgba(30,46,68,0.6);
+  transition: background 0.12s;
+}
+tbody tr:nth-child(odd) { background: var(--card); }
+tbody tr:nth-child(even) { background: rgba(10,15,26,0.5); }
+tbody tr:hover { background: rgba(58,123,213,0.08); }
+tbody td {
+  padding: 10px 14px;
+  color: var(--text1);
+  vertical-align: middle;
+}
+tbody td:first-child { font-weight: 600; }
+
+.link-cell a {
+  color: var(--accent1);
+  text-decoration: none;
+  font-weight: 600;
+}
+.link-cell a:hover { text-decoration: underline; color: #5b9ef5; }
+
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+}
+.tag-general  { background: rgba(58,123,213,0.18); color: #5b9ef5; }
+.tag-code     { background: rgba(46,196,160,0.18); color: #2ec4a0; }
+.tag-math     { background: rgba(245,158,11,0.18); color: #f59e0b; }
+.tag-long     { background: rgba(167,139,250,0.18); color: #a78bfa; }
+.tag-agent    { background: rgba(233,69,96,0.18); color: #e94560; }
+.tag-align    { background: rgba(251,146,60,0.18); color: #fb923c; }
+.tag-chinese  { background: rgba(52,211,153,0.18); color: #34d399; }
+.tag-multi    { background: rgba(244,114,182,0.18); color: #f472b6; }
+
+.stars { color: var(--accent3); letter-spacing: -1px; }
+
+/* ===== DIRECTION CARDS ===== */
+.dir-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+@media (max-width: 1200px) {
+  .dir-grid { grid-template-columns: 1fr; }
+}
+
+.dir-card {
+  background: var(--card);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  padding: 24px;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.dir-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.dir-card.c1 { border-left-color: var(--accent1); }
+.dir-card.c2 { border-left-color: var(--accent2); }
+.dir-card.c3 { border-left-color: var(--accent3); }
+.dir-card.c4 { border-left-color: var(--accent5); }
+.dir-card.c5 { border-left-color: var(--accent4); }
+.dir-card.c6 { border-left-color: var(--accent6); }
+.dir-card.c7 { border-left-color: var(--accent7); }
+.dir-card.c8 { border-left-color: var(--accent8); }
+
+.dir-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.dir-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.c1 .dir-icon { background: rgba(58,123,213,0.15); }
+.c2 .dir-icon { background: rgba(46,196,160,0.15); }
+.c3 .dir-icon { background: rgba(245,158,11,0.15); }
+.c4 .dir-icon { background: rgba(167,139,250,0.15); }
+.c5 .dir-icon { background: rgba(233,69,96,0.15); }
+.c6 .dir-icon { background: rgba(251,146,60,0.15); }
+.c7 .dir-icon { background: rgba(52,211,153,0.15); }
+.c8 .dir-icon { background: rgba(244,114,182,0.15); }
+
+.dir-card-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text1);
+}
+.dir-card-header .sub {
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.bench-list {
+  list-style: none;
+  margin-bottom: 16px;
+}
+.bench-list li {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(30,46,68,0.5);
+  font-size: 13px;
+}
+.bench-list li:last-child { border-bottom: none; }
+.bench-name {
+  font-weight: 700;
+  color: var(--text1);
+}
+.bench-meta {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+.bench-meta a {
+  color: var(--accent1);
+  text-decoration: none;
+}
+.bench-meta a:hover { text-decoration: underline; }
+
+.challenge-box {
+  background: rgba(0,0,0,0.2);
+  border-radius: 8px;
+  padding: 12px 14px;
+  border-left: 3px solid rgba(245,158,11,0.4);
+}
+.challenge-box .label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--accent3);
+  margin-bottom: 6px;
+}
+.challenge-box p {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+
+/* ===== TIMELINE ===== */
+.timeline {
+  position: relative;
+  padding-left: 40px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 12px;
+  top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent1), var(--accent2), var(--accent4));
+  border-radius: 2px;
+}
+.tl-item {
+  position: relative;
+  margin-bottom: 32px;
+}
+.tl-dot {
+  position: absolute;
+  left: -34px;
+  top: 4px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  border: 2px solid var(--accent1);
+  background: var(--bg1);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-dot::after {
+  content: '';
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent1);
+}
+.tl-item.y2018 .tl-dot { border-color: #64748b; }
+.tl-item.y2018 .tl-dot::after { background: #64748b; }
+.tl-item.y2019 .tl-dot { border-color: #3a7bd5; }
+.tl-item.y2019 .tl-dot::after { background: #3a7bd5; }
+.tl-item.y2020 .tl-dot { border-color: #2ec4a0; }
+.tl-item.y2020 .tl-dot::after { background: #2ec4a0; }
+.tl-item.y2021 .tl-dot { border-color: #f59e0b; }
+.tl-item.y2021 .tl-dot::after { background: #f59e0b; }
+.tl-item.y2022 .tl-dot { border-color: #a78bfa; }
+.tl-item.y2022 .tl-dot::after { background: #a78bfa; }
+.tl-item.y2023 .tl-dot { border-color: #e94560; }
+.tl-item.y2023 .tl-dot::after { background: #e94560; }
+.tl-item.y2024 .tl-dot { border-color: #fb923c; }
+.tl-item.y2024 .tl-dot::after { background: #fb923c; }
+.tl-item.y2025 .tl-dot { border-color: #f472b6; }
+.tl-item.y2025 .tl-dot::after { background: #f472b6; }
+
+.tl-year {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--accent1);
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+.tl-item.y2018 .tl-year { color: #64748b; }
+.tl-item.y2019 .tl-year { color: #3a7bd5; }
+.tl-item.y2020 .tl-year { color: #2ec4a0; }
+.tl-item.y2021 .tl-year { color: #f59e0b; }
+.tl-item.y2022 .tl-year { color: #a78bfa; }
+.tl-item.y2023 .tl-year { color: #e94560; }
+.tl-item.y2024 .tl-year { color: #fb923c; }
+.tl-item.y2025 .tl-year { color: #f472b6; }
+
+.tl-content {
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 16px 18px;
+}
+.tl-benchmarks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+.tl-bench-tag {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 12px;
+  cursor: default;
+}
+
+/* ===== METHODOLOGY ===== */
+.method-steps {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+  margin-top: 8px;
+}
+@media (max-width: 1400px) {
+  .method-steps { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 900px) {
+  .method-steps { grid-template-columns: 1fr 1fr; }
+}
+.method-step {
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 18px;
+  position: relative;
+  overflow: hidden;
+}
+.method-step::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+}
+.method-step:nth-child(1)::before { background: var(--accent1); }
+.method-step:nth-child(2)::before { background: var(--accent2); }
+.method-step:nth-child(3)::before { background: var(--accent3); }
+.method-step:nth-child(4)::before { background: var(--accent4); }
+.method-step:nth-child(5)::before { background: var(--accent5); }
+
+.method-step .num {
+  font-size: 32px;
+  font-weight: 900;
+  opacity: 0.08;
+  position: absolute;
+  top: 8px; right: 12px;
+  color: var(--text1);
+  line-height: 1;
+}
+.method-step h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text1);
+  margin-bottom: 8px;
+}
+.method-step p {
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.6;
+}
+.method-step .year-badge {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  display: inline-block;
+}
+
+/* ===== CONTAMINATION ===== */
+.cont-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+@media (max-width: 1000px) {
+  .cont-grid { grid-template-columns: 1fr; }
+}
+.cont-card {
+  background: var(--card);
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 20px;
+}
+.cont-card h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.cont-card ul {
+  list-style: none;
+}
+.cont-card ul li {
+  font-size: 13px;
+  color: var(--text2);
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(30,46,68,0.4);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.cont-card ul li:last-child { border-bottom: none; }
+.cont-card ul li::before {
+  content: '›';
+  color: var(--accent1);
+  font-weight: 700;
+  flex-shrink: 0;
+  margin-top: 0;
+}
+
+footer {
+  padding: 32px 48px;
+  text-align: center;
+  color: var(--text2);
+  font-size: 12px;
+  border-top: 1px solid var(--border);
+}
+footer a { color: var(--accent1); text-decoration: none; }
+
+/* Scrollbar for main */
+#main::-webkit-scrollbar { width: 6px; }
+#main::-webkit-scrollbar-track { background: transparent; }
+#main::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* smooth scroll */
+html { scroll-behavior: smooth; }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar">
+  <div class="nav-logo">
+    <h2>📊 LLM Benchmark</h2>
+    <p>综述报告 · 2025–2026 更新版</p>
+  </div>
+
+  <div class="nav-section">总览</div>
+  <a class="nav-item" href="#overview">📋 Benchmark 总览表格 <span class="nav-badge">70+</span></a>
+
+  <div class="nav-section">分方向深度介绍</div>
+  <a class="nav-item" href="#general">🧠 通用知识与推理</a>
+  <a class="nav-item" href="#code">💻 代码能力</a>
+  <a class="nav-item" href="#math">📐 数学与逻辑推理</a>
+  <a class="nav-item" href="#longctx">📜 长文本与RAG</a>
+  <a class="nav-item" href="#agent">🤖 Agent与Tool Use</a>
+  <a class="nav-item" href="#alignment">⚖️ 对齐与安全</a>
+  <a class="nav-item" href="#chinese">🇨🇳 中文与多语言</a>
+  <a class="nav-item" href="#multimodal">🖼️ 多模态</a>
+
+  <div class="nav-section" style="color:#f472b6;">🆕 2025–2026 前沿</div>
+  <a class="nav-item" href="#frontier25" style="color:#f472b6;">🚀 推理前沿新标杆</a>
+  <a class="nav-item" href="#agent25" style="color:#f472b6;">🤖 Agent新基准</a>
+  <a class="nav-item" href="#multimodal25" style="color:#f472b6;">🖼️ 多模态新进展</a>
+  <a class="nav-item" href="#factuality25" style="color:#f472b6;">📡 事实性新评测</a>
+  <a class="nav-item" href="#antileak25" style="color:#f472b6;">🛡️ 防污染新范式</a>
+
+  <div class="nav-section">附录</div>
+  <a class="nav-item" href="#timeline">📅 发展时间线 2018–2026</a>
+  <a class="nav-item" href="#methodology">🔬 评测方法论演进</a>
+  <a class="nav-item" href="#contamination">☣️ 数据污染问题</a>
+</nav>
+
+<!-- ===== MAIN ===== -->
+<div id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag">SURVEY · 2025–2026 更新版</div>
+    <h1>LLM Benchmark 系统综述</h1>
+    <p>从 ARC（2018）到 HLE / ARC-AGI-2（2025–2026），系统梳理大语言模型评测体系的演进历程。涵盖通用推理、代码、数学、长文本、Agent、对齐、多语言、多模态八大方向，并新增 2025–2026 前沿章节，深度解析 70+ 核心 Benchmark 的设计理念、评测指标与研究挑战。</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">70+</div><div class="label">Benchmarks</div></div>
+      <div class="hero-stat"><div class="num">8+</div><div class="label">评测方向</div></div>
+      <div class="hero-stat"><div class="num">8年</div><div class="label">发展跨度</div></div>
+      <div class="hero-stat"><div class="num">2018–2026</div><div class="label">时间线</div></div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION 1: OVERVIEW TABLE ===== -->
+  <section id="overview">
+    <h2 class="section-title"><span class="icon">📋</span>Benchmark 总览</h2>
+    <p class="section-desc">涵盖 45+ 主流 LLM 评测基准，按评测方向分类，附发布时间、机构、影响力及核心特点。</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>名称</th>
+            <th>年份</th>
+            <th>发布机构</th>
+            <th>方向</th>
+            <th>影响力</th>
+            <th>核心特点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- GENERAL -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2009.03300" target="_blank">MMLU</a></td>
+            <td>2020</td>
+            <td>UC Berkeley / UT Austin</td>
+            <td><span class="tag tag-general">通用知识</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>57个学科14,000道多选题，覆盖STEM/人文/社科，已成标配基准</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/1905.07830" target="_blank">HellaSwag</a></td>
+            <td>2019</td>
+            <td>UW / AI2</td>
+            <td><span class="tag tag-general">通用知识</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>常识推理/续句选择，对抗过滤构造，早期LLM基准里程碑</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/1803.05457" target="_blank">ARC</a></td>
+            <td>2018</td>
+            <td>AI2</td>
+            <td><span class="tag tag-general">通用知识</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>小学科学题（Easy/Challenge双集），Challenge集对早期模型极难</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2206.04615" target="_blank">BIG-Bench</a></td>
+            <td>2022</td>
+            <td>Google Research</td>
+            <td><span class="tag tag-general">通用知识</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>200+任务测试边界能力，协作社区设计，BIG-Bench Hard子集更难</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2406.01574" target="_blank">MMLU-Pro</a></td>
+            <td>2024</td>
+            <td>Tiger Lab / UIUC</td>
+            <td><span class="tag tag-general">通用知识</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>MMLU加强版，10选项增加难度，减少猜测，更能区分顶级模型</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2304.06364" target="_blank">AGIEval</a></td>
+            <td>2023</td>
+            <td>Microsoft Research</td>
+            <td><span class="tag tag-general">通用知识</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>以人类资格考试（高考/SAT/LSAT）为基础，中英双语评测</td>
+          </tr>
+
+          <!-- CODE -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2107.03374" target="_blank">HumanEval</a></td>
+            <td>2021</td>
+            <td>OpenAI</td>
+            <td><span class="tag tag-code">代码</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>164道Python函数补全，引入pass@k指标，代码评测黄金标准</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2108.07732" target="_blank">MBPP</a></td>
+            <td>2021</td>
+            <td>Google Brain</td>
+            <td><span class="tag tag-code">代码</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>500道入门级Python，众包生成，含单元测试，适合细粒度评测</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2310.06770" target="_blank">SWE-bench</a></td>
+            <td>2023</td>
+            <td>Princeton NLP</td>
+            <td><span class="tag tag-code">代码</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>GitHub真实issue修复，2294个任务，测试端到端工程能力</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2403.07974" target="_blank">LiveCodeBench</a></td>
+            <td>2024</td>
+            <td>MIT / UC Berkeley</td>
+            <td><span class="tag tag-code">代码</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>实时爬取竞赛新题，时间截止过滤防污染，持续更新</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2203.07814" target="_blank">CodeContests</a></td>
+            <td>2022</td>
+            <td>DeepMind</td>
+            <td><span class="tag tag-code">代码</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>Codeforces竞赛题，高难度算法设计，AlphaCode训练/评测集</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2211.11501" target="_blank">DS-1000</a></td>
+            <td>2022</td>
+            <td>Stanford / HKU</td>
+            <td><span class="tag tag-code">代码</span></td>
+            <td><span class="stars">⭐⭐⭐</span></td>
+            <td>1000道数据科学任务，覆盖numpy/pandas/sklearn等7个库</td>
+          </tr>
+
+          <!-- MATH -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2110.14168" target="_blank">GSM8K</a></td>
+            <td>2021</td>
+            <td>OpenAI</td>
+            <td><span class="tag tag-math">数学</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>8500道小学数学应用题，需多步推理，GPT-4已近饱和（>95%）</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2103.03874" target="_blank">MATH</a></td>
+            <td>2021</td>
+            <td>UC Berkeley</td>
+            <td><span class="tag tag-math">数学</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>12500道竞赛题，5个难度级，o1/o3顶级模型仍有挑战</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://artofproblemsolving.com/wiki/index.php/AMC_Problems_and_Solutions" target="_blank">AMC/AIME</a></td>
+            <td>历年</td>
+            <td>MAA（数学协会）</td>
+            <td><span class="tag tag-math">数学</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>美国数学竞赛题，高中/本科难度，测试顶级数学推理</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2402.14008" target="_blank">OlympiadBench</a></td>
+            <td>2024</td>
+            <td>Tsinghua University</td>
+            <td><span class="tag tag-math">数学</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>奥林匹克级数学物理题，8476道，中英双语，难度最高</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2402.17231" target="_blank">AIME 2024</a></td>
+            <td>2024</td>
+            <td>MAA（竞赛改编）</td>
+            <td><span class="tag tag-math">数学</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>2024年最新AIME竞赛题，测试o1/o3等前沿模型推理边界</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2405.12209" target="_blank">MathBench</a></td>
+            <td>2024</td>
+            <td>Peking University</td>
+            <td><span class="tag tag-math">数学</span></td>
+            <td><span class="stars">⭐⭐⭐</span></td>
+            <td>中文数学，小学到大学5档难度，3709道题，中文数学能力评测</td>
+          </tr>
+
+          <!-- LONG CONTEXT -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2308.14508" target="_blank">LongBench</a></td>
+            <td>2023</td>
+            <td>Tsinghua University</td>
+            <td><span class="tag tag-long">长文本</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>21个任务，中英双语，平均7000字，全面覆盖问答/摘要/代码等</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2404.06654" target="_blank">RULER</a></td>
+            <td>2024</td>
+            <td>NVIDIA</td>
+            <td><span class="tag tag-long">长文本</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>合成可控长文本基准，支持4K-128K，测试检索/聚合/问答等</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://github.com/gkamradt/LLMTest_NeedleInAHaystack" target="_blank">Needle-in-Haystack</a></td>
+            <td>2023</td>
+            <td>Greg Kamradt（社区）</td>
+            <td><span class="tag tag-long">长文本</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>在超长文本中定位单条信息，直观暴露模型上下文检索盲点</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2305.14196" target="_blank">ZeroScrolls</a></td>
+            <td>2023</td>
+            <td>Tel Aviv University</td>
+            <td><span class="tag tag-long">长文本</span></td>
+            <td><span class="stars">⭐⭐⭐</span></td>
+            <td>零样本长文本基准，10个任务，测试真实文档理解而非模板匹配</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2402.13718" target="_blank">InfBench</a></td>
+            <td>2024</td>
+            <td>Peking University</td>
+            <td><span class="tag tag-long">长文本</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>超长文本（平均100K+字），234任务5类型，测试真正的无限上下文</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2412.15204" target="_blank">LongBench-v2</a></td>
+            <td>2024</td>
+            <td>Tsinghua University</td>
+            <td><span class="tag tag-long">长文本</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>更难的长文本版本，需深度理解而非浅层检索，8K-2M字</td>
+          </tr>
+
+          <!-- AGENT -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2307.16789" target="_blank">ToolBench</a></td>
+            <td>2023</td>
+            <td>Tsinghua University</td>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>16464个真实API，49个类别，多步工具调用，ToolLLM训练集</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2307.13854" target="_blank">WebArena</a></td>
+            <td>2023</td>
+            <td>CMU</td>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>真实网页操作，812任务覆盖电商/Reddit等，端到端浏览器Agent</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2308.03688" target="_blank">AgentBench</a></td>
+            <td>2023</td>
+            <td>Tsinghua University</td>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>8种环境（OS/DB/Web等），测试LLM作为智能体的全面能力</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2311.12983" target="_blank">GAIA</a></td>
+            <td>2023</td>
+            <td>Meta AI / HuggingFace</td>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>通用AI助手基准，3级难度，需工具调用+多步推理，人类轻松完成但LLM困难</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2406.12045" target="_blank">TAU-bench</a></td>
+            <td>2024</td>
+            <td>Sierra AI</td>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>电话客服场景，含航空/零售真实策略，测试Agent遵循规则的一致性</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2404.07972" target="_blank">OSWorld</a></td>
+            <td>2024</td>
+            <td>The University of Hong Kong</td>
+            <td><span class="tag tag-agent">Agent</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>操作系统GUI基准，369任务，覆盖Windows/Mac/Linux，真实计算机使用</td>
+          </tr>
+
+          <!-- ALIGNMENT -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2109.07958" target="_blank">TruthfulQA</a></td>
+            <td>2021</td>
+            <td>University of Oxford</td>
+            <td><span class="tag tag-align">对齐安全</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>817道易产生幻觉的问题，测试模型真实性而非模仿人类错误信念</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2306.05685" target="_blank">MT-Bench</a></td>
+            <td>2023</td>
+            <td>UC Berkeley (LMSYS)</td>
+            <td><span class="tag tag-align">对齐安全</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>80道多轮对话，GPT-4打分1-10，推动LLM-as-Judge范式普及</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2304.15004" target="_blank">AlpacaEval</a></td>
+            <td>2023</td>
+            <td>Stanford</td>
+            <td><span class="tag tag-align">对齐安全</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>自动偏好评测，805道指令，GPT-4对比text-davinci-003，AlpacaEval 2.0修正长度偏差</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2406.11939" target="_blank">WildBench</a></td>
+            <td>2024</td>
+            <td>Allen Institute for AI</td>
+            <td><span class="tag tag-align">对齐安全</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>真实用户query，1024道，6类任务，LLM-as-Judge，更贴近实际使用场景</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2406.11939" target="_blank">Arena-Hard</a></td>
+            <td>2024</td>
+            <td>UC Berkeley (LMSYS)</td>
+            <td><span class="tag tag-align">对齐安全</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>从Chatbot Arena提炼500道困难题，GPT-4-Turbo打分，区分度更高</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2311.07911" target="_blank">IFEval</a></td>
+            <td>2023</td>
+            <td>Google</td>
+            <td><span class="tag tag-align">对齐安全</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>指令遵循评测，541道含可编程验证约束的指令，精确量化服从度</td>
+          </tr>
+
+          <!-- CHINESE -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2305.08322" target="_blank">C-Eval</a></td>
+            <td>2023</td>
+            <td>SJTU / Univ. of Edinburgh</td>
+            <td><span class="tag tag-chinese">中文</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>52个中文学科13948题，4选1，中文版MMLU，已成中文评测标配</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2306.09212" target="_blank">CMMLU</a></td>
+            <td>2023</td>
+            <td>MBZUAI / Shanghai AI Lab</td>
+            <td><span class="tag tag-chinese">中文</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>67个科目11528题，着重中文文化知识和本土常识，补充C-Eval</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2304.06364" target="_blank">AGIEval-CN</a></td>
+            <td>2023</td>
+            <td>Microsoft Research</td>
+            <td><span class="tag tag-chinese">中文</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>AGIEval中文子集，高考/中考/法考等真实中文资格考，原汁原味</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2305.05982" target="_blank">M3KE</a></td>
+            <td>2023</td>
+            <td>中国传媒大学等</td>
+            <td><span class="tag tag-chinese">中文</span></td>
+            <td><span class="stars">⭐⭐⭐</span></td>
+            <td>多任务多语言知识评测，涵盖71个中文学科，20000+题</td>
+          </tr>
+
+          <!-- MULTIMODAL -->
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2307.06281" target="_blank">MMBench</a></td>
+            <td>2023</td>
+            <td>Shanghai AI Lab</td>
+            <td><span class="tag tag-multi">多模态</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>20个视觉能力维度，3000+题，CircularEval策略减少猜测，双语版</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2311.16502" target="_blank">MMMU</a></td>
+            <td>2023</td>
+            <td>UMich / CMU / Stanford 等</td>
+            <td><span class="tag tag-multi">多模态</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>大学级多模态，11500题，30个学科，需专家级视觉推理</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2310.02255" target="_blank">MathVista</a></td>
+            <td>2023</td>
+            <td>UCLA</td>
+            <td><span class="tag tag-multi">多模态</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>6141道数学图表理解题，综合视觉与数学推理，多领域图表</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2209.09958" target="_blank">ScienceQA</a></td>
+            <td>2022</td>
+            <td>UCLA</td>
+            <td><span class="tag tag-multi">多模态</span></td>
+            <td><span class="stars">⭐⭐⭐⭐</span></td>
+            <td>21000道科学题含图像，覆盖自然/社会/语言，带解析链思维</td>
+          </tr>
+          <tr>
+            <td class="link-cell"><a href="https://arxiv.org/abs/2405.21075" target="_blank">VideoMME</a></td>
+            <td>2024</td>
+            <td>Bytedance / 浙大 等</td>
+            <td><span class="tag tag-multi">多模态</span></td>
+            <td><span class="stars">⭐⭐⭐⭐⭐</span></td>
+            <td>视频理解基准，900视频2700题，时长从11秒到1小时，跨30领域</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 2: DIRECTIONS ===== -->
+
+  <!-- 1. General -->
+  <section id="general">
+    <h2 class="section-title"><span class="icon">🧠</span>通用知识与推理</h2>
+    <p class="section-desc">覆盖学科知识、常识推理、逻辑理解等，是LLM评测最基础也最广泛的方向。</p>
+    <div class="dir-grid">
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">📚</div>
+          <div>
+            <h3>MMLU</h3>
+            <div class="sub">Massive Multitask Language Understanding</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2020 · Dan Hendrycks et al. · UC Berkeley / UT Austin · <a href="https://arxiv.org/abs/2009.03300" target="_blank">arXiv:2009.03300</a></div>
+          </li>
+          <li>
+            <div class="bench-name">题目规模</div>
+            <div class="bench-meta">57个学科，14,042道4选1多选题，涵盖STEM、人文、社科、法律等</div>
+          </li>
+          <li>
+            <div class="bench-name">评测指标</div>
+            <div class="bench-meta">Accuracy（准确率），按学科分组报告，5-shot标准评测</div>
+          </li>
+          <li>
+            <div class="bench-name">饱和问题</div>
+            <div class="bench-meta">GPT-4达86%+，Claude-3 Opus达88%+，已接近人类专家水平，区分度下降</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>数据污染严重（训练集泄露），接近饱和导致区分度不足，MMLU-Pro正在取代</p>
+        </div>
+      </div>
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔬</div>
+          <div>
+            <h3>BIG-Bench / BIG-Bench Hard</h3>
+            <div class="sub">Beyond the Imitation Game Benchmark</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2022 · Google Research + 社区 · <a href="https://arxiv.org/abs/2206.04615" target="_blank">arXiv:2206.04615</a></div>
+          </li>
+          <li>
+            <div class="bench-name">题目规模</div>
+            <div class="bench-meta">200+协作任务，覆盖语言、逻辑、数学、常识等；BIG-Bench Hard提炼23个最难任务</div>
+          </li>
+          <li>
+            <div class="bench-name">设计哲学</div>
+            <div class="bench-meta">测试"超越模仿游戏"的能力边界，由全球研究者协作贡献</div>
+          </li>
+          <li>
+            <div class="bench-name">现状</div>
+            <div class="bench-meta">工程复杂度高，不同任务难以统一比较；CoT在BBH上显著提升性能</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>任务异质性强，难以给出单一分数；部分任务设计存在歧义；计算成本高</p>
+        </div>
+      </div>
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">🚀</div>
+          <div>
+            <h3>MMLU-Pro</h3>
+            <div class="sub">更难的知识与推理基准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2024 · Tiger Lab · UIUC · <a href="https://arxiv.org/abs/2406.01574" target="_blank">arXiv:2406.01574</a></div>
+          </li>
+          <li>
+            <div class="bench-name">改进点</div>
+            <div class="bench-meta">选项从4扩展到10，增加推理题比例，减少纯记忆类题目</div>
+          </li>
+          <li>
+            <div class="bench-name">区分度</div>
+            <div class="bench-meta">顶级模型准确率下降约16%（相比MMLU），显著提升区分度</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>10选项设计虽降低猜测但增加模糊性；题目来源仍存在污染风险</p>
+        </div>
+      </div>
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎓</div>
+          <div>
+            <h3>AGIEval</h3>
+            <div class="sub">基于人类资格考试的评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · Microsoft Research · <a href="https://arxiv.org/abs/2304.06364" target="_blank">arXiv:2304.06364</a></div>
+          </li>
+          <li>
+            <div class="bench-name">题目来源</div>
+            <div class="bench-meta">高考、中考、SAT、LSAT、GRE、GMAT等20套真实人类资格考试</div>
+          </li>
+          <li>
+            <div class="bench-name">特色</div>
+            <div class="bench-meta">中英双语，真实考试场景，考察人类水平所需能力</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 演进趋势</div>
+          <p>选择题→开放生成→动态更新；挑战：中国高考题逐步进入模型训练数据，需要持续引入新考试</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. CODE -->
+  <section id="code">
+    <h2 class="section-title"><span class="icon">💻</span>代码能力</h2>
+    <p class="section-desc">代码评测是 LLM 能力评测中最成熟、最可客观执行的方向——代码有确定性正确答案（单元测试执行），规避了 LLM-as-Judge 的主观性问题。从 2021 年 HumanEval 的 164 道函数补全题，到 2024 年 SWE-bench Verified 的真实工程 issue 修复，代码评测已发展出函数级、竞赛算法、数据科学、仓库级工程、多语言等多个子维度。</p>
+
+    <!-- 子类 1: 函数级代码生成 -->
+    <h3 style="color:#2ec4a0;margin:32px 0 16px;font-size:17px;padding-left:4px;border-left:3px solid #2ec4a0;">
+      📝 函数级代码生成
+    </h3>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:20px;">最基础的代码评测维度：给定函数签名和文档注释，生成可通过测试用例的实现。简单、客观、可复现，但存在严重的污染问题和能力上限。</p>
+    <div class="dir-grid">
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🐍</div>
+          <div>
+            <h3>HumanEval</h3>
+            <div class="sub">代码生成黄金标准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2021 · OpenAI · <a href="https://arxiv.org/abs/2107.03374" target="_blank">arXiv:2107.03374</a></div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">164道手写Python函数补全题，每题含docstring和测试用例</div></li>
+          <li><div class="bench-name">pass@k 指标</div><div class="bench-meta">生成k个候选取最优，pass@1是标准报告指标；GPT-4 o1 已超 95%</div></li>
+          <li><div class="bench-name">影响力</div><div class="bench-meta">⭐⭐⭐⭐⭐ 代码评测领域引用量最高，几乎所有代码 LLM 论文必报</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>样本量小（164题）；数据污染极其严重；仅测函数级单文件；中文/多语言能力盲区；已接近天花板</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">📋</div>
+          <div>
+            <h3>MBPP</h3>
+            <div class="sub">众包入门 Python 题库</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2021 · Google Brain · <a href="https://arxiv.org/abs/2108.07732" target="_blank">arXiv:2108.07732</a></div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">374道（sanitized版），由 crowd workers 编写，每题 3 个测试用例</div></li>
+          <li><div class="bench-name">特点</div><div class="bench-meta">题目多样，难度较 HumanEval 稍低；常与 HumanEval 联合报告</div></li>
+          <li><div class="bench-name">变体</div><div class="bench-meta">MBPP+ 扩充了测试用例数量，减少侥幸通过概率</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>题目编写质量不均匀；测试用例覆盖不全；模型轻松饱和</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🌐</div>
+          <div>
+            <h3>HumanEval-X / MultiPL-E</h3>
+            <div class="sub">多语言代码生成扩展</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">HumanEval-X</div><div class="bench-meta">2023 · 清华 · <a href="https://arxiv.org/abs/2303.17568" target="_blank">arXiv:2303.17568</a> · 扩展到 C++/Java/JS/Go/Python</div></li>
+          <li><div class="bench-name">MultiPL-E</div><div class="bench-meta">2022 · Northeastern · <a href="https://arxiv.org/abs/2208.08227" target="_blank">arXiv:2208.08227</a> · 18种语言自动翻译版本</div></li>
+          <li><div class="bench-name">McEval</div><div class="bench-meta">2024 · 复旦 · <a href="https://arxiv.org/abs/2406.07436" target="_blank">arXiv:2406.07436</a> · 40种语言，覆盖冷门语言如 Rust/Kotlin/Lua</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">评测模型在非 Python 语言的泛化能力；Go/Rust 表现往往比 Python 低 20%+</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>机器翻译的题目存在语义漂移；稀少语言的测试用例质量难保证</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🧩</div>
+          <div>
+            <h3>CRUXEval</h3>
+            <div class="sub">代码理解与推理</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2024 · Meta FAIR · <a href="https://arxiv.org/abs/2401.03065" target="_blank">arXiv:2401.03065</a></div></li>
+          <li><div class="bench-name">任务</div><div class="bench-meta">给定代码+输出，预测输入（input prediction）；给定代码+输入，预测输出（output prediction）</div></li>
+          <li><div class="bench-name">特点</div><div class="bench-meta">测试代码理解而非生成；800道题，来自 CodeContests</div></li>
+          <li><div class="bench-name">价值</div><div class="bench-meta">能区分"真理解代码"和"靠记忆生成代码"的模型</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>题目可能偏简单算法；难以覆盖复杂控制流</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 子类 2: 竞赛算法题 -->
+    <h3 style="color:#3a7bd5;margin:32px 0 16px;font-size:17px;padding-left:4px;border-left:3px solid #3a7bd5;">
+      🏆 竞赛算法题
+    </h3>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:20px;">面向算法竞赛（Codeforces / LeetCode / ICPC）的题目，要求模型具备深度算法推理能力，如动态规划、图论、贪心等。当前 o1/o3 类推理模型在此表现突出。</p>
+    <div class="dir-grid">
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🥇</div>
+          <div>
+            <h3>CodeContests</h3>
+            <div class="sub">AlphaCode 基准，高难度竞赛题</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2022 · DeepMind · <a href="https://arxiv.org/abs/2203.07814" target="_blank">arXiv:2203.07814</a></div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">13328道 Codeforces/CodeChef/Aizu 竞赛题，含公开和隐藏测试用例</div></li>
+          <li><div class="bench-name">难度</div><div class="bench-meta">需要复杂算法设计；普通 GPT-4 pass@1 极低（&lt;5%）</div></li>
+          <li><div class="bench-name">评测</div><div class="bench-meta">AlphaCode 在此达到竞赛前 50% 水平，引发广泛关注</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>题目难度与工程实践脱节；评测成本高；需要大量 sample 才能体现差异</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">⚡</div>
+          <div>
+            <h3>LiveCodeBench</h3>
+            <div class="sub">实时防污染，三合一评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2024 · MIT / UC Berkeley · <a href="https://arxiv.org/abs/2403.07974" target="_blank">arXiv:2403.07974</a></div></li>
+          <li><div class="bench-name">防污染机制</div><div class="bench-meta">从 LeetCode/Codeforces/AtCoder 实时爬取新题，以题目发布时间做时间截止分区</div></li>
+          <li><div class="bench-name">三合一任务</div><div class="bench-meta">① 代码生成 ② 测试输出预测 ③ 代码自我修复；每维度独立报告</div></li>
+          <li><div class="bench-name">特点</div><div class="bench-meta">持续更新，能区分知识截止前/后的真实能力</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>竞赛题风格较为单一；与真实工程代码差距大；平台出题质量参差不齐</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎯</div>
+          <div>
+            <h3>TACO / CodeElo</h3>
+            <div class="sub">竞赛级分级评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">TACO</div><div class="bench-meta">2023 · 多伦多 · <a href="https://arxiv.org/abs/2312.14852" target="_blank">arXiv:2312.14852</a> · 26433道题，分 easy/medium/hard/expert 四档</div></li>
+          <li><div class="bench-name">CodeElo</div><div class="bench-meta">2025 · DeepSeek · <a href="https://arxiv.org/abs/2501.01257" target="_blank">arXiv:2501.01257</a> · 基于 Codeforces ELO 评分系统，为模型计算竞赛 ELO 值</div></li>
+          <li><div class="bench-name">CodeElo 特点</div><div class="bench-meta">o3 mini ELO 约 1700（接近 Candidate Master），DeepSeek-R1 约 1600；比单纯 pass@k 更有区分度</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>ELO 需要大量对比测试；难以迁移到工程场景</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 子类 3: 数据科学与科学计算 -->
+    <h3 style="color:#f59e0b;margin:32px 0 16px;font-size:17px;padding-left:4px;border-left:3px solid #f59e0b;">
+      📊 数据科学与科学计算
+    </h3>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:20px;">数据分析、机器学习、科学计算场景下的代码能力，是区别于算法竞赛的另一重要维度，与实际从业者的日常工作更接近。</p>
+    <div class="dir-grid">
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔬</div>
+          <div>
+            <h3>DS-1000</h3>
+            <div class="sub">数据科学任务基准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2022 · Stanford/HKU · <a href="https://arxiv.org/abs/2211.11501" target="_blank">arXiv:2211.11501</a></div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">1000道数据科学真实任务，覆盖 pandas/numpy/sklearn/scipy/matplotlib/seaborn/tensorflow</div></li>
+          <li><div class="bench-name">来源</div><div class="bench-meta">从 StackOverflow 真实问题改编，贴近工程实践</div></li>
+          <li><div class="bench-name">评测方式</div><div class="bench-meta">表面形式匹配（surface form match）+ 精确执行结果</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>库版本依赖问题；评测脚本较脆；部分任务答案不唯一</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">📈</div>
+          <div>
+            <h3>SciCode</h3>
+            <div class="sub">科学研究代码生成</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2024 · 芝加哥大学 · <a href="https://arxiv.org/abs/2407.13168" target="_blank">arXiv:2407.13168</a></div></li>
+          <li><div class="bench-name">特点</div><div class="bench-meta">338道科研计算题，涵盖物理/数学/材料/生物/化学，需要领域知识+编程能力</div></li>
+          <li><div class="bench-name">难度</div><div class="bench-meta">GPT-4o 仅约 4.6%（独立模式），o1 约 15%；顶尖人类研究者约 80%+</div></li>
+          <li><div class="bench-name">价值</div><div class="bench-meta">测试模型是否真正理解科学背景，还是靠模式匹配</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>题目量较少；评测需要专业领域知识验证；难以大规模扩展</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 子类 4: 仓库级/工程级代码 -->
+    <h3 style="color:#e94560;margin:32px 0 16px;font-size:17px;padding-left:4px;border-left:3px solid #e94560;">
+      🏗️ 仓库级与工程级代码（Agentic Coding）
+    </h3>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:20px;">单文件函数生成不能反映真实软件工程能力。仓库级评测要求模型理解多文件代码结构、处理跨文件依赖、完成真实工程任务，是代码评测的最高难度维度，也是 AI 编程 Agent 的主要战场。</p>
+    <div class="dir-grid">
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔧</div>
+          <div>
+            <h3>SWE-bench / SWE-bench Verified</h3>
+            <div class="sub">GitHub 真实 Issue 修复</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">基本信息</div><div class="bench-meta">2023 · Princeton NLP · <a href="https://arxiv.org/abs/2310.06770" target="_blank">arXiv:2310.06770</a></div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">2294个真实 GitHub issue + patch，覆盖 12 个热门 Python 开源库</div></li>
+          <li><div class="bench-name">SWE-bench Verified</div><div class="bench-meta">2024 · 500道人工验证题，过滤歧义问题；Claude 3.5 Sonnet 约 50%</div></li>
+          <li><div class="bench-name">SWE-bench Lite</div><div class="bench-meta">300道精选，降低评测成本，适合迭代调优</div></li>
+          <li><div class="bench-name">影响力</div><div class="bench-meta">⭐⭐⭐⭐⭐ 推动了 Devin、SWE-agent、Agentless 等系统，成为工程 Agent 核心基准</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>评测成本极高（需运行完整测试套件）；跨文件修复需长上下文；测试集覆盖语言单一（Python）</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🗂️</div>
+          <div>
+            <h3>RepoExec / CrossCodeEval / RepoCoder</h3>
+            <div class="sub">跨文件代码补全与调用</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">CrossCodeEval</div><div class="bench-meta">2023 · Amazon · <a href="https://arxiv.org/abs/2310.11248" target="_blank">arXiv:2310.11248</a> · 跨文件代码补全，Python/JS/TS/Java 四语言，需检索仓库上下文</div></li>
+          <li><div class="bench-name">RepoExec</div><div class="bench-meta">2024 · <a href="https://arxiv.org/abs/2406.11927" target="_blank">arXiv:2406.11927</a> · 仓库级函数生成，含函数签名+文档，需调用其他模块</div></li>
+          <li><div class="bench-name">RepoCoder</div><div class="bench-meta">2022 · Microsoft · <a href="https://arxiv.org/abs/2303.12570" target="_blank">arXiv:2303.12570</a> · 仓库级代码补全基准，带有 RAG 检索框架</div></li>
+          <li><div class="bench-name">共同点</div><div class="bench-meta">均强调跨文件依赖，测试模型对大型代码库上下文的理解和利用能力</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>仓库体积导致 token 消耗大；如何高效检索相关上下文是核心问题</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🖥️</div>
+          <div>
+            <h3>Terminal-Bench / InterCode</h3>
+            <div class="sub">终端环境下的代码执行与 Shell 操作</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">InterCode</div><div class="bench-meta">2023 · Princeton · <a href="https://arxiv.org/abs/2306.14898" target="_blank">arXiv:2306.14898</a> · 交互式代码执行，Shell/SQL 两个子集，支持多轮反馈</div></li>
+          <li><div class="bench-name">Terminal-Bench</div><div class="bench-meta">2024 · 终端命令行操作，覆盖文件系统/网络/系统调试等真实运维任务</div></li>
+          <li><div class="bench-name">特点</div><div class="bench-meta">需要多步规划、工具调用、从执行结果中修正，贴近真实开发者工作流</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>环境配置复杂，可复现性差；任务定义难以标准化</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">📝</div>
+          <div>
+            <h3>DevBench / GitHubBench</h3>
+            <div class="sub">完整软件开发流程</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">DevBench</div><div class="bench-meta">2024 · <a href="https://arxiv.org/abs/2403.08604" target="_blank">arXiv:2403.08604</a> · 从需求→架构→编码→测试的完整开发流程评测，22个真实项目</div></li>
+          <li><div class="bench-name">EvoEval</div><div class="bench-meta">2024 · UCSB · <a href="https://arxiv.org/abs/2403.19114" target="_blank">arXiv:2403.19114</a> · 对 HumanEval 题目做语义等价变换，测试模型的鲁棒性</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">端到端评测更接近 AI 编程助手的真实价值；但标准化难度极高</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>评测标准主观性强；单次评测成本高；难以大规模对比</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 子类 5: 代码特定能力 -->
+    <h3 style="color:#a78bfa;margin:32px 0 16px;font-size:17px;padding-left:4px;border-left:3px solid #a78bfa;">
+      🔍 代码特定能力（Debug / Review / Translation）
+    </h3>
+    <p style="color:var(--text2);font-size:13px;margin-bottom:20px;">除生成能力外，代码的理解、调试、审查、翻译等能力同样是工程实践的重要组成部分。</p>
+    <div class="dir-grid">
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🐛</div>
+          <div>
+            <h3>DebugBench / BugsInPy</h3>
+            <div class="sub">代码 Debug 能力评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">DebugBench</div><div class="bench-meta">2024 · 微软亚研 · <a href="https://arxiv.org/abs/2401.04621" target="_blank">arXiv:2401.04621</a> · 4253道含 bug 的代码题，涵盖 Python/Java/C++，分语义/逻辑/语法三类 bug</div></li>
+          <li><div class="bench-name">BugsInPy</div><div class="bench-meta">2020 · <a href="https://arxiv.org/abs/2005.09738" target="_blank">arXiv:2005.09738</a> · 从 17 个 Python 项目提取真实 bug，492 个 bug 实例</div></li>
+          <li><div class="bench-name">LiveCodeBench-Debug</div><div class="bench-meta">2024 · LiveCodeBench 子集，代码自我修复任务，带执行反馈</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>Debug 是高度依赖上下文的任务；评测反馈闭环难以自动化</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔄</div>
+          <div>
+            <h3>CodeTransOcean / TransCoder</h3>
+            <div class="sub">代码翻译：跨语言迁移</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">TransCoder</div><div class="bench-meta">2020 · Facebook AI · <a href="https://arxiv.org/abs/2006.03511" target="_blank">arXiv:2006.03511</a> · 跨语言代码翻译（Java↔Python↔C++），无监督学习</div></li>
+          <li><div class="bench-name">CodeTransOcean</div><div class="bench-meta">2023 · <a href="https://arxiv.org/abs/2310.04951" target="_blank">arXiv:2310.04951</a> · 5个子集，覆盖高频/低资源/领域专用语言翻译</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">大型企业代码库迁移、跨语言重构是真实需求</div></li>
+        </ul>
+        <div class="challenge-box"><div class="label">⚡ 挑战</div>
+          <p>翻译结果的语言习惯往往不够地道；评测指标难以完全量化</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 演进脉络 -->
+    <div style="background:var(--card);border-radius:12px;padding:28px;margin-top:32px;border:1px solid var(--border);">
+      <h3 style="color:#fff;margin-bottom:20px;font-size:16px;">📈 代码评测演进脉络</h3>
+      <div style="display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="background:#2ec4a0;color:#000;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">2021</div>
+          <div style="font-size:13px;color:var(--text1);">HumanEval + MBPP 确立函数级代码生成范式，pass@k 成为通用指标</div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="background:#3a7bd5;color:#fff;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">2022</div>
+          <div style="font-size:13px;color:var(--text1);">DS-1000 引入数据科学赛道；CodeContests 将难度推到竞赛级；MultiPL-E 开启多语言评测</div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="background:#f59e0b;color:#000;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">2023</div>
+          <div style="font-size:13px;color:var(--text1);">SWE-bench 将评测从函数级提升到仓库级工程任务；CrossCodeEval 引入跨文件依赖</div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="background:#e94560;color:#fff;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">2024</div>
+          <div style="font-size:13px;color:var(--text1);">LiveCodeBench 解决污染问题；SWE-bench Verified 提升标注质量；CodeElo 引入 ELO 排名体系；SciCode 探索科学计算边界</div>
+        </div>
+        <div style="display:flex;gap:16px;align-items:flex-start;">
+          <div style="background:#a78bfa;color:#fff;padding:3px 10px;border-radius:4px;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px;">2025</div>
+          <div style="font-size:13px;color:var(--text1);">方向：① 完整软件开发流程评测（DevBench）② 真实工程 Agent 评测 ③ 多语言/多模态代码理解</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 当前核心挑战 -->
+    <div style="background:rgba(233,69,96,0.08);border:1px solid rgba(233,69,96,0.3);border-radius:12px;padding:24px;margin-top:20px;">
+      <h3 style="color:#e94560;margin-bottom:16px;font-size:16px;">⚠️ 代码评测方向核心挑战</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;font-size:13px;color:var(--text1);">
+        <div><strong style="color:#fff;">① 污染严重</strong><br>HumanEval/MBPP 题目早已出现在众多模型训练集，pass@1 数字已不可信</div>
+        <div><strong style="color:#fff;">② 指标单一</strong><br>pass@k 只看最终正确与否，无法衡量代码质量、可读性、效率</div>
+        <div><strong style="color:#fff;">③ 语言偏 Python</strong><br>大多数 benchmark 以 Python 为主，Rust/Go/C++ 等语言评测覆盖不足</div>
+        <div><strong style="color:#fff;">④ 评测与工程脱节</strong><br>竞赛算法能力≠工程代码能力；单函数生成≠系统架构设计能力</div>
+        <div><strong style="color:#fff;">⑤ 仓库级评测成本高</strong><br>SWE-bench 每次评测需要运行完整测试套件，cost 远高于选择题</div>
+        <div><strong style="color:#fff;">⑥ 动态性不足</strong><br>静态题库在模型持续更新下快速过时，缺乏实时动态题目机制</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. MATH -->
+  <section id="math">
+    <h2 class="section-title"><span class="icon">📐</span>数学与逻辑推理</h2>
+    <p class="section-desc">从小学数学到奥林匹克级别，LLM数学能力的快速进步与评测挑战。</p>
+    <div class="dir-grid">
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">➕</div>
+          <div>
+            <h3>GSM8K</h3>
+            <div class="sub">小学数学推理黄金标准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2021 · OpenAI · <a href="https://arxiv.org/abs/2110.14168" target="_blank">arXiv:2110.14168</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">8500道小学数学应用题，2~8步推理，全为文字描述</div>
+          </li>
+          <li>
+            <div class="bench-name">现状</div>
+            <div class="bench-meta">GPT-4/Claude-3系列准确率超过95%，已近饱和；Chain-of-Thought论文的标志性数据集</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>接近饱和，区分度不足；GSM-Symbolic（苹果2024）研究显示LLM可能依赖模式匹配</p>
+        </div>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🏆</div>
+          <div>
+            <h3>MATH</h3>
+            <div class="sub">竞赛数学黄金标准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2021 · Dan Hendrycks et al. · UC Berkeley · <a href="https://arxiv.org/abs/2103.03874" target="_blank">arXiv:2103.03874</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">12500道竞赛题，5个难度级别，7个数学领域（代数/几何/数论等）</div>
+          </li>
+          <li>
+            <div class="bench-name">进展</div>
+            <div class="bench-meta">早期GPT-3约5%；GPT-4约52%；o1-preview约74%；o3近90%+</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>LaTeX格式评判复杂；部分答案存在等价形式；5级难度仍有天花板压力</p>
+        </div>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🥇</div>
+          <div>
+            <h3>OlympiadBench & AIME</h3>
+            <div class="sub">奥林匹克级数学挑战</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">OlympiadBench</div>
+            <div class="bench-meta">2024 · 清华大学 · 8476道奥林匹克数学/物理，中英双语，含图表 · <a href="https://arxiv.org/abs/2402.14008" target="_blank">arXiv:2402.14008</a></div>
+          </li>
+          <li>
+            <div class="bench-name">AIME 2024</div>
+            <div class="bench-meta">美国数学邀请赛最新题，共30道（I+II），o3达85%以上，人类精英约70%</div>
+          </li>
+          <li>
+            <div class="bench-name">AMC系列</div>
+            <div class="bench-meta">AMC 8/10/12多年度题目，Putnam竞赛级别，已有模型逼近满分</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>真正的olympiad题需要创造性推理而非模式匹配；图形几何类题目对视觉推理要求高</p>
+        </div>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🇨🇳</div>
+          <div>
+            <h3>MathBench</h3>
+            <div class="sub">中文分级数学评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2024 · 北京大学 · <a href="https://arxiv.org/abs/2405.12209" target="_blank">arXiv:2405.12209</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">3709道题，覆盖小学→大学5个难度，应用+理论双维度</div>
+          </li>
+          <li>
+            <div class="bench-name">定位</div>
+            <div class="bench-meta">中文数学能力评测标杆，揭示LLM在中文语境数学的独特弱点</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>中文数学表达与英文不同，需要语言理解与数学推理协同；计算题仍有优势，证明题极难</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. LONG CONTEXT -->
+  <section id="longctx">
+    <h2 class="section-title"><span class="icon">📜</span>长文本与RAG</h2>
+    <p class="section-desc">随着模型上下文窗口扩展至128K乃至百万token，长文本评测成为关键战场。</p>
+    <div class="dir-grid">
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">📖</div>
+          <div>
+            <h3>LongBench / LongBench-v2</h3>
+            <div class="sub">清华长文本多任务基准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">LongBench v1</div>
+            <div class="bench-meta">2023 · 清华大学 · 21个任务，中英双语，平均7243字 · <a href="https://arxiv.org/abs/2308.14508" target="_blank">arXiv:2308.14508</a></div>
+          </li>
+          <li>
+            <div class="bench-name">LongBench v2</div>
+            <div class="bench-meta">2024 · 清华大学 · 503道多选题，8K-2M字，需深度理解 · <a href="https://arxiv.org/abs/2412.15204" target="_blank">arXiv:2412.15204</a></div>
+          </li>
+          <li>
+            <div class="bench-name">任务类型</div>
+            <div class="bench-meta">单文档QA、多文档QA、摘要、Few-shot学习、代码补全、合成任务</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>如何区分"真理解"和"关键词匹配"；v2引入干扰信息使浅层检索失效</p>
+        </div>
+      </div>
+
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎯</div>
+          <div>
+            <h3>RULER & Needle-in-Haystack</h3>
+            <div class="sub">长文本检索压力测试</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">RULER</div>
+            <div class="bench-meta">2024 · NVIDIA · 合成可控基准，4K-128K，13个任务4类型 · <a href="https://arxiv.org/abs/2404.06654" target="_blank">arXiv:2404.06654</a></div>
+          </li>
+          <li>
+            <div class="bench-name">Needle-in-Haystack</div>
+            <div class="bench-meta">2023 · Greg Kamradt · 在超长文本（≤200K）中定位单条信息 · <a href="https://github.com/gkamradt/LLMTest_NeedleInAHaystack" target="_blank">GitHub</a></div>
+          </li>
+          <li>
+            <div class="bench-name">发现</div>
+            <div class="bench-meta">RULER揭示：声称支持128K的模型在实际任务中往往只有32K甚至更短的有效窗口</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>合成测试与真实理解有差距；多针（Multi-Needle）检索难度指数级上升</p>
+        </div>
+      </div>
+
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">∞</div>
+          <div>
+            <h3>InfBench</h3>
+            <div class="sub">超长文本极限挑战</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2024 · 北京大学 · <a href="https://arxiv.org/abs/2402.13718" target="_blank">arXiv:2402.13718</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">234个任务，平均长度184K字（最高达1M+），5类任务</div>
+          </li>
+          <li>
+            <div class="bench-name">任务</div>
+            <div class="bench-meta">问答/摘要/选择/检索/代码调试，覆盖书籍/论文/代码库等</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>100K+长度下计算成本极高；现有模型在超长范围内性能急剧下降</p>
+        </div>
+      </div>
+
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">📑</div>
+          <div>
+            <h3>ZeroScrolls</h3>
+            <div class="sub">零样本长文档理解</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · Tel Aviv University · <a href="https://arxiv.org/abs/2305.14196" target="_blank">arXiv:2305.14196</a></div>
+          </li>
+          <li>
+            <div class="bench-name">任务</div>
+            <div class="bench-meta">10个NLP任务，强调零样本真实文档理解，非模板匹配</div>
+          </li>
+          <li>
+            <div class="bench-name">特色</div>
+            <div class="bench-meta">聚合分数（SCROLLS Score）统一衡量长文本综合能力</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>生成式评估（ROUGE/BERTScore）与人类判断存在gap；部分任务有多个合法答案</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. AGENT -->
+  <section id="agent">
+    <h2 class="section-title"><span class="icon">🤖</span>Agent 与 Tool Use</h2>
+    <p class="section-desc">LLM从问答走向行动，Agent评测测试模型在真实环境中规划、工具调用与任务完成能力。</p>
+    <div class="dir-grid">
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔩</div>
+          <div>
+            <h3>ToolBench</h3>
+            <div class="sub">大规模真实API调用</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · 清华大学 · <a href="https://arxiv.org/abs/2307.16789" target="_blank">arXiv:2307.16789</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">16464个真实RapidAPI工具，49个类别，12k+复杂指令</div>
+          </li>
+          <li>
+            <div class="bench-name">评测</div>
+            <div class="bench-meta">DFSDT搜索策略，ChatGPT-Evaluator自动评判，ToolLLM训练集</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>API版本更新导致测试不稳定；评判模型本身有偏差；多步规划能力难以量化</p>
+        </div>
+      </div>
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🌐</div>
+          <div>
+            <h3>WebArena</h3>
+            <div class="sub">真实网页操作Agent</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · CMU · <a href="https://arxiv.org/abs/2307.13854" target="_blank">arXiv:2307.13854</a></div>
+          </li>
+          <li>
+            <div class="bench-name">环境</div>
+            <div class="bench-meta">自托管网站（购物/Reddit/Gitlab/地图），812个任务，功能可验证</div>
+          </li>
+          <li>
+            <div class="bench-name">进展</div>
+            <div class="bench-meta">早期GPT-4约14%；顶级Agent系统现在约50%+</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>环境维护成本高；网站UI变化影响可复现性；长序列操作中错误传播</p>
+        </div>
+      </div>
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🌍</div>
+          <div>
+            <h3>GAIA</h3>
+            <div class="sub">通用AI助手终极考验</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · Meta AI / HuggingFace / HEC Paris · <a href="https://arxiv.org/abs/2311.12983" target="_blank">arXiv:2311.12983</a></div>
+          </li>
+          <li>
+            <div class="bench-name">设计</div>
+            <div class="bench-meta">3级难度，需要工具调用+多步推理+常识；人类轻松完成（92%）但GPT-4难&lt;15%</div>
+          </li>
+          <li>
+            <div class="bench-name">核心问题</div>
+            <div class="bench-meta">测试"真实有用的AI助手"，答案可精确验证，无法靠猜测通过</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>需要浏览网页/文件处理/工具调用协同；多步推理中间步骤不可见；评测成本极高</p>
+        </div>
+      </div>
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🖥️</div>
+          <div>
+            <h3>OSWorld & TAU-bench & AgentBench</h3>
+            <div class="sub">多场景Agent综合评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">OSWorld</div>
+            <div class="bench-meta">2024 · HKU · 操作系统GUI，369任务，Win/Mac/Linux · <a href="https://arxiv.org/abs/2404.07972" target="_blank">arXiv:2404.07972</a></div>
+          </li>
+          <li>
+            <div class="bench-name">TAU-bench</div>
+            <div class="bench-meta">2024 · Sierra AI · 客服场景，含真实业务规则，测试一致性遵循 · <a href="https://arxiv.org/abs/2406.12045" target="_blank">arXiv:2406.12045</a></div>
+          </li>
+          <li>
+            <div class="bench-name">AgentBench</div>
+            <div class="bench-meta">2023 · 清华大学 · 8环境（OS/DB/Web/游戏等），综合Agent能力 · <a href="https://arxiv.org/abs/2308.03688" target="_blank">arXiv:2308.03688</a></div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 综合挑战</div>
+          <p>评测基础设施复杂，难以复现；GUI截图理解+操作规划协同；失败原因分析困难</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. ALIGNMENT -->
+  <section id="alignment">
+    <h2 class="section-title"><span class="icon">⚖️</span>对齐与安全</h2>
+    <p class="section-desc">测试模型的真实性、指令遵循、多轮对话质量以及对齐人类价值观的程度。</p>
+    <div class="dir-grid">
+      <div class="dir-card c6">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎭</div>
+          <div>
+            <h3>TruthfulQA</h3>
+            <div class="sub">幻觉与真实性测试</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2021 · Stephanie Lin et al. · Oxford / OpenAI · <a href="https://arxiv.org/abs/2109.07958" target="_blank">arXiv:2109.07958</a></div>
+          </li>
+          <li>
+            <div class="bench-name">设计</div>
+            <div class="bench-meta">817道精心设计的问题，专门针对LLM容易产生的错误信念和幻觉</div>
+          </li>
+          <li>
+            <div class="bench-name">发现</div>
+            <div class="bench-meta">模型越大有时反而"更自信地错"；RLHF显著提升真实性</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>人工标注成本高；问题集相对较小；现代模型已能较好应对，需要扩展新类别幻觉</p>
+        </div>
+      </div>
+
+      <div class="dir-card c6">
+        <div class="dir-card-header">
+          <div class="dir-icon">💬</div>
+          <div>
+            <h3>MT-Bench & AlpacaEval</h3>
+            <div class="sub">LLM-as-Judge先驱</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">MT-Bench</div>
+            <div class="bench-meta">2023 · UC Berkeley (LMSYS) · 80道8类多轮对话，GPT-4打分1-10 · <a href="https://arxiv.org/abs/2306.05685" target="_blank">arXiv:2306.05685</a></div>
+          </li>
+          <li>
+            <div class="bench-name">AlpacaEval 2.0</div>
+            <div class="bench-meta">2023 · Stanford · 805道指令，LC胜率修正长度偏见，与LMSYS高相关 · <a href="https://arxiv.org/abs/2304.15004" target="_blank">arXiv:2304.15004</a></div>
+          </li>
+          <li>
+            <div class="bench-name">LLM-as-Judge范式</div>
+            <div class="bench-meta">GPT-4作为裁判，与人类偏好高度相关（80%+），成本仅人类标注1/100</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>Position bias（偏好先出现的答案）；Verbosity bias（偏好更长的答案）；自我偏好（模型偏好自己生成的内容）</p>
+        </div>
+      </div>
+
+      <div class="dir-card c6">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔥</div>
+          <div>
+            <h3>Arena-Hard & WildBench</h3>
+            <div class="sub">2024年对齐评测新标杆</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">Arena-Hard</div>
+            <div class="bench-meta">2024 · UC Berkeley · 500道困难题（从Chatbot Arena提炼），GPT-4-Turbo打分 · <a href="https://github.com/lm-sys/arena-hard-auto" target="_blank">GitHub</a></div>
+          </li>
+          <li>
+            <div class="bench-name">WildBench</div>
+            <div class="bench-meta">2024 · Allen AI · 1024道真实用户query，6类任务，WB-Score · <a href="https://arxiv.org/abs/2406.11939" target="_blank">arXiv:2406.11939</a></div>
+          </li>
+          <li>
+            <div class="bench-name">相关性</div>
+            <div class="bench-meta">两者与LMSYS Chatbot Arena排行榜Pearson相关性均超0.95</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>以GPT-4-Turbo为参照存在局限；随着模型接近GPT-4水平，需要更强的裁判模型</p>
+        </div>
+      </div>
+
+      <div class="dir-card c6">
+        <div class="dir-card-header">
+          <div class="dir-icon">📋</div>
+          <div>
+            <h3>IFEval</h3>
+            <div class="sub">指令遵循精确评测</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · Google · <a href="https://arxiv.org/abs/2311.07911" target="_blank">arXiv:2311.07911</a></div>
+          </li>
+          <li>
+            <div class="bench-name">设计</div>
+            <div class="bench-meta">541道含可编程验证约束的指令（如"不超过X词"、"JSON格式"等）</div>
+          </li>
+          <li>
+            <div class="bench-name">优势</div>
+            <div class="bench-meta">完全自动化评判，无需LLM评分；精确量化模型服从度</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>仅测试形式化约束，难以评估内容质量；25种约束类型覆盖有限</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. CHINESE -->
+  <section id="chinese">
+    <h2 class="section-title"><span class="icon">🇨🇳</span>中文与多语言</h2>
+    <p class="section-desc">中文LLM评测体系建设，覆盖知识、文化、语言理解等中文特有维度。</p>
+    <div class="dir-grid">
+      <div class="dir-card c7">
+        <div class="dir-card-header">
+          <div class="dir-icon">📝</div>
+          <div>
+            <h3>C-Eval</h3>
+            <div class="sub">中文版MMLU，最广泛使用</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · 上海交通大学 / 爱丁堡大学 · <a href="https://arxiv.org/abs/2305.08322" target="_blank">arXiv:2305.08322</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">52个中文学科，13,948道4选1题，覆盖人文/理工/医学/法律等</div>
+          </li>
+          <li>
+            <div class="bench-name">状态</div>
+            <div class="bench-meta">GPT-4约68%，国产顶级模型约75%+；已成中文评测最广泛引用基准</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>题目已进入多个模型训练集，污染严重；中文特有文化知识覆盖不足</p>
+        </div>
+      </div>
+
+      <div class="dir-card c7">
+        <div class="dir-card-header">
+          <div class="dir-icon">🏮</div>
+          <div>
+            <h3>CMMLU</h3>
+            <div class="sub">中文文化知识专项</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · MBZUAI / Shanghai AI Lab · <a href="https://arxiv.org/abs/2306.09212" target="_blank">arXiv:2306.09212</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">67个科目，11,528题，含中国特有领域（汉语/中国历史/地理等）</div>
+          </li>
+          <li>
+            <div class="bench-name">互补性</div>
+            <div class="bench-meta">与C-Eval互补，着重中文本土文化而非纯学科知识</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>中文文化类题目更新缓慢；与C-Eval高度相关，区分度有限</p>
+        </div>
+      </div>
+
+      <div class="dir-card c7">
+        <div class="dir-card-header">
+          <div class="dir-icon">📜</div>
+          <div>
+            <h3>AGIEval-CN & M3KE</h3>
+            <div class="sub">中文考试与多语言</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">AGIEval-CN</div>
+            <div class="bench-meta">2023 · 微软 · AGIEval中文子集，高考/中考/法考原题，最贴近真实考试 · <a href="https://arxiv.org/abs/2304.06364" target="_blank">arXiv:2304.06364</a></div>
+          </li>
+          <li>
+            <div class="bench-name">M3KE</div>
+            <div class="bench-meta">2023 · 中国传媒大学等 · 71个中文学科，20,000+题，多任务多语言 · <a href="https://arxiv.org/abs/2305.05982" target="_blank">arXiv:2305.05982</a></div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 综合挑战</div>
+          <p>中文benchmark质量参差不齐；高度相互重叠；真实考试题更容易泄露进训练集；缺乏开放式生成评测</p>
+        </div>
+      </div>
+
+      <div class="dir-card c7">
+        <div class="dir-card-header">
+          <div class="dir-icon">🌏</div>
+          <div>
+            <h3>中文评测的系统性挑战</h3>
+            <div class="sub">研究方向与建议</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">污染问题</div>
+            <div class="bench-meta">中文互联网上考试题目极为丰富，几乎必然进入预训练语料</div>
+          </li>
+          <li>
+            <div class="bench-name">文化偏差</div>
+            <div class="bench-meta">直接翻译西方benchmark会引入文化偏差，需要本土设计</div>
+          </li>
+          <li>
+            <div class="bench-name">生成评测空缺</div>
+            <div class="bench-meta">缺乏高质量的中文开放式对话/写作评测（C-Bench等填补中）</div>
+          </li>
+          <li>
+            <div class="bench-name">动态更新</div>
+            <div class="bench-meta">需要类似LiveCodeBench的动态中文基准，持续引入新题</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 趋势</div>
+          <p>从多选题走向开放生成评测；引入LLM-as-Judge的中文场景；建立动态防污染机制</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. MULTIMODAL -->
+  <section id="multimodal">
+    <h2 class="section-title"><span class="icon">🖼️</span>多模态</h2>
+    <p class="section-desc">从图像理解到视频推理，多模态大模型评测体系正在快速完善。</p>
+    <div class="dir-grid">
+      <div class="dir-card c8">
+        <div class="dir-card-header">
+          <div class="dir-icon">👁️</div>
+          <div>
+            <h3>MMBench</h3>
+            <div class="sub">全面图像理解基准</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · Shanghai AI Lab · <a href="https://arxiv.org/abs/2307.06281" target="_blank">arXiv:2307.06281</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">20个视觉能力维度，3000+题，CircularEval减少猜测，英文/中文双版</div>
+          </li>
+          <li>
+            <div class="bench-name">维度</div>
+            <div class="bench-meta">属性识别/空间关系/OCR/知识/推理等，细粒度能力诊断</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>多选题形式限制了对生成质量的评测；视觉任务标注一致性维护困难</p>
+        </div>
+      </div>
+
+      <div class="dir-card c8">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎓</div>
+          <div>
+            <h3>MMMU</h3>
+            <div class="sub">大学级多模态理解</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · UMich / CMU / Stanford / UCLA · <a href="https://arxiv.org/abs/2311.16502" target="_blank">arXiv:2311.16502</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">11,500题，30个学科，多图像/图表/方程，需专家级推理</div>
+          </li>
+          <li>
+            <div class="bench-name">难度</div>
+            <div class="bench-meta">顶级模型GPT-4V约56%，人类专家约88%；差距显著</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>需要视觉感知+领域知识+推理协同；部分题目对图像质量敏感</p>
+        </div>
+      </div>
+
+      <div class="dir-card c8">
+        <div class="dir-card-header">
+          <div class="dir-icon">📐</div>
+          <div>
+            <h3>MathVista</h3>
+            <div class="sub">数学图表视觉推理</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">基本信息</div>
+            <div class="bench-meta">2023 · UCLA · <a href="https://arxiv.org/abs/2310.02255" target="_blank">arXiv:2310.02255</a></div>
+          </li>
+          <li>
+            <div class="bench-name">规模</div>
+            <div class="bench-meta">6,141道题，含图表/几何/函数图/统计图，需视觉+数学协同</div>
+          </li>
+          <li>
+            <div class="bench-name">特色</div>
+            <div class="bench-meta">源自28个现有数学数据集，多样化图表类型，双语版本</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>LLM在图形几何问题上仍显著弱于人类；纯文字描述和图像输入的性能差距大</p>
+        </div>
+      </div>
+
+      <div class="dir-card c8">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎬</div>
+          <div>
+            <h3>VideoMME & ScienceQA</h3>
+            <div class="sub">视频理解与科学多模态</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">VideoMME</div>
+            <div class="bench-meta">2024 · 字节跳动/浙大等 · 900视频2700题，11秒~1小时，30领域 · <a href="https://arxiv.org/abs/2405.21075" target="_blank">arXiv:2405.21075</a></div>
+          </li>
+          <li>
+            <div class="bench-name">ScienceQA</div>
+            <div class="bench-meta">2022 · UCLA · 21,208题含图像，科学推理+链式解释，多学科 · <a href="https://arxiv.org/abs/2209.09958" target="_blank">arXiv:2209.09958</a></div>
+          </li>
+          <li>
+            <div class="bench-name">视频挑战</div>
+            <div class="bench-meta">长视频（1小时+）需要时序理解；帧采样策略影响性能；音频/字幕融合</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 综合挑战</div>
+          <p>多模态评测标准尚不统一；视频理解计算成本极高；视觉幻觉问题比文本更严重</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION: 2025–2026 FRONTIER ===== -->
+  <section id="frontier25">
+    <h2 class="section-title"><span class="icon">🚀</span>2025–2026 推理前沿新标杆</h2>
+    <p class="section-desc">随着 o1/o3/R1/Gemini-2.5-Pro 等推理模型崛起，传统 MMLU/GSM8K 已全面饱和。2025–2026 年涌现出一批专门为「frontier 模型」设计的超难基准，目标是找到当前最强模型仍然解不出来的题目。</p>
+
+    <div class="dir-grid">
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎓</div>
+          <div>
+            <h3>Humanity's Last Exam (HLE)</h3>
+            <div class="sub">SCALE AI × Center for AI Safety · 2025.01 · arXiv:2501.14249</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">设计理念</div>
+            <div class="bench-meta">由全球 ~1000 名领域专家提交 3000 道题，专门针对 MMLU/GPQA 饱和问题而设计。涵盖数学、物理、化学、生物、历史、哲学、语言学等跨学科。</div>
+          </li>
+          <li>
+            <div class="bench-name">难度与意义</div>
+            <div class="bench-meta">初始发布时 GPT-4o 准确率约 3%，o3 约 18%。2026.01 发表于 Nature。被称为"闭卷考试中人类知识的最后考验"。</div>
+          </li>
+          <li>
+            <div class="bench-name">评测指标</div>
+            <div class="bench-meta">Accuracy（选择/填空），附带 Calibration（校准度）子指标，考察模型是否知道自己不知道</div>
+          </li>
+          <li>
+            <div class="bench-name">当前 SOTA（2026.02）</div>
+            <div class="bench-meta">o3 ~18%，Gemini 2.5 Pro ~10%，Claude 3.5 Sonnet ~8%。人类专家估计 ~95%+</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 核心挑战</div>
+          <p>题目由领域专家命题，保密维护成本高；题目形式差异极大，难以统一评判；多模态图文题比例约 30%</p>
+        </div>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🧩</div>
+          <div>
+            <h3>ARC-AGI-2</h3>
+            <div class="sub">François Chollet · ARC Prize · 2025.05 · arXiv:2505.11831</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">设计理念</div>
+            <div class="bench-meta">ARC-AGI-1（2019）被 o3 达到 ~87% 后宣告接近饱和。ARC-AGI-2 重新设计任务，要求模型归纳新颖视觉规律，并在极少示例下做 few-shot 推广。</div>
+          </li>
+          <li>
+            <div class="bench-name">难度升级</div>
+            <div class="bench-meta">当前 SOTA（2026.02）约 4–7%，人类约 60%+。专门过滤了任何形式的程序搜索捷径，迫使模型展现真正的规律归纳能力。</div>
+          </li>
+          <li>
+            <div class="bench-name">ARC Prize 2025</div>
+            <div class="bench-meta">公开竞赛，1M 美元奖金，ARC-AGI-2 Technical Report（arXiv:2601.10904）于 2026.01 发布</div>
+          </li>
+          <li>
+            <div class="bench-name">争议</div>
+            <div class="bench-meta">Chollet 认为通过程序搜索（如 o3 的暴力计算）不算真正通过测试；学界对"fluid intelligence"定义有分歧</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 核心价值</div>
+          <p>目前极少有自动化方法能稳定提分，是衡量真实抽象推理能力的少有基准之一</p>
+        </div>
+      </div>
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">📐</div>
+          <div>
+            <h3>AIME 2024 / 2025</h3>
+            <div class="sub">AMC / MAA 官方竞赛题目 · 年度更新</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">背景</div>
+            <div class="bench-meta">美国数学邀请赛（AIME）30 道题，答案为 0–999 整数，避免选择题猜测。MATH-500 饱和后成为新主流数学推理标杆。</div>
+          </li>
+          <li>
+            <div class="bench-name">AIME 2025 成绩爆发</div>
+            <div class="bench-meta">o3（high compute）~86%，DeepSeek-R1 ~72%，Gemini 2.5 Pro ~74%。相比 2024 年各模型平均提升 30–40 分（百分比）。</div>
+          </li>
+          <li>
+            <div class="bench-name">评测工具</div>
+            <div class="bench-meta">AIME-Preview（GAIR-NLP，2026.01）：实时评测框架，使用最新赛题，防止提前泄露</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 局限</div>
+          <p>年度只有 30 题，统计显著性有限；答案整数设计适合数学但不适合推理多样性测试</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔬</div>
+          <div>
+            <h3>FrontierMath</h3>
+            <div class="sub">Epoch AI · 2024.11</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">设计理念</div>
+            <div class="bench-meta">由数十位专业数学家命题，专注于研究级别数学（非竞赛级）。题目答案为可程序验证的数学对象（数字/集合/函数），确保客观评判。</div>
+          </li>
+          <li>
+            <div class="bench-name">难度</div>
+            <div class="bench-meta">SOTA（2025.02）< 2%，目标是对当前 AI 系统"几十年内有效"的超高难度基准</div>
+          </li>
+          <li>
+            <div class="bench-name">防污染</div>
+            <div class="bench-meta">题目由数学家原创，从未在互联网上出现，理论上无法污染</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 意义</div>
+          <p>第一个研究级数学基准，区分"竞赛训练"和"真正数学理解"</p>
+        </div>
+      </div>
+
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">📊</div>
+          <div>
+            <h3>GPQA Diamond</h3>
+            <div class="sub">Rein et al. · 2023.11 · arXiv:2311.12022（2025年成为主流标配）</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">内容</div>
+            <div class="bench-meta">Graduate-level Google-Proof Q&A：198 道研究生水平生物/化学/物理题，专家命题，Google 搜索也无法简单找到答案</div>
+          </li>
+          <li>
+            <div class="bench-name">GPQA Diamond 子集</div>
+            <div class="bench-meta">198 道中最难的子集，SOTA（2026.02）：o3 ~87%，Gemini 2.5 Pro ~84%，Claude 3.7 ~78%</div>
+          </li>
+          <li>
+            <div class="bench-name">地位变化</div>
+            <div class="bench-meta">2024 年前 SOTA 约 40%，2025 年 reasoning 模型推动分数快速上升，部分认为正在接近饱和</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 注意</div>
+          <p>GPQA Diamond 有被过度优化的风险，部分公司针对性训练导致分数虚高</p>
+        </div>
+      </div>
+
+      <div class="dir-card c6">
+        <div class="dir-card-header">
+          <div class="dir-icon">⚙️</div>
+          <div>
+            <h3>LiveBench</h3>
+            <div class="sub">White et al. · 2024.06 · arXiv:2406.19314 · 持续更新</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">设计理念</div>
+            <div class="bench-meta">专为对抗污染设计：持续从当月新闻、arXiv 论文、竞赛中采集题目，每月更新，所有题目均有客观可验证答案</div>
+          </li>
+          <li>
+            <div class="bench-name">覆盖范围</div>
+            <div class="bench-meta">推理、数学、代码、语言、指令跟随、数据分析六大类；每月发布新版本，始终保持时效性</div>
+          </li>
+          <li>
+            <div class="bench-name">2025 特点</div>
+            <div class="bench-meta">已成为社区公认的"最可信公开基准"之一，被广泛用于独立模型评测</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>月度更新导致历史可比性下降；题目难度分布随时间变化；维护团队资源有限</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION: Agent 2025 ===== -->
+  <section id="agent25">
+    <h2 class="section-title"><span class="icon">🤖</span>2025–2026 Agent 新基准</h2>
+    <p class="section-desc">2025 年 Agent 评测从"单步工具调用"进化到"长时程、真实环境、复杂任务"。以下是 2025–2026 年代表性新 Agent 基准。</p>
+
+    <div class="dir-grid">
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🌐</div>
+          <div>
+            <h3>BrowseComp</h3>
+            <div class="sub">OpenAI · 2025.04 · arXiv:2504.12516</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">设计理念</div>
+            <div class="bench-meta">1266 道需要在互联网上多步搜索才能找到答案的问题。答案是确定唯一的事实，但需要多跳、多来源推理才能得出。</div>
+          </li>
+          <li>
+            <div class="bench-name">难度</div>
+            <div class="bench-meta">GPT-4o（无搜索）≈ 0.1%，OpenAI Deep Research ≈ 51.5%，普通人类 ≈ 2–3%（不借助搜索）</div>
+          </li>
+          <li>
+            <div class="bench-name">意义</div>
+            <div class="bench-meta">第一个专门测试"深度网络搜索 Agent"能力的基准，与 WebArena 的模拟环境不同，题目基于真实互联网</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 特点</div>
+          <p>答案简短精确，自动评判无歧义；设计反向验证（答案难以被 Google 直接搜到）</p>
+        </div>
+      </div>
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">💻</div>
+          <div>
+            <h3>SWE-bench Verified</h3>
+            <div class="sub">OpenAI × SWE-bench Team · 2024.08 · 持续更新</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">背景</div>
+            <div class="bench-meta">SWE-bench 原版 500 任务由人工验证过滤，去除了有争议/环境不稳定的样本，Verified 子集共 500 条，质量更高</div>
+          </li>
+          <li>
+            <div class="bench-name">2025 年进展</div>
+            <div class="bench-meta">Claude 3.5 Sonnet（Cursor Agent）～49%，OpenAI Codex CLI ～54%，各家产品级 Agent 激烈竞争。已成为代码 Agent 最重要的评测标准。</div>
+          </li>
+          <li>
+            <div class="bench-name">SWE-bench Multimodal</div>
+            <div class="bench-meta">2025 年推出，包含前端 UI/截图问题，引入视觉理解能力评测</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 现状</div>
+          <p>快速成为行业事实标准；部分团队"针对性训练"引发争议；难度上限仍未被触及</p>
+        </div>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🖥️</div>
+          <div>
+            <h3>OSWorld</h3>
+            <div class="sub">Xiao et al. · 2024.04 · arXiv:2404.07972 · 持续更新</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">内容</div>
+            <div class="bench-meta">在真实操作系统（Ubuntu/Windows/macOS）上完成跨应用任务，含 Office、Chrome、代码编辑等。369 个任务，截图驱动。</div>
+          </li>
+          <li>
+            <div class="bench-name">2025 更新</div>
+            <div class="bench-meta">OSWorld-Verified（2025.07）修复社区反馈问题并加入 AWS 支持，SOTA 约 27%，人类约 72%</div>
+          </li>
+          <li>
+            <div class="bench-name">意义</div>
+            <div class="bench-meta">唯一覆盖真实桌面操作环境的大规模多模态 Agent 基准，测试"GUI 操作"而非纯文本工具调用</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>运行成本高（需要完整虚拟机）；任务重现性受环境状态影响；视觉分辨率对性能影响显著</p>
+        </div>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🛠️</div>
+          <div>
+            <h3>τ-bench（Tau-bench）</h3>
+            <div class="sub">Yao et al. · 2024 · 模拟真实业务 Agent</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">设计理念</div>
+            <div class="bench-meta">模拟航空/零售业务场景，Agent 需在动态状态下完成含策略约束的多步工具调用任务（退款、改签、查询等）</div>
+          </li>
+          <li>
+            <div class="bench-name">评测维度</div>
+            <div class="bench-meta">Task Success Rate + Policy Compliance Rate（不能违反业务规则）</div>
+          </li>
+          <li>
+            <div class="bench-name">意义</div>
+            <div class="bench-meta">第一个测试"有约束的真实业务 Agent"的基准，区分"能完成任务"和"合规完成任务"</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 挑战</div>
+          <p>业务规则设计较简单；状态空间覆盖有限；难以推广到任意垂直行业</p>
+        </div>
+      </div>
+
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">🧪</div>
+          <div>
+            <h3>BFCL v3（Berkeley Function Calling Leaderboard）</h3>
+            <div class="sub">Berkeley Sky Computing Lab · 持续更新 · 2024–2025</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">内容</div>
+            <div class="bench-meta">专注工具调用（Function Calling）评测，2000+ 题，覆盖单步/多步/并行/嵌套工具调用，17 种编程语言工具定义</div>
+          </li>
+          <li>
+            <div class="bench-name">v3 更新（2025）</div>
+            <div class="bench-meta">加入多轮对话工具调用、状态追踪（State-Based Evaluation）、真实 API 调用验证</div>
+          </li>
+          <li>
+            <div class="bench-name">地位</div>
+            <div class="bench-meta">工具调用领域最被广泛引用的公开 leaderboard，每周更新最新模型</div>
+          </li>
+        </ul>
+        <div class="challenge-box">
+          <div class="label">⚡ 意义</div>
+          <p>区分"格式正确调用"与"语义正确调用"，是 RAG/Agent pipeline 工程选型的重要参考</p>
+        </div>
+      </div>
+
+      <div class="dir-card c6">
+        <div class="dir-card-header">
+          <div class="dir-icon">🔭</div>
+          <div>
+            <h3>Agent Evaluation Survey（COLING 2025）</h3>
+            <div class="sub">arXiv:2503.16416 · Mar 2025</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li>
+            <div class="bench-name">综述内容</div>
+            <div class="bench-meta">系统梳理 2024–2025 年 50+ Agent 评测基准，按能力层（感知/规划/记忆/工具/协作）分类分析</div>
+          </li>
+          <li>
+            <div class="bench-name">核心观点</div>
+            <div class="bench-meta">现有基准主要覆盖规划和推理，但"长时程记忆"和"多 Agent 协作"评测极度缺乏；现实世界任务评测缺少经济效益指标</div>
+          </li>
+          <li>
+            <div class="bench-name">推荐阅读</div>
+            <div class="bench-meta">如果要系统了解 2024–2025 年 Agent 评测全貌，这篇综述是最佳起点</div>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION: Multimodal 2025 ===== -->
+  <section id="multimodal25">
+    <h2 class="section-title"><span class="icon">🖼️</span>2025–2026 多模态评测新进展</h2>
+    <p class="section-desc">多模态评测从"图片问答"扩展到视频理解、3D 空间推理和多学科多模态融合。</p>
+
+    <div class="dir-grid">
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎬</div>
+          <div>
+            <h3>Video-MME</h3>
+            <div class="sub">Fu et al. · CVPR 2025 · arXiv:2405.21075</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">首个视频理解综合基准</div><div class="bench-meta">900 段视频（11 秒–60 分钟），2700 道问题，覆盖六大领域。字幕/音频可选配置，测试不同信息源融合能力。</div></li>
+          <li><div class="bench-name">当前 SOTA</div><div class="bench-meta">Gemini 2.5 Pro（2025.05）宣称 SOTA，约 84%（有字幕）/76%（无字幕）</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">2025 年成为视频 MLLM 评测的最重要基准之一，各大模型报告必引</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">📚</div>
+          <div>
+            <h3>Video-MMMU</h3>
+            <div class="sub">EvolvingLMMs-Lab · 2025.01</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">知识型视频理解</div><div class="bench-meta">基于 MMMU 框架扩展到视频，要求模型从教学类视频中学习知识并回答问题，评测"视频中的知识获取"能力</div></li>
+          <li><div class="bench-name">创新点</div><div class="bench-meta">区分 Perception（感知）vs Knowledge Acquisition（学习）两种视频理解模式</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🎯</div>
+          <div>
+            <h3>MMMU-Pro</h3>
+            <div class="sub">Yue et al. · 2024.09 · arXiv:2409.02813 · ACL 2025</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">MMMU 增强版</div><div class="bench-meta">三步增强：去除纯文本可解题目 → 加入多图理解 → 构建无选项开放生成版本。SOTA（2025）约 50–60%，人类约 72%</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">相比 MMMU（SOTA 已近 90%），MMMU-Pro 更难饱和，是 2025 年视觉推理的主力基准</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🖼️</div>
+          <div>
+            <h3>SimpleVQA（多模态事实性）</h3>
+            <div class="sub">Cheng et al. · ICCV 2025</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">设计</div><div class="bench-meta">将 SimpleQA 框架扩展到多模态：短答案事实性问题，图文融合，中英双语</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">第一个系统评测 MLLM 事实性（而非推理能力）的多模态基准</div></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION: Factuality 2025 ===== -->
+  <section id="factuality25">
+    <h2 class="section-title"><span class="icon">📡</span>2025–2026 事实性与指令跟随新评测</h2>
+    <p class="section-desc">随着模型能力提升，幻觉和指令跟随开始成为独立评测方向，出现了多个专门工具。</p>
+
+    <div class="dir-grid">
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">✅</div>
+          <div>
+            <h3>SimpleQA / SimpleQA Verified</h3>
+            <div class="sub">OpenAI · 2024.11 · arXiv:2411.04368 ｜ Verified: arXiv:2509.07968 · 2025.09</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">设计</div><div class="bench-meta">短答案事实性问题，要求准确且不能乱猜。原版 4326 题，Verified 版本 1000 题，人工核验全部答案。</div></li>
+          <li><div class="bench-name">核心指标</div><div class="bench-meta">Accuracy + Calibration（给出"不知道"时的准确率），同时惩罚过度自信和过度拒绝</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">2025 年成为主流事实性基准，ChatGPT/Claude/Gemini 等均在技术报告中引用</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">📋</div>
+          <div>
+            <h3>IFEval（Instruction Following Evaluation）</h3>
+            <div class="sub">Zhou et al. · Google · 2023.11 · arXiv:2311.07911 ｜ 2025 年成主流</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">设计</div><div class="bench-meta">541 道指令跟随题，每道题包含可程序化验证的约束（如"回复不超过 100 字"、"包含关键词 X"），自动评判无需 LLM-as-Judge</div></li>
+          <li><div class="bench-name">2025 年地位</div><div class="bench-meta">几乎所有主流模型技术报告均包含 IFEval，成为指令跟随能力的标配指标。SOTA 约 90%+。</div></li>
+          <li><div class="bench-name">局限</div><div class="bench-meta">约束较机械，未测试语义层面的指令理解；可程序化约束覆盖面有限</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">🗂️</div>
+          <div>
+            <h3>FRAMES（长文档检索+推理）</h3>
+            <div class="sub">Google DeepMind · 2024.09 · arXiv:2409.12941</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">设计</div><div class="bench-meta">测试模型在给定多文档（最长 32K token）后的跨文档推理和检索能力。答案需要综合多个文档片段。</div></li>
+          <li><div class="bench-name">特点</div><div class="bench-meta">区分 Single-hop 和 Multi-hop（需要串联多文档），是 RAG 系统评测的优质基准</div></li>
+          <li><div class="bench-name">2025 应用</div><div class="bench-meta">被广泛用于评测 Gemini/Claude 等长上下文模型的 RAG 能力</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c4">
+        <div class="dir-card-header">
+          <div class="dir-icon">🧮</div>
+          <div>
+            <h3>MMLU-Pro（知识推理升级版）</h3>
+            <div class="sub">Wang et al. · 2024.06 · arXiv:2406.01574 · 2025 年成主流</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">改进</div><div class="bench-meta">将 MMLU 的 4 选 1 升级为 10 选 1，并加入更多推理性题目（而非纯记忆），共 12K 题</div></li>
+          <li><div class="bench-name">难度</div><div class="bench-meta">MMLU 平均 ~90% 时，MMLU-Pro SOTA 约 72–78%（2025.02），显著更难</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">MMLU 饱和后的主要替代者，已被 Anthropic/OpenAI/Google 纳入标准评测套件</div></li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION: Anti-Leak 2025 ===== -->
+  <section id="antileak25">
+    <h2 class="section-title"><span class="icon">🛡️</span>2025–2026 防污染评测新范式</h2>
+    <p class="section-desc">2025 年最重要的评测方法论进展：从"静态题库"到"动态/实时/程序生成"评测体系。</p>
+
+    <div class="dir-grid">
+
+      <div class="dir-card c1">
+        <div class="dir-card-header">
+          <div class="dir-icon">⚡</div>
+          <div>
+            <h3>LiveCodeBench v2+</h3>
+            <div class="sub">Jain et al. · 2024.03 · arXiv:2403.07974 · 持续更新到 2026</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">防污染机制</div><div class="bench-meta">持续从 LeetCode/Codeforces/AtCoder 实时爬取新题，带发布日期标注。评测时只使用模型训练截止日期后的题目。</div></li>
+          <li><div class="bench-name">2025 新增</div><div class="bench-meta">加入代码修复、代码测试生成、代码转换三类新任务，不再局限于代码生成</div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">截至 2025 年末已累计 3000+ 题，是最大的防污染代码评测基准</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c5">
+        <div class="dir-card-header">
+          <div class="dir-icon">🧬</div>
+          <div>
+            <h3>GSM-Symbolic / GSM-NoOp</h3>
+            <div class="sub">Apple · 2024.10 · arXiv:2410.05229</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">设计</div><div class="bench-meta">将 GSM8K 数字替换为新符号（GSM-Symbolic），或加入无关条件（GSM-NoOp），测试模型是否真正在推理还是只在识别模式</div></li>
+          <li><div class="bench-name">发现</div><div class="bench-meta">所有主流模型在 GSM-Symbolic 上均下降 4–20%，在 GSM-NoOp 上下降更严重。表明模型部分依赖训练数据中的题目模式。</div></li>
+          <li><div class="bench-name">影响</div><div class="bench-meta">引发学界重新思考数学评测可靠性，推动了更多基于程序生成的动态数学题</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c3">
+        <div class="dir-card-header">
+          <div class="dir-icon">📅</div>
+          <div>
+            <h3>Benchmark Self-Evolving（动态基准框架）</h3>
+            <div class="sub">COLING 2025 · ACL Anthology</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">设计</div><div class="bench-meta">Multi-agent 框架，由 LLM 自动生成新题目、自动验证、自动加入题库，实现基准题库的自动扩展与更新</div></li>
+          <li><div class="bench-name">意义</div><div class="bench-meta">试图从根本上解决"benchmark 很快被模型解决"的问题，通过持续自动演化保持难度</div></li>
+          <li><div class="bench-name">挑战</div><div class="bench-meta">LLM 生成的题目质量和人工命题差距仍大；自动验证存在漏洞</div></li>
+        </ul>
+      </div>
+
+      <div class="dir-card c2">
+        <div class="dir-card-header">
+          <div class="dir-icon">🏟️</div>
+          <div>
+            <h3>Chatbot Arena 2.0 进展</h3>
+            <div class="sub">LMSYS · 2025 持续更新 · 1000 万+ 对话投票</div>
+          </div>
+        </div>
+        <ul class="bench-list">
+          <li><div class="bench-name">2025 新增</div><div class="bench-meta">Hard Prompts 子集（人工筛选难题）；Vision Arena（多模态盲测）；Coding Arena（代码专项）</div></li>
+          <li><div class="bench-name">规模</div><div class="bench-meta">截至 2025 年底约 1500 万次盲测投票，覆盖 100+ 模型，100+ 语言</div></li>
+          <li><div class="bench-name">ELO 体系</div><div class="bench-meta">升级为 Bradley-Terry-Luce 模型，加入时间衰减因子，更准确反映模型当前能力排名</div></li>
+        </ul>
+      </div>
+
+    </div>
+
+    <!-- Key insight box -->
+    <div style="margin-top:32px;background:var(--card);border-radius:12px;border:1px solid var(--border);padding:28px;">
+      <h4 style="font-size:16px;font-weight:700;color:var(--text1);margin-bottom:16px;">📌 2025–2026 评测体系核心判断</h4>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="padding:16px;background:rgba(58,123,213,0.06);border-radius:8px;border:1px solid rgba(58,123,213,0.2);">
+          <div style="font-size:11px;font-weight:700;color:var(--accent1);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">能力天花板转移</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.7;">MMLU/HumanEval 已基本饱和，新的能力边界在 HLE、ARC-AGI-2、FrontierMath 等极难基准上。推理模型（o3/R1）正在快速推进这个边界。</p>
+        </div>
+        <div style="padding:16px;background:rgba(46,196,160,0.06);border-radius:8px;border:1px solid rgba(46,196,160,0.2);">
+          <div style="font-size:11px;font-weight:700;color:var(--accent2);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">Agent 评测成主战场</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.7;">2025 年最激烈的评测竞争在 SWE-bench Verified、OSWorld、BrowseComp 上。单轮问答能力几乎成了基础门槛，多步 Agent 执行才是新分水岭。</p>
+        </div>
+        <div style="padding:16px;background:rgba(245,158,11,0.06);border-radius:8px;border:1px solid rgba(245,158,11,0.2);">
+          <div style="font-size:11px;font-weight:700;color:var(--accent3);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:8px;">防污染成行业共识</div>
+          <p style="font-size:12px;color:var(--text2);line-height:1.7;">LiveBench、LiveCodeBench、BrowseComp 等时间截止+动态更新的设计已成为新基准的默认标准。静态基准需要配合污染声明才有公信力。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3A: TIMELINE (UPDATED) ===== -->
+  <section id="timeline">
+    <h2 class="section-title"><span class="icon">📅</span>发展时间线（2018–2025）</h2>
+    <p class="section-desc">LLM Benchmark 从基础学科问答到多模态Agent评测的七年演进历程。</p>
+
+    <div class="timeline">
+
+      <div class="tl-item y2018">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2018</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">NLP评测起步期 · 以规则推理和科学知识为重点</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(100,116,139,0.2);color:#94a3b8;">ARC（AI2推理挑战，科学题）</span>
+            <span class="tl-bench-tag" style="background:rgba(100,116,139,0.2);color:#94a3b8;">GLUE（多任务NLP基准）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2019">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2019</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">常识推理 & 语言理解提升 · 对抗数据集构造兴起</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(58,123,213,0.2);color:#5b9ef5;">HellaSwag（对抗续句选择）</span>
+            <span class="tl-bench-tag" style="background:rgba(58,123,213,0.2);color:#5b9ef5;">SuperGLUE（增强版GLUE）</span>
+            <span class="tl-bench-tag" style="background:rgba(58,123,213,0.2);color:#5b9ef5;">WinoGrande（常识代词消歧）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2020">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2020</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">多任务学科知识评测元年 · MMLU成为里程碑</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(46,196,160,0.2);color:#2ec4a0;">MMLU（57学科多选题，成为标配）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2021">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2021</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">代码+数学+真实性评测集体爆发 · 功能性评测崛起</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(245,158,11,0.2);color:#f59e0b;">HumanEval（代码pass@k）</span>
+            <span class="tl-bench-tag" style="background:rgba(245,158,11,0.2);color:#f59e0b;">MBPP（入门Python）</span>
+            <span class="tl-bench-tag" style="background:rgba(245,158,11,0.2);color:#f59e0b;">GSM8K（小学数学推理）</span>
+            <span class="tl-bench-tag" style="background:rgba(245,158,11,0.2);color:#f59e0b;">MATH（竞赛数学）</span>
+            <span class="tl-bench-tag" style="background:rgba(245,158,11,0.2);color:#f59e0b;">TruthfulQA（幻觉检测）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2022">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2022</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">大规模综合基准 & 视觉推理 · ChatGPT出现前夜</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(167,139,250,0.2);color:#a78bfa;">BIG-Bench（200+任务）</span>
+            <span class="tl-bench-tag" style="background:rgba(167,139,250,0.2);color:#a78bfa;">CodeContests（竞赛代码）</span>
+            <span class="tl-bench-tag" style="background:rgba(167,139,250,0.2);color:#a78bfa;">DS-1000（数据科学）</span>
+            <span class="tl-bench-tag" style="background:rgba(167,139,250,0.2);color:#a78bfa;">ScienceQA（科学多模态）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2023">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2023</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">LLM-as-Judge & Agent & 中文评测 · 评测范式革命</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">SWE-bench（真实工程）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">LongBench（长文本）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">ToolBench（API调用）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">WebArena（网页Agent）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">AgentBench（多环境）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">GAIA（通用助手）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">C-Eval（中文学科）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">CMMLU（中文文化）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">AGIEval（资格考试）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">MT-Bench（多轮对话）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">AlpacaEval（偏好评测）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">IFEval（指令遵循）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">MMBench（视觉）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">MMMU（大学多模态）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">MathVista（图表数学）</span>
+            <span class="tl-bench-tag" style="background:rgba(233,69,96,0.2);color:#e94560;">Needle-in-Haystack</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2024">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2024</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">防污染 & 超长文本 & 视频 · 评测军备竞赛加速</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">MMLU-Pro（更难知识）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">LiveCodeBench（实时代码）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">RULER（合成长文本）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">InfBench（100K+）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">LongBench-v2（深度理解）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">TAU-bench（客服Agent）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">OSWorld（GUI操作）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">Arena-Hard（困难对齐）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">WildBench（真实用户）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">VideoMME（视频理解）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">OlympiadBench（奥数）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">MathBench（中文数学）</span>
+            <span class="tl-bench-tag" style="background:rgba(251,146,60,0.2);color:#fb923c;">AIME 2024</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item y2025">
+        <div class="tl-dot"></div>
+        <div class="tl-year">2025</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">推理模型崛起 · frontier 超难基准 · Agent 评测成主战场 · 防污染成默认标准</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">HLE（人类最后考试 · Nature）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">ARC-AGI-2（新世代规律归纳）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">AIME 2025（竞赛数学年度题）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">FrontierMath（研究级数学）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">BrowseComp（深网络搜索Agent）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">SWE-bench Verified（代码Agent）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">OSWorld-Verified（GUI操作）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">SimpleQA Verified（事实性）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">Video-MME（视频理解，CVPR）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">MMMU-Pro（视觉推理，ACL）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">BFCL v3（工具调用升级）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">LiveBench（全类防污染更新）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">GSM-Symbolic（模式识别揭露）</span>
+            <span class="tl-bench-tag" style="background:rgba(244,114,182,0.2);color:#f472b6;">FRAMES（多文档RAG推理）</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item" style="--dot-color:#7dd3fc;">
+        <div class="tl-dot" style="border-color:#7dd3fc;"><div style="width:6px;height:6px;border-radius:50%;background:#7dd3fc;"></div></div>
+        <div class="tl-year" style="color:#7dd3fc;">2026（进行中）</div>
+        <div class="tl-content">
+          <p style="font-size:13px;color:var(--text2);margin-bottom:10px;">推理极限测试 · 科学发现 Agent · 多模态知识评测持续深化</p>
+          <div class="tl-benchmarks">
+            <span class="tl-bench-tag" style="background:rgba(125,211,252,0.2);color:#7dd3fc;">HLE 发表于 Nature（2026.01）</span>
+            <span class="tl-bench-tag" style="background:rgba(125,211,252,0.2);color:#7dd3fc;">ARC Prize 2025 Tech Report（2026.01）</span>
+            <span class="tl-bench-tag" style="background:rgba(125,211,252,0.2);color:#7dd3fc;">SimpleQA Verified 广泛采用</span>
+            <span class="tl-bench-tag" style="background:rgba(125,211,252,0.2);color:#7dd3fc;">Video-MMMU（知识型视频）</span>
+            <span class="tl-bench-tag" style="background:rgba(125,211,252,0.2);color:#7dd3fc;">LiveCodeBench 3000+ 题累积</span>
+            <span class="tl-bench-tag" style="background:rgba(125,211,252,0.2);color:#7dd3fc;">Chatbot Arena 1500万+ 投票</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3B: METHODOLOGY ===== -->
+  <section id="methodology">
+    <h2 class="section-title"><span class="icon">🔬</span>评测方法论演进</h2>
+    <p class="section-desc">从静态多选题到人机混合竞技场，LLM评测范式经历了五次重大跃迁。</p>
+    <div class="method-steps">
+
+      <div class="method-step">
+        <div class="num">1</div>
+        <span class="year-badge" style="background:rgba(58,123,213,0.15);color:#5b9ef5;">2018–2021</span>
+        <h4>闭卷多选题时代</h4>
+        <p>以MMLU、ARC、HellaSwag为代表。选择题设计，精确自动评判，低成本大规模。<br><br>
+        优点：可复现、低成本、易比较<br>
+        缺点：选择题无法测试生成质量；记忆>推理；猜测率偏高</p>
+      </div>
+
+      <div class="method-step">
+        <div class="num">2</div>
+        <span class="year-badge" style="background:rgba(46,196,160,0.15);color:#2ec4a0;">2021–2022</span>
+        <h4>开放生成 + 代码执行</h4>
+        <p>HumanEval引入pass@k，GSM8K测试推理链，代码通过单元测试客观评判。<br><br>
+        优点：更贴近真实能力；可执行验证<br>
+        缺点：样本量小；测试环境配置复杂；数学答案等价判断困难</p>
+      </div>
+
+      <div class="method-step">
+        <div class="num">3</div>
+        <span class="year-badge" style="background:rgba(245,158,11,0.15);color:#f59e0b;">2023</span>
+        <h4>LLM-as-Judge</h4>
+        <p>MT-Bench和AlpacaEval用GPT-4替代人工打分，成本下降100倍，实现大规模偏好评测。<br><br>
+        优点：可扩展；与人类偏好相关性高<br>
+        缺点：位置偏见/长度偏见/自我偏好；评判模型版本影响结果</p>
+      </div>
+
+      <div class="method-step">
+        <div class="num">4</div>
+        <span class="year-badge" style="background:rgba(233,69,96,0.15);color:#e94560;">2024</span>
+        <h4>动态/实时防污染</h4>
+        <p>LiveCodeBench实时爬取新题，LongBench-v2引入难以靠记忆完成的深度理解任务，时间截止过滤。<br><br>
+        优点：有效对抗数据污染<br>
+        缺点：维护成本高；难度稳定性差；需要持续运营</p>
+      </div>
+
+      <div class="method-step">
+        <div class="num">5</div>
+        <span class="year-badge" style="background:rgba(167,139,250,0.15);color:#a78bfa;">2023–持续</span>
+        <h4>人机混合竞技场</h4>
+        <p>LMSYS Chatbot Arena通过数百万真实用户盲测投票，Bradley-Terry模型计算ELO分数，最接近真实使用场景。<br><br>
+        优点：真实用户分布；大规模众包；覆盖多语言<br>
+        缺点：评测不透明；用户分布偏English-Heavy；操纵风险</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== SECTION 3C: CONTAMINATION ===== -->
+  <section id="contamination">
+    <h2 class="section-title"><span class="icon">☣️</span>数据污染问题</h2>
+    <p class="section-desc">数据污染是当前LLM评测面临的最严峻挑战，直接威胁评测结果的可信度。</p>
+    <div class="cont-grid">
+
+      <div class="cont-card">
+        <h4><span style="color:var(--accent4)">⚠️</span> 当前现状</h4>
+        <ul>
+          <li>MMLU、GSM8K、HumanEval等主流基准已大量进入网络语料，几乎所有大模型训练集均有覆盖</li>
+          <li>OpenAI/Anthropic等均披露其模型在HumanEval等数据集上有数据泄露迹象</li>
+          <li>ChatGPT（2022年底）发布后，大量"GPT答题"内容被爬入后续模型训练集</li>
+          <li>部分模型在公开benchmark上"过度优化"，实际能力被高估</li>
+          <li>中文benchmark（C-Eval等）因中文互联网考试题丰富，污染尤为严重</li>
+        </ul>
+      </div>
+
+      <div class="cont-card">
+        <h4><span style="color:var(--accent3)">🔍</span> 检测方法</h4>
+        <ul>
+          <li><strong style="color:var(--text1)">n-gram重叠检测：</strong>统计测试题与训练语料的n-gram重叠率，简单有效</li>
+          <li><strong style="color:var(--text1)">Canary String：</strong>在测试集中插入特殊标记字符串，检测模型是否记忆</li>
+          <li><strong style="color:var(--text1)">Membership Inference：</strong>攻击判断样本是否在训练集中，更精准</li>
+          <li><strong style="color:var(--text1)">对比实验：</strong>比较"seen/unseen"分区上的性能差异</li>
+          <li><strong style="color:var(--text1)">扰动测试：</strong>对题目做等价变换，污染模型性能显著下降</li>
+          <li><strong style="color:var(--text1)">GSM-Symbolic：</strong>Apple研究通过符号替换发现模型依赖模式而非推理</li>
+        </ul>
+      </div>
+
+      <div class="cont-card">
+        <h4><span style="color:var(--accent2)">✅</span> 解决方向</h4>
+        <ul>
+          <li><strong style="color:var(--text1)">动态生成题目：</strong>LiveCodeBench / FrontierMath从未公开来源实时生成</li>
+          <li><strong style="color:var(--text1)">时间截止过滤：</strong>只使用模型训练截止日期之后发布的题目</li>
+          <li><strong style="color:var(--text1)">私有保留集：</strong>保留不公开的测试集（SWE-bench Verified）</li>
+          <li><strong style="color:var(--text1)">程序化生成：</strong>通过模板生成无限新题（RULER的合成方式）</li>
+          <li><strong style="color:var(--text1)">人机竞技场：</strong>实时真实用户query天然防污染（Chatbot Arena）</li>
+          <li><strong style="color:var(--text1)">加密哈希验证：</strong>训练前提交benchmark哈希，防止有针对性训练</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="margin-top:28px;background:var(--card);border-radius:12px;border:1px solid var(--border);padding:24px;">
+      <h4 style="font-size:15px;font-weight:700;color:var(--text1);margin-bottom:12px;">📌 研究社区共识</h4>
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;">
+        <div style="padding:14px;background:rgba(58,123,213,0.06);border-radius:8px;border:1px solid rgba(58,123,213,0.2);">
+          <p style="font-size:12px;color:var(--text2);line-height:1.7;">
+            <strong style="color:var(--accent1)">短期：</strong>静态benchmark仍有价值，但需配合污染检测报告；关注"相对排名"而非绝对数值；使用多个benchmark交叉验证
+          </p>
+        </div>
+        <div style="padding:14px;background:rgba(46,196,160,0.06);border-radius:8px;border:1px solid rgba(46,196,160,0.2);">
+          <p style="font-size:12px;color:var(--text2);line-height:1.7;">
+            <strong style="color:var(--accent2)">中期：</strong>动态生成+时间截止成为标准；私有测试集+公开验证协议；定期版本迭代（类似WNLI/SuperGLUE迭代路径）
+          </p>
+        </div>
+        <div style="padding:14px;background:rgba(245,158,11,0.06);border-radius:8px;border:1px solid rgba(245,158,11,0.2);">
+          <p style="font-size:12px;color:var(--text2);line-height:1.7;">
+            <strong style="color:var(--accent3)">长期：</strong>人机混合竞技场+专家评测结合；建立可信第三方评测机构；从"拟合benchmark"转向"解决真实问题"
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>LLM Benchmark 综述报告 · 2025–2026 更新版 · 涵盖 70+ 核心基准，8大评测方向 + 2025–2026 前沿新章节</p>
+    <p style="margin-top:8px;">数据来源：arXiv 论文 / Nature / CVPR / ACL / GitHub / 各研究机构官方页面 · 如有更新请以原始论文为准</p>
+    <p style="margin-top:8px;">
+      代表性资源：
+      <a href="https://paperswithcode.com/sota" target="_blank">PapersWithCode SOTA</a> ·
+      <a href="https://chat.lmsys.org/" target="_blank">LMSYS Chatbot Arena</a> ·
+      <a href="https://huggingface.co/spaces/HuggingFaceH4/open_llm_leaderboard" target="_blank">Open LLM Leaderboard</a>
+    </p>
+  </footer>
+
+</div>
+
+<script>
+// Highlight active nav on scroll
+const sections = document.querySelectorAll('section[id], div.hero');
+const navItems = document.querySelectorAll('.nav-item');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const id = entry.target.id || 'hero';
+      navItems.forEach(item => {
+        item.classList.remove('active');
+        if (item.getAttribute('href') === '#' + id) {
+          item.classList.add('active');
+        }
+      });
+    }
+  });
+}, { rootMargin: '-20% 0px -70% 0px' });
+
+document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>

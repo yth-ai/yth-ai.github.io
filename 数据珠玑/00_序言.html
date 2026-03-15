@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>序言 · 数据珠玑</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2e7dbe;
+    --light-bg: #f5f8fc;
+    --text: #2c3e50;
+    --muted: #7f8c9a;
+    --border: #d0dce8;
+    --highlight: #fff8e1;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Georgia', 'Noto Serif SC', serif;
+    background: #fff;
+    color: var(--text);
+    line-height: 1.9;
+    font-size: 17px;
+  }
+  .book-header {
+    background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 60%, #2e5f8a 100%);
+    color: #fff;
+    padding: 60px 5%;
+    text-align: center;
+  }
+  .book-title { font-size: 2.8em; letter-spacing: 0.1em; margin-bottom: 8px; }
+  .book-subtitle { font-size: 1.1em; color: #a8c4dc; letter-spacing: 0.05em; }
+  .chapter-header {
+    padding: 48px 5% 32px;
+    border-bottom: 2px solid var(--border);
+    background: var(--light-bg);
+  }
+  .chapter-label { color: var(--accent); font-size: 0.85em; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; font-family: sans-serif; }
+  .chapter-title { font-size: 2em; color: var(--primary); line-height: 1.3; }
+  .main-content { max-width: 860px; margin: 0 auto; padding: 40px 5%; }
+  h2 { font-size: 1.5em; color: var(--primary); margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 1.15em; color: var(--accent); margin: 32px 0 12px; }
+  p { margin-bottom: 1.2em; }
+  blockquote {
+    border-left: 4px solid var(--accent);
+    background: var(--light-bg);
+    padding: 16px 24px;
+    margin: 24px 0;
+    font-style: italic;
+    color: #445566;
+    border-radius: 0 6px 6px 0;
+  }
+  .highlight-box {
+    background: var(--highlight);
+    border: 1px solid #f0d060;
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin: 24px 0;
+  }
+  .highlight-box strong { color: #8b6914; }
+  .stat-row {
+    display: flex;
+    gap: 24px;
+    margin: 28px 0;
+    flex-wrap: wrap;
+  }
+  .stat-card {
+    flex: 1;
+    min-width: 160px;
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+  }
+  .stat-card .number { font-size: 2em; font-weight: bold; color: var(--accent); }
+  .stat-card .label { font-size: 0.85em; color: var(--muted); margin-top: 4px; font-family: sans-serif; }
+  .toc-box {
+    background: var(--light-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 32px;
+    margin: 32px 0;
+  }
+  .toc-box h4 { color: var(--primary); margin-bottom: 12px; font-size: 1em; font-family: sans-serif; }
+  .toc-box ul { list-style: none; }
+  .toc-box ul li { padding: 4px 0; color: var(--muted); font-family: sans-serif; font-size: 0.9em; }
+  .toc-box ul li::before { content: "→ "; color: var(--accent); }
+  .footer-nav {
+    border-top: 1px solid var(--border);
+    padding: 24px 5%;
+    display: flex;
+    justify-content: flex-end;
+    font-family: sans-serif;
+    font-size: 0.9em;
+  }
+  .footer-nav a { color: var(--accent); text-decoration: none; }
+  .footer-nav a:hover { text-decoration: underline; }
+  .author-note {
+    font-family: sans-serif;
+    font-size: 0.92em;
+    color: var(--muted);
+    border-top: 1px solid var(--border);
+    margin-top: 48px;
+    padding-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Preface</div>
+  <div class="chapter-title">序言：为什么"数据"是 LLM 时代最被低估的核心资产</div>
+</div>
+
+<div class="main-content">
+
+  <h2>一、被遗忘的基础</h2>
+
+  <p>当 GPT-4 以流利的语言完成复杂推理，当 Gemini 跨越视觉与文字的边界，当 DeepSeek 以极低成本逼近前沿性能，公众的目光几乎无一例外地聚焦在模型架构的精妙、算力集群的规模、以及训练算法的创新之上。</p>
+
+  <p>数据，这个一切的起点，被惊人地低估了。</p>
+
+  <blockquote>
+    "Garbage in, garbage out" 是计算机科学的古训，但在大语言模型时代，这句话的含义已远比字面深刻：不是"垃圾进来垃圾出去"这么简单，而是"数据的形状决定了智能的形状"。
+  </blockquote>
+
+  <p>2020年，OpenAI 发布 GPT-3。那篇论文中最被引用的数字是 1750 亿参数——模型的规模。但如果你仔细读完全文，你会发现另一个同样惊人的数字：这个模型消化了 <strong>约 570GB 的过滤后文本数据</strong>，来自 Common Crawl、WebText2、Books1、Books2 和维基百科。数据来源的选择与配比，在论文中只占了寥寥几页，但它们在很大程度上决定了这个模型能做什么、不能做什么，以及会犯什么样的错误。</p>
+
+  <p>五年后的今天，训练一个前沿 LLM 所需的 Token 数量已从数百亿跃升至数十万亿（Trillion）。数据的规模增长速度，甚至超过了著名的算力扩展定律（Scaling Law）所描述的算力增长速度。</p>
+
+  <div class="stat-row">
+    <div class="stat-card">
+      <div class="number">570 GB</div>
+      <div class="label">GPT-3 训练数据（2020）</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">~15 T</div>
+      <div class="label">LLaMA-3 训练 Token 数（2024）</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">&gt;10x</div>
+      <div class="label">四年间数据规模增幅</div>
+    </div>
+    <div class="stat-card">
+      <div class="number">未知</div>
+      <div class="label">GPT-4/Gemini 训练数据（未公开）</div>
+    </div>
+  </div>
+
+  <h2>二、数据为何被低估</h2>
+
+  <p>有几个结构性原因，导致数据在 LLM 话语体系中长期处于幕后：</p>
+
+  <h3>2.1 可见性不对称</h3>
+  <p>模型架构可以写成论文、画成图表、发表到 arXiv。算力可以用 GPU 小时量化。而数据，尤其是高质量的私有数据，天然倾向于不公开——既因为版权风险，也因为它是竞争壁垒。你很难在一篇论文里看到"我们的数据来源是XX"，但这恰恰是最关键的部分。</p>
+
+  <h3>2.2 "数据工程"不够性感</h3>
+  <p>在 AI 研究圈，设计新架构、提出新训练算法，才是顶级会议的焦点。清洗 1TB 网页文本、去重、过滤毒性内容，听起来更像是工程劳动而非科学研究。这种偏见造成了严重的知识断层：数据工程实践大量存在于公司内部，很少被系统总结和分享。</p>
+
+  <h3>2.3 混淆了"数据量"与"数据价值"</h3>
+  <p>早期的扩展定律研究让人产生一种错觉：更多数据 = 更好模型。这导致了大量"大力出奇迹"式的数据堆砌。直到 Chinchilla（2022）的出现，才将这个问题的复杂性带回视野——<strong>数据质量与配比，至少和数量同等重要</strong>。</p>
+
+  <h3>2.4 法律与伦理的雷区使话题变得敏感</h3>
+  <p>版权诉讼、隐私监管、偏见指控……凡是涉及训练数据的话题，都潜藏法律风险。许多公司对数据来源讳莫如深，客观上阻碍了公开讨论。</p>
+
+  <h2>三、数据正在成为最重要的护城河</h2>
+
+  <p>然而，越来越多的从业者意识到：在 Transformer 架构日趋同质化、开源模型快速追赶的今天，<strong>数据是少数几个仍能形成持久竞争优势的维度之一</strong>。</p>
+
+  <div class="highlight-box">
+    <strong>关键洞察：</strong>当架构趋于收敛，当算法可以被复现，当算力可以购买，唯有数据——特别是经过精心策划的高质量、有特定分布的数据——难以被快速复制。这正是为什么谷歌的搜索数据、Meta 的社交数据、OpenAI 的 RLHF 人工反馈数据，都被视为战略资产。
+  </div>
+
+  <p>2024年，随着"互联网数据趋向枯竭"的讨论愈演愈烈，合成数据（Synthetic Data）作为解决方案走向前台。从 phi-1 到 Gemini Nano，从 WizardLM 到 DeepSeek-R1，越来越多的前沿工作揭示：由模型生成的合成数据，在特定任务上可以超越天然互联网数据。这进一步证明了数据策略的核心地位——问题不再只是"从哪里收集数据"，而是"如何创造和塑造数据"。</p>
+
+  <h2>四、本书的结构与阅读方式</h2>
+
+  <p>本书名为《数据珠玑》，取"珠玑"之意——珍贵而紧密排列的珍珠，每一颗都是精心打磨的知识。本书试图系统梳理大语言模型训练数据的完整生命周期，涵盖三大部分：</p>
+
+  <div class="toc-box">
+    <h4>本书结构概览</h4>
+    <ul>
+      <li><strong>第一部分：预训练数据</strong>——数据来源、清洗、配比与前沿问题</li>
+      <li><strong>第二部分：中训练数据</strong>——领域适配、能力增强与知识更新</li>
+      <li><strong>第三部分：后训练数据</strong>——SFT、RLHF、偏好数据与对齐工程</li>
+    </ul>
+  </div>
+
+  <p><strong>目标读者</strong>：本书写给 AI 工程师、数据科学家、NLP 研究者，以及对 LLM 内部机制感到好奇的产品经理和技术决策者。我们尽量兼顾深度与可读性——每一章都有理论基础，也有工业实践的案例；有学术前沿的引用，也有"踩坑笔记"式的第一手观察。</p>
+
+  <p><strong>如何阅读</strong>：你可以从头到尾线性阅读，也可以按需跳读。如果你当前聚焦于某个特定问题（比如如何构建 SFT 数据集，或者如何应对数据污染），可以直接跳到相应章节。但我们建议，即便是只关注后训练的读者，也值得浏览一遍第一部分——预训练数据的特性，深刻地影响着后训练策略的选择。</p>
+
+  <h2>五、一点坦诚的说明</h2>
+
+  <p>大语言模型的训练数据领域，是一个快速演化、信息不对称极为严重的领域。许多最关键的实践细节，从未被公开发表。本书在尽力综合公开文献、开源数据集文档和工业界可披露信息的同时，也无法回避这一现实：有些最重要的问题，答案仍在探索之中。</p>
+
+  <p>我们将在适当之处明确标注哪些是已有定论、哪些是当前主流实践、哪些是悬而未决的开放问题。这种诚实，本身也是本书希望传递的一种科学态度。</p>
+
+  <blockquote>
+    数据不是燃料，不是投入就能燃烧的原料。数据是土壤——它的成分、质地、生态，决定了在它上面能生长出什么样的智能。理解数据，是理解大语言模型的真正起点。
+  </blockquote>
+
+  <div class="author-note">
+    <p><em>《数据珠玑：大语言模型训练数据全景》</em></p>
+  </div>
+
+</div>
+
+<div class="footer-nav">
+  <a href="01_第一章_预训练数据总论.html">第1章 预训练数据总论 →</a>
+</div>
+
+</body>
+</html>

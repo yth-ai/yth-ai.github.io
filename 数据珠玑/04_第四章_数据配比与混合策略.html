@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第4章 数据配比与混合策略 · 数据珠玑</title>
+<style>
+  :root { --primary:#1a3a5c; --accent:#2e7dbe; --light-bg:#f5f8fc; --text:#2c3e50; --muted:#7f8c9a; --border:#d0dce8; --highlight:#fff8e1; --green-bg:#f0faf4; --green-border:#68c98a; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Georgia','Noto Serif SC',serif; background:#fff; color:var(--text); line-height:1.9; font-size:17px; }
+  .book-header { background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 60%,#2e5f8a 100%); color:#fff; padding:40px 5%; text-align:center; }
+  .book-title { font-size:1.8em; letter-spacing:0.1em; }
+  .book-subtitle { font-size:0.95em; color:#a8c4dc; margin-top:6px; }
+  .chapter-header { padding:48px 5% 32px; border-bottom:2px solid var(--border); background:var(--light-bg); }
+  .chapter-label { color:var(--accent); font-size:0.85em; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; font-family:sans-serif; }
+  .chapter-title { font-size:2.2em; color:var(--primary); line-height:1.3; }
+  .chapter-intro { font-size:1.05em; color:#445; margin-top:16px; max-width:680px; font-style:italic; }
+  .main-content { max-width:860px; margin:0 auto; padding:40px 5%; }
+  h2 { font-size:1.5em; color:var(--primary); margin:52px 0 16px; padding-bottom:8px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:1.15em; color:#1a5080; margin:32px 0 12px; }
+  p { margin-bottom:1.2em; }
+  ul,ol { margin:12px 0 16px 24px; line-height:2; }
+  blockquote { border-left:4px solid var(--accent); background:var(--light-bg); padding:16px 24px; margin:24px 0; font-style:italic; color:#445566; border-radius:0 6px 6px 0; }
+  .highlight-box { background:var(--highlight); border:1px solid #f0d060; border-radius:6px; padding:20px 24px; margin:24px 0; }
+  .highlight-box strong { color:#8b6914; }
+  .info-box { background:var(--light-bg); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .info-box h4 { color:var(--accent); margin-bottom:8px; font-family:sans-serif; }
+  .success-box { background:var(--green-bg); border:1px solid var(--green-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  table { width:100%; border-collapse:collapse; margin:24px 0; font-family:sans-serif; font-size:0.88em; }
+  th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--light-bg); }
+  .formula-box { background:#f8f4ff; border:1px solid #c9b8f0; border-radius:6px; padding:16px 24px; margin:20px 0; font-family:'Courier New',monospace; font-size:0.92em; color:#3d1f7a; }
+  .mix-chart { display:flex; gap:4px; margin:20px 0; align-items:flex-end; height:180px; }
+  .mix-bar { flex:1; border-radius:4px 4px 0 0; display:flex; flex-direction:column; justify-content:flex-end; align-items:center; padding-bottom:8px; font-family:sans-serif; font-size:0.72em; color:#fff; font-weight:bold; min-width:0; }
+  .bar-label { margin-top:8px; font-family:sans-serif; font-size:0.75em; color:var(--muted); text-align:center; }
+  .footnote { font-size:0.82em; color:var(--muted); font-family:sans-serif; border-top:1px solid var(--border); margin-top:40px; padding-top:16px; }
+  .nav-bar { border-top:1px solid var(--border); padding:24px 5%; display:flex; justify-content:space-between; font-family:sans-serif; font-size:0.9em; }
+  .nav-bar a { color:var(--accent); text-decoration:none; }
+  .nav-bar a:hover { text-decoration:underline; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第一部分：预训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 4 · Data Mixture and Blending Strategy</div>
+  <div class="chapter-title">第4章 数据配比与混合策略</div>
+  <div class="chapter-intro">从直觉配比到算法搜索，探索预训练数据混合的科学——如何在不同数据域之间找到最优的平衡点。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>4.1 Domain Mixture：各数据源的最优比例如何确定</h2>
+
+  <p>假设你已经收集并清洗了网页、书籍、代码、学术论文、新闻等多个数据域的语料，下一个问题是：各个域应该以什么比例混合进行训练？这是预训练数据工程中最缺乏理论指导、最依赖实验验证的问题之一。</p>
+
+  <h3>GPT-3 的配比公开数据</h3>
+
+  <p>GPT-3 是少数明确公开了数据配比的前沿模型之一。其训练数据混合如下（按训练 Token 采样权重，非原始数据量比例）：</p>
+
+  <table>
+    <thead><tr><th>数据源</th><th>采样权重</th><th>原始数据量</th><th>每 Epoch 采样次数</th></tr></thead>
+    <tbody>
+      <tr><td>Common Crawl（过滤后）</td><td>60%</td><td>410B Token</td><td>~0.44×</td></tr>
+      <tr><td>WebText2</td><td>22%</td><td>19B Token</td><td>~2.9×</td></tr>
+      <tr><td>Books1</td><td>8%</td><td>12B Token</td><td>~1.9×</td></tr>
+      <tr><td>Books2</td><td>8%</td><td>55B Token</td><td>~0.43×</td></tr>
+      <tr><td>Wikipedia</td><td>3%</td><td>3B Token</td><td>~3.4×</td></tr>
+    </tbody>
+  </table>
+
+  <p>这组配比数据揭示了一个重要信号：<strong>WebText2 和维基百科被大量过采样（多次重复训练）</strong>，说明它们的质量信号被认为远高于原始数据量所代表的价值。这是"数量配比"与"质量权重"的早期实践。</p>
+
+  <h3>LLaMA 系列的配比演进</h3>
+
+  <p>Meta 的 LLaMA 系列逐步迭代了数据配比策略：</p>
+
+  <div class="info-box">
+    <h4>LLaMA-1（2023）：以公开数据为主</h4>
+    <p>CommonCrawl 67%、C4 15%、GitHub 4.5%、Wikipedia 4.5%、Books 4.5%、ArXiv 2.5%、StackExchange 2%。代码比例较低（约 4.5%），与后续版本的区别明显。</p>
+  </div>
+
+  <div class="info-box">
+    <h4>LLaMA-3（2024）：大幅提升代码与推理数据</h4>
+    <p>代码比例提升至约 17%（相比 LLaMA-1 的 4.5%），数学和科学内容专项上采样，多语言内容（5% 非英语）首次作为独立目标。官方报告明确提出"质量优先于数量"的策略转变。</p>
+  </div>
+
+  <h3>跨域性能的权衡</h3>
+
+  <p>数据配比存在明显的性能权衡：增加代码比例会提升代码生成和推理能力，但可能轻微降低纯语言任务（如创意写作）的流畅度；增加学术论文比例会提升 STEM 知识，但可能让模型的口语表达变得过于正式。目前尚无通用的"最优配比"，不同应用场景的目标导向了不同的配比选择。</p>
+
+  <!-- 4.2 -->
+  <h2>4.2 Upsampling 与 Downsampling 的原则</h2>
+
+  <p>当原始数据集中不同域的数据量差异悬殊时，直接按原始比例训练会导致大域主导（如 Common Crawl 几乎会淹没所有其他来源）。通过上采样（Upsampling）和下采样（Downsampling）调整各域的训练频率，是解决这一问题的核心手段。</p>
+
+  <h3>上采样（Upsampling）</h3>
+
+  <p>对于数据量较少但质量高的域，通过重复采样使其在训练中出现更多次。常用实现方式：</p>
+
+  <ul>
+    <li><strong>权重上采样</strong>：设置域权重 w_i，按权重概率随机采样。例如，将维基百科的权重设为其原始数据量对应权重的 3 倍</li>
+    <li><strong>Epoch 重复</strong>：对特定域的数据进行 k 次 Epoch 重复训练。Muennighoff et al.（2023）发现，对高质量数据重复最多 4 个 Epoch，性能下降可忽略不计；但重复 16+ Epoch 后，过拟合会显著损害泛化能力</li>
+  </ul>
+
+  <div class="formula-box">
+    <strong>Epoch 重复与性能的关系（Muennighoff et al., 2023）：</strong><br>
+    对于 R 次重复，模型困惑度约为：<br>
+    PPL(R) ≈ PPL(1) × (1 + α × log(R))<br>
+    在 R ≤ 4 时，α 较小，性能损失可接受；<br>
+    在 R &gt; 16 时，性能损失明显，但仍优于随机数据填充
+  </div>
+
+  <h3>下采样（Downsampling）</h3>
+
+  <p>对于数量过多的域（如 Common Crawl），通过随机子采样控制其实际训练比例。下采样的关键决策是：被丢弃的部分是否应该在训练后期被"捡回"？</p>
+
+  <p>一种常见策略是"<strong>分阶段上采样</strong>"（Curriculum-style Upsampling）：在预训练初期使用相对平均的配比（包含大量 CC），在训练后期减少 CC 比例并增加高质量数据的比例，模拟"先博览群书，后精读经典"的学习过程。</p>
+
+  <h3>冷却阶段（Cooldown Phase）的特殊配比</h3>
+
+  <p>LLaMA-3、Mistral 等模型引入了"冷却阶段"（Cooldown/Annealing Phase）的概念：在预训练的最后 1-5% 的步骤中，将学习率快速降低（线性或余弦退火），同时将数据配比切换为高质量精选数据（如指令数据、高质量网页、数学数据）的混合。</p>
+
+  <div class="success-box">
+    <p><strong>冷却阶段的效果（LLaMA-3 技术报告）：</strong>Meta 发现，在冷却阶段引入约 40% 的高质量混合数据（含指令数据和数学数据），相比标准预训练结束，在推理类基准（GSM8K、MATH）和指令遵从类评测上均有显著提升，且可以减少 SFT 阶段所需的微调量。</p>
+  </div>
+
+  <!-- 4.3 -->
+  <h2>4.3 多语言数据的语言平衡策略</h2>
+
+  <p>多语言数据的配比是数据混合问题的一个特殊且复杂的子问题，因为不同语言之间不仅数量差异悬殊，质量也参差不齐。</p>
+
+  <h3>语言-性能曲线的形态</h3>
+
+  <p>研究表明，语言模型在某一语言上的性能大体上遵循数据量的对数线性关系：将某种语言的训练 Token 数翻倍，约可使该语言的性能提升固定的 Δ。但这个关系在低资源语言上会"打折"——由于跨语言迁移（Cross-lingual Transfer）效应，低资源语言可以从高资源语言（尤其是语言学上相近的语言）的训练数据中受益。</p>
+
+  <h3>α 参数的选择</h3>
+
+  <p>回顾第2章提到的多语言采样公式 P(l) ∝ n_l^α，α 的选择直接影响资源分配：</p>
+
+  <table>
+    <thead><tr><th>α 值</th><th>效果</th><th>适用场景</th></tr></thead>
+    <tbody>
+      <tr><td>1.0</td><td>按原始数量比例采样，高资源语言主导</td><td>以英语性能为主要目标时</td></tr>
+      <tr><td>0.7</td><td>中度平衡，XLM-R 原始设置</td><td>通用多语言模型</td></tr>
+      <tr><td>0.3</td><td>强平衡，低资源语言大量上采样</td><td>强调语言公平性时</td></tr>
+      <tr><td>0.0</td><td>完全均等采样，每种语言等概率</td><td>极低资源语言专项研究</td></tr>
+    </tbody>
+  </table>
+
+  <p>BLOOM（2022）的 176B 多语言模型选择了 α ≈ 0.25，大幅上采样低资源语言，在 59 种语言上取得了相对均衡的性能，但代价是英语性能略低于同规模的英语专属模型。</p>
+
+  <!-- 4.4 -->
+  <h2>4.4 代码数据对推理能力的迁移效应</h2>
+
+  <p>代码数据对通用推理能力的迁移效应（Transfer Effect）是近年来最受关注的数据配比发现之一，其意义超越了代码生成任务本身。</p>
+
+  <h3>实验证据</h3>
+
+  <p>多项独立研究证实了代码数据的推理迁移效应：</p>
+
+  <ul>
+    <li><strong>Chen et al.（Codex, 2021）</strong>：发现在大量代码上训练的模型，在数学文字题（GSM8K）上的零样本性能显著高于纯自然语言训练的同规模模型</li>
+    <li><strong>Liang et al.（2023）</strong>：系统性实验表明，代码比例从 0% 提升到 10-15% 时，BBH（Big-Bench Hard）推理任务性能单调提升；超过 15% 后出现收益递减</li>
+    <li><strong>LLaMA-3 技术报告（2024）</strong>：代码比例从 LLaMA-1 的 4.5% 提升至约 17%，GSM8K 和 MATH 性能大幅提升，同时语言能力未见明显下降</li>
+  </ul>
+
+  <h3>为什么代码能迁移推理</h3>
+
+  <p>当前最受认可的假说认为，代码训练提供了三类独特的学习信号：</p>
+
+  <ol>
+    <li><strong>过程链（Process Chains）</strong>：函数调用栈、循环展开等显式展示了"分步解决问题"的思维过程，天然对齐 Chain-of-Thought 推理</li>
+    <li><strong>精确执行语义</strong>：代码中的条件语句（if-else）、循环（for/while）强迫模型学习精确的逻辑条件判断，减少推理中的模糊性</li>
+    <li><strong>符号操作能力</strong>：变量命名、符号替换等操作增强了模型的符号推理能力，有助于数学证明和代数运算</li>
+  </ol>
+
+  <div class="highlight-box">
+    <strong>实践建议：</strong>即使你的应用场景与代码完全无关（如医疗、法律），在预训练数据中保留 5-15% 的代码数据，仍然是提升模型通用推理能力的高性价比投资。推荐优先纳入注释丰富、逻辑清晰的高质量代码（如算法教程、竞赛代码），而非 Minified JS 等低质量代码。
+  </div>
+
+  <!-- 4.5 -->
+  <h2>4.5 数据配比搜索：DoReMi、RegMix 等方法</h2>
+
+  <p>手动调整数据配比效率低下且缺乏系统性。近年来，研究者开始将数据配比问题形式化为一个优化问题，并提出了自动化搜索算法。</p>
+
+  <h3>DoReMi：基于分布鲁棒优化的配比搜索</h3>
+
+  <p>Xie et al.（2023）提出的 DoReMi（Domain Reweighting with Minimax Optimization）将数据配比问题建模为最坏情况优化（Min-Max Optimization）：寻找在所有域上都表现良好的配比，而非平均性能最优的配比。</p>
+
+  <div class="formula-box">
+    <strong>DoReMi 目标函数：</strong><br>
+    min_θ max_λ Σ_k λ_k × L_k(θ)<br>
+    其中 L_k 是在域 k 上的训练损失，λ_k 是域权重<br><br>
+    <strong>算法流程：</strong><br>
+    1. 用均匀配比训练一个小的"代理模型"（Proxy Model）<br>
+    2. 对每个域计算超额损失（Excess Loss）= 实际损失 - 参考模型损失<br>
+    3. 根据超额损失更新域权重（超额损失高的域获得更高权重）<br>
+    4. 用新权重重新训练代理模型，迭代直至收敛<br>
+    5. 将最终域权重用于正式大模型训练
+  </div>
+
+  <p>DoReMi 的实验表明，在 280B Token 的训练规模下，使用搜索得到的配比相比均匀配比，在平均困惑度上降低约 6.5%，在多个评测集上表现一致提升。</p>
+
+  <h3>RegMix：基于回归的配比优化</h3>
+
+  <p>Liu et al.（2024）提出的 RegMix 进一步简化了配比搜索的成本：训练大量（数十至数百个）极小规模（1M 参数）的代理模型，使用不同的配比组合；拟合一个配比→性能的回归模型；在回归模型的输出空间上进行优化，找到最优配比；最后用该配比训练正式大模型。</p>
+
+  <div class="success-box">
+    <p><strong>RegMix 的效率优势：</strong>相比 DoReMi 需要训练数十亿参数的代理模型，RegMix 仅需要数百个 1M 参数小模型，总计算量减少约 90%。且在 1B/3B/7B 参数的 LLaMA 模型上的验证表明，RegMix 搜索到的配比可以稳定地将 Hellaswag、ARC 等基准的平均分提升 1-3%。</p>
+  </div>
+
+  <h3>基于数据影响的配比方法</h3>
+
+  <p>另一类方法基于数据影响函数（Data Influence Functions）或 DSIR（Data Selection via Importance Resampling），通过估计每个训练样本对目标分布的重要性来调整采样权重。这类方法的优势在于可以在任意目标分布（如特定下游任务）上进行优化，而不局限于预定义的域划分。</p>
+
+  <div class="highlight-box">
+    <strong>配比搜索的工程现实：</strong>自动配比搜索方法在学术上颇具价值，但工业界的主流做法仍然是：先基于经验和直觉确定初始配比，在小规模（1B 参数以内）模型上做消融实验，通过多轮迭代调整后再应用于正式训练。这不是因为自动方法不够好，而是因为真实的数据分布和评测目标太过复杂，任何代理模型都难以完美捕捉。配比搜索方法更多用于启发初始猜测和提供决策依据。
+  </div>
+
+  <div class="footnote">
+    <p><strong>参考文献要点：</strong>Brown et al. (2020) "GPT-3"；Meta AI (2023/2024) "LLaMA 1/2/3"；Muennighoff et al. (2023) "Scaling Data-Constrained Language Models"；Xie et al. (2023) "DoReMi"；Liu et al. (2024) "RegMix"；Xie et al. (2023) "DSIR"；Alabi et al. (2022) "Adapting Pretrained LMs for Long-range Language Modeling"；BigScience (2022) "BLOOM"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="03_第三章_数据清洗与过滤.html">← 第3章</a>
+  <a href="05_第五章_预训练数据前沿问题.html">第5章 预训练数据前沿问题 →</a>
+</div>
+
+</body>
+</html>

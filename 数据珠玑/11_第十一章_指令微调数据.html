@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第11章 指令微调数据（SFT Data） · 数据珠玑</title>
+<style>
+  :root { --primary:#1a3a5c; --accent:#2e7dbe; --light-bg:#f5f8fc; --text:#2c3e50; --muted:#7f8c9a; --border:#d0dce8; --highlight:#fff8e1; --green-bg:#f0faf4; --green-border:#68c98a; --red-bg:#fff5f5; --red-border:#e88; --orange-bg:#fff7ed; --orange-border:#f5a623; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Georgia','Noto Serif SC',serif; background:#fff; color:var(--text); line-height:1.9; font-size:17px; }
+  .book-header { background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 60%,#2e5f8a 100%); color:#fff; padding:40px 5%; text-align:center; }
+  .book-title { font-size:1.8em; letter-spacing:0.1em; }
+  .book-subtitle { font-size:0.95em; color:#a8c4dc; margin-top:6px; }
+  .chapter-header { padding:48px 5% 32px; border-bottom:2px solid var(--border); background:var(--light-bg); }
+  .chapter-label { color:var(--accent); font-size:0.85em; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; font-family:sans-serif; }
+  .chapter-title { font-size:2.2em; color:var(--primary); line-height:1.3; }
+  .chapter-intro { font-size:1.05em; color:#445; margin-top:16px; max-width:680px; font-style:italic; }
+  .main-content { max-width:860px; margin:0 auto; padding:40px 5%; }
+  h2 { font-size:1.5em; color:var(--primary); margin:52px 0 16px; padding-bottom:8px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:1.15em; color:#1a5080; margin:32px 0 12px; }
+  p { margin-bottom:1.2em; }
+  ul,ol { margin:12px 0 16px 24px; line-height:2; }
+  blockquote { border-left:4px solid var(--accent); background:var(--light-bg); padding:16px 24px; margin:24px 0; font-style:italic; color:#445566; border-radius:0 6px 6px 0; }
+  .highlight-box { background:var(--highlight); border:1px solid #f0d060; border-radius:6px; padding:20px 24px; margin:24px 0; }
+  .highlight-box strong { color:#8b6914; }
+  .info-box { background:var(--light-bg); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .info-box h4 { color:var(--accent); margin-bottom:8px; font-family:sans-serif; }
+  .success-box { background:var(--green-bg); border:1px solid var(--green-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .warning-box { background:var(--red-bg); border:1px solid var(--red-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .orange-box { background:var(--orange-bg); border:1px solid var(--orange-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  table { width:100%; border-collapse:collapse; margin:24px 0; font-family:sans-serif; font-size:0.88em; }
+  th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--light-bg); }
+  .code-block { background:#1e2a3a; color:#e8f0f8; padding:18px 22px; border-radius:6px; margin:16px 0; font-family:'Courier New',monospace; font-size:0.88em; line-height:1.7; overflow-x:auto; }
+  .code-block .key { color:#9cdcfe; }
+  .code-block .value { color:#ce9178; }
+  .code-block .comment { color:#6a9955; }
+  .method-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0; }
+  .method-card { border:1px solid var(--border); border-radius:8px; padding:18px; }
+  .method-card .method-name { font-weight:bold; font-family:sans-serif; color:var(--primary); margin-bottom:8px; font-size:0.95em; }
+  .rs-flow { display:flex; gap:8px; align-items:center; margin:20px 0; flex-wrap:wrap; }
+  .rs-step { background:var(--light-bg); border:1px solid var(--border); border-radius:6px; padding:10px 14px; font-family:sans-serif; font-size:0.85em; text-align:center; flex:1; min-width:100px; }
+  .rs-step.active { background:var(--accent); color:#fff; border-color:var(--accent); }
+  .rs-arrow { color:var(--muted); font-size:1.2em; }
+  .final-box { background:linear-gradient(135deg,#0d2137,#1a3a5c); color:#fff; border-radius:12px; padding:36px 40px; margin:48px 0; }
+  .final-box h3 { color:#a8d8f8; border:none; margin-top:0; }
+  .final-box p { color:#cce4f6; }
+  .final-box ul { color:#cce4f6; }
+  .footnote { font-size:0.82em; color:var(--muted); font-family:sans-serif; border-top:1px solid var(--border); margin-top:40px; padding-top:16px; }
+  .nav-bar { border-top:1px solid var(--border); padding:24px 5%; display:flex; justify-content:space-between; font-family:sans-serif; font-size:0.9em; }
+  .nav-bar a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第三部分：后训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 11 · Supervised Fine-tuning (SFT) Data</div>
+  <div class="chapter-title">第11章 指令微调数据（SFT Data）</div>
+  <div class="chapter-intro">从人工标注到模型生成，从对话构建到拒绝采样，深入解析 SFT 数据工程的核心方法论与工业实践。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>11.1 人工标注数据：构建标准、标注指南、质量控制</h2>
+
+  <p>人工标注数据是 SFT 数据质量的"锚点"——即使在大规模使用合成数据的今天，高质量的人工标注样本仍然在种子数据、质量校验和困难样本处理中不可替代。</p>
+
+  <h3>标注任务类型的演进</h3>
+
+  <p>早期 SFT 数据标注（2021-2022）主要是"给定指令，撰写一个满意的回答"。随着模型能力提升和应用场景复杂化，标注任务类型大幅扩展：</p>
+
+  <table>
+    <thead><tr><th>标注类型</th><th>说明</th><th>典型应用场景</th></tr></thead>
+    <tbody>
+      <tr><td>指令-回答撰写</td><td>标注者直接撰写高质量回答</td><td>帮助性对话、专业知识问答</td></tr>
+      <tr><td>对比偏好标注</td><td>从多个候选回答中选择最优/排序</td><td>奖励模型训练（RLHF）</td></tr>
+      <tr><td>错误纠正</td><td>对模型输出进行修改和改进</td><td>幻觉减少、事实校正</td></tr>
+      <tr><td>对话场景创作</td><td>构建多轮对话数据</td><td>对话系统、客服场景</td></tr>
+      <tr><td>安全评测（红队）</td><td>构造攻击性提示并提供安全回应</td><td>安全对齐、越狱防御</td></tr>
+      <tr><td>推理链标注</td><td>为复杂问题标注完整思维链</td><td>数学推理、复杂分析</td></tr>
+    </tbody>
+  </table>
+
+  <h3>标注指南（Annotation Guidelines）的核心要素</h3>
+
+  <p>标注指南是保证标注一致性的核心文档。OpenAI、Anthropic 等公司的标注指南通常长达数十乃至数百页，涵盖以下核心维度：</p>
+
+  <div class="info-box">
+    <h4>典型标注指南结构</h4>
+    <ol style="line-height:2;">
+      <li><strong>评估维度定义</strong>：如何界定"有帮助"、"无害"、"诚实"，每个维度的 1-5 分标准</li>
+      <li><strong>任务类型指导</strong>：针对不同任务类型（创意写作、事实问答、代码生成等）的专项标准</li>
+      <li><strong>边界案例处理</strong>：如何处理有争议的请求、文化敏感内容、专业领域问题</li>
+      <li><strong>格式要求</strong>：回答长度、列表与段落的适用场景、引用格式等</li>
+      <li><strong>禁止性内容清单</strong>：绝对不应生成的内容类型及处理方式</li>
+      <li><strong>标注示例</strong>：大量带评分的好/差回答示例，校准标注者的判断标准</li>
+    </ol>
+  </div>
+
+  <h3>质量控制机制</h3>
+
+  <ul>
+    <li><strong>标注者资质审核</strong>：专业领域数据（医疗、法律）需要具备相关背景的标注者</li>
+    <li><strong>黄金标准题（Gold Questions）</strong>：在标注批次中插入已有标准答案的测试题，持续监控标注者准确率</li>
+    <li><strong>多人交叉标注</strong>：关键数据样本由 3-5 名标注者独立标注，取多数意见或专家裁定</li>
+    <li><strong>IAA（标注者间一致性）监控</strong>：用 Cohen's Kappa 等指标定期评估标注者之间的一致性，低于阈值时触发重新培训</li>
+    <li><strong>定期校准会议</strong>：标注团队定期讨论边界案例，统一判断标准</li>
+  </ul>
+
+  <h2>11.2 模型生成数据：Self-Instruct、Alpaca、WizardLM 方法论</h2>
+
+  <p>人工标注成本高昂且扩展性有限。2023 年，以 Self-Instruct 为代表的"模型生成指令数据"方法打开了低成本、大规模 SFT 数据构建的大门。</p>
+
+  <div class="method-grid">
+    <div class="method-card">
+      <div class="method-name">🌱 Self-Instruct（Wang et al., 2022）</div>
+      <p style="font-size:0.9em;">从 175 条人工撰写的种子任务出发，通过 GPT-3 自动生成新指令和回答，再经过质量过滤（去重、语法检查、指令合理性过滤）循环扩充数据集至 52K 条。首次证明了"模型可以自举生成训练自身的数据"这一范式的可行性。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-name">🦙 Stanford Alpaca（Taori et al., 2023）</div>
+      <p style="font-size:0.9em;">将 Self-Instruct 应用于 LLaMA-7B，使用 GPT-3.5（text-davinci-003）生成 52K 指令-回答对，总成本约 500 美元，训练出了在多项任务上接近 GPT-3.5 用户体验的开源模型。引发了开源社区的"指令微调热潮"。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-name">🧙 WizardLM（Xu et al., 2023）</div>
+      <p style="font-size:0.9em;"><strong>Evol-Instruct</strong>：通过"指令进化"策略，用 GPT-4 将简单指令逐步改写为更复杂、更有深度的指令（加入约束、增加推理步骤、结合多个任务等），生成复杂度更高的 SFT 数据。结果显示，在高复杂度指令上的能力大幅超越 Alpaca。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-name">🔮 Magpie（2024）</div>
+      <p style="font-size:0.9em;">更激进的自举方法：直接向对齐后的模型（如 Llama-3-Instruct）输入 "[INST]"前缀，让模型"自发"生成用户指令，再生成对应的回答，无需任何种子任务。从 Llama-3 中提取了 300M+ 条指令-回答对，是规模最大的自举数据集之一。</p>
+    </div>
+  </div>
+
+  <h3>模型生成数据的质量控制要点</h3>
+
+  <p>模型生成数据最大的风险是<strong>"幻觉级联"</strong>——模型生成的错误信息被用于训练，使下一代模型更容易产生类似错误。关键质量控制策略：</p>
+
+  <ul>
+    <li><strong>困难度筛选</strong>：过滤过于简单（模型100%能答对）和过于困难（模型完全无法回答）的样本，保留"有学习价值"的边界样本</li>
+    <li><strong>多样性过滤</strong>：对生成的指令进行 embedding 聚类，确保数据集覆盖足够多样的任务类型和主题，避免某些指令类型过度集中</li>
+    <li><strong>事实性验证</strong>：对包含事实声明的回答进行自动化验证（搜索、计算器等工具辅助）</li>
+    <li><strong>教师模型选择</strong>：使用能力显著强于目标模型的"教师模型"生成数据；使用能力相当的模型生成数据效果极差</li>
+  </ul>
+
+  <h2>11.3 对话数据构建：多轮、系统提示、角色扮演</h2>
+
+  <p>单轮"指令-回答"数据无法覆盖真实用户场景中复杂的多轮对话需求。高质量的多轮对话数据是 ChatGPT 级别助手的关键训练要素。</p>
+
+  <h3>多轮对话数据的核心挑战</h3>
+
+  <p><strong>上下文一致性</strong>：模型需要在多轮中保持信息和立场的一致性。训练数据中的对话必须确保每一轮的回答都与历史上下文一致，不出现矛盾。</p>
+
+  <p><strong>主题跟踪与转移</strong>：真实对话中，用户经常突然转换话题或在原话题上追问澄清。多轮数据需要覆盖这两种模式。</p>
+
+  <p><strong>系统提示（System Prompt）多样性</strong>：模型在不同的系统提示（角色、语气、限制条件）下应当表现出正确的行为差异。训练数据需要覆盖多样化的系统提示场景。</p>
+
+  <div class="code-block">
+<span class="comment">// 多轮对话数据格式示例（OpenAI Chat Format）</span>
+{
+  <span class="key">"messages"</span>: [
+    {
+      <span class="key">"role"</span>: <span class="value">"system"</span>,
+      <span class="key">"content"</span>: <span class="value">"你是一位专业的数据科学助手，回答简洁专业。"</span>
+    },
+    {
+      <span class="key">"role"</span>: <span class="value">"user"</span>,
+      <span class="key">"content"</span>: <span class="value">"什么是过拟合？"</span>
+    },
+    {
+      <span class="key">"role"</span>: <span class="value">"assistant"</span>,
+      <span class="key">"content"</span>: <span class="value">"过拟合是指模型在训练集上性能优异，但在未见数据上泛化能力差的现象..."</span>
+    },
+    {
+      <span class="key">"role"</span>: <span class="value">"user"</span>,
+      <span class="key">"content"</span>: <span class="value">"如何避免过拟合？给我三个最实用的方法。"</span>
+    },
+    {
+      <span class="key">"role"</span>: <span class="value">"assistant"</span>,
+      <span class="key">"content"</span>: <span class="value">"针对你的问题，三个最实用的方法是：1. 正则化（L1/L2）..."</span>
+    }
+  ]
+}
+  </div>
+
+  <h2>11.4 拒绝采样（Rejection Sampling）数据构建</h2>
+
+  <p>拒绝采样（Rejection Sampling, RS）是将强化学习思想引入 SFT 数据构建的关键方法，也是当前生产高质量 SFT 数据的最有效方法之一。</p>
+
+  <div class="rs-flow">
+    <div class="rs-step">给定提示 (Prompt)</div>
+    <div class="rs-arrow">→</div>
+    <div class="rs-step active">模型采样 N 个候选回答</div>
+    <div class="rs-arrow">→</div>
+    <div class="rs-step">奖励模型/验证器打分</div>
+    <div class="rs-arrow">→</div>
+    <div class="rs-step active">保留最高分回答</div>
+    <div class="rs-arrow">→</div>
+    <div class="rs-step">加入 SFT 训练集</div>
+  </div>
+
+  <h3>不同场景的拒绝采样策略</h3>
+
+  <p><strong>数学与代码（可验证场景）</strong>：使用自动化验证器（Python 解释器、数学公式检验器）作为奖励信号，接受率高、成本低。代表工作：LLaMA-3 的数学能力训练大量使用了基于执行验证的拒绝采样；WizardMath 通过 RS+SFT 循环迭代显著提升了数学能力。</p>
+
+  <p><strong>开放性任务（不可验证场景）</strong>：使用奖励模型或 LLM-as-Judge 打分，选择最高分回答。偏差更大，但在帮助性任务上效果显著。</p>
+
+  <div class="success-box">
+    <p><strong>LLaMA-3 拒绝采样实践（Meta, 2024）：</strong>在数学和代码领域，Meta 使用了"迭代拒绝采样"——模型每次迭代后生成新的候选答案，通过验证器筛选正确答案加入训练集，再训练更强的模型，如此循环。这一方法在 GSM8K 上使 8B 模型从约 55% 提升至 84.5%，接近 GPT-4 的水平，是拒绝采样在工业级产品中的最佳实践案例之一。</p>
+  </div>
+
+  <h2>11.5 格式数据：Tool Use、JSON Mode、结构化输出</h2>
+
+  <p>随着 LLM 从"对话助手"扩展到"智能体（Agent）"和"工作流组件"，模型能否可靠地输出结构化格式成为工程部署的关键需求。格式数据（Format Data）是使模型掌握这些能力的专项训练数据。</p>
+
+  <h3>工具调用（Tool Use / Function Calling）数据</h3>
+
+  <p>工具调用数据通常包含三个部分：用户请求、可用工具的描述（Schema）、以及模型的工具调用决策（包含工具名称和参数）。</p>
+
+  <div class="code-block">
+<span class="comment">// Tool Use 训练数据示例</span>
+{
+  <span class="key">"tools"</span>: [
+    {
+      <span class="key">"name"</span>: <span class="value">"get_weather"</span>,
+      <span class="key">"description"</span>: <span class="value">"获取指定城市的当前天气"</span>,
+      <span class="key">"parameters"</span>: {
+        <span class="key">"city"</span>: <span class="value">"string"</span>,
+        <span class="key">"unit"</span>: <span class="value">"celsius|fahrenheit"</span>
+      }
+    }
+  ],
+  <span class="key">"user"</span>: <span class="value">"北京今天天气怎么样？"</span>,
+  <span class="key">"assistant"</span>: <span class="value">"{\"tool_call\": {\"name\": \"get_weather\", \"parameters\": {\"city\": \"北京\", \"unit\": \"celsius\"}}}"</span>
+}
+  </div>
+
+  <h3>格式数据构建的关键原则</h3>
+
+  <ul>
+    <li><strong>覆盖边界情况</strong>：数据集必须覆盖工具调用失败、工具不适用（模型应直接回答）、多工具串联调用等边界场景</li>
+    <li><strong>错误格式的负样本</strong>：包含"错误的 JSON 格式"及对应的"正确回答应该是..."的样本，帮助模型学习错误识别</li>
+    <li><strong>嵌套与复杂结构</strong>：从简单 JSON 到嵌套对象、数组的完整覆盖，确保结构化输出的鲁棒性</li>
+    <li><strong>Schema 多样性</strong>：训练数据的工具 Schema 格式应尽量多样，避免模型过拟合到特定 Schema 风格</li>
+  </ul>
+
+  <div class="orange-box">
+    <p><strong>格式数据的工程现实：</strong>工具调用和结构化输出数据是目前 SFT 数据中工程难度最高的类别之一。一个真实的 Agent 场景可能涉及数十个工具的相互依赖、异常处理和多步规划。高质量的工具调用数据往往需要在真实或模拟的工具执行环境中构建，而非纯粹的文本构造。这一领域目前仍处于快速演进中，数据策略是 Agent 能力差距的核心来源之一。</p>
+  </div>
+
+  <!-- 全书结语 -->
+  <div class="final-box">
+    <h3>📚 全书至此——数据即智慧</h3>
+    <p>本书走过了大语言模型训练数据的完整旅程：从预训练阶段用万亿 Token 塑造模型的世界观，到中训练阶段用精选数据注入专业能力与最新知识，再到后训练阶段用精心标注的指令与偏好数据，将一个"会说话的系统"塑造为"有用、无害、可信赖的助手"。</p>
+    <p>回到序言中的那个命题：<strong>数据是 LLM 时代最被低估的核心资产</strong>。希望读完这本书，这一判断已不再需要说服——你已经看到了数据如何在每一个环节决定着智能的形状。</p>
+    <p>未来的 LLM 发展，将在以下几个数据维度持续演进：</p>
+    <ul>
+      <li>合成数据从"补充"走向"主导"，数据飞轮成为领先模型的核心护城河</li>
+      <li>可验证奖励的强化学习将数学、代码能力推向人类专家水平，并逐渐扩展到更多可形式化的领域</li>
+      <li>多模态数据工程迎来爆发，视频、音频、3D 等模态的数据策略亟待系统化</li>
+      <li>数据合规与版权生态重塑，推动"授权数据市场"的形成</li>
+      <li>持续学习与知识更新机制成熟，实现真正"与时俱进"的知识系统</li>
+    </ul>
+    <p>数据工程师和数据科学家，你们是这个时代最重要的建筑师之一。</p>
+  </div>
+
+  <div class="footnote">
+    <p><strong>参考文献：</strong>Wang et al. (2022) "Self-Instruct"；Taori et al. (2023) "Alpaca"；Xu et al. (2023) "WizardLM (Evol-Instruct)"；Zhao et al. (2024) "Magpie"；Ouyang et al. (2022) "InstructGPT"；Meta AI (2024) "LLaMA-3"；Liao et al. (2023) "WizardMath"；Ziegler et al. (2019) "Fine-Tuning Language Models from Human Preferences"；Bai et al. (2022) "Training a Helpful and Harmless AI (Constitutional AI)"；OpenAI (2023) "GPT-4 Technical Report"；Zheng et al. (2023) "MT-Bench"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="10_第十章_后训练数据总论.html">← 第10章</a>
+  <a href="00_序言.html">↩ 回到序言</a>
+</div>
+
+</body>
+</html>

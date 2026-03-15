@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>知识改写合成 · 系统综述</title>
+<style>
+  :root {
+    --bg: #0e1117;
+    --bg2: #161b22;
+    --bg3: #1c2128;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+
+    /* Category colors */
+    --cat-a: #1f6feb;
+    --cat-a-bg: rgba(31,111,235,0.12);
+    --cat-a-border: rgba(31,111,235,0.35);
+    --cat-b: #d97706;
+    --cat-b-bg: rgba(217,119,6,0.12);
+    --cat-b-border: rgba(217,119,6,0.35);
+    --cat-c: #a855f7;
+    --cat-c-bg: rgba(168,85,247,0.12);
+    --cat-c-border: rgba(168,85,247,0.35);
+    --cat-d: #22c55e;
+    --cat-d-bg: rgba(34,197,94,0.12);
+    --cat-d-border: rgba(34,197,94,0.35);
+    --cat-e: #ec4899;
+    --cat-e-bg: rgba(236,72,153,0.12);
+    --cat-e-border: rgba(236,72,153,0.35);
+
+    --accent: #58a6ff;
+    --tag-bg: #21262d;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", Helvetica, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+
+  /* ── NAV ── */
+  .topnav {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 12px 32px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topnav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    transition: color .2s;
+  }
+  .topnav a:hover { color: var(--text); }
+  .topnav .sep { color: var(--text-dim); }
+  .topnav .title-nav {
+    color: var(--text);
+    font-weight: 600;
+    font-size: 14px;
+  }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 32px 80px;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    text-align: center;
+    padding: 48px 0 40px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #58a6ff 0%, #a855f7 50%, #ec4899 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 12px;
+  }
+  .hero .subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+    max-width: 700px;
+    margin: 0 auto 20px;
+  }
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .hero-tags span {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3px 12px;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  /* ── SECTION ── */
+  .section {
+    margin-bottom: 56px;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .section-num {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .arxiv-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-family: "SF Mono", Consolas, monospace;
+  }
+  .year-tag {
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background: var(--tag-bg);
+    color: var(--text-dim);
+  }
+  .card p {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.75;
+  }
+  .card ul {
+    color: var(--text-muted);
+    font-size: 14px;
+    padding-left: 20px;
+    line-height: 2;
+  }
+
+  /* stat badges */
+  .stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .stat {
+    font-size: 12px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    border: 1px solid;
+  }
+  .stat-green { color: #3fb950; border-color: rgba(63,185,80,.35); background: rgba(63,185,80,.1); }
+  .stat-blue  { color: #58a6ff; border-color: rgba(88,166,255,.35); background: rgba(88,166,255,.1); }
+  .stat-amber { color: #e3b341; border-color: rgba(227,179,65,.35); background: rgba(227,179,65,.1); }
+  .stat-purple{ color: #bc8cff; border-color: rgba(188,140,255,.35); background: rgba(188,140,255,.1); }
+
+  /* category card */
+  .cat-a .card { border-left: 3px solid var(--cat-a); }
+  .cat-b .card { border-left: 3px solid var(--cat-b); }
+  .cat-c .card { border-left: 3px solid var(--cat-c); }
+  .cat-d .card { border-left: 3px solid var(--cat-d); }
+  .cat-e .card { border-left: 3px solid var(--cat-e); }
+
+  .cat-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 16px;
+  }
+  .cat-label-a { color: var(--cat-a); background: var(--cat-a-bg); border: 1px solid var(--cat-a-border); }
+  .cat-label-b { color: var(--cat-b); background: var(--cat-b-bg); border: 1px solid var(--cat-b-border); }
+  .cat-label-c { color: var(--cat-c); background: var(--cat-c-bg); border: 1px solid var(--cat-c-border); }
+  .cat-label-d { color: var(--cat-d); background: var(--cat-d-bg); border: 1px solid var(--cat-d-border); }
+  .cat-label-e { color: var(--cat-e); background: var(--cat-e-bg); border: 1px solid var(--cat-e-border); }
+
+  .cat-section {
+    margin-bottom: 40px;
+  }
+  .cat-section h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+
+  /* ── WHY SECTION ── */
+  .why-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  @media (max-width: 700px) { .why-grid { grid-template-columns: 1fr; } }
+  .why-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .why-card .why-icon {
+    font-size: 1.6rem;
+    margin-bottom: 8px;
+  }
+  .why-card h4 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .why-card p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+    line-height: 1.7;
+  }
+
+  .pain-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+  .pain-chip {
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .pain-noise  { color: #f85149; border-color: rgba(248,81,73,.35); background: rgba(248,81,73,.1); }
+  .pain-scarce { color: #e3b341; border-color: rgba(227,179,65,.35); background: rgba(227,179,65,.1); }
+  .pain-dist   { color: #58a6ff; border-color: rgba(88,166,255,.35); background: rgba(88,166,255,.1); }
+  .pain-dup    { color: #8b949e; border-color: rgba(139,148,158,.35); background: rgba(139,148,158,.1); }
+  .pain-stale  { color: #bc8cff; border-color: rgba(188,140,255,.35); background: rgba(188,140,255,.1); }
+
+  .example-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .example-card .ex-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .example-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+  .example-card p  { font-size: 13.5px; color: var(--text-muted); }
+
+  .vs-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  .vs-box {
+    flex: 1;
+    border-radius: 6px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .vs-bad  { background: rgba(248,81,73,.1); border: 1px solid rgba(248,81,73,.3); color: #f85149; }
+  .vs-good { background: rgba(63,185,80,.1); border: 1px solid rgba(63,185,80,.3); color: #3fb950; }
+  .vs-box .vs-label { font-size: 11px; font-weight: 700; margin-bottom: 4px; opacity: .8; }
+  .vs-box .vs-text  { color: var(--text-muted); font-size: 12.5px; line-height: 1.6; }
+
+  /* ── OVERVIEW TABLE ── */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  thead tr {
+    background: var(--bg3);
+  }
+  th {
+    padding: 12px 14px;
+    text-align: left;
+    font-weight: 700;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 11px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,.03); }
+  tbody tr.row-a td:first-child { border-left: 3px solid var(--cat-a); }
+  tbody tr.row-b td:first-child { border-left: 3px solid var(--cat-b); }
+  tbody tr.row-c td:first-child { border-left: 3px solid var(--cat-c); }
+  tbody tr.row-d td:first-child { border-left: 3px solid var(--cat-d); }
+  tbody tr.row-e td:first-child { border-left: 3px solid var(--cat-e); }
+  .method-name { font-weight: 700; color: var(--text); }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 7px;
+    border-radius: 4px;
+    margin: 1px;
+    white-space: nowrap;
+  }
+  .badge-yes  { background: rgba(63,185,80,.15);  color: #3fb950; }
+  .badge-no   { background: rgba(248,81,73,.12);  color: #f85149; }
+  .badge-gray { background: var(--tag-bg); color: var(--text-dim); }
+  .td-pros  { color: #3fb950; font-size: 12px; }
+  .td-cons  { color: #f85149; font-size: 12px; }
+
+  /* ── RELATIONSHIP MAP ── */
+  .rel-map {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 32px 24px;
+    margin-bottom: 24px;
+    position: relative;
+  }
+  .rel-map-title {
+    text-align: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 28px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+  .rel-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .rel-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 8px;
+  }
+  .rel-center {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+  .rel-node {
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    text-align: center;
+    border: 2px solid;
+    min-width: 120px;
+  }
+  .rel-node-root {
+    background: rgba(88,166,255,.15);
+    border-color: #58a6ff;
+    color: #58a6ff;
+    font-size: 14px;
+    padding: 12px 24px;
+    min-width: 200px;
+  }
+  .rel-node-a { background: var(--cat-a-bg); border-color: var(--cat-a); color: var(--cat-a); }
+  .rel-node-b { background: var(--cat-b-bg); border-color: var(--cat-b); color: var(--cat-b); }
+  .rel-node-c { background: var(--cat-c-bg); border-color: var(--cat-c); color: var(--cat-c); }
+  .rel-node-d { background: var(--cat-d-bg); border-color: var(--cat-d); color: var(--cat-d); }
+  .rel-node-e { background: var(--cat-e-bg); border-color: var(--cat-e); color: var(--cat-e); }
+  .rel-connector {
+    flex: 1;
+    height: 2px;
+    background: var(--border);
+    min-width: 20px;
+    max-width: 40px;
+  }
+  .rel-children {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .rel-sub {
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid;
+    font-weight: 600;
+  }
+  .rel-sub-a { background: var(--cat-a-bg); border-color: var(--cat-a-border); color: var(--cat-a); }
+  .rel-sub-b { background: var(--cat-b-bg); border-color: var(--cat-b-border); color: var(--cat-b); }
+  .rel-sub-c { background: var(--cat-c-bg); border-color: var(--cat-c-border); color: var(--cat-c); }
+  .rel-sub-d { background: var(--cat-d-bg); border-color: var(--cat-d-border); color: var(--cat-d); }
+  .rel-sub-e { background: var(--cat-e-bg); border-color: var(--cat-e-border); color: var(--cat-e); }
+
+  .map-layout {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    align-items: start;
+    gap: 16px;
+  }
+  .map-col { display: flex; flex-direction: column; gap: 8px; }
+  .map-center-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .map-line {
+    width: 2px;
+    height: 20px;
+    background: var(--border);
+    margin: 0 auto;
+  }
+  .map-h-line {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── CHALLENGES ── */
+  .challenge-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-left: 3px solid #f85149;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 12px;
+  }
+  .challenge-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f85149;
+    margin-bottom: 6px;
+  }
+  .challenge-card p {
+    font-size: 13.5px;
+    color: var(--text-muted);
+  }
+
+  /* ── OUTLOOK ── */
+  .outlook-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 800px) { .outlook-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 500px) { .outlook-grid { grid-template-columns: 1fr; } }
+  .outlook-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    text-align: center;
+  }
+  .outlook-icon { font-size: 1.8rem; margin-bottom: 8px; }
+  .outlook-card h4 { font-size: 13.5px; font-weight: 700; margin-bottom: 6px; }
+  .outlook-card p  { font-size: 12.5px; color: var(--text-muted); }
+
+  /* ── FOOTER ── */
+  .footer {
+    margin-top: 64px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 12.5px;
+  }
+  .footer a { color: var(--text-muted); text-decoration: none; }
+  .footer a:hover { color: var(--accent); }
+
+  /* ── MISC ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    margin: 32px 0;
+  }
+  strong { color: var(--text); font-weight: 600; }
+  code {
+    font-family: "SF Mono", Consolas, monospace;
+    font-size: 12.5px;
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 5px;
+    color: #e3b341;
+  }
+  .highlight { color: var(--accent); font-weight: 600; }
+
+  .two-col-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 700px) { .two-col-cards { grid-template-columns: 1fr; } }
+
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 10px 16px;
+    background: rgba(88,166,255,.07);
+    border-radius: 0 6px 6px 0;
+    margin: 12px 0;
+    color: var(--text-muted);
+    font-size: 13.5px;
+    font-style: italic;
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="topnav">
+  <a href="index.html">🏠 首页</a>
+  <span class="sep">›</span>
+  <span class="title-nav">知识改写合成 · 系统综述</span>
+  <span style="margin-left:auto;color:var(--text-dim);font-size:12px;">2025 · LLM Training Data</span>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="hero">
+    <h1>知识改写合成</h1>
+    <p class="subtitle">Knowledge Rewriting &amp; Synthesis for LLM Training — 从预训练数据增强到参数内知识编辑的系统综述</p>
+    <div class="hero-tags">
+      <span>预训练数据质量</span>
+      <span>指令微调</span>
+      <span>知识编辑</span>
+      <span>RAG</span>
+      <span>多模态</span>
+      <span>数据合成</span>
+      <span>WRAP · ROME · MEMIT</span>
+      <span>SwallowCode · phi-1</span>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 1: WHY
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>为什么要做知识改写合成（Why）</h2>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <p>大语言模型的能力上限，在相当程度上被训练数据的质量和分布所决定。互联网上虽然堆积了海量文本，却充斥着噪声、格式混乱和事实错误；而特定领域（数学、代码、低资源语言）的高质量数据则极度稀缺。知识改写合成（Knowledge Rewriting &amp; Synthesis）正是为了<strong>系统性地弥合"原始数据"与"理想训练数据"之间的鸿沟</strong>而生。</p>
+    </div>
+
+    <h3 style="font-size:1rem;color:var(--text-muted);margin-bottom:14px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;">核心痛点（Training Data Pain Points）</h3>
+    <div class="pain-grid">
+      <span class="pain-chip pain-noise">🔊 噪声（Noise）</span>
+      <span class="pain-chip pain-scarce">📉 稀缺（Scarcity）</span>
+      <span class="pain-chip pain-dist">📊 分布不均（Imbalance）</span>
+      <span class="pain-chip pain-dup">♻️ 重复（Duplication）</span>
+      <span class="pain-chip pain-stale">⏰ 知识过时（Staleness）</span>
+      <span class="pain-chip pain-noise" style="color:#bc8cff;border-color:rgba(188,140,255,.35);background:rgba(188,140,255,.1);">❓ 格式错配（Format Mismatch）</span>
+    </div>
+
+    <div class="why-grid">
+      <!-- Example A -->
+      <div class="example-card">
+        <div class="ex-label">案例 A · 网页数据噪声</div>
+        <h4>CommonCrawl：原始数据 vs 清洗后的质量鸿沟</h4>
+        <p>CommonCrawl 每月爬取约 <strong>200 亿</strong>网页，但原始数据中包含大量广告模板、SEO 垃圾文本、重复内容和格式符号。未经处理的 CC 数据在语言模型训练中往往导致更高的困惑度（perplexity）和更低的下游任务性能。</p>
+        <div class="vs-row">
+          <div class="vs-box vs-bad">
+            <div class="vs-label">❌ 原始 CC 数据</div>
+            <div class="vs-text">「Buy now!!! Click here... 100% satisfaction guaranteed™ ©2019 all rights reserved」— 无语义价值，模型被迫学习噪声模式</div>
+          </div>
+          <div class="vs-box vs-good">
+            <div class="vs-label">✅ 改写后（Wiki 风格）</div>
+            <div class="vs-text">「量子计算利用量子叠加和纠缠原理…」— 清晰的知识表述，每个 token 都在传递信息</div>
+          </div>
+        </div>
+        <div class="stats" style="margin-top:10px;">
+          <span class="stat stat-blue">WRAP 在 C4 上 Perplexity ↓10%+</span>
+          <span class="stat stat-green">13 任务 Zero-shot +2%</span>
+        </div>
+      </div>
+
+      <!-- Example B -->
+      <div class="example-card">
+        <div class="ex-label">案例 B · 数学/代码数据稀缺</div>
+        <h4>phi-1 的"教科书就是一切"为何奏效</h4>
+        <p>网络上的数学/代码内容大多是碎片化的 Stack Overflow 问答和随机 GitHub 仓库，缺乏系统性的<strong>教学推导过程</strong>。phi-1（1.3B 参数）用 GPT-4 生成教科书级别的"合成代码教程"，使得其 HumanEval 性能超越了 6× 参数量的模型。</p>
+        <div class="vs-row">
+          <div class="vs-box vs-bad">
+            <div class="vs-label">❌ 原始代码数据</div>
+            <div class="vs-text">孤立的函数片段，无注释，无推理过程，难以传递编程思维</div>
+          </div>
+          <div class="vs-box vs-good">
+            <div class="vs-label">✅ 合成教科书数据</div>
+            <div class="vs-text">系统讲解 → 例题 → 解析 → 变体练习，每个 token 都服务于技能习得</div>
+          </div>
+        </div>
+        <div class="stats">
+          <span class="stat stat-green">phi-1.5（1.3B）≈ LLaMA-65B 在多项推理任务</span>
+        </div>
+      </div>
+
+      <!-- Example C -->
+      <div class="example-card">
+        <div class="ex-label">案例 C · 指令格式错配</div>
+        <h4>相同信息，不同格式，训练效果天壤之别</h4>
+        <p>研究表明，<strong>信息内容相同</strong>的数据，以不同格式呈现时，模型的指令遵循能力存在显著差距。连续段落式的知识 vs 结构化的问答对（instruction-response pairs），后者能更直接地引导模型建立"指令→回答"的行为模式。Evol-Instruct 通过系统性地改写指令难度，使 WizardLM-7B 在 MT-Bench 上超越原始指令训练模型 30%+。</p>
+        <div class="vs-row">
+          <div class="vs-box vs-bad">
+            <div class="vs-label">❌ 未改写指令</div>
+            <div class="vs-text">「解释梯度下降」→ 模型给出教科书答案，无法回答实际问题变体</div>
+          </div>
+          <div class="vs-box vs-good">
+            <div class="vs-label">✅ Evol-Instruct 改写后</div>
+            <div class="vs-text">「在小批量 SGD 下，当学习率为 1e-3 时，如果梯度消失应如何诊断？」→ 更复杂、更真实的对话场景</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Example D -->
+      <div class="example-card">
+        <div class="ex-label">案例 D · 知识过时</div>
+        <h4>训练截止后的知识注入：低成本 vs 全量重训</h4>
+        <p>GPT-4 的训练数据截止于 2023 年初，但世界在不断变化。传统方案是持续重新训练（Continual Pretraining），成本极高。<strong>知识编辑（Knowledge Editing）</strong>提供了一种外科手术式的替代方案——ROME 可以在毫秒内将「法国首都是巴黎」修改为任意新事实，而无需重新训练整个模型。</p>
+        <div class="stats">
+          <span class="stat stat-purple">ROME 单次编辑 &lt;1s（NVIDIA A100）</span>
+          <span class="stat stat-blue">MEMIT 批量编辑 10,000 条事实</span>
+          <span class="stat stat-amber">全量重训 vs 编辑：成本差异 10,000×+</span>
+        </div>
+        <blockquote style="margin-top:10px;">「Knowledge editing is to LLMs what patches are to software — surgical, efficient, and targeted.」</blockquote>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 2: OVERVIEW TABLE
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>方法全景对比（Overview）</h2>
+    </div>
+
+    <!-- Relationship Map -->
+    <div class="rel-map">
+      <div class="rel-map-title">📐 方法分类关系图</div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:0;">
+        <div class="rel-node rel-node-root" style="margin-bottom:12px;">知识改写合成<br><span style="font-size:11px;font-weight:400;opacity:.8;">Knowledge Rewriting &amp; Synthesis</span></div>
+        <div style="width:2px;height:20px;background:var(--border);"></div>
+        <div style="display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;justify-content:center;">
+          <!-- Col A -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="width:2px;height:16px;background:var(--cat-a);"></div>
+            <div class="rel-node rel-node-a" style="font-size:11px;min-width:100px;">类别 A<br>预训练增强</div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <span class="rel-sub rel-sub-a">WRAP</span>
+              <span class="rel-sub rel-sub-a">Cosmopedia</span>
+              <span class="rel-sub rel-sub-a">SwallowCode</span>
+              <span class="rel-sub rel-sub-a">FineWeb-Edu</span>
+              <span class="rel-sub rel-sub-a">phi-1</span>
+            </div>
+          </div>
+          <!-- Col B -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="width:2px;height:16px;background:var(--cat-b);"></div>
+            <div class="rel-node rel-node-b" style="font-size:11px;min-width:100px;">类别 B<br>指令微调改写</div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <span class="rel-sub rel-sub-b">Self-Instruct</span>
+              <span class="rel-sub rel-sub-b">Evol-Instruct</span>
+              <span class="rel-sub rel-sub-b">Auto Evol</span>
+              <span class="rel-sub rel-sub-b">Condor</span>
+            </div>
+          </div>
+          <!-- Col C -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="width:2px;height:16px;background:var(--cat-c);"></div>
+            <div class="rel-node rel-node-c" style="font-size:11px;min-width:100px;">类别 C<br>参数内知识编辑</div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <span class="rel-sub rel-sub-c">ROME</span>
+              <span class="rel-sub rel-sub-c">MEMIT</span>
+              <span class="rel-sub rel-sub-c">MEND</span>
+              <span class="rel-sub rel-sub-c">GRACE</span>
+              <span class="rel-sub rel-sub-c">WISE</span>
+              <span class="rel-sub rel-sub-c">AlphaEdit</span>
+            </div>
+          </div>
+          <!-- Col D -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="width:2px;height:16px;background:var(--cat-d);"></div>
+            <div class="rel-node rel-node-d" style="font-size:11px;min-width:100px;">类别 D<br>RAG 检索注入</div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <span class="rel-sub rel-sub-d">Dense Retrieval</span>
+              <span class="rel-sub rel-sub-d">IKE (ICL)</span>
+              <span class="rel-sub rel-sub-d">参数外更新</span>
+            </div>
+          </div>
+          <!-- Col E -->
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px;">
+            <div style="width:2px;height:16px;background:var(--cat-e);"></div>
+            <div class="rel-node rel-node-e" style="font-size:11px;min-width:100px;">类别 E<br>多模态编辑</div>
+            <div style="display:flex;flex-direction:column;gap:4px;align-items:center;">
+              <span class="rel-sub rel-sub-e">MMKE-Bench</span>
+              <span class="rel-sub rel-sub-e">Visual KE</span>
+              <span class="rel-sub rel-sub-e">跨模态一致性</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview Table -->
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方法 / 代表工作</th>
+            <th>改写目标</th>
+            <th>改写粒度</th>
+            <th>修改参数？</th>
+            <th>使用阶段</th>
+            <th>✅ 优点</th>
+            <th>❌ 缺点</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-a">
+            <td><span class="method-name">WRAP</span><br><span class="arxiv-tag">2401.16380</span></td>
+            <td>预训练质量<br>风格多样性</td>
+            <td>文档级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">预训练</span></td>
+            <td class="td-pros">3× 加速，zero-shot +2%</td>
+            <td class="td-cons">LLM 改写成本高</td>
+          </tr>
+          <tr class="row-a">
+            <td><span class="method-name">Cosmopedia</span><br><span class="year-tag">2024</span></td>
+            <td>预训练质量<br>风格多样性</td>
+            <td>文档级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">预训练</span></td>
+            <td class="td-pros">30B token 多格式合成</td>
+            <td class="td-cons">内容可能偏离事实</td>
+          </tr>
+          <tr class="row-a">
+            <td><span class="method-name">SwallowCode/Math</span><br><span class="arxiv-tag">2505.02881</span></td>
+            <td>预训练质量<br>代码/数学</td>
+            <td>文档级<br>函数级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">预训练</span></td>
+            <td class="td-pros">HumanEval +17.0<br>GSM8K +12.4</td>
+            <td class="td-cons">四阶段流水线复杂</td>
+          </tr>
+          <tr class="row-a">
+            <td><span class="method-name">FineWeb-Edu</span><br><span class="year-tag">2024</span></td>
+            <td>预训练质量</td>
+            <td>文档级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">预训练</span></td>
+            <td class="td-pros">高教育价值过滤</td>
+            <td class="td-cons">过滤损失大量数据</td>
+          </tr>
+          <tr class="row-a">
+            <td><span class="method-name">phi-1 / phi-1.5</span><br><span class="year-tag">2023 · MS</span></td>
+            <td>预训练质量</td>
+            <td>文档级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">预训练</span></td>
+            <td class="td-pros">小模型超大模型<br>教科书质量数据</td>
+            <td class="td-cons">依赖 GPT-4 生成，成本高</td>
+          </tr>
+          <tr class="row-b">
+            <td><span class="method-name">Self-Instruct</span><br><span class="year-tag">2023</span></td>
+            <td>指令格式</td>
+            <td>样本级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">SFT</span></td>
+            <td class="td-pros">自动化指令生成</td>
+            <td class="td-cons">质量参差不齐</td>
+          </tr>
+          <tr class="row-b">
+            <td><span class="method-name">Evol-Instruct</span><br><span class="year-tag">2023</span></td>
+            <td>指令格式<br>风格多样性</td>
+            <td>样本级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">SFT</span></td>
+            <td class="td-pros">系统提升难度梯度</td>
+            <td class="td-cons">进化方向需人工设计</td>
+          </tr>
+          <tr class="row-b">
+            <td><span class="method-name">Auto Evol-Instruct</span><br><span class="arxiv-tag">2406.00770</span></td>
+            <td>指令格式<br>自动化</td>
+            <td>样本级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">SFT</span></td>
+            <td class="td-pros">无需手动设计进化方法</td>
+            <td class="td-cons">优化目标可能偏移</td>
+          </tr>
+          <tr class="row-b">
+            <td><span class="method-name">Condor</span><br><span class="arxiv-tag">2501.12273</span></td>
+            <td>知识驱动 SFT</td>
+            <td>样本级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">SFT</span></td>
+            <td class="td-pros">知识精化，高质量合成</td>
+            <td class="td-cons">pipeline 较复杂</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">ROME</span><br><span class="arxiv-tag">2202.05262</span></td>
+            <td>知识更新</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-yes">是</span></td>
+            <td><span class="badge badge-gray">推理前</span></td>
+            <td class="td-pros">精确单条事实编辑</td>
+            <td class="td-cons">不支持批量，涟漪效应</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">MEMIT</span><br><span class="year-tag">ICLR 2023</span></td>
+            <td>知识更新</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-yes">是</span></td>
+            <td><span class="badge badge-gray">推理前</span></td>
+            <td class="td-pros">批量编辑 10k 条事实</td>
+            <td class="td-cons">多层分散可能引入副作用</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">MEND</span><br><span class="year-tag">2021</span></td>
+            <td>知识更新</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-yes">是</span></td>
+            <td><span class="badge badge-gray">推理前</span></td>
+            <td class="td-pros">超网络泛化编辑</td>
+            <td class="td-cons">需要预训练超网络</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">GRACE</span><br><span class="year-tag">2022</span></td>
+            <td>知识更新</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-no">否*</span></td>
+            <td><span class="badge badge-gray">推理时</span></td>
+            <td class="td-pros">外挂 codebook，零干扰</td>
+            <td class="td-cons">检索延迟，codebook 膨胀</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">WISE</span><br><span class="year-tag">NeurIPS 2024</span></td>
+            <td>知识更新<br>终身编辑</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-yes">是</span></td>
+            <td><span class="badge badge-gray">推理前</span></td>
+            <td class="td-pros">双轨记忆，终身编辑</td>
+            <td class="td-cons">路由机制复杂</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">AlphaEdit</span><br><span class="year-tag">ICLR 2025</span></td>
+            <td>知识更新</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-yes">是</span></td>
+            <td><span class="badge badge-gray">推理前</span></td>
+            <td class="td-pros">零空间约束，无关知识不受影响</td>
+            <td class="td-cons">零空间计算代价</td>
+          </tr>
+          <tr class="row-c">
+            <td><span class="method-name">IKE</span><br><span class="year-tag">2023</span></td>
+            <td>知识更新</td>
+            <td>句子级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">推理时</span></td>
+            <td class="td-pros">无参数修改，零成本</td>
+            <td class="td-cons">受 context 长度限制</td>
+          </tr>
+          <tr class="row-d">
+            <td><span class="method-name">RAG</span><br><span class="year-tag">参数外检索</span></td>
+            <td>知识更新</td>
+            <td>文档级/段落级</td>
+            <td><span class="badge badge-no">否</span></td>
+            <td><span class="badge badge-gray">推理时</span></td>
+            <td class="td-pros">知识随时更新，成本极低</td>
+            <td class="td-cons">推理延迟，检索质量敏感</td>
+          </tr>
+          <tr class="row-e">
+            <td><span class="method-name">MMKE-Bench</span><br><span class="year-tag">ICLR 2025</span></td>
+            <td>多模态知识更新</td>
+            <td>知识三元组级</td>
+            <td><span class="badge badge-yes">是</span></td>
+            <td><span class="badge badge-gray">推理前</span></td>
+            <td class="td-pros">首个多模态编辑评测基准</td>
+            <td class="td-cons">视觉-文本一致性难保证</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 3: METHODS DEEP DIVE
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>分类详细介绍</h2>
+    </div>
+
+    <!-- ── CATEGORY A ── -->
+    <div class="cat-section cat-a">
+      <span class="cat-label cat-label-a">🔵 类别 A · 预训练数据改写与增强</span>
+      <h3>将原始网页/代码/数学数据改写为高质量训练语料</h3>
+
+      <div class="card">
+        <div class="card-title">
+          WRAP — Web Rephrase Augmented Pretraining
+          <span class="arxiv-tag">arXiv:2401.16380</span>
+          <span class="year-tag">Apple & CMU 2024</span>
+        </div>
+        <p>WRAP 的核心思想是：与其花费更多时间在噪声网页数据上训练，不如先<strong>用小型 LLM 将网页内容改写成多种高质量风格</strong>，再进行预训练。改写后的数据与原始数据混合，提供了格式多样性（style diversity）。</p>
+        <p style="margin-top:8px;"><strong>四种改写风格：</strong>① Wikipedia 百科风格（结构化、中立叙述）②问答格式（明确的知识点拆解）③故事风格（叙事化包装）④原文混合（保留原始文本作为对照）</p>
+        <p style="margin-top:8px;"><strong>关键机制：</strong>用 Mistral-7B 作为改写器，对 C4 数据集中的网页文本进行段落级别改写，生成 3× 数据量的多风格版本。预训练时按比例混合多种风格版本。</p>
+        <div class="stats">
+          <span class="stat stat-green">C4 Perplexity 降低 10%+</span>
+          <span class="stat stat-green">13 任务 Zero-shot avg +2%</span>
+          <span class="stat stat-blue">预训练效率提升约 3×（相同性能所需步数）</span>
+          <span class="stat stat-amber">改写成本：Mistral-7B 约 $0.002/MB 原始数据</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Cosmopedia
+          <span class="year-tag">HuggingFace 2024</span>
+        </div>
+        <p>Cosmopedia 将互联网内容改写为多种<strong>教育性格式</strong>，构建了一个覆盖广泛话题的合成预训练数据集。核心创新在于：根据目标受众（儿童/学生/专家）和输出格式（教科书/博客/故事/维基百科/社交帖子）的组合，设计了 <strong>100+ 种 prompt 模板</strong>，由 Mixtral-8x7B-Instruct 生成内容。</p>
+        <p style="margin-top:8px;">每个网页内容被提炼为"教科书式"的系统性知识介绍，而不是简单复制网页内容。这种方式减少了噪声，同时丰富了内容的多样性。</p>
+        <div class="stats">
+          <span class="stat stat-blue">30B token 合成数据</span>
+          <span class="stat stat-green">覆盖 35,000+ 话题</span>
+          <span class="stat stat-amber">生成格式：教科书/博客/故事/维基/代码文档</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          SwallowCode &amp; SwallowMath
+          <span class="arxiv-tag">arXiv:2505.02881</span>
+          <span class="year-tag">2025</span>
+        </div>
+        <p>针对代码和数学预训练数据，提出了<strong>四阶段串行改写流水线</strong>，将低质量的原始代码/数学文档逐步提升到教科书级别质量：</p>
+        <ul style="margin-top:8px;">
+          <li><strong>阶段 1 — 语法验证：</strong>使用 AST 解析器过滤无法正确解析的代码片段</li>
+          <li><strong>阶段 2 — pylint 过滤：</strong>基于静态分析评分，过滤低质量代码（评分阈值 &gt;6.0/10）</li>
+          <li><strong>阶段 3 — 风格改写：</strong>用 LLM 规范化代码风格（命名规范、注释补全、缩进统一）</li>
+          <li><strong>阶段 4 — 算法优化：</strong>LLM 识别低效算法并替换为更优实现（O(n²) → O(n log n) 等）</li>
+        </ul>
+        <div class="stats">
+          <span class="stat stat-blue">SwallowCode：~16.1B token</span>
+          <span class="stat stat-blue">SwallowMath：~2.3B token</span>
+          <span class="stat stat-green">HumanEval pass@1 +17.0</span>
+          <span class="stat stat-green">GSM8K +12.4</span>
+          <span class="stat stat-green">MATH +7.6</span>
+        </div>
+      </div>
+
+      <div class="two-col-cards">
+        <div class="card">
+          <div class="card-title">
+            FineWeb-Edu
+            <span class="year-tag">HuggingFace 2024</span>
+          </div>
+          <p>不是直接改写数据，而是通过<strong>LLM 教育价值打分（0-5分）</strong>过滤 CommonCrawl，仅保留高教育价值的网页。训练一个打分 Classifier（从 Llama-3-70B 的判断中蒸馏），对全量数据打分后保留顶部 ~15%。</p>
+          <p style="margin-top:8px;">相比 WRAP 的"改写"策略，FineWeb-Edu 是"筛选"策略：不改变内容，只过滤低质量文档。两者互补，可以先过滤再改写。</p>
+          <div class="stats">
+            <span class="stat stat-blue">1.3T token 过滤后高质量数据</span>
+            <span class="stat stat-green">MMLU +5% vs 原始 FineWeb</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            phi-1 &amp; phi-1.5
+            <span class="year-tag">Microsoft 2023</span>
+          </div>
+          <p>微软小语言模型系列的代表作。核心主张：<strong>"Textbooks Are All You Need"</strong> —— 用 GPT-4 生成教科书级别的 Python 编程教程，使 1.3B 参数模型在代码任务上超越数倍大的模型。</p>
+          <p style="margin-top:8px;">phi-1 使用约 6B token 训练数据（1B 合成教科书 + 1B 高质量代码 + 4B 网络代码），在 HumanEval 上达到 50.6%，超越 13B 级别的多数开源模型。</p>
+          <div class="stats">
+            <span class="stat stat-blue">phi-1：1.3B 参数，HumanEval 50.6%</span>
+            <span class="stat stat-green">合成教科书数据：约 1B token</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── CATEGORY B ── -->
+    <div class="cat-section cat-b">
+      <span class="cat-label cat-label-b">🟠 类别 B · 指令微调数据改写</span>
+      <h3>将原始知识改写为对齐友好的指令-回应格式</h3>
+
+      <div class="card">
+        <div class="card-title">
+          Self-Instruct
+          <span class="year-tag">2023</span>
+        </div>
+        <p>Self-Instruct 开创了<strong>用 LLM 自举生成指令数据</strong>的范式：从少量人工种子指令（175 条）出发，让 GPT-3 自动生成新的指令-回应对，通过过滤后加入训练集，再用扩充后的数据微调 GPT-3，形成自我改进循环。</p>
+        <p style="margin-top:8px;"><strong>生成流程：</strong>① 从 pool 采样 8 条种子指令（6条人工+2条生成）→ ② GPT-3 生成新指令 → ③ 判断指令类型（分类/非分类）→ ④ 生成对应输出 → ⑤ ROUGE-L 过滤重复 → ⑥ 加入 pool</p>
+        <div class="stats">
+          <span class="stat stat-blue">最终生成 52K 指令-回应对</span>
+          <span class="stat stat-green">比原始 GPT-3 在 SuperNI 上提升 33%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          Evol-Instruct &amp; WizardLM
+          <span class="year-tag">2023</span>
+        </div>
+        <p>Evol-Instruct 引入了<strong>进化操作（Evolutionary Operators）</strong>的概念，系统性地将简单指令改写为更复杂、更多样的版本。两类进化方向：</p>
+        <ul style="margin-top:8px;">
+          <li><strong>深化（In-depth Evolving）：</strong>增加约束条件、深化要求、具体化、增加推理步骤、复杂化输入</li>
+          <li><strong>拓宽（In-breadth Evolving）：</strong>从现有指令变异出新的话题/场景，提升数据集多样性</li>
+        </ul>
+        <p style="margin-top:8px;">WizardLM 用 Evol-Instruct 生成的数据训练 LLaMA，在 MT-Bench 和 Vicuna 评测中表现超越 ChatGPT（GPT-3.5 时期）。</p>
+        <div class="stats">
+          <span class="stat stat-blue">WizardLM-70B 在 MT-Bench 获得 7.71 分</span>
+          <span class="stat stat-green">WizardCoder：HumanEval 73.2%（2023年底 SOTA）</span>
+        </div>
+      </div>
+
+      <div class="two-col-cards">
+        <div class="card">
+          <div class="card-title">
+            Auto Evol-Instruct
+            <span class="arxiv-tag">arXiv:2406.00770</span>
+            <span class="year-tag">2024</span>
+          </div>
+          <p>Evol-Instruct 的重要局限是：进化操作需要人工设计，难以泛化到新领域。Auto Evol-Instruct 通过<strong>自动搜索最优进化方法</strong>来解决这个问题：用 LLM 自动提议、评估和优化进化策略，不再依赖人工先验。</p>
+          <p style="margin-top:8px;">引入元优化框架（meta-optimization），将进化操作的设计也交给 LLM，形成 "进化策略的进化"（evolution of evolution strategies）。</p>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            Condor
+            <span class="arxiv-tag">arXiv:2501.12273</span>
+            <span class="year-tag">2025</span>
+          </div>
+          <p>Condor 提出了<strong>知识驱动的 SFT 数据合成</strong>框架，区别于纯格式改写，Condor 更注重知识内容的精化（Refinement）：首先识别目标知识点，再合成覆盖该知识点的高质量指令-回应对，最后通过自我批判（self-critique）迭代提升数据质量。</p>
+          <div class="stats">
+            <span class="stat stat-blue">知识点覆盖率显著提升</span>
+            <span class="stat stat-green">在多个 SFT 基准上优于 Evol-Instruct</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── CATEGORY C ── -->
+    <div class="cat-section cat-c">
+      <span class="cat-label cat-label-c">🟣 类别 C · 参数内知识编辑（Knowledge Editing）</span>
+      <h3>直接修改模型权重中存储的知识——狭义的"知识改写"</h3>
+
+      <div class="card" style="background:rgba(168,85,247,.06);border-color:rgba(168,85,247,.25);">
+        <p><strong>核心前提（Factual Association Hypothesis）：</strong>神经网络存储事实的方式并非均匀分布，而是在特定层的 FFN（Feed-Forward Network）权重中形成<strong>键值对（key-value pairs）</strong>式的"关联记忆"。中间层 FFN 权重可以被视为一个<strong>可寻址的知识存储器</strong>，通过精准修改这些权重，可以实现外科手术式的知识更新。评估知识编辑的三个核心指标：</p>
+        <ul style="margin-top:8px;">
+          <li><strong>Reliability（可靠性）：</strong>编辑后模型能否正确输出新知识</li>
+          <li><strong>Generality（泛化性）：</strong>对近义表达是否同样有效</li>
+          <li><strong>Locality（局部性）：</strong>无关知识是否不受影响</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          ROME — Rank-One Model Editing
+          <span class="arxiv-tag">arXiv:2202.05262</span>
+          <span class="year-tag">NeurIPS 2022</span>
+        </div>
+        <p>ROME 是参数内知识编辑领域的奠基性工作。<strong>两步法：定位（Locate） + 编辑（Edit）</strong></p>
+        <p style="margin-top:8px;"><strong>Step 1 — 因果追踪（Causal Tracing）：</strong>通过介入实验（activation patching）定位哪一层的 FFN 对某条事实知识最关键。实验发现：事实知识主要存储在 <strong>早-中层（约第 5-10 层）</strong>的 MLP 权重中。</p>
+        <p style="margin-top:8px;"><strong>Step 2 — Rank-One 更新：</strong>将目标层 FFN 的权重矩阵 <code>W</code> 视为键值存储 <code>W ≈ V·K⁻¹</code>，通过求解约束优化问题，添加一个 rank-one 更新 <code>ΔW = ε·k*ᵀ</code>，使得新的键 <code>k*</code> 映射到新的值 <code>v*</code>（新事实），同时保持其他键的输出不变。</p>
+        <div class="stats">
+          <span class="stat stat-green">CounterFact 基准：编辑成功率 ~99%</span>
+          <span class="stat stat-blue">Locality（无关知识保留）：~95%</span>
+          <span class="stat stat-amber">仅支持单条编辑，批量能力有限</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          MEMIT — Mass-Editing Memory In a Transformer
+          <span class="year-tag">ICLR 2023</span>
+        </div>
+        <p>MEMIT 是 ROME 的批量扩展，解决了 ROME 无法同时编辑大量事实的问题。<strong>核心创新：将编辑更新分散到多个 FFN 层</strong>，避免单层过载。</p>
+        <p style="margin-top:8px;"><strong>算法：</strong>给定 N 条待编辑事实，MEMIT 将更新分配到 <code>L</code> 个目标层（通常 5-10 层），每层承担 <code>N/L</code> 的"更新压力"。每层的更新通过最小化约束优化目标求解：在修改目标事实的同时，最小化对原有知识分布的扰动（用伪逆约束实现）。</p>
+        <div class="stats">
+          <span class="stat stat-blue">支持同时编辑 10,000 条事实</span>
+          <span class="stat stat-green">GPT-J（6B）批量编辑 Reliability ~80%</span>
+          <span class="stat stat-amber">层数增加时 Locality 略有下降</span>
+        </div>
+      </div>
+
+      <div class="two-col-cards">
+        <div class="card">
+          <div class="card-title">
+            MEND — Model Editor Networks with Gradient Decomposition
+            <span class="year-tag">2021</span>
+          </div>
+          <p>MEND 训练一个<strong>超网络（Hyper-Network）</strong>：给定目标模型的微调梯度，超网络学会将其转化为一个精准的参数更新，使得只有相关事实被修改。</p>
+          <p style="margin-top:8px;">核心思路：利用 low-rank 分解将微调梯度压缩，然后通过 MLP 超网络将压缩后的梯度映射为最优参数更新方向。超网络的训练本身需要大量样本对，但一旦训练完成，可以快速（~20ms）编辑任意新知识。</p>
+          <div class="stats">
+            <span class="stat stat-blue">编辑速度极快：&lt;20ms</span>
+            <span class="stat stat-amber">需要预训练超网络（成本前置）</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            GRACE — General Retrieval Adaptors for Continual Editing
+            <span class="year-tag">2022</span>
+          </div>
+          <p>GRACE 的思路与 ROME/MEMIT 完全不同：<strong>不修改模型原始参数</strong>，而是外挂一个可寻址的<strong>离散记忆 Codebook</strong>。</p>
+          <p style="margin-top:8px;">每次编辑时，将新的（查询, 新知识）对存入 codebook。推理时，如果当前输入与 codebook 中某条记录的查询足够相似（距离 &lt; 阈值 ε），则用 codebook 中的新值替换模型输出。否则走原始模型路径。</p>
+          <div class="stats">
+            <span class="stat stat-green">零干扰：原始参数完全不变</span>
+            <span class="stat stat-amber">Codebook 随编辑次数线性增长</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          T-Patcher — Transformer Patcher
+          <span class="year-tag">2022</span>
+        </div>
+        <p>T-Patcher 在 FFN 层中注入少量<strong>可训练的"补丁神经元"（Patch Neurons）</strong>，每个补丁神经元负责一条待编辑事实。补丁神经元与原有神经元并联，通过门控机制决定何时激活。</p>
+        <p style="margin-top:8px;">优势在于：原有参数完全冻结，只训练新增的补丁神经元（参数量极少）。每个 patch 独立，互不干扰。缺点是随着编辑次数增加，模型参数量缓慢增长。</p>
+        <div class="stats">
+          <span class="stat stat-blue">每条编辑仅需 &lt;100 个新参数</span>
+          <span class="stat stat-green">原有参数零修改</span>
+        </div>
+      </div>
+
+      <div class="two-col-cards">
+        <div class="card">
+          <div class="card-title">
+            WISE — Wise Injection for Sequential Editing
+            <span class="year-tag">NeurIPS 2024</span>
+          </div>
+          <p>WISE 针对<strong>终身顺序编辑（Lifelong Sequential Editing）</strong>场景，解决顺序编辑时新旧知识冲突的问题。</p>
+          <p style="margin-top:8px;"><strong>双轨记忆架构：</strong>① <strong>通用记忆（General Memory）</strong>= 原始模型参数，保留基础知识；② <strong>工作记忆（Working Memory）</strong>= 可写的知识缓冲区，存储最新编辑。推理时，路由器（Router）根据输入的语义相关性决定从哪个轨道读取知识，避免新旧知识互相覆盖。</p>
+          <div class="stats">
+            <span class="stat stat-green">终身编辑 1000 步后性能不退化</span>
+            <span class="stat stat-blue">双轨设计有效解决遗忘问题</span>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            AlphaEdit
+            <span class="year-tag">ICLR 2025</span>
+          </div>
+          <p>AlphaEdit 通过引入<strong>零空间约束（Null Space Constraint）</strong>，解决知识编辑中"修改目标知识时意外干扰无关知识"的问题。</p>
+          <p style="margin-top:8px;"><strong>数学原理：</strong>将参数更新方向 <code>ΔW</code> 投影到无关知识的表示空间的<strong>零空间（null space）</strong>中，即保证 <code>ΔW · h_unrelated ≈ 0</code>，从而确保更新只影响与编辑事实相关的激活方向，对无关输入的影响趋近于零。相比 ROME 和 MEMIT，AlphaEdit 的 Locality 显著提升。</p>
+          <div class="stats">
+            <span class="stat stat-green">Locality 提升约 15% vs ROME</span>
+            <span class="stat stat-blue">零空间投影保证理论最优</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          IKE — In-Context Knowledge Editing
+          <span class="year-tag">2023</span>
+        </div>
+        <p>IKE 是一种<strong>完全无参数修改</strong>的知识注入方法：将新知识以 few-shot demonstration 的形式放入 prompt 的上下文（context），利用 LLM 的 in-context learning 能力来"覆盖"旧知识。</p>
+        <p style="margin-top:8px;"><strong>Demo 构建策略：</strong>包含三类示例 —— ①<strong>Copy</strong>（直接重复新事实）②<strong>Update</strong>（展示从旧知识到新知识的更新格式）③<strong>Retain</strong>（展示不相关知识保持不变的例子），综合引导模型正确应用新知识。</p>
+        <div class="stats">
+          <span class="stat stat-green">零参数修改成本</span>
+          <span class="stat stat-amber">受 context 窗口限制，无法大量注入</span>
+          <span class="stat stat-amber">每次推理都需要携带新知识 context</span>
+        </div>
+      </div>
+
+      <div class="card" style="background:rgba(168,85,247,.06);border-color:rgba(168,85,247,.25);">
+        <div class="card-title">工具包：EasyEdit &amp; KnowEdit Benchmark</div>
+        <p><strong>EasyEdit</strong>（ACL 2024，浙大 zjunlp 团队）是目前最全面的知识编辑工具包，统一实现了 ROME、MEMIT、MEND、GRACE、T-Patcher、WISE 等 10+ 种方法，提供统一 API 和评测接口，大幅降低了知识编辑研究的门槛。</p>
+        <p style="margin-top:8px;"><strong>KnowEdit Benchmark</strong> 是配套的综合评测基准，涵盖多种任务类型（CounterFact、ZsRE、WikiData、WikiBio 等），支持三个维度（Reliability / Generality / Locality）的系统评测。</p>
+        <div class="stats">
+          <span class="stat stat-blue">EasyEdit：GitHub 5k+ stars</span>
+          <span class="stat stat-green">KnowEdit：覆盖 7 种数据集类型</span>
+          <span class="stat stat-amber">ACL 2024 System Demonstration Track</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── CATEGORY D ── -->
+    <div class="cat-section cat-d">
+      <span class="cat-label cat-label-d">🟢 类别 D · 检索增强式知识注入（RAG）</span>
+      <h3>参数外（Parametric-Free）的动态知识注入</h3>
+
+      <div class="card">
+        <div class="card-title">
+          Retrieval-Augmented Generation (RAG)
+          <span class="year-tag">Lewis et al. 2020 / 广泛应用</span>
+        </div>
+        <p>RAG 代表了与知识编辑截然不同的知识注入哲学：<strong>不修改模型参数，而是在推理时从外部知识库检索相关文档，作为 context 注入 prompt</strong>。这使得知识更新完全解耦于模型训练，外部知识库可以随时更新而无需重训练模型。</p>
+
+        <div class="vs-row" style="margin-top:12px;">
+          <div class="vs-box vs-good">
+            <div class="vs-label">✅ RAG 的核心优势</div>
+            <div class="vs-text">
+              • 知识可随时更新，成本极低（仅需更新向量库）<br>
+              • 可追溯来源（Grounded generation）<br>
+              • 可处理长尾、私有知识<br>
+              • 无灾难性遗忘风险<br>
+              • 透明度高，可审计
+            </div>
+          </div>
+          <div class="vs-box vs-bad">
+            <div class="vs-label">❌ RAG 的主要局限</div>
+            <div class="vs-text">
+              • 推理延迟增加（检索 + 生成两步）<br>
+              • 检索质量决定天花板<br>
+              • 上下文窗口受限，无法注入大量知识<br>
+              • 检索失败时模型可能产生幻觉<br>
+              • 多跳推理场景表现差
+            </div>
+          </div>
+        </div>
+
+        <p style="margin-top:14px;"><strong>与知识编辑的本质区别：</strong></p>
+        <ul style="margin-top:6px;">
+          <li><strong>参数内（Parametric）</strong>：ROME/MEMIT — 知识烧入权重，推理无额外开销，但更新需重新编辑</li>
+          <li><strong>参数外（Non-Parametric）</strong>：RAG — 知识在外部，零代价更新，但推理有检索开销</li>
+        </ul>
+        <div class="stats">
+          <span class="stat stat-green">知识更新成本：接近零（仅更新向量库）</span>
+          <span class="stat stat-blue">推理延迟：通常增加 50-200ms（检索步骤）</span>
+          <span class="stat stat-amber">现代 RAG 框架：LlamaIndex, LangChain, Haystack</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ── CATEGORY E ── -->
+    <div class="cat-section cat-e">
+      <span class="cat-label cat-label-e">🌸 类别 E · 多模态知识编辑</span>
+      <h3>视觉-文本跨模态的知识改写与一致性挑战</h3>
+
+      <div class="card">
+        <div class="card-title">
+          MMKE-Bench — Multimodal Knowledge Editing Benchmark
+          <span class="year-tag">ICLR 2025</span>
+        </div>
+        <p>MMKE-Bench 是<strong>首个系统评测多模态大模型（MLLMs）知识编辑能力</strong>的综合基准。与纯文本知识编辑不同，多模态场景面临额外挑战：当一个视觉实体（如某位名人的照片）的关联知识被编辑后，模型需要同时在视觉和文本两个模态上保持一致性。</p>
+        <p style="margin-top:8px;"><strong>评测维度（扩展了文本知识编辑的三维度）：</strong></p>
+        <ul style="margin-top:4px;">
+          <li><strong>Visual Reliability：</strong>看到图片时能否给出新知识</li>
+          <li><strong>Textual Reliability：</strong>描述该实体时能否给出新知识</li>
+          <li><strong>Cross-Modal Consistency：</strong>视觉和文本路径是否给出相同答案</li>
+          <li><strong>Generality &amp; Locality：</strong>在多模态场景下的泛化性和局部性</li>
+        </ul>
+        <div class="stats">
+          <span class="stat stat-blue">覆盖 3 类知识实体：视觉实体/感知知识/视觉内容知识</span>
+          <span class="stat stat-amber">ICLR 2025 Spotlight</span>
+        </div>
+      </div>
+
+      <div class="two-col-cards">
+        <div class="card">
+          <div class="card-title">
+            Visual-Oriented Fine-Grained Knowledge Editing
+            <span class="year-tag">ICCV 2025</span>
+          </div>
+          <p>专注于<strong>细粒度视觉知识</strong>的编辑，例如修改模型对特定视觉属性的认知（如"这张图里的鸟是什么种类"）。与 MMKE-Bench 的系统评测视角不同，这项工作更关注方法创新：设计了视觉感知引导的编辑机制，通过视觉特征对齐来保证跨模态知识一致性。</p>
+        </div>
+        <div class="card">
+          <div class="card-title">
+            多模态编辑的核心挑战
+            <span class="year-tag">2024–2025</span>
+          </div>
+          <p><strong>视觉-文本跨模态一致性</strong>是多模态知识编辑区别于文本编辑的核心难点：</p>
+          <ul style="margin-top:6px;">
+            <li>图像编码器与语言解码器的表示空间对齐</li>
+            <li>视觉 entity 的归一化（同一人不同照片）</li>
+            <li>编辑知识在视觉 prompt 和文本 prompt 下的一致激活</li>
+            <li>多模态模型架构多样（CLIP/ViT + LLM），编辑方法难以统一</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 4: CHALLENGES
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>挑战与开放问题</h2>
+    </div>
+
+    <div class="challenge-card">
+      <h4>⚡ Ripple Effect（涟漪效应）</h4>
+      <p>当我们编辑一条事实（如"埃菲尔铁塔在巴黎"→"埃菲尔铁塔在柏林"），模型中存储的<strong>所有与之关联的知识都应该同步更新</strong>（如"去看埃菲尔铁塔需要飞往哪个城市"应改为"柏林"）。然而，当前的知识编辑方法往往只能修改目标事实本身，无法自动更新所有下游关联事实，导致知识不一致。<strong>RippleEdits Benchmark</strong>（2023）系统量化了这一问题，发现主流方法的 Ripple Consistency 普遍低于 50%。</p>
+    </div>
+
+    <div class="challenge-card">
+      <h4>🔄 大规模顺序编辑的灾难性遗忘</h4>
+      <p>在现实场景中，知识编辑需要<strong>持续顺序进行</strong>（不断有新知识需要更新）。然而，基于梯度更新的方法（如 ROME、MEMIT）在顺序编辑多条事实后，往往会产生累积误差，导致早期编辑的事实被后续编辑覆盖（catastrophic forgetting at the editing level）。实验显示，ROME 在顺序编辑 100 条事实后，前期事实的 Reliability 从 99% 下降至 ~60%。WISE 的双轨架构是目前最好的缓解方案，但仍不能完全解决。</p>
+    </div>
+
+    <div class="challenge-card">
+      <h4>🌀 改写数据的幻觉风险（Hallucination in Rewritten Data）</h4>
+      <p>LLM 改写（WRAP、Cosmopedia、phi-1 等）在提升数据格式质量的同时，也引入了一个新风险：<strong>改写模型可能在原文基础上产生幻觉内容</strong>。例如，将一段描述历史事件的网页改写成"教科书风格"时，LLM 可能补充一些看似合理但实际不存在的细节。这些幻觉内容一旦进入预训练数据，就会被模型学习并固化。如何在改写过程中保证事实准确性，是一个尚未完全解决的问题。检测手段：用另一个 LLM 对改写内容进行事实核查，但这会显著增加成本。</p>
+    </div>
+
+    <div class="challenge-card">
+      <h4>🤔 真的能修正幻觉吗？（HalluEditBench, NeurIPS 2024）</h4>
+      <p>知识编辑的一个重要应用场景是修正模型的幻觉——将错误知识替换为正确知识。然而，NeurIPS 2024 的 HalluEditBench 论文（<em>Can Knowledge Editing Really Correct Hallucinations?</em>）给出了令人深思的负面结论：当前主流知识编辑方法在修正幻觉方面<strong>效果非常有限</strong>，特别是对于需要多步推理才能检测的幻觉。根本原因在于：幻觉往往不是单一的"错误事实"，而是多个弱关联的概率偏差共同导致的，不能简单地通过修改一条三元组来修复。这一发现促使研究者重新思考知识编辑的适用边界。</p>
+    </div>
+
+    <div class="challenge-card">
+      <h4>🌍 多语言迁移效果不均（Cross-Lingual Transfer）</h4>
+      <p>知识编辑通常在英文场景下研究，但在多语言 LLM 中，<strong>用英文编辑的知识并不会自动迁移到其他语言</strong>。研究发现，用英文编辑「拜登是美国总统→特朗普」后，中文提问「谁是美国总统」时，模型仍然可能给出旧答案。跨语言知识同步需要在每种语言上分别进行编辑，或者开发语言无关的编辑方法。目前，多语言知识编辑是一个活跃的研究方向，但进展仍有限。</p>
+    </div>
+  </div>
+
+  <!-- ════════════════════════════════════════════
+       SECTION 5: CONCLUSION & OUTLOOK
+  ═══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>总结与展望</h2>
+    </div>
+
+    <div class="card" style="margin-bottom:24px;">
+      <p>知识改写合成作为一个研究方向，正在从两个维度同步演进：一是<strong>训练前的数据质量提升</strong>（WRAP、Cosmopedia、SwallowCode 等），通过在数据层面的系统性改写，从根本上提升模型能力的天花板；二是<strong>训练后的知识动态更新</strong>（ROME、MEMIT、WISE 等），通过精准的参数编辑，以极低成本维护模型知识的时效性。两个方向的终极目标是一致的：让 LLM 能够<strong>高效、准确、可持续地掌握和更新人类知识</strong>。</p>
+    </div>
+
+    <div class="outlook-grid">
+      <div class="outlook-card">
+        <div class="outlook-icon">🔬</div>
+        <h4>统一改写-编辑框架</h4>
+        <p>将预训练数据改写（数据层）与参数内知识编辑（模型层）统一到一个理论框架，理解两者的互补关系</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">♾️</div>
+        <h4>终身知识维护</h4>
+        <p>解决顺序编辑的累积遗忘问题，实现真正的持续学习与知识演化，而非一次性编辑</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">🧠</div>
+        <h4>涟漪效应的系统解决</h4>
+        <p>开发能够自动追踪和更新关联知识的编辑方法，从单点编辑升级为知识图谱级别的一致性维护</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">🌐</div>
+        <h4>多语言知识同步</h4>
+        <p>语言无关的知识表示与编辑，一次编辑，全语言同步，打破语言壁垒</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">🎨</div>
+        <h4>多模态知识改写</h4>
+        <p>视觉-文本联合改写与编辑，实现跨模态知识一致性，是下一代 MLLM 的重要挑战</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">✅</div>
+        <h4>自动化事实核查</h4>
+        <p>改写管道集成实时事实验证，从源头消除幻觉风险，实现"改写即正确"的高质量合成数据</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:20px;background:rgba(88,166,255,.06);border-color:rgba(88,166,255,.25);">
+      <p style="color:var(--text-muted);font-size:14px;">
+        <strong>方法选型建议：</strong>
+        若目标是<strong>提升预训练数据质量</strong>，优先考虑 WRAP（快速多风格改写）或 FineWeb-Edu（高教育价值筛选）；
+        若目标是<strong>指令微调对齐</strong>，推荐 Evol-Instruct 或 Condor；
+        若目标是<strong>注入新知识且不重训</strong>，小批量用 ROME，大批量用 MEMIT，终身编辑用 WISE，零成本用 IKE/RAG；
+        若目标是<strong>系统评测知识编辑效果</strong>，使用 EasyEdit + KnowEdit 基准。
+      </p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>
+      <a href="index.html">🏠 返回首页</a>
+      &nbsp;·&nbsp;
+      Knowledge Rewriting &amp; Synthesis Survey
+      &nbsp;·&nbsp;
+      Generated 2025
+    </p>
+    <p style="margin-top:6px;">
+      Key refs: WRAP (arXiv:2401.16380) · SwallowCode (arXiv:2505.02881) · ROME (arXiv:2202.05262) ·
+      Auto Evol-Instruct (arXiv:2406.00770) · Condor (arXiv:2501.12273) ·
+      EasyEdit (ACL 2024) · WISE (NeurIPS 2024) · AlphaEdit (ICLR 2025) · MMKE-Bench (ICLR 2025)
+    </p>
+  </div>
+
+</div><!-- /container -->
+</body>
+</html>

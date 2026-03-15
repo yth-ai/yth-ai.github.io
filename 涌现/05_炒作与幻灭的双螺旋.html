@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第五章：炒作与幻灭的双螺旋 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第二部分：震惊（2020-2022）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第五章</div>
+  <h1 class="chapter-title">炒作与幻灭的双螺旋</h1>
+  <div class="chapter-epigraph">
+    "技术成熟度曲线（Gartner Hype Cycle）是有它的道理的。只不过这一次，谷底比我们想象的浅。"
+    <cite>—— 一位硅谷投资人，2021年底，私下谈话</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#hype">炒作机器的运转</a></li>
+      <li><a href="#metaverse">元宇宙的岔路口</a></li>
+      <li><a href="#competitor">百花齐放：竞争者的涌现</a></li>
+      <li><a href="#limits">GPT-3的真实局限</a></li>
+      <li><a href="#disappointment">一批创业公司的困惑</a></li>
+      <li><a href="#undercurrent">暗流：真正的工作在继续</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="hype">炒作机器的运转</h2>
+  <p>
+    2021年，AI是硅谷最热的词。GPT-3的API让一批创业公司迅速涌现，他们用它做营销文案、代码补全、客服对话、内容摘要……风险投资涌入这个赛道，估值水涨船高。
+  </p>
+  <p>
+    媒体推波助澜。"AI将取代程序员"、"AI会写小说"、"AI已经能过律师考试"——这些标题一个比一个耸人听闻，而且大多数都不准确。GPT-3确实通过了某些考试的部分题目，但离"通过律师考试"还差得远，遑论真正执业。
+  </p>
+  <p>
+    这种炒作，在投资圈里形成了一种特殊的动力学：每个人都知道目前的产品能力有限，但每个人都相信"下一个版本会更好"，所以投资要抢先。这种"未来贴现"的逻辑，驱动了一轮又一轮的融资热潮。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2021 年</div>
+    <div class="event">AI 创业的第一波热潮</div>
+    <div class="desc">数百家基于GPT-3 API的创业公司成立，覆盖写作辅助、代码生成、客服自动化等领域。AI赛道融资额创历史新高。</div>
+  </div>
+
+  <h2 id="metaverse">元宇宙的岔路口</h2>
+  <p>
+    有意思的是，2021年还发生了另一件大事：Facebook改名Meta，宣布全力押注"元宇宙"。马克·扎克伯格在发布会上戴着VR眼镜，向全世界展示一个数字世界的愿景——在那里，人们的化身可以开会、玩游戏、买地皮。
+  </p>
+  <p>
+    这件事，现在看起来像是一个岔路口的隐喻。科技巨头们在2021年对"下一件大事"的判断，分成了两个阵营：一边押注元宇宙，一边押注AI。押注元宇宙的，两年后面对的是数百亿美元的亏损和公众的嘲笑。押注AI的，则骑上了历史上最快的一匹马。
+  </p>
+  <p>
+    但在当时，这两件事的热度是可比的。AI的炒作是真实的，但元宇宙的炒作更大。OpenAI还是个相对小众的名字，ChatGPT还不存在，Midjourney还不存在。普通人对"AI"的印象，更多来自科幻电影，而不来自他们的日常生活。
+  </p>
+
+  <blockquote>
+    "当时我们在讨论应该招聘AI工程师还是AR/VR工程师。结果显而易见，但在当时真的不显而易见。"
+    <cite>—— 一位大型科技公司工程总监，2023年回顾</cite>
+  </blockquote>
+
+  <h2 id="competitor">百花齐放：竞争者的涌现</h2>
+  <p>
+    GPT-3的成功，刺激了其他玩家迅速跟进。
+  </p>
+  <p>
+    谷歌在2021年推出了LaMDA（Language Model for Dialogue Applications），一个专为对话优化的模型。谷歌工程师Blake Lemoine因为声称LaMDA"有意识"而引发了一场巨大争议，并最终被谷歌解雇——这件事让AI意识问题第一次登上了大众媒体的头条。
+  </p>
+  <p>
+    同年，谷歌还发布了PaLM（5400亿参数），以及后来的Chinchilla训练法则（2022年），证明以前的大模型在数据量上都严重不足。DeepMind发布了Gopher（2800亿参数）和后来的Flamingo多模态模型。
+  </p>
+  <p>
+    中国方面，百度、华为、智谱等公司也开始了各自的大模型研发。清华大学THUDM团队的工作也在这一时期悄然开始。
+  </p>
+  <p>
+    更值得关注的，是一批新型的AI研究机构和公司的崛起。Anthropic，由OpenAI离职员工Dario Amodei、Daniela Amodei领衔创立，专注AI安全；Cohere，专注企业级NLP；AI21 Labs，来自以色列，专注写作工具……
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2022 年 4 月</div>
+    <div class="event">Chinchilla 训练法则</div>
+    <div class="desc">DeepMind发布论文，证明最优训练需要在参数量和数据量上取得平衡。当时大多数大模型都是"参数过多、数据不足"的状态，这篇论文改变了整个领域的训练策略。</div>
+  </div>
+
+  <h2 id="limits">GPT-3的真实局限</h2>
+  <p>
+    与炒作并行的，是使用者们逐渐发现的真实局限。
+  </p>
+  <p>
+    GPT-3的输出，是概率驱动的。它不"知道"什么是真，它只是在预测什么词最可能出现。这导致了两个问题：其一，幻觉（hallucination）——它会用极其自信的语气，说出完全错误的事情，甚至编造不存在的论文引用、不存在的人物；其二，不稳定性——同样的问题，稍微换个表述，可能得到完全不同的答案。
+  </p>
+  <p>
+    更麻烦的是，GPT-3不好"控制"。你想让它写一篇正面评价的文章，它可能给你写成负面的；你想让它回答一个技术问题，它可能给你一大段不着边际的话。它的"对齐"（alignment）问题——让模型的行为与用户意图和人类价值观对齐——成为了一个越来越紧迫的挑战。
+  </p>
+
+  <blockquote>
+    "GPT-3就像一个极其聪明但完全不可预测的实习生。它可能给你写出天才之作，也可能给你一堆胡言乱语。你无法知道哪个会出现。"
+    <cite>—— Linus Lee，独立研究者，2021年博客文章</cite>
+  </blockquote>
+
+  <h2 id="disappointment">一批创业公司的困惑</h2>
+  <p>
+    2021-2022年间，很多基于GPT-3的创业公司遭遇了一个现实：用GPT-3做产品，比想象中难得多。
+  </p>
+  <p>
+    幻觉问题让客户难以信任AI生成的内容；不稳定性让产品的用户体验难以保持一致；API成本随着用量增长而飙升，很多商业模式在算力成本面前算不过账来。
+  </p>
+  <p>
+    一些公司选择退出；另一些公司转向"人在回路"（Human-in-the-Loop）模式，用AI辅助人类，而不是取代人类；还有一些公司开始自己训练更小、更专用的模型，以降低成本和提高可控性。
+  </p>
+  <p>
+    这一段时期，是AI创业的"幻灭期"——不是因为技术没用，而是因为把技术变成稳定可靠的产品，比大家想象的要难得多。
+  </p>
+
+  <h2 id="undercurrent">暗流：真正的工作在继续</h2>
+  <p>
+    但就在炒作和幻灭的噪音之中，有一些安静的工作在继续。
+  </p>
+  <p>
+    OpenAI的一个小团队，正在研究一个问题：怎么让语言模型真正"听话"？不只是技术上能做什么，而是能按照人类的意图做事，能拒绝有害请求，能在不确定时表达不确定性。
+  </p>
+  <p>
+    这个方向，叫做"从人类反馈中学习"（Reinforcement Learning from Human Feedback，RLHF）。它将在接下来的一章里，成为改变一切的关键钥匙。
+  </p>
+  <p>
+    炒作是噪音，暗流是信号。2021年是嘈杂的，但在嘈杂之下，有人在埋头做真正重要的事。
+  </p>
+
+  <div class="highlight-box">
+    📈 <strong>AI炒作周期的教训</strong>：每一次技术突破都会经历炒作-幻灭-真正落地的三阶段。GPT-3的故事也不例外。真正的产品价值，往往在幻灭期结束后才显现。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="04_GPT3时刻.html" class="nav-btn">← 第四章</a>
+  <a href="06_Codex与GitHub_Copilot.html" class="nav-btn">第六章：Codex与GitHub Copilot →</a>
+</nav>
+
+</body>
+</html>

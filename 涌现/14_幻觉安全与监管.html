@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第十四章：幻觉、安全与监管 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第四部分：混沌（2023-2024）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第十四章</div>
+  <h1 class="chapter-title">幻觉、安全与监管</h1>
+  <div class="chapter-epigraph">
+    "我们有一种工具，它能自信地说谎，不知道自己在说谎。这是一个全新的信任问题。"
+    <cite>—— Sam Bowman，AI安全研究员，2023年</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#hallucination">幻觉：自信的谎言</a></li>
+      <li><a href="#cases">真实代价：幻觉引发的事故</a></li>
+      <li><a href="#pause-letter">暂停信：6个月暂停训练的倡议</a></li>
+      <li><a href="#eu-act">欧盟AI法案</a></li>
+      <li><a href="#openai-drama">OpenAI内部政变：最戏剧的48小时</a></li>
+      <li><a href="#governance">AI治理的困境</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="hallucination">幻觉：自信的谎言</h2>
+  <p>
+    "幻觉"（Hallucination），是大语言模型最广为人知的缺陷，也是阻碍其在高风险场景中应用的最大障碍。
+  </p>
+  <p>
+    幻觉指的是：模型以高度自信的口吻，生成实际上不正确的信息。它不只是"答错了"——它还用了一种让人难以质疑的确定语气，就像一个博学但不知道自己在撒谎的人。
+  </p>
+  <p>
+    幻觉的来源，在技术上是可以理解的：模型的训练目标是生成"看起来合理的"文字，而不是"确认为真实的"事实。当一个知识点在训练数据中稀少或矛盾时，模型会用"感觉像真的"来填补空白，而不是说"我不知道"。
+  </p>
+  <p>
+    解决幻觉，是AI安全研究的核心课题之一。各种技术尝试（检索增强生成RAG、工具调用、更强的RLHF……）都能在一定程度上减轻，但没有完全消除幻觉。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2023 年</div>
+    <div class="event">AI幻觉引发的第一批法律纠纷</div>
+    <div class="desc">美国律师Michael Cohen承认，他使用ChatGPT准备法律文件，文件中引用了数个不存在的案例，被法官训诫。类似事件在医疗、法律等专业领域多次出现。</div>
+  </div>
+
+  <h2 id="cases">真实代价：幻觉引发的事故</h2>
+  <p>
+    幻觉不只是一个技术问题——它有真实的代价。
+  </p>
+  <p>
+    最引人关注的案例：2023年5月，美国律师Steven Schwartz承认，他使用ChatGPT准备了一份法庭文件，其中引用了六个实际上不存在的判决——这些判决是ChatGPT"编造"的，但看起来格式完整、细节丰富。联邦法官在审查中发现了这些错误，对涉事律师进行了处罚，并引发了法律界对AI使用的广泛讨论。
+  </p>
+  <p>
+    在医疗领域，研究人员发现，当医生用ChatGPT辅助病历记录或临床决策时，偶发的幻觉可能导致严重误判。一个错误的药物剂量建议，或者一个编造的研究结论，在医疗场景中可能危及生命。
+  </p>
+  <p>
+    这些案例，推动了整个行业向"负责任AI"（Responsible AI）框架靠拢——更清晰的不确定性表达、强制性的人类审查流程、针对高风险场景的特殊安全措施。
+  </p>
+
+  <blockquote>
+    "如果一个工具让你更快地犯错，而不是更快地做对，那它就不是生产力工具，它是风险放大器。"
+    <cite>—— 一位医疗AI研究者，2023年，JAMA文章</cite>
+  </blockquote>
+
+  <h2 id="pause-letter">暂停信：6个月暂停训练的倡议</h2>
+  <p>
+    2023年3月，一封公开信在AI圈和科技媒体上引发轩然大波。这封信呼吁，所有AI实验室应当暂停训练比GPT-4更强大的AI系统，暂停期至少6个月，以便社会和行业有时间评估风险，制定安全标准。
+  </p>
+  <p>
+    这封信，由未来生命研究所（Future of Life Institute）发起，签署者超过1000人，包括Elon Musk、Stuart Russell、Yoshua Bengio，以及来自苹果、谷歌DeepMind的多位研究员。
+  </p>
+  <p>
+    但也有很多人拒绝签署，包括OpenAI的主要研究员，以及LeCun等人（理由各不相同）。业界的普遍反应是：暂停是不现实的——没有任何一个实验室会在竞争对手不停步的情况下单方面放缓。
+  </p>
+  <p>
+    这封信的真正意义，不在于推动了实际的暂停，而在于它让"AI安全"话题第一次以如此高调的方式进入公众视野，推动了政策讨论和立法行动。
+  </p>
+
+  <h2 id="eu-act">欧盟AI法案</h2>
+  <p>
+    2023年，欧洲议会推进了《欧盟人工智能法案》（EU AI Act）的立法进程，这是全球第一部综合性的AI监管法规。
+  </p>
+  <p>
+    法案采用风险分级方法：将AI系统按风险等级分为不可接受（禁止）、高风险（严格监管）、有限风险（透明度要求）和低风险（基本不监管）。高风险场景包括：用于招聘的AI、用于信用评分的AI、用于执法的AI……
+  </p>
+  <p>
+    法案引发了两种截然不同的反应：欧洲的隐私权和公民自由倡导者普遍支持；科技公司（包括欧洲的）和部分研究者则担心，过于严格的监管会阻碍创新，让欧洲在AI竞争中进一步落后。
+  </p>
+  <p>
+    这种"安全与创新的两难"，也在美国、中国、英国等地的政策讨论中反复出现。各国政府面对一个困境：行动太慢，可能被技术赶超；行动太快，可能制定出不合时宜的规则。
+  </p>
+
+  <h2 id="openai-drama">OpenAI内部政变：最戏剧的48小时</h2>
+  <p>
+    2023年11月17日，发生了AI史上最戏剧性的公司事件。
+  </p>
+  <p>
+    那天早晨，OpenAI董事会突然宣布解除Sam Altman的CEO职务，措辞是"他在与董事会的沟通中不够坦诚，阻碍了董事会履行其监督职责"。没有任何预警，整个科技圈哗然。
+  </p>
+  <p>
+    接下来的72小时，是一场近乎荒诞的权力剧情：Greg Brockman（CTO）宣布辞职支持Altman；大量OpenAI员工表示如果Altman不回来就集体辞职；微软CEO Satya Nadella宣布欢迎Altman加入微软领导新的AI团队；投资者们联系董事会施压……
+  </p>
+  <p>
+    五天后，2023年11月22日，Sam Altman宣布回归OpenAI担任CEO，原董事会大部分成员被替换。这场"政变"以Altman的完胜告终。
+  </p>
+  <p>
+    这个事件，暴露了OpenAI独特治理结构（非营利机构控制营利公司）的内在张力，也让整个行业深刻感受到，在这个阶段，AI公司的领导力稳定性，是一个真实的风险因素。
+  </p>
+
+  <blockquote>
+    "那个周末，我一夜没睡，不是因为工作，而是因为不敢相信这件事真的发生了。"
+    <cite>—— 一位OpenAI员工，2023年11月，事后Twitter留言</cite>
+  </blockquote>
+
+  <h2 id="governance">AI治理的困境</h2>
+  <p>
+    OpenAI的内乱，以及各国的立法尝试，共同揭示了AI治理的核心困境：我们需要治理一个我们还不完全理解的技术，用一些还没发明出来的工具，来应对还没发生的问题。
+  </p>
+  <p>
+    没有简单答案。但有一件事是清楚的：从实验室里的研究问题，到全球性的政治、法律、伦理问题——AI用了不到一年的时间，完成了这个跨越。这个速度，超过了任何之前的技术。
+  </p>
+
+  <div class="highlight-box">
+    ⚖️ <strong>全球AI监管进展（2023）</strong>：欧盟推进AI法案；美国拜登政府发布AI行政令；中国发布生成式AI服务管理暂行办法；英国召开布莱切利峰会，28个国家签署AI安全宣言。治理时代已经开始。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="13_唱衰的声音.html" class="nav-btn">← 第十三章</a>
+  <a href="15_开源的力量.html" class="nav-btn">第十五章：开源的力量 →</a>
+</nav>
+
+</body>
+</html>

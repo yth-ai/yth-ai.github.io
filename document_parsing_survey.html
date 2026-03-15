@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>文档解析技术综述 2025–2026</title>
+<style>
+:root {
+  --bg: #0e1117;
+  --card: #161b27;
+  --card2: #1a2035;
+  --border: rgba(255,255,255,0.08);
+  --text1: #f0f4ff;
+  --text2: #8b9ab8;
+  --text3: #5a6882;
+  --accent1: #3a7bd5;
+  --accent2: #2ec4a0;
+  --accent3: #f59e0b;
+  --accent4: #e94560;
+  --accent5: #a78bfa;
+  --accent6: #f472b6;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: -apple-system, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  display: flex;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ── */
+nav {
+  width: 220px;
+  min-width: 220px;
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow-y: auto;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  padding: 24px 0 40px;
+  font-size: 12px;
+}
+.nav-logo {
+  padding: 0 18px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text1);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.nav-logo span { display:block; font-size:10px; color:var(--text2); font-weight:400; margin-top:3px; }
+.nav-section {
+  padding: 8px 18px 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-top: 10px;
+}
+.nav-item {
+  display: block;
+  padding: 6px 18px;
+  color: var(--text2);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: all .15s;
+  line-height: 1.45;
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: var(--text1); }
+.nav-new { color: #f472b6 !important; }
+
+/* ── Main ── */
+.main {
+  flex: 1;
+  min-width: 0;
+  padding: 40px 48px 80px;
+  max-width: 1060px;
+}
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, rgba(58,123,213,.15) 0%, rgba(46,196,160,.08) 100%);
+  border: 1px solid rgba(58,123,213,.25);
+  border-radius: 16px;
+  padding: 40px 44px;
+  margin-bottom: 48px;
+}
+.hero-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--accent1);
+  margin-bottom: 12px;
+}
+.hero h1 { font-size: 32px; font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+.hero-sub { font-size: 15px; color: var(--accent2); margin-bottom: 16px; font-weight: 500; }
+.hero-desc { font-size: 13px; color: var(--text2); line-height: 1.8; max-width: 720px; margin-bottom: 24px; }
+.hero-stats { display: flex; gap: 32px; flex-wrap: wrap; }
+.stat .stat-n { font-size: 22px; font-weight: 800; color: var(--text1); }
+.stat .stat-l { font-size: 11px; color: var(--text2); margin-top: 2px; }
+
+/* ── Section ── */
+section { margin-bottom: 60px; }
+.section-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text1);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.section-title .icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+}
+.section-desc { font-size: 13px; color: var(--text2); line-height: 1.8; margin-bottom: 28px; max-width: 800px; }
+
+/* ── Comparison Table ── */
+.comp-table-wrap { overflow-x: auto; margin-bottom: 28px; }
+.comp-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12.5px;
+  min-width: 860px;
+}
+.comp-table th {
+  background: rgba(58,123,213,0.12);
+  color: var(--accent1);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  letter-spacing: .8px;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.comp-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: var(--text1);
+  vertical-align: top;
+  line-height: 1.6;
+}
+.comp-table tr:hover td { background: rgba(255,255,255,0.025); }
+.comp-table .cat { font-weight: 700; color: var(--text2); font-size: 11px; letter-spacing: .5px; }
+
+/* score dots */
+.score { display: flex; gap: 3px; align-items: center; }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-on  { background: var(--accent2); }
+.dot-off { background: rgba(255,255,255,0.12); }
+.score-label { font-size: 11px; color: var(--text2); margin-left: 4px; }
+
+/* tag */
+.tag {
+  display: inline-block;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: .5px;
+  margin: 1px 2px;
+}
+.t-blue  { background: rgba(58,123,213,.2); color: #7cb3f5; }
+.t-green { background: rgba(46,196,160,.2); color: #4ecdaa; }
+.t-amber { background: rgba(245,158,11,.2); color: #fbbf24; }
+.t-red   { background: rgba(233,69,96,.2);  color: #f87171; }
+.t-purple{ background: rgba(167,139,250,.2);color: #c4b5fd; }
+.t-pink  { background: rgba(244,114,182,.2);color: #f9a8d4; }
+.t-gray  { background: rgba(255,255,255,.08);color: var(--text2); }
+
+/* pros/cons list */
+.pc-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.pc-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px 20px;
+}
+.pc-box.pro  { border-left: 3px solid var(--accent2); }
+.pc-box.con  { border-left: 3px solid var(--accent4); }
+.pc-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; letter-spacing: .5px; }
+.pc-box.pro .pc-title { color: var(--accent2); }
+.pc-box.con .pc-title { color: var(--accent4); }
+.pc-box ul { padding-left: 16px; font-size: 12.5px; color: var(--text2); line-height: 1.85; }
+.pc-box ul li { margin-bottom: 3px; }
+
+/* card grid */
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 22px;
+  transition: border-color .15s;
+}
+.card:hover { border-color: rgba(255,255,255,0.15); }
+.card h3 { font-size: 14px; font-weight: 700; color: var(--text1); margin-bottom: 5px; }
+.card .sub { font-size: 11px; color: var(--text3); margin-bottom: 12px; }
+.card ul { padding-left: 16px; font-size: 12.5px; color: var(--text2); line-height: 1.8; }
+.card ul li { margin-bottom: 4px; }
+.card ul li strong { color: var(--text1); }
+
+.card3 { grid-template-columns: repeat(3, 1fr); }
+
+/* pipeline block */
+.pipeline {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  margin: 20px 0 28px;
+  overflow-x: auto;
+}
+.pipe-step {
+  flex: 1;
+  min-width: 110px;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  padding: 16px 14px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text2);
+  position: relative;
+}
+.pipe-step:first-child { border-radius: 10px 0 0 10px; }
+.pipe-step:last-child  { border-radius: 0 10px 10px 0; }
+.pipe-step + .pipe-step { border-left: none; }
+.pipe-step .pipe-icon { font-size: 22px; margin-bottom: 8px; }
+.pipe-step .pipe-name { font-weight: 700; color: var(--text1); font-size: 12px; margin-bottom: 4px; }
+.pipe-arrow {
+  width: 20px; min-width: 20px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text3); font-size: 14px;
+  background: var(--bg);
+}
+
+/* info box */
+.info-box {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 22px 26px;
+  margin: 20px 0;
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.8;
+}
+.info-box strong { color: var(--text1); }
+
+/* timeline */
+.timeline { position: relative; padding-left: 32px; }
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 10px; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, var(--accent1), var(--accent5), var(--accent6));
+  border-radius: 2px;
+}
+.tl-item { position: relative; margin-bottom: 32px; }
+.tl-dot {
+  position: absolute;
+  left: -28px; top: 4px;
+  width: 16px; height: 16px;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent1);
+  display: flex; align-items: center; justify-content: center;
+}
+.tl-dot div { width: 6px; height: 6px; border-radius: 50%; background: var(--accent1); }
+.tl-year { font-size: 11px; font-weight: 700; color: var(--accent1); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+.tl-title { font-size: 14px; font-weight: 700; color: var(--text1); margin-bottom: 6px; }
+.tl-desc { font-size: 12.5px; color: var(--text2); line-height: 1.75; }
+.tl-tags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 5px; }
+
+/* method section head */
+.method-head {
+  display: flex; align-items: center; gap: 12px;
+  margin: 32px 0 16px;
+  padding: 14px 18px;
+  background: var(--card2);
+  border-radius: 10px;
+  border-left: 3px solid;
+}
+.method-head .mh-icon { font-size: 22px; }
+.method-head .mh-name { font-size: 15px; font-weight: 700; color: var(--text1); }
+.method-head .mh-sub  { font-size: 12px; color: var(--text2); margin-top: 2px; }
+
+/* insight box */
+.insight-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin: 20px 0;
+}
+.insight-box {
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid;
+  font-size: 12.5px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.insight-box .ih { font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 8px; }
+
+/* responsive */
+@media (max-width: 900px) {
+  nav { display: none; }
+  .main { padding: 24px 20px 60px; }
+  .card-grid, .card3 { grid-template-columns: 1fr; }
+  .pc-grid { grid-template-columns: 1fr; }
+  .insight-grid { grid-template-columns: 1fr 1fr; }
+  .comp-table { min-width: 700px; }
+}
+
+/* scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 3px; }
+
+footer {
+  margin-top: 60px;
+  padding-top: 24px;
+  border-top: 1px solid var(--border);
+  font-size: 12px;
+  color: var(--text3);
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+
+<!-- ========= SIDEBAR ========= -->
+<nav>
+  <div class="nav-logo">📄 文档解析综述<span>Document Parsing Survey · 2025–2026</span></div>
+
+  <div class="nav-section">概览</div>
+  <a class="nav-item" href="#overview">文档解析的挑战</a>
+  <a class="nav-item" href="#taxonomy">方案分类体系</a>
+
+  <div class="nav-section">方案对比</div>
+  <a class="nav-item" href="#comparison">综合优劣对比表</a>
+  <a class="nav-item" href="#tradeoffs">核心 Trade-off 分析</a>
+  <a class="nav-item" href="#benchmark">Benchmark 数据</a>
+
+  <div class="nav-section">关键方案</div>
+  <a class="nav-item" href="#rule-based">规则 / 启发式方法</a>
+  <a class="nav-item" href="#pipeline">Pipeline 流水线方法</a>
+  <a class="nav-item" href="#e2e-ocr">端到端 OCR 模型</a>
+  <a class="nav-item" href="#vlm-parse">VLM 直接解析</a>
+  <a class="nav-item" href="#tools">主流工具横评</a>
+
+  <div class="nav-section" style="color:var(--accent6);">🆕 2025–2026</div>
+  <a class="nav-item nav-new" href="#new2526">前沿进展</a>
+
+  <div class="nav-section">附录</div>
+  <a class="nav-item" href="#timeline">技术发展时间线</a>
+  <a class="nav-item" href="#outlook">展望</a>
+</nav>
+
+<!-- ========= MAIN ========= -->
+<div class="main">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-label">综述报告 · 2025–2026</div>
+    <h1>文档解析技术综述</h1>
+    <p class="hero-sub">从规则匹配到多模态大模型的全面演进</p>
+    <p class="hero-desc">
+      文档解析是 RAG、知识库构建、信息抽取等一切下游任务的"第一公里"。本报告系统梳理规则方法、Pipeline 流水线、
+      端到端 OCR 模型、VLM 直接解析四大技术路线的核心优劣，深度介绍 MinerU、Docling、Marker、olmOCR、GOT-OCR、
+      Nougat、Mistral OCR 等主流方案，并梳理 2025–2026 年前沿进展与技术展望。
+    </p>
+    <div class="hero-stats">
+      <div class="stat"><div class="stat-n">4</div><div class="stat-l">技术路线</div></div>
+      <div class="stat"><div class="stat-n">12+</div><div class="stat-l">关键方案</div></div>
+      <div class="stat"><div class="stat-n">2018—2026</div><div class="stat-l">时间跨度</div></div>
+      <div class="stat"><div class="stat-n">PDF · 扫描 · 图像</div><div class="stat-l">覆盖格式</div></div>
+    </div>
+  </div>
+
+  <!-- ===== 1. 文档解析的挑战 ===== -->
+  <section id="overview">
+    <div class="section-title"><span class="icon" style="background:rgba(58,123,213,.2);">🌍</span>文档解析的挑战</div>
+    <p class="section-desc">
+      文档解析不只是"提取文字"——它需要理解版式结构、语义关系、多模态内容，并以机器可消费的格式输出。真实文档的多样性让这个任务远比想象中困难。
+    </p>
+
+    <div class="card-grid card3">
+      <div class="card" style="border-top:2px solid var(--accent1);">
+        <h3>📐 版式多样性</h3>
+        <ul>
+          <li>单/多列混排，期刊、PPT、报表各不相同</li>
+          <li>复杂表格：跨行/列合并、嵌套表格、无边框表</li>
+          <li>公式、代码块、图注、脚注的阅读顺序还原</li>
+          <li>页眉页脚、水印、批注的干扰噪声去除</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:2px solid var(--accent2);">
+        <h3>🖼️ 内容多模态</h3>
+        <ul>
+          <li>扫描件（图片 PDF）vs 数字原生 PDF 处理差异巨大</li>
+          <li>图表（柱状图/折线图）需理解而非仅截图</li>
+          <li>LaTeX 公式、化学式的结构化还原</li>
+          <li>手写内容、低分辨率、偏斜、污损的鲁棒性</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:2px solid var(--accent3);">
+        <h3>⚙️ 工程现实</h3>
+        <ul>
+          <li>速度 vs 精度的 trade-off：工业场景对吞吐量要求极高</li>
+          <li>部署成本：GPU 依赖、模型大小、推理延迟</li>
+          <li>多语言（中/日/韩/阿拉伯语等）支持难度</li>
+          <li>下游适配：Markdown / JSON / HTML 等格式要求不同</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Pipeline overview -->
+    <div class="section-title" style="font-size:15px;margin-top:8px;"><span class="icon" style="background:rgba(46,196,160,.15);font-size:14px;">⚙️</span>文档解析完整 Pipeline</div>
+    <div class="pipeline">
+      <div class="pipe-step" style="border-top:2px solid #3a7bd5;">
+        <div class="pipe-icon">📥</div>
+        <div class="pipe-name">输入</div>
+        PDF / 图像 / 扫描件
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-top:2px solid #2ec4a0;">
+        <div class="pipe-icon">🗺️</div>
+        <div class="pipe-name">版式检测</div>
+        文字区 / 表格 / 图 / 公式
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-top:2px solid #f59e0b;">
+        <div class="pipe-icon">🔤</div>
+        <div class="pipe-name">文字识别</div>
+        OCR / 文本提取
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-top:2px solid #a78bfa;">
+        <div class="pipe-icon">📊</div>
+        <div class="pipe-name">结构理解</div>
+        表格 / 公式 / 阅读顺序
+      </div>
+      <div class="pipe-arrow">→</div>
+      <div class="pipe-step" style="border-top:2px solid #e94560;">
+        <div class="pipe-icon">📝</div>
+        <div class="pipe-name">格式化输出</div>
+        Markdown / JSON / HTML
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 2. 方案分类 ===== -->
+  <section id="taxonomy">
+    <div class="section-title"><span class="icon" style="background:rgba(46,196,160,.2);">🗂️</span>方案分类体系</div>
+    <p class="section-desc">按技术路线可分为四大类，各有其适用场景和能力边界。</p>
+    <div class="card-grid card3" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card" style="border-left:3px solid var(--accent1);">
+        <h3>① 规则 / 启发式方法</h3>
+        <div class="sub">PyMuPDF · pdfminer · pdfplumber</div>
+        <ul>
+          <li>直接解析 PDF 内部数字结构（字符位置、字体信息）</li>
+          <li>无需模型，速度极快（毫秒级），内存占用极低</li>
+          <li>对数字原生 PDF 效果好；扫描件/复杂版式束手无策</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:3px solid var(--accent2);">
+        <h3>② Pipeline 流水线方法</h3>
+        <div class="sub">MinerU · Marker · Docling · Surya</div>
+        <ul>
+          <li>版式检测（YOLO/LayoutLM）+ OCR + 后处理多阶段串联</li>
+          <li>各模块可替换，工程灵活性高；对扫描件/复杂文档强</li>
+          <li>模块错误累积，推理速度受限于最慢模块</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:3px solid var(--accent3);">
+        <h3>③ 端到端 OCR 模型</h3>
+        <div class="sub">GOT-OCR 2.0 · Nougat · olmOCR · TrOCR</div>
+        <ul>
+          <li>图像→文本的统一端到端模型，无模块划分</li>
+          <li>对特定领域（学术论文/公式）精度高</li>
+          <li>输出结构相对简单；推理速度受模型大小影响</li>
+        </ul>
+      </div>
+      <div class="card" style="border-left:3px solid var(--accent5);">
+        <h3>④ VLM 直接解析</h3>
+        <div class="sub">GPT-4o · Mistral OCR · Gemini · Claude</div>
+        <ul>
+          <li>多模态大模型直接理解文档图像，输出结构化文本</li>
+          <li>理解能力最强，表格/图表语义解析能力突出</li>
+          <li>API 成本高、速度慢、难以本地部署</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 3. 综合对比表 ===== -->
+  <section id="comparison">
+    <div class="section-title"><span class="icon" style="background:rgba(245,158,11,.2);">📊</span>综合优劣对比表</div>
+    <p class="section-desc">从九个维度全面对比四大技术路线的能力边界。⭐ 数量越多越好。</p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th style="min-width:120px;">评估维度</th>
+            <th>① 规则/启发式</th>
+            <th>② Pipeline 流水线</th>
+            <th>③ 端到端 OCR</th>
+            <th>④ VLM 直接解析</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="cat">数字原生 PDF</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">扫描件 / 图像 PDF</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">极差</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极强</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">复杂表格识别</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">弱</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极强</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">数学公式解析</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">极差</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">阅读顺序还原</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极强</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">推理速度</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极快</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">慢</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">极慢</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">部署成本</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极低</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">较高</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">极高</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">多语言支持</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">强</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极强</span></span></td>
+          </tr>
+          <tr>
+            <td class="cat">工程可控性</td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="score-label">极高</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="score-label">高</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">中</span></span></td>
+            <td><span class="score"><span class="dot dot-on"></span><span class="dot dot-on"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="dot dot-off"></span><span class="score-label">低</span></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- 适用场景推荐 -->
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);gap:12px;">
+      <div class="info-box" style="border-left:3px solid var(--accent1);">
+        <strong>✅ 用规则方法</strong>：数字原生 PDF 批量处理、速度优先、成本敏感、无扫描件。<br>典型场景：企业内网文档检索、标准化报表提取
+      </div>
+      <div class="info-box" style="border-left:3px solid var(--accent2);">
+        <strong>✅ 用 Pipeline 方法</strong>：扫描件 + 数字 PDF 混合、需要公式/表格、可接受 GPU 部署、要求本地化。<br>典型场景：学术论文 / 医疗报告批量处理
+      </div>
+      <div class="info-box" style="border-left:3px solid var(--accent3);">
+        <strong>✅ 用端到端 OCR</strong>：学术论文/科技文档为主、公式密集、对格式还原要求高。<br>典型场景：arXiv 论文转 Markdown、教材数字化
+      </div>
+      <div class="info-box" style="border-left:3px solid var(--accent5);">
+        <strong>✅ 用 VLM 解析</strong>：复杂报表/合同、表格语义理解、精度优先于成本、可接受 API 调用。<br>典型场景：金融报告分析、合规文档审查
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 4. Trade-off 分析 ===== -->
+  <section id="tradeoffs">
+    <div class="section-title"><span class="icon" style="background:rgba(233,69,96,.2);">⚖️</span>核心 Trade-off 深度分析</div>
+    <p class="section-desc">文档解析没有"最好的方案"，只有"最合适的方案"。以下是四组最关键的取舍。</p>
+
+    <div class="card-grid" style="grid-template-columns:1fr 1fr;gap:20px;">
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;">
+        <div style="font-size:13px;font-weight:700;color:var(--accent3);margin-bottom:12px;">⚡ 速度 vs 精度</div>
+        <p style="font-size:12.5px;color:var(--text2);line-height:1.75;margin-bottom:10px;">规则方法处理一页 PDF &lt;1ms；Pipeline 方法（如 MinerU）约 0.5–3s/页（GPU）；VLM 方案每页调用可达 5–20s。精度方向则完全相反。</p>
+        <div style="font-size:12px;color:var(--text3);padding:10px;background:rgba(245,158,11,0.06);border-radius:6px;">
+          💡 实践建议：两阶段策略——先用规则方法快速分类文档类型（数字/扫描/混合），再分流到对应的精度优先方法。
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;">
+        <div style="font-size:13px;font-weight:700;color:var(--accent2);margin-bottom:12px;">🏠 本地部署 vs API 服务</div>
+        <p style="font-size:12.5px;color:var(--text2);line-height:1.75;margin-bottom:10px;">MinerU/Marker/Docling 支持纯本地 GPU 部署，适合隐私敏感场景（医疗/法律/金融）。Mistral OCR / GPT-4o 等仅提供 API，数据上传风险不可忽视。</p>
+        <div style="font-size:12px;color:var(--text3);padding:10px;background:rgba(46,196,160,0.06);border-radius:6px;">
+          💡 数据隐私优先选 Pipeline 本地方案；精度优先且数据非敏感选 VLM API。
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;">
+        <div style="font-size:13px;font-weight:700;color:var(--accent5);margin-bottom:12px;">📊 结构提取 vs 语义理解</div>
+        <p style="font-size:12.5px;color:var(--text2);line-height:1.75;margin-bottom:10px;">Pipeline 方法善于还原文档结构（阅读顺序、标题层级、表格边界），但不理解"这个表格说的是什么"。VLM 善于理解语义，但结构还原不一定准（如复杂嵌套表格的 Markdown 格式）。</p>
+        <div style="font-size:12px;color:var(--text3);padding:10px;background:rgba(167,139,250,0.06);border-radius:6px;">
+          💡 RAG 场景用 Pipeline 还原结构；需要摘要/问答理解场景可叠加 VLM 二次处理。
+        </div>
+      </div>
+
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;">
+        <div style="font-size:13px;font-weight:700;color:var(--accent4);margin-bottom:12px;">🎯 通用性 vs 领域专精</div>
+        <p style="font-size:12.5px;color:var(--text2);line-height:1.75;margin-bottom:10px;">通用方案（MinerU/Docling）覆盖场景广，但在专业领域（医学影像报告、工程图纸、法律合同）不如针对性微调的模型。Nougat 专攻学术论文效果远超通用方案，但对其他文档类型效果差。</p>
+        <div style="font-size:12px;color:var(--text3);padding:10px;background:rgba(233,69,96,0.06);border-radius:6px;">
+          💡 数据源单一且专业，优先考虑专项微调；来源多样的通用场景用 MinerU/Docling。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 5. Benchmark ===== -->
+  <section id="benchmark">
+    <div class="section-title"><span class="icon" style="background:rgba(46,196,160,.2);">📈</span>Benchmark 数据</div>
+    <p class="section-desc">
+      <strong style="color:var(--text1);">OmniDocBench</strong>（CVPR 2025，arXiv:2412.07626，opendatalab）：目前最全面的文档解析基准，涵盖学术论文、教科书、金融报告、法律合同等多种文档类型，同时评测 Pipeline 方法和端到端 VLM 方法。
+    </p>
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>方法 / 工具</th>
+            <th>类型</th>
+            <th>文本识别↑</th>
+            <th>公式识别↑</th>
+            <th>表格识别↑</th>
+            <th>阅读顺序↑</th>
+            <th>综合得分↑</th>
+            <th>速度参考</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MinerU 1.x</strong></td>
+            <td><span class="tag t-green">Pipeline</span></td>
+            <td>82–88%</td><td>76–82%</td><td>70–78%</td><td>85%</td>
+            <td style="color:var(--accent2);font-weight:700;">综合最优（开源）</td>
+            <td>~1.5s/页（GPU）</td>
+          </tr>
+          <tr>
+            <td><strong>Docling 2.x</strong></td>
+            <td><span class="tag t-green">Pipeline</span></td>
+            <td>80–86%</td><td>68–74%</td><td>72–80%</td><td>82%</td>
+            <td style="color:#7cb3f5;font-weight:700;">综合第二（开源）</td>
+            <td>~2s/页（CPU可跑）</td>
+          </tr>
+          <tr>
+            <td><strong>Marker v1</strong></td>
+            <td><span class="tag t-green">Pipeline</span></td>
+            <td>78–84%</td><td>60–68%</td><td>65–72%</td><td>78%</td>
+            <td>中等</td>
+            <td>~1s/页（GPU）</td>
+          </tr>
+          <tr>
+            <td><strong>olmOCR</strong></td>
+            <td><span class="tag t-blue">端到端</span></td>
+            <td>84–90%</td><td>72–78%</td><td>68–74%</td><td>86%</td>
+            <td style="color:#7cb3f5;">文本强，表格中</td>
+            <td>~2s/页（7B 模型）</td>
+          </tr>
+          <tr>
+            <td><strong>GOT-OCR 2.0</strong></td>
+            <td><span class="tag t-blue">端到端</span></td>
+            <td>83–89%</td><td>84–90%</td><td>62–70%</td><td>80%</td>
+            <td style="color:var(--accent3);">公式极强</td>
+            <td>~1.5s/页（580M）</td>
+          </tr>
+          <tr>
+            <td><strong>Nougat</strong></td>
+            <td><span class="tag t-blue">端到端</span></td>
+            <td>学术论文 90%+</td><td>88–93%</td><td>55–65%</td><td>82%</td>
+            <td style="color:var(--accent3);">学术论文最强</td>
+            <td>~3s/页（GPU）</td>
+          </tr>
+          <tr>
+            <td><strong>Mistral OCR</strong></td>
+            <td><span class="tag t-purple">VLM API</span></td>
+            <td>88–94%</td><td>78–84%</td><td>82–88%</td><td>90%</td>
+            <td style="color:var(--accent5);font-weight:700;">API 最优</td>
+            <td>5–15s/页（API）</td>
+          </tr>
+          <tr>
+            <td><strong>GPT-4o（Vision）</strong></td>
+            <td><span class="tag t-purple">VLM API</span></td>
+            <td>86–92%</td><td>76–82%</td><td>84–90%</td><td>88%</td>
+            <td style="color:var(--accent5);">综合极强</td>
+            <td>8–20s/页（API）</td>
+          </tr>
+          <tr>
+            <td><strong>PyMuPDF</strong></td>
+            <td><span class="tag t-gray">规则</span></td>
+            <td>数字PDF 95%+</td><td>❌ 不支持</td><td>基础支持</td><td>65%</td>
+            <td>数字PDF极快</td>
+            <td>&lt;10ms/页</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="info-box" style="font-size:12px;">
+      ⚠️ <strong>注意</strong>：以上数据综合自 OmniDocBench、PDF Parsing for LLM（nbrosse.github.io）、PDF to Markdown Mastery（2025.03）等多个评测，不同测试集和评测协议结果有差异。建议在自己的目标文档类型上做独立评测再选型。<br>
+      <strong>MinerU Layout Detection mAP</strong>（DocLayout-YOLO，opendatalab 自测）：97.5 mAP，是开源版式检测 SOTA。
+    </div>
+  </section>
+
+  <!-- ===== 6. 关键方案详解 ===== -->
+  <!-- 6a 规则方法 -->
+  <section id="rule-based">
+    <div class="section-title"><span class="icon" style="background:rgba(58,123,213,.2);">📐</span>规则 / 启发式方法详解</div>
+    <p class="section-desc">直接解析 PDF 的数字结构，速度最快、成本最低，是数字原生文档处理的首选。</p>
+
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card" style="border-top:2px solid var(--accent1);">
+        <h3>PyMuPDF（fitz）</h3>
+        <div class="sub">MuPDF 引擎 · Python binding · 工业级</div>
+        <ul>
+          <li><strong>核心能力</strong>：极速提取文字、图像、元数据、超链接；支持输出结构化 JSON（含位置坐标）</li>
+          <li><strong>版本亮点</strong>：PyMuPDF 1.24+（2024）加入 RAG/LLM 专用模式（<code>page.get_text("markdown")</code>），自动处理列排版</li>
+          <li><strong>局限</strong>：扫描件完全无效；复杂跨列表格识别错误率高；公式仅提取纯文本</li>
+          <li><strong>适用</strong>：数字原生 PDF 批量处理、速度 &gt; 精度场景、无 GPU 环境</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:2px solid var(--accent1);">
+        <h3>pdfplumber / pdfminer.six</h3>
+        <div class="sub">Python · 细粒度坐标控制</div>
+        <ul>
+          <li><strong>核心能力</strong>：暴露每个字符的位置、字体、颜色信息；pdfplumber 在表格提取方面比 PyMuPDF 更细腻（可基于线段识别表格边界）</li>
+          <li><strong>表格提取</strong>：通过检测 PDF 内的线段自动识别表格，对有边框表格效果好</li>
+          <li><strong>局限</strong>：仅限数字 PDF；大文件性能较差；无列排版还原能力</li>
+          <li><strong>适用</strong>：需要精确坐标的文档结构分析、有边框表格提取</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pc-grid">
+      <div class="pc-box pro"><div class="pc-title">✅ 优势</div><ul>
+        <li>处理速度极快（&lt;10ms/页），支持百万级批量处理</li>
+        <li>零 GPU 依赖，部署成本几乎为零</li>
+        <li>输出确定性高，可复现，调试方便</li>
+        <li>对有序数字 PDF 精度极高（&gt;95%）</li>
+        <li>工程控制性强，每一步都可调试和干预</li>
+      </ul></div>
+      <div class="pc-box con"><div class="pc-title">❌ 劣势</div><ul>
+        <li>扫描件/图像 PDF 完全无法处理（需先 OCR）</li>
+        <li>多列排版阅读顺序容易混乱</li>
+        <li>公式仅能提取纯文本符号，无法还原 LaTeX 结构</li>
+        <li>复杂嵌套表格识别效果差</li>
+        <li>依赖 PDF 编码质量，"坏 PDF"会产生乱码</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 6b Pipeline 方法 -->
+  <section id="pipeline">
+    <div class="section-title"><span class="icon" style="background:rgba(46,196,160,.2);">🔧</span>Pipeline 流水线方法详解</div>
+    <p class="section-desc">模块化设计，版式检测 + OCR + 结构理解串联，是当前开源文档解析的最主流方案。</p>
+
+    <!-- MinerU -->
+    <div class="method-head" style="border-color:var(--accent2);">
+      <span class="mh-icon">⛏️</span>
+      <div><div class="mh-name">MinerU（PDF-Extract-Kit）</div><div class="mh-sub">opendatalab · OpenDataLab/MinerU · 2024–2025 · 最活跃的开源 PDF 解析项目</div></div>
+    </div>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>架构</h3>
+        <ul>
+          <li><strong>版式检测</strong>：DocLayout-YOLO（opendatalab 自研，97.5 mAP，YOLOv10 based）</li>
+          <li><strong>OCR</strong>：PaddleOCR（默认）或 PP-OCRv4 server 模型；支持 surya OCR 替换</li>
+          <li><strong>公式识别</strong>：UniMERNet 端到端公式识别，支持行内/块级公式 LaTeX 输出</li>
+          <li><strong>表格识别</strong>：TableMaster / RapidTable，输出 HTML 格式</li>
+          <li><strong>阅读顺序</strong>：LayoutReader 模型还原多列顺序</li>
+          <li><strong>输出</strong>：Markdown + JSON（含坐标）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>2025 年更新亮点</h3>
+        <ul>
+          <li>1.3.x 系列（2025 Q1-Q2）：公式解析优化，公式渲染成功率大幅提升</li>
+          <li>支持 VLM 模式：将版式检测换成 VLM 整页理解，精度进一步提升</li>
+          <li>MinerU CLI 大幅优化，支持批量并行处理</li>
+          <li>ModelScope 一键部署，国内用户友好</li>
+          <li>OmniDocBench 评测中综合排名第一（开源方案）</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Docling -->
+    <div class="method-head" style="border-color:var(--accent1);">
+      <span class="mh-icon">📖</span>
+      <div><div class="mh-name">Docling</div><div class="mh-sub">IBM Research · 2024.09 开源 · arXiv:2408.09869 · IBM watsonx 生产系统来源</div></div>
+    </div>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>架构与设计理念</h3>
+        <ul>
+          <li><strong>版式检测</strong>：DocLayNet 数据训练的 RT-DETR 模型，对多种文档类型覆盖广</li>
+          <li><strong>表格结构</strong>：TableFormer（IBM 自研），在有/无边框表格上均表现稳定</li>
+          <li><strong>OCR</strong>：EasyOCR / Tesseract 可选；扫描件走 OCR 流程，数字 PDF 直接解析</li>
+          <li><strong>设计重点</strong>：统一的 DoclingDocument 数据结构，所有格式输出一致</li>
+          <li><strong>输出</strong>：Markdown / HTML / JSON，以及 LlamaIndex/LangChain 集成</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>适用场景与优势</h3>
+        <ul>
+          <li><strong>CPU 友好</strong>：无需 GPU 也可运行（速度会慢），对轻量部署更友好</li>
+          <li><strong>表格识别稳定</strong>：TableFormer 对无边框表格效果优于大多数开源方案</li>
+          <li><strong>生态完善</strong>：官方提供 LlamaIndex 和 LangChain 集成，RAG 场景开箱即用</li>
+          <li><strong>Docling v2</strong>（2025.01）：加速 3–5× ，加入 VLM 增强模式（docling-ibm-models）</li>
+          <li><strong>局限</strong>：公式识别不如 MinerU；中文支持相对弱</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Marker -->
+    <div class="method-head" style="border-color:var(--accent3);">
+      <span class="mh-icon">🖊️</span>
+      <div><div class="mh-name">Marker</div><div class="mh-sub">Vik Paruchuri · 2023.12 开源 · 轻量 Pipeline，社区广泛使用</div></div>
+    </div>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>架构</h3>
+        <ul>
+          <li><strong>版式检测</strong>：Surya layout（自研小模型）</li>
+          <li><strong>OCR</strong>：Surya OCR（自研，多语言支持好，90+ 语言）</li>
+          <li><strong>公式</strong>：Texify 模型（数学公式 → LaTeX）</li>
+          <li><strong>输出</strong>：Markdown，简洁可读性强</li>
+          <li><strong>特点</strong>：代码简洁，易于定制，社区活跃</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Marker v1 更新（2025）</h3>
+        <ul>
+          <li>加入 VLM 增强路径（可用 Claude/GPT-4V 做 fallback），大幅提升复杂页面精度</li>
+          <li>原生支持 <code>--use_llm</code> 参数，一行命令启用 VLM 增强</li>
+          <li>速度最优：纯 Surya 模式下处理速度是三大开源方案中最快的</li>
+          <li><strong>局限</strong>：表格识别精度稍低于 Docling/MinerU；公式密集文档效果不如 MinerU</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pc-grid">
+      <div class="pc-box pro"><div class="pc-title">✅ Pipeline 整体优势</div><ul>
+        <li>模块可替换，工程灵活性高，便于针对特定文档类型优化</li>
+        <li>完全本地化部署，无数据隐私风险</li>
+        <li>扫描件与数字 PDF 都能处理，通用性强</li>
+        <li>开源生态完善，社区活跃，持续迭代</li>
+        <li>输出格式标准化（Markdown/JSON），下游集成方便</li>
+      </ul></div>
+      <div class="pc-box con"><div class="pc-title">❌ Pipeline 整体劣势</div><ul>
+        <li>模块串联误差累积：版式检测错 → OCR 范围错 → 结构错</li>
+        <li>需要 GPU 才能达到工业级速度（1–3s/页）</li>
+        <li>模型组合复杂，调参门槛较高</li>
+        <li>手写内容、严重倾斜/污损文档效果较差</li>
+        <li>复杂嵌套表格、跨页表格识别仍是难题</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 6c 端到端 OCR -->
+  <section id="e2e-ocr">
+    <div class="section-title"><span class="icon" style="background:rgba(245,158,11,.2);">🔤</span>端到端 OCR 模型详解</div>
+    <p class="section-desc">统一的图像→文本模型，无需手动组装 pipeline，特定领域精度可超过流水线方案。</p>
+
+    <!-- Nougat -->
+    <div class="method-head" style="border-color:var(--accent3);">
+      <span class="mh-icon">🎓</span>
+      <div><div class="mh-name">Nougat</div><div class="mh-sub">Meta AI · EMNLP 2023 · arXiv:2308.13418 · 学术论文专用</div></div>
+    </div>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>设计与原理</h3>
+        <ul>
+          <li><strong>架构</strong>：Donut 风格（Vision Encoder + AR Decoder），图像→LaTeX/Markdown 端到端</li>
+          <li><strong>训练数据</strong>：arXiv 论文 PDF 与对应 LaTeX 源码对齐，学术文档分布</li>
+          <li><strong>公式</strong>：行内/块级 LaTeX 公式还原精度业界最高（学术文档场景）</li>
+          <li><strong>输出</strong>：结构化 Markdown，含标题层级、公式、引用</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>局限与适用</h3>
+        <ul>
+          <li><strong>强烈领域偏置</strong>：在非学术文档（报表、合同）上效果急剧下降</li>
+          <li><strong>速度较慢</strong>：AR 解码逐 token 生成，长页面耗时明显</li>
+          <li><strong>幻觉问题</strong>：AR 模型会在低置信区域产生不存在的内容</li>
+          <li><strong>最佳场景</strong>：arXiv 风格学术论文批量转 Markdown，公式密集文档</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- GOT-OCR 2.0 -->
+    <div class="method-head" style="border-color:var(--accent5);">
+      <span class="mh-icon">🌐</span>
+      <div><div class="mh-name">GOT-OCR 2.0</div><div class="mh-sub">阶跃星辰（StepFun）· arXiv:2409.01704 · 2024.09 · 580M 参数统一端到端模型</div></div>
+    </div>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>设计理念：OCR-2.0</h3>
+        <ul>
+          <li><strong>统一架构</strong>：高压缩 ViT 编码器 + 长上下文 Qwen 解码器，580M 参数</li>
+          <li><strong>多任务覆盖</strong>：纯文本 OCR、场景文字、公式（LaTeX）、乐谱、图表（纯文字输出）、手写体</li>
+          <li><strong>Local Attention</strong>：支持高分辨率输入（1024×1024），减少计算量</li>
+          <li><strong>交互式解析</strong>：支持框选区域 OCR、颜色区域 OCR</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>公式识别特长</h3>
+        <ul>
+          <li>在 UniMER-Test 等公式识别基准上超越 Nougat 和专用公式识别模型</li>
+          <li>支持行内公式、块级公式、化学式的统一识别</li>
+          <li><strong>局限</strong>：表格识别为纯文本提取，无结构（行/列）理解；多列文档阅读顺序不稳定</li>
+          <li><strong>最佳场景</strong>：公式识别、单页混合内容文档、不需要表格结构的场景</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- olmOCR -->
+    <div class="method-head" style="border-color:var(--accent2);">
+      <span class="mh-icon">🌿</span>
+      <div><div class="mh-name">olmOCR / olmOCR 2</div><div class="mh-sub">Allen Institute for AI (AI2) · arXiv:2502.18443 · 2025.02 / v2 arXiv:2510.19817 · 2025.10</div></div>
+    </div>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>设计目标：为预训练数据生产而生</h3>
+        <ul>
+          <li><strong>核心目标</strong>：高吞吐量地从 PDF 中提取高质量文本，用于 LLM 预训练数据集构建</li>
+          <li><strong>架构</strong>：基于 Qwen2-VL-7B 微调，在 26 万页 PDF（10 万文档）上训练</li>
+          <li><strong>保留阅读顺序</strong>：特别优化阅读顺序恢复，保证提取文本语义连贯性</li>
+          <li><strong>多类型支持</strong>：含表格、公式、手写内容</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>olmOCR 2 升级（2025.10）</h3>
+        <ul>
+          <li><strong>Unit Test Rewards</strong>：用 RLVR 风格训练（可验证奖励），显著提升结构化区域准确率</li>
+          <li><strong>规模</strong>：可横向扩展到 100+ GPU 并行，适合万亿 token 规模文本提取</li>
+          <li><strong>完全开源</strong>：模型权重 + 训练数据 + 代码全部开源</li>
+          <li><strong>局限</strong>：主要为文本质量优化，不输出 Markdown 结构标注（表格输出较简单）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pc-grid">
+      <div class="pc-box pro"><div class="pc-title">✅ 端到端 OCR 整体优势</div><ul>
+        <li>无模块拼接问题，错误不累积</li>
+        <li>对特定领域可做高度针对性微调（如 Nougat 的学术论文）</li>
+        <li>GOT-OCR 等小模型（580M）部署成本相对低</li>
+        <li>公式识别精度是四类方案中最强的（GOT/Nougat）</li>
+      </ul></div>
+      <div class="pc-box con"><div class="pc-title">❌ 端到端 OCR 整体劣势</div><ul>
+        <li>AR 解码速度慢，长文档吞吐量低</li>
+        <li>幻觉问题：低置信区域容易凭空生成内容</li>
+        <li>表格结构理解弱于专用 Pipeline 方案</li>
+        <li>通用性不如 Pipeline，跨领域表现不稳定</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- 6d VLM -->
+  <section id="vlm-parse">
+    <div class="section-title"><span class="icon" style="background:rgba(167,139,250,.2);">🤖</span>VLM 直接解析详解</div>
+    <p class="section-desc">多模态大模型直接"看"文档图像并输出结构化文本，理解能力最强，成本最高。</p>
+
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card" style="border-top:2px solid #f472b6;">
+        <h3>Mistral OCR / Mistral OCR 3</h3>
+        <div class="sub">Mistral AI · API · 2025.03 / OCR3 2025.12</div>
+        <ul>
+          <li><strong>定位</strong>：专为文档解析优化的多模态 API（非通用对话模型），结构感知架构</li>
+          <li><strong>OCR3 性能</strong>（2025.12）：对 OCR2 综合胜率 74%，在表单/扫描件/复杂表格/手写体上大幅提升</li>
+          <li><strong>优势</strong>：输出稳定的 Markdown/JSON，多语言支持极强，价格相对 GPT-4o 便宜</li>
+          <li><strong>定价</strong>（2025）：约 $1/1000 页，比 GPT-4o 便宜 3–5×</li>
+          <li><strong>局限</strong>：API 调用，数据需外传；速度较慢；中文特殊版式偶有问题</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:2px solid #a78bfa;">
+        <h3>GPT-4o / Claude 3.5+ Vision</h3>
+        <div class="sub">OpenAI / Anthropic · API</div>
+        <ul>
+          <li><strong>语义理解最强</strong>：表格内容语义、图表含义、专业术语理解远超 Pipeline 方案</li>
+          <li><strong>复杂版式</strong>：对各类奇特版式有最强的鲁棒性（营销材料、创意排版等）</li>
+          <li><strong>成本</strong>：GPT-4o 约 $3–5/1000 页（取决于图像分辨率）；Claude 3.5 Sonnet 相近</li>
+          <li><strong>工程集成</strong>：原生支持批处理（Batch API），成本降低 50%</li>
+          <li><strong>局限</strong>：逐页处理吞吐量有限；严格结构输出（如精确 Markdown 表格）有时需要 prompt 工程</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:2px solid var(--accent5);">
+        <h3>dots.ocr</h3>
+        <div class="sub">arXiv:2512.02498 · 2025.12 · 统一 VLM 架构</div>
+        <ul>
+          <li><strong>设计</strong>：单一 VLM 架构同时做版式检测 + OCR + 结构理解，无需多模型串联</li>
+          <li><strong>创新</strong>：证明 VLM 架构在文档版式解析上的可行性和 SOTA 性能</li>
+          <li><strong>多语言</strong>：单一模型支持多语言，不需要语言特定的 OCR 模型</li>
+          <li>目前仍为研究状态，无生产可用版本</li>
+        </ul>
+      </div>
+      <div class="card" style="border-top:2px solid var(--accent3);">
+        <h3>DocVLM（CVPR 2025）</h3>
+        <div class="sub">arXiv · CVPR 2025 · 高效文档 VLM</div>
+        <ul>
+          <li><strong>设计</strong>：让通用 VLM 成为"高效文档阅读器"，专注于文本密集文档的高效处理</li>
+          <li><strong>贡献</strong>：解决通用 VLM 在文本密集图像上压缩视觉特征导致的性能下降问题</li>
+          <li>文档专用特征提取，比直接用通用 VLM 速度快 2–3×，精度相当</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="pc-grid">
+      <div class="pc-box pro"><div class="pc-title">✅ VLM 解析优势</div><ul>
+        <li>语义理解能力最强：图表含义、表格上下文、跨页关系</li>
+        <li>对复杂/异常版式鲁棒性最好</li>
+        <li>多语言、手写体、低质量扫描件处理能力极强</li>
+        <li>可在同一次调用中完成解析+理解+摘要</li>
+      </ul></div>
+      <div class="pc-box con"><div class="pc-title">❌ VLM 解析劣势</div><ul>
+        <li>API 成本高，大规模批处理经济性差</li>
+        <li>推理速度慢，吞吐量受限</li>
+        <li>数据需外传，隐私敏感场景不可用</li>
+        <li>输出不完全稳定（需 prompt 工程控制格式）</li>
+        <li>本地部署需要极大 GPU 显存（70B+ 模型）</li>
+      </ul></div>
+    </div>
+  </section>
+
+  <!-- ===== 7. 主流工具横评 ===== -->
+  <section id="tools">
+    <div class="section-title"><span class="icon" style="background:rgba(233,69,96,.2);">🔬</span>主流工具横评：选型决策指南</div>
+    <p class="section-desc">综合技术能力、工程成熟度、社区活跃度，给出实战选型建议。</p>
+
+    <div class="comp-table-wrap">
+      <table class="comp-table">
+        <thead>
+          <tr>
+            <th>工具</th><th>类型</th><th>开源</th><th>GPU 需求</th><th>中文支持</th><th>公式</th><th>表格</th><th>推荐场景</th><th>不推荐</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>MinerU</strong></td>
+            <td><span class="tag t-green">Pipeline</span></td>
+            <td>✅ MIT</td><td>必须 GPU</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td>
+            <td>学术论文、中文文档、预训练数据构建</td>
+            <td>无 GPU 环境、超大规模 API 场景</td>
+          </tr>
+          <tr>
+            <td><strong>Docling</strong></td>
+            <td><span class="tag t-green">Pipeline</span></td>
+            <td>✅ MIT</td><td>可 CPU</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td>
+            <td>企业文档（英文为主）、RAG pipeline 集成、CPU 部署</td>
+            <td>中文为主场景、公式密集文档</td>
+          </tr>
+          <tr>
+            <td><strong>Marker</strong></td>
+            <td><span class="tag t-green">Pipeline</span></td>
+            <td>✅ GPL-3</td><td>推荐 GPU</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td><td>⭐⭐⭐</td>
+            <td>快速原型、定制化开发、速度优先</td>
+            <td>公式密集、对表格结构要求高</td>
+          </tr>
+          <tr>
+            <td><strong>olmOCR</strong></td>
+            <td><span class="tag t-blue">端到端</span></td>
+            <td>✅ Apache-2</td><td>必须 GPU（7B）</td><td>⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐</td>
+            <td>预训练数据高吞吐量提取、英文文档</td>
+            <td>需要 Markdown 结构输出、中文为主</td>
+          </tr>
+          <tr>
+            <td><strong>GOT-OCR 2.0</strong></td>
+            <td><span class="tag t-blue">端到端</span></td>
+            <td>✅ Apache-2</td><td>轻量 GPU（580M）</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td>
+            <td>公式 / 化学式 / 乐谱，单页混合内容</td>
+            <td>需要表格结构输出、多列文档</td>
+          </tr>
+          <tr>
+            <td><strong>Nougat</strong></td>
+            <td><span class="tag t-blue">端到端</span></td>
+            <td>✅ CC-BY-NC</td><td>GPU 推荐</td><td>⭐⭐</td><td>⭐⭐⭐⭐⭐</td><td>⭐⭐</td>
+            <td>arXiv 风格学术论文（英文）</td>
+            <td>非学术文档、中文、速度要求高</td>
+          </tr>
+          <tr>
+            <td><strong>Mistral OCR 3</strong></td>
+            <td><span class="tag t-purple">VLM API</span></td>
+            <td>❌ API</td><td>无需</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐</td><td>⭐⭐⭐⭐⭐</td>
+            <td>高精度需求、非敏感文档、预算充足</td>
+            <td>数据隐私敏感、超大规模低成本</td>
+          </tr>
+          <tr>
+            <td><strong>PyMuPDF</strong></td>
+            <td><span class="tag t-gray">规则</span></td>
+            <td>✅ AGPL/商业</td><td>无需</td><td>⭐⭐⭐⭐⭐</td><td>❌</td><td>⭐⭐⭐</td>
+            <td>数字原生 PDF 批量、速度极端优先</td>
+            <td>扫描件、公式、复杂版式</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="info-box" style="background:rgba(58,123,213,0.06);border:1px solid rgba(58,123,213,0.2);">
+      <strong>🏆 快速选型口诀：</strong><br>
+      数字 PDF + 速度优先 → <strong>PyMuPDF</strong><br>
+      扫描件 + 中文 + 公式 → <strong>MinerU</strong><br>
+      企业文档 + 表格 + CPU 部署 → <strong>Docling</strong><br>
+      学术论文 + 公式最高精度 → <strong>Nougat</strong>（英文）/ <strong>MinerU</strong>（中文）<br>
+      复杂表格 + 精度优先 + 非敏感 → <strong>Mistral OCR 3</strong><br>
+      预训练数据构建 + 高吞吐量 → <strong>olmOCR + MinerU 组合</strong>
+    </div>
+  </section>
+
+  <!-- ===== 8. 2025–2026 前沿 ===== -->
+  <section id="new2526">
+    <div class="section-title"><span class="icon" style="background:rgba(244,114,182,.2);">🚀</span>2025–2026 前沿进展</div>
+    <p class="section-desc">2025 年文档解析领域发生了范式级别的转变：VLM 从"辅助增强"走向"核心路线"，端到端能力快速逼近 Pipeline 方案的结构精度。</p>
+
+    <h3 style="color:var(--accent6);font-size:15px;padding-left:10px;border-left:3px solid var(--accent6);margin:24px 0 16px;">📌 2025 年五大趋势</h3>
+
+    <div class="insight-grid">
+      <div class="insight-box" style="background:rgba(58,123,213,0.06);border-color:rgba(58,123,213,0.25);">
+        <div class="ih" style="color:var(--accent1);">趋势① VLM 统一架构</div>
+        dots.ocr（2025.12）首次证明单一 VLM 可同时完成版式检测+OCR+结构理解，性能达到 SOTA。Pipeline 架构的模块化优势正在被 VLM 统一性优势侵蚀。
+      </div>
+      <div class="insight-box" style="background:rgba(46,196,160,0.06);border-color:rgba(46,196,160,0.25);">
+        <div class="ih" style="color:var(--accent2);">趋势② RLVR 训练 OCR</div>
+        olmOCR 2（2025.10）将可验证奖励强化学习（RLVR）引入 OCR 训练，通过程序化验证文字识别正确性做 RL 反馈，在结构化区域精度上大幅提升。
+      </div>
+      <div class="insight-box" style="background:rgba(245,158,11,0.06);border-color:rgba(245,158,11,0.25);">
+        <div class="ih" style="color:var(--accent3);">趋势③ 混合 Pipeline+VLM</div>
+        Marker v1 / MinerU VLM 模式：用规则/YOLO 做粗版式检测，VLM 做精细内容理解。两者结合在速度和精度上取得更好的 Pareto 最优点。
+      </div>
+      <div class="insight-box" style="background:rgba(167,139,250,0.06);border-color:rgba(167,139,250,0.25);">
+        <div class="ih" style="color:var(--accent5);">趋势④ 评测体系完善</div>
+        OmniDocBench（CVPR 2025）建立了统一的文档解析基准，覆盖多种文档类型和内容类型，解决了此前各家自测不可比的问题。
+      </div>
+      <div class="insight-box" style="background:rgba(233,69,96,0.06);border-color:rgba(233,69,96,0.25);">
+        <div class="ih" style="color:var(--accent4);">趋势⑤ 预训练数据工程化</div>
+        olmOCR 的定位是"为 LLM 预训练解锁万亿 token"，文档解析开始成为数据工程的标准基础设施，而非独立研究方向。
+      </div>
+      <div class="insight-box" style="background:rgba(244,114,182,0.06);border-color:rgba(244,114,182,0.25);">
+        <div class="ih" style="color:var(--accent6);">趋势⑥ 多模态文档理解</div>
+        从"文字提取"扩展到"图表理解"：图表→数字/描述的自动解析（图表 QA）、科学图像的结构化描述正在成为新的评测方向（CVPR 2025 相关工作）。
+      </div>
+    </div>
+
+    <h3 style="color:var(--accent5);font-size:15px;padding-left:10px;border-left:3px solid var(--accent5);margin:32px 0 16px;">🔭 2026 年重点方向</h3>
+    <div class="card-grid" style="grid-template-columns:repeat(2,1fr);">
+      <div class="card">
+        <h3>端到端 VLM 文档解析的工程化</h3>
+        <ul>
+          <li>dots.ocr 类方案从研究走向生产，单 VLM 完成全流程</li>
+          <li>推理加速（投机解码、量化、批处理优化）使 VLM 方案的吞吐量接近 Pipeline</li>
+          <li>小模型专项蒸馏（从 GPT-4o 蒸馏文档解析能力到 7B 以下模型）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>跨页/长文档结构理解</h3>
+        <ul>
+          <li>跨页表格、跨页公式的上下文还原</li>
+          <li>章节层级自动识别（不依赖字体大小启发式）</li>
+          <li>文档知识图谱构建：从文字提取到关系提取的一体化</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>图表语义理解（Chart Understanding）</h3>
+        <ul>
+          <li>从"截图保存"到"数字/描述提取"：柱图/折线图的数值自动读取</li>
+          <li>科学论文图（architecture diagram、结果曲线）的自动解读</li>
+          <li>图表 QA 基准的完善（ChartQA、FigureQA 的升级版本）</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>手写与低质量文档</h3>
+        <ul>
+          <li>手写识别（HTR）与印刷识别统一：olmOCR、GOT-OCR 已有初步探索</li>
+          <li>历史文献、老旧扫描件（噪声、褪色、装订折痕）的鲁棒性</li>
+          <li>多语言混合文档（中英混排、注释语言不同）的处理</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 9. Timeline ===== -->
+  <section id="timeline">
+    <div class="section-title"><span class="icon" style="background:rgba(245,158,11,.2);">📅</span>技术发展时间线</div>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--accent1);"><div style="background:var(--accent1);width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:var(--accent1);">2018–2020</div>
+        <div class="tl-title">规则方法成熟 + 深度学习版式检测兴起</div>
+        <div class="tl-desc">PyMuPDF/pdfminer 成为数字 PDF 处理标准工具。LayoutParser（2020）统一深度学习版式检测框架，基于 Detectron2 的文档版式模型大量涌现。</div>
+        <div class="tl-tags">
+          <span class="tag t-gray">PyMuPDF</span><span class="tag t-gray">LayoutParser</span><span class="tag t-gray">Tesseract 4.0</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--accent2);"><div style="background:var(--accent2);width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:var(--accent2);">2021–2022</div>
+        <div class="tl-title">预训练文档理解模型崛起</div>
+        <div class="tl-desc">LayoutLM v2/v3（微软）将文本+位置+图像多模态预训练引入文档理解，成为文档 NLP 的标准 backbone。DocLayNet（IBM）发布大规模文档版式标注数据集。</div>
+        <div class="tl-tags">
+          <span class="tag t-blue">LayoutLMv3</span><span class="tag t-blue">DocLayNet</span><span class="tag t-gray">PaddleOCR v3</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--accent3);"><div style="background:var(--accent3);width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:var(--accent3);">2023</div>
+        <div class="tl-title">端到端 OCR 爆发 + 开源 Pipeline 工具兴起</div>
+        <div class="tl-desc">Nougat（Meta，EMNLP 2023）开创图像→Markdown 端到端学术文档解析范式。Marker（2023.12）以轻量 Pipeline 快速获得开源社区采纳。Surya OCR 发布，多语言 OCR 开源民主化。</div>
+        <div class="tl-tags">
+          <span class="tag t-amber">Nougat</span><span class="tag t-green">Marker</span><span class="tag t-gray">Surya OCR</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--accent5);"><div style="background:var(--accent5);width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:var(--accent5);">2024 上半年</div>
+        <div class="tl-title">VLM 多模态文档理解进入主流</div>
+        <div class="tl-desc">GPT-4o/Claude 3 的 Vision 能力被广泛应用于文档解析。Docling（IBM，2024.09 开源）发布，带来 TableFormer 表格识别能力。GOT-OCR 2.0（阶跃星辰，2024.09）提出 OCR-2.0 概念，统一端到端模型覆盖公式/乐谱等。</div>
+        <div class="tl-tags">
+          <span class="tag t-purple">GPT-4o Vision</span><span class="tag t-green">Docling</span><span class="tag t-blue">GOT-OCR 2.0</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--accent4);"><div style="background:var(--accent4);width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:var(--accent4);">2024 下半年</div>
+        <div class="tl-title">MinerU 开源 + DocLayout-YOLO + OmniDocBench</div>
+        <div class="tl-desc">MinerU（opendatalab）开源，迅速成为中文文档解析最流行工具。DocLayout-YOLO（97.5 mAP）刷新开源版式检测 SOTA。OmniDocBench（arXiv:2412.07626）建立统一评测基准，首次系统对比 Pipeline vs VLM 方案。</div>
+        <div class="tl-tags">
+          <span class="tag t-green">MinerU</span><span class="tag t-amber">DocLayout-YOLO</span><span class="tag t-red">OmniDocBench</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:var(--accent6);"><div style="background:var(--accent6);width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:var(--accent6);">2025 上半年</div>
+        <div class="tl-title">Mistral OCR + olmOCR + Pipeline×VLM 混合</div>
+        <div class="tl-desc">olmOCR（AI2，2025.02）专为预训练数据生产设计，高吞吐量开源 VLM OCR。Mistral OCR（2025.03）发布专用文档解析 API，性价比优于 GPT-4o。Marker v1、MinerU 均加入 VLM 增强模式，Pipeline+VLM 混合成为新趋势。</div>
+        <div class="tl-tags">
+          <span class="tag t-blue">olmOCR</span><span class="tag t-pink">Mistral OCR</span><span class="tag t-green">Marker v1 VLM</span>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-dot" style="border-color:#7dd3fc;"><div style="background:#7dd3fc;width:6px;height:6px;border-radius:50%;"></div></div>
+        <div class="tl-year" style="color:#7dd3fc;">2025 下半年 & 2026</div>
+        <div class="tl-title">端到端 VLM 统一架构兴起 + RLVR 引入 OCR</div>
+        <div class="tl-desc">olmOCR 2（2025.10）引入 RLVR 训练范式，将可验证奖励 RL 用于 OCR 精度提升。dots.ocr（2025.12）首次证明单一 VLM 的文档版式解析可达 SOTA。Mistral OCR 3（2025.12）综合胜率提升 74%。2026 年重心转向端到端 VLM 工程化和图表语义理解。</div>
+        <div class="tl-tags">
+          <span class="tag t-blue">olmOCR 2（RLVR）</span><span class="tag t-purple">dots.ocr</span><span class="tag t-pink">Mistral OCR 3</span><span class="tag t-amber">DocVLM（CVPR 2025）</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ===== 10. 展望 ===== -->
+  <section id="outlook">
+    <div class="section-title"><span class="icon" style="background:rgba(46,196,160,.2);">🔭</span>技术展望</div>
+    <p class="section-desc">文档解析正处于范式转变期：从"结构提取工具"演进为"文档智能理解系统"。</p>
+
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px 32px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;font-size:13px;">
+        <div>
+          <div style="color:var(--accent2);font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">📈 未来 1–2 年（2026–2027）</div>
+          <ul style="padding-left:16px;color:var(--text2);line-height:1.9;">
+            <li><strong style="color:var(--text1);">VLM 统一架构普及</strong>：dots.ocr 类端到端 VLM 方案工程化，逐步取代多模块 Pipeline 作为新的默认方案</li>
+            <li><strong style="color:var(--text1);">推理加速缩小速度差距</strong>：量化/投机解码让 7B VLM 的吞吐量接近当前 Pipeline 方案</li>
+            <li><strong style="color:var(--text1);">图表语义理解成熟</strong>：图表→结构化数字/描述的自动解析成为文档解析标配</li>
+            <li><strong style="color:var(--text1);">评测标准化</strong>：OmniDocBench 类统一基准成为业界标准，终结各家自测乱象</li>
+          </ul>
+        </div>
+        <div>
+          <div style="color:var(--accent3);font-weight:700;font-size:12px;letter-spacing:1px;text-transform:uppercase;margin-bottom:12px;">🔬 中长期挑战（3–5 年）</div>
+          <ul style="padding-left:16px;color:var(--text2);line-height:1.9;">
+            <li><strong style="color:var(--text1);">文档知识图谱</strong>：从结构提取到跨文档知识关系构建，文档解析与知识图谱的融合</li>
+            <li><strong style="color:var(--text1);">主动理解</strong>：模型不仅提取文字，还能主动识别文档中的不一致/错误（审阅式解析）</li>
+            <li><strong style="color:var(--text1);">实时流式解析</strong>：文档摄像头/扫描流的实时解析，用于智能会议记录、工业质检等</li>
+            <li><strong style="color:var(--text1);">可信度量化</strong>：解析结果附带置信度，下游 RAG 系统可据此决策是否需要人工核查</li>
+          </ul>
+        </div>
+      </div>
+      <div style="margin-top:20px;padding-top:18px;border-top:1px solid var(--border);font-size:13px;color:var(--text2);">
+        <strong style="color:var(--text1);">核心判断：</strong>
+        文档解析将在 2026–2027 年经历一次类似"OCR → 深度学习"的范式切换——从"规则+模型 Pipeline"到"端到端 VLM"。
+        但这不意味着 Pipeline 方案消亡：在隐私敏感、成本极端敏感、特定领域专精的场景，轻量级 Pipeline 方案仍将长期存在。
+        <strong style="color:var(--accent2);">实践建议：现在就应该在核心业务文档类型上测试 VLM 方案，为迁移做准备，同时保留 Pipeline 作为低成本/离线场景 fallback。</strong>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <p>文档解析技术综述 · 2025–2026 版 · 涵盖 12+ 主流方案，4 大技术路线</p>
+    <p style="margin-top:6px;">参考来源：OmniDocBench（CVPR 2025）· olmOCR arXiv:2502.18443 · GOT-OCR arXiv:2409.01704 · dots.ocr arXiv:2512.02498 · PDF Parsing for LLM (nbrosse.github.io) · Mistral AI Blog · opendatalab MinerU 文档 · IBM Research Docling · Marker GitHub</p>
+  </footer>
+
+</div><!-- /main -->
+</body>
+</html>

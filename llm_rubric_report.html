@@ -1,0 +1,1511 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Rubric 评估研究综述报告（2024-2026）</title>
+  <style>
+    :root {
+      --primary: #1a365d;
+      --secondary: #2b6cb0;
+      --accent: #3182ce;
+      --light-bg: #f7fafc;
+      --border: #e2e8f0;
+      --text: #2d3748;
+      --text-light: #718096;
+      --tag-bg: #ebf8ff;
+      --tag-color: #2b6cb0;
+      --green: #276749;
+      --green-bg: #f0fff4;
+      --yellow: #744210;
+      --yellow-bg: #fffbeb;
+      --red: #742a2a;
+      --red-bg: #fff5f5;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: "Noto Serif SC", "Source Han Serif SC", Georgia, "Times New Roman", serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.8;
+      font-size: 15px;
+    }
+
+    /* ===== Header ===== */
+    .cover {
+      background: linear-gradient(135deg, #1a365d 0%, #2b6cb0 60%, #4299e1 100%);
+      color: #fff;
+      padding: 60px 80px 50px;
+    }
+    .cover .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 20px;
+      padding: 4px 14px;
+      font-size: 12px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .cover h1 {
+      font-size: 2.4em;
+      font-weight: 700;
+      line-height: 1.3;
+      margin-bottom: 16px;
+    }
+    .cover .subtitle {
+      font-size: 1.1em;
+      opacity: 0.85;
+      margin-bottom: 30px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .cover .meta {
+      display: flex;
+      gap: 30px;
+      font-size: 0.85em;
+      opacity: 0.75;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .cover .meta span::before { margin-right: 6px; }
+
+    /* ===== Layout ===== */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 240px 1fr;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    /* ===== TOC ===== */
+    .toc-sidebar {
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: 30px 20px;
+      background: var(--light-bg);
+      border-right: 1px solid var(--border);
+    }
+    .toc-sidebar h3 {
+      font-size: 0.75em;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-light);
+      margin-bottom: 16px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .toc-sidebar ul { list-style: none; }
+    .toc-sidebar li { margin: 2px 0; }
+    .toc-sidebar a {
+      display: block;
+      padding: 5px 8px;
+      border-radius: 4px;
+      text-decoration: none;
+      color: var(--text-light);
+      font-size: 0.82em;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      transition: all 0.15s;
+    }
+    .toc-sidebar a:hover {
+      background: var(--border);
+      color: var(--primary);
+    }
+    .toc-sidebar li.sub a { padding-left: 18px; font-size: 0.78em; }
+
+    /* ===== Main Content ===== */
+    .main-content { padding: 40px 50px; }
+
+    /* ===== Sections ===== */
+    .section {
+      margin-bottom: 55px;
+      padding-bottom: 40px;
+      border-bottom: 1px solid var(--border);
+    }
+    .section:last-child { border-bottom: none; }
+
+    h2 {
+      font-size: 1.6em;
+      color: var(--primary);
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 3px solid var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    h2 .num {
+      background: var(--accent);
+      color: #fff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75em;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 1.15em;
+      color: var(--secondary);
+      margin: 28px 0 12px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    h4 {
+      font-size: 1em;
+      color: var(--text);
+      margin: 18px 0 8px;
+      font-weight: 700;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    p { margin-bottom: 14px; }
+
+    /* ===== Paper Cards ===== */
+    .paper-card {
+      background: var(--light-bg);
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--accent);
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 18px 0;
+    }
+    .paper-card .paper-title {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.95em;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      margin-bottom: 6px;
+    }
+    .paper-card .paper-meta {
+      font-size: 0.8em;
+      color: var(--text-light);
+      margin-bottom: 8px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .paper-card .paper-meta a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .paper-card .paper-meta a:hover { text-decoration: underline; }
+    .paper-card .paper-summary { font-size: 0.9em; margin-bottom: 0; }
+
+    .paper-card.green { border-left-color: #48bb78; }
+    .paper-card.orange { border-left-color: #ed8936; }
+    .paper-card.purple { border-left-color: #9f7aea; }
+    .paper-card.red { border-left-color: #fc8181; }
+
+    /* ===== Tags ===== */
+    .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-color);
+      border: 1px solid #bee3f8;
+      border-radius: 12px;
+      padding: 2px 10px;
+      font-size: 0.75em;
+      margin: 2px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    .tag.green { background: var(--green-bg); color: var(--green); border-color: #9ae6b4; }
+    .tag.orange { background: #fffaf0; color: #c05621; border-color: #fbd38d; }
+    .tag.purple { background: #faf5ff; color: #6b46c1; border-color: #d6bcfa; }
+    .tag.red { background: #fff5f5; color: #c53030; border-color: #feb2b2; }
+
+    /* ===== Tables ===== */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 20px 0;
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85em;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+    thead tr {
+      background: var(--primary);
+      color: #fff;
+    }
+    thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+    }
+    tbody tr { border-bottom: 1px solid var(--border); }
+    tbody tr:nth-child(even) { background: var(--light-bg); }
+    tbody tr:hover { background: #ebf8ff; }
+    td { padding: 10px 16px; vertical-align: top; }
+
+    /* ===== Callout Boxes ===== */
+    .callout {
+      border-radius: 6px;
+      padding: 16px 20px;
+      margin: 18px 0;
+      font-size: 0.9em;
+    }
+    .callout.info {
+      background: #ebf8ff;
+      border-left: 4px solid #63b3ed;
+      color: #1a365d;
+    }
+    .callout.warning {
+      background: var(--yellow-bg);
+      border-left: 4px solid #ecc94b;
+      color: var(--yellow);
+    }
+    .callout.success {
+      background: var(--green-bg);
+      border-left: 4px solid #48bb78;
+      color: var(--green);
+    }
+    .callout strong {
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* ===== Abstract / Summary ===== */
+    .abstract {
+      background: linear-gradient(135deg, #f7fafc, #ebf8ff);
+      border: 1px solid #bee3f8;
+      border-radius: 8px;
+      padding: 24px 28px;
+      margin-bottom: 40px;
+    }
+    .abstract h3 {
+      color: var(--primary);
+      margin-top: 0;
+      margin-bottom: 12px;
+    }
+
+    /* ===== Workflow Diagram ===== */
+    .flow-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+    .flow-step {
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 0.82em;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+      white-space: nowrap;
+    }
+    .flow-arrow {
+      color: var(--text-light);
+      font-size: 1.2em;
+      padding: 0 8px;
+    }
+
+    /* ===== Lists ===== */
+    ul.styled, ol.styled {
+      padding-left: 22px;
+      margin-bottom: 14px;
+    }
+    ul.styled li, ol.styled li { margin-bottom: 8px; }
+    ul.styled li::marker { color: var(--accent); }
+
+    /* ===== Footnote ===== */
+    .footnote {
+      font-size: 0.8em;
+      color: var(--text-light);
+      border-top: 1px solid var(--border);
+      margin-top: 30px;
+      padding-top: 16px;
+      font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+    }
+
+    /* ===== Print ===== */
+    @media print {
+      .toc-sidebar { display: none; }
+      .layout { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .layout { grid-template-columns: 1fr; }
+      .toc-sidebar { display: none; }
+      .main-content { padding: 20px; }
+      .cover { padding: 30px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="container">
+    <div class="badge">Technical Research Report · 2026</div>
+    <h1>LLM Rubric 评估研究全景综述<br><span style="font-size:0.7em;opacity:0.9">从评估框架到奖励建模的系统性梳理</span></h1>
+    <div class="subtitle">涵盖 Rubric 生成方法 · Reward Modeling · Alignment · Judge Bias · 专域应用 · Benchmark</div>
+    <div class="meta">
+      <span>📅 撰写时间：2026年2月</span>
+      <span>🎯 面向：大模型预训练/数据团队</span>
+      <span>📚 覆盖论文：40+ 篇</span>
+      <span>🗓 文献时间跨度：2023–2026</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== LAYOUT ===== -->
+<div class="layout">
+
+  <!-- TOC -->
+  <nav class="toc-sidebar">
+    <h3>目录导航</h3>
+    <ul>
+      <li><a href="#abstract">执行摘要</a></li>
+      <li><a href="#sec1">1. 背景与动机</a></li>
+      <li class="sub"><a href="#sec1-1">1.1 LLM-as-a-Judge 的兴起</a></li>
+      <li class="sub"><a href="#sec1-2">1.2 为何需要 Rubric</a></li>
+      <li><a href="#sec2">2. Rubric 生成方法</a></li>
+      <li class="sub"><a href="#sec2-1">2.1 人工构造</a></li>
+      <li class="sub"><a href="#sec2-2">2.2 对比式自动生成</a></li>
+      <li class="sub"><a href="#sec2-3">2.3 递归分解 (RRD)</a></li>
+      <li class="sub"><a href="#sec2-4">2.4 交替强化学习 (Rubric-ARM)</a></li>
+      <li class="sub"><a href="#sec2-5">2.5 尾部感知生成</a></li>
+      <li><a href="#sec3">3. Rubric-based Reward Modeling</a></li>
+      <li class="sub"><a href="#sec3-1">3.1 Generative Reward Models</a></li>
+      <li class="sub"><a href="#sec3-2">3.2 数学推理: RRM</a></li>
+      <li class="sub"><a href="#sec3-3">3.3 RaR (Scale AI)</a></li>
+      <li><a href="#sec4">4. Rubric 用于 RLHF/RFT/Alignment</a></li>
+      <li><a href="#sec5">5. Judge Bias 与缓解策略</a></li>
+      <li class="sub"><a href="#sec5-1">5.1 偏见分类</a></li>
+      <li class="sub"><a href="#sec5-2">5.2 缓解方法</a></li>
+      <li><a href="#sec6">6. 专域 Rubric</a></li>
+      <li class="sub"><a href="#sec6-1">6.1 医疗: HealthBench</a></li>
+      <li class="sub"><a href="#sec6-2">6.2 代码评估</a></li>
+      <li class="sub"><a href="#sec6-3">6.3 其他专域</a></li>
+      <li><a href="#sec7">7. Benchmark 与数据集</a></li>
+      <li class="sub"><a href="#sec7-1">7.1 BiGGen Bench</a></li>
+      <li class="sub"><a href="#sec7-2">7.2 JudgeBench</a></li>
+      <li class="sub"><a href="#sec7-3">7.3 PPE</a></li>
+      <li><a href="#sec8">8. Fine-tuned Judge 模型</a></li>
+      <li class="sub"><a href="#sec8-1">8.1 Prometheus 系列</a></li>
+      <li class="sub"><a href="#sec8-2">8.2 JudgeLM / PandaLM</a></li>
+      <li class="sub"><a href="#sec8-3">8.3 横向对比</a></li>
+      <li><a href="#sec9">9. 横向对比总表</a></li>
+      <li><a href="#sec10">10. 研究趋势与展望</a></li>
+      <li><a href="#sec11">11. 实践建议</a></li>
+      <li><a href="#refs">参考文献</a></li>
+    </ul>
+  </nav>
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- Abstract -->
+    <div class="abstract" id="abstract">
+      <h3>📋 执行摘要</h3>
+      <p>
+        随着大型语言模型（LLM）能力边界不断扩展，如何对其开放式输出进行<strong>可解释、可扩展、可对齐</strong>的评估，已成为预训练、后训练及数据工程中的核心命题。
+        <strong>Rubric（评分标准）</strong>——将评估任务分解为一组结构化、可检验的标准——作为连接人工对齐偏好与自动化评估的桥梁，近两年经历了爆发式发展。
+      </p>
+      <p>
+        本报告系统梳理了 2023–2026 年 LLM Rubric 领域 40+ 篇核心文献，涵盖：
+        <strong>① Rubric 生成范式演进</strong>（人工 → 对比式 → 递归分解 → 交替强化学习）；
+        <strong>② Rubric-based Reward Modeling</strong>（生成式奖励模型、数学推理过程奖励）；
+        <strong>③ Rubric 在 RLHF/RFT 中的应用</strong>；
+        <strong>④ Judge 偏见的系统性分类与缓解</strong>；
+        <strong>⑤ 医疗、代码等专域 Rubric</strong>；
+        <strong>⑥ 主流 Benchmark 与 Fine-tuned Judge 模型对比</strong>。
+        最后结合预训练数据团队实际需求，提出可落地的工程实践建议。
+      </p>
+    </div>
+
+    <!-- ===== SECTION 1 ===== -->
+    <section class="section" id="sec1">
+      <h2><span class="num">1</span> 背景与动机</h2>
+
+      <h3 id="sec1-1">1.1 LLM-as-a-Judge 的兴起</h3>
+      <p>
+        传统 NLP 评估依赖参考答案（BLEU、ROUGE）或人工标注，两者在 LLM 时代均面临严重瓶颈：参考答案覆盖率不足以捕捉开放式回答的多样性，而人工标注成本高昂且难以规模化。2023 年，MT-Bench（Zheng et al., 2023）和 Chatbot Arena（Chiang et al., 2024）将 GPT-4 作为评估裁判（LLM-as-a-Judge）引入，展示了媲美人类一致性的评估能力，引发广泛关注。
+      </p>
+      <p>
+        然而，纯粹的 LLM-as-a-Judge 存在三大痼疾：<strong>位置偏见</strong>（偏爱列表第一位的答案）、<strong>冗长偏见</strong>（偏爱更长但不一定更好的答案）、<strong>自我强化偏见</strong>（评估模型偏袒与其风格相似的输出）。此外，不透明的打分过程让下游的对齐训练缺乏可解释信号。
+      </p>
+
+      <h3 id="sec1-2">1.2 为何需要 Rubric</h3>
+      <p>
+        Rubric（评分标准/评分细则）是教育评估领域的成熟概念，其核心思想是将复杂的评估任务<strong>分解为若干可独立判断的维度</strong>，每个维度给出清晰的评判依据。将 Rubric 引入 LLM 评估，带来三重价值：
+      </p>
+      <ul class="styled">
+        <li><strong>可解释性</strong>：每个分数对应具体维度，而非黑盒标量</li>
+        <li><strong>可控性</strong>：评估标准随任务动态调整，而非使用通用偏好</li>
+        <li><strong>可对齐性</strong>：Rubric 分数可作为密集过程信号用于强化学习，优于稀疏的最终结果奖励</li>
+      </ul>
+
+      <div class="callout info">
+        <strong>关键概念区分</strong><br>
+        <strong>Rubric vs. Checklist</strong>：Checklist 是布尔型（满足/不满足），Rubric 包含程度信息（1-5分等）。<br>
+        <strong>Hard Rules vs. Principles</strong>：OpenRubrics 将 Rubric 细分为"必须遵守的硬规则"（如格式要求）和"期望达到的原则"（如逻辑清晰度），两者的生成和权重机制不同。
+      </div>
+    </section>
+
+    <!-- ===== SECTION 2 ===== -->
+    <section class="section" id="sec2">
+      <h2><span class="num">2</span> Rubric 生成方法：从人工到自动化</h2>
+
+      <p>Rubric 的质量直接决定评估的可靠性与奖励信号的密度。近两年涌现出四种主要生成范式，呈现出从<strong>手工标注 → 对比式自动化 → 递归结构化 → 端到端强化学习</strong>的演进轨迹。</p>
+
+      <h3 id="sec2-1">2.1 人工构造（Microsoft LLM-Rubric）</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">LLM-Rubric: A Multidimensional, Calibrated Approach to Automated Evaluation of Natural Language Texts</div>
+        <div class="paper-meta">
+          Bespoke Quality Assessment · Microsoft Research · ACL 2024 ·
+          <a href="https://aclanthology.org/2024.acl-long.745/" target="_blank">ACL Anthology</a> |
+          <a href="https://github.com/microsoft/llm-rubric" target="_blank">GitHub</a>
+          <span class="tag">人工设计</span><span class="tag">多维度</span><span class="tag">校准</span>
+        </div>
+        <div class="paper-summary">
+          微软提出的 LLM-Rubric 框架是早期最具影响力的系统化 Rubric 评估工作。其核心贡献在于：<br>
+          <strong>（1）多维度 Rubric 设计</strong>：评估任务被分解为若干正交维度（如准确性、流畅性、完整性），每个维度由人工撰写的自然语言标准描述。<br>
+          <strong>（2）统计校准</strong>：通过小规模人工标注数据（校准集）对 LLM 打分进行后校正，将评估者个体偏差纳入建模，大幅提升与人类判断的相关性。<br>
+          <strong>（3）概率聚合</strong>：多个 LLM 分布的打分结果通过概率方式聚合，而非简单平均，具有更强的统计可解释性。<br>
+          <br>
+          <strong>局限性</strong>：Rubric 需人工逐任务撰写，难以大规模扩展；在新领域需重新设计标准。
+        </div>
+      </div>
+
+      <h3 id="sec2-2">2.2 对比式自动生成（OpenRubrics / CRG）</h3>
+
+      <div class="paper-card green">
+        <div class="paper-title">OpenRubrics: Towards Scalable Synthetic Rubric Generation for Reward Modeling and LLM Alignment</div>
+        <div class="paper-meta">
+          Purdue University + Emory University + Georgia Tech · 2025.10 ·
+          <a href="https://arxiv.org/abs/2510.07743" target="_blank">arXiv:2510.07743</a>
+          <span class="tag green">对比生成</span><span class="tag green">大规模数据集</span><span class="tag green">硬规则+原则</span>
+        </div>
+        <div class="paper-summary">
+          <strong>核心创新：Contrastive Rubric Generation (CRG)</strong><br>
+          传统 Rubric 生成仅基于单一提示词，往往产生模糊、冗余的标准。OpenRubrics 提出从<strong>偏好对</strong>（preferred vs. rejected 回答对）出发，通过对比两者差异来推导评估标准。具体流程：
+          <br><br>
+          <div class="flow-steps">
+            <div class="flow-step">① 收集偏好对</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">② LLM 对比分析差异</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">③ 提取 Hard Rules</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">④ 提取 Principles</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">⑤ 偏好一致性过滤</div>
+          </div>
+          <br>
+          <strong>数据集规模</strong>：构建了大规模 (prompt, rubric) 配对数据集，覆盖多样化任务类型。<br>
+          <strong>过滤机制</strong>：preference-label consistency filtering 确保生成的 Rubric 与原始偏好标注方向一致，减少噪音。<br>
+          <strong>下游应用</strong>：OpenRubrics 数据集可直接用于训练 Rubric 生成模型和 Rubric-based Reward Model。
+        </div>
+      </div>
+
+      <h3 id="sec2-3">2.3 递归分解与过滤（RRD）</h3>
+
+      <div class="paper-card orange">
+        <div class="paper-title">Rethinking Rubric Generation for Improving LLM Judge and Reward Modeling for Open-ended Tasks</div>
+        <div class="paper-meta">
+          Meta Superintelligence Labs · 2026.02 ·
+          <a href="https://arxiv.org/abs/2602.05125" target="_blank">arXiv:2602.05125</a>
+          <span class="tag orange">递归分解</span><span class="tag orange">Meta 2026</span><span class="tag orange">判别性强化</span>
+        </div>
+        <div class="paper-summary">
+          <strong>问题诊断</strong>：现有自动化 Rubric 往往是粗粒度的，如"逻辑清晰"这类标准无法有效区分好坏答案。RRD 指出现有方法存在三大缺陷：<strong>粒度粗</strong>（无法判别边界情形）、<strong>覆盖不完整</strong>（遗漏关键评估维度）、<strong>冗余过多</strong>（多个标准实质相同）。
+          <br><br>
+          <strong>Recursive Rubric Decomposition (RRD) 框架</strong>：
+          <ul class="styled">
+            <li><strong>分解阶段</strong>：将粗粒度标准递归分解为更细、更具判别性的子标准，直至达到原子粒度</li>
+            <li><strong>过滤阶段</strong>：移除与人类偏好不一致的标准；识别并合并冗余标准</li>
+            <li><strong>重加权阶段</strong>：防止过度细化某一维度导致权重失衡</li>
+          </ul>
+          <strong>实验结果</strong>：RRD 生成的 Rubric 显著提升 LLM 评估的判别能力，在开放式任务中的与人类一致性超过基线方法。
+        </div>
+      </div>
+
+      <h3 id="sec2-4">2.4 交替强化学习端到端优化（Rubric-ARM）</h3>
+
+      <div class="paper-card purple">
+        <div class="paper-title">Alternating Reinforcement Learning for Rubric-Based Reward Modeling in Non-Verifiable LLM Post-Training</div>
+        <div class="paper-meta">
+          Ran Xu, Tianci Liu et al. · 2026.02 ·
+          <a href="https://arxiv.org/abs/2602.01511" target="_blank">arXiv:2602.01511</a>
+          <span class="tag purple">交替 RL</span><span class="tag purple">端到端</span><span class="tag purple">潜变量优化</span>
+        </div>
+        <div class="paper-summary">
+          <strong>核心思想</strong>：将 Rubric 生成视为<strong>潜在动作（latent action）</strong>，同时优化 Rubric 生成器和 Judge 模型，通过交替强化学习实现端到端训练。
+          <br><br>
+          <strong>技术创新</strong>：
+          <ul class="styled">
+            <li><strong>联合优化</strong>：生成器和 Judge 通过交替更新相互促进，而非独立训练</li>
+            <li><strong>稳定性机制</strong>：采用交替更新策略和正则化方法防止训练崩溃</li>
+            <li><strong>多维度 Rubric 分解</strong>：将评估拆分为可解释维度，提升泛化性</li>
+          </ul>
+          <strong>适用场景</strong>：创意写作、开放式问答等非可验证域（non-verifiable domains），无法使用结果奖励，必须依赖 LLM 生成的 Rubric 信号。
+        </div>
+      </div>
+
+      <h3 id="sec2-5">2.5 尾部感知对比生成（Chasing the Tail）</h3>
+
+      <div class="paper-card red">
+        <div class="paper-title">Chasing the Tail: Effective Rubric-based Reward Modeling for Large Language Model Post-Training</div>
+        <div class="paper-meta">
+          Jun-Kai Zhang et al. · 2025.09 ·
+          <a href="https://arxiv.org/abs/2509.21500" target="_blank">arXiv:2509.21500</a>
+          <span class="tag red">奖励过优化</span><span class="tag red">尾部分布</span><span class="tag red">对比精炼</span>
+        </div>
+        <div class="paper-summary">
+          <strong>问题发现</strong>：Rubric-based Reward 在 RFT 中面临<strong>奖励过优化</strong>（reward over-optimization）问题——策略模型发现了"破解"Rubric 的捷径，在高分的同时输出质量实际下降。理论分析表明，Rubric 的质量不在于整体分布，而在于<strong>能否区分高奖励尾部（high-reward tail）</strong>。
+          <br><br>
+          <strong>Refinement-through-Differentiation 工作流</strong>：
+          <div class="flow-steps" style="margin-top:8px">
+            <div class="flow-step">① 采样多样化高质量响应</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">② 对比差异提取精炼标准</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">③ 过滤低判别力标准</div>
+            <div class="flow-arrow">→</div>
+            <div class="flow-step">④ 应用于 RFT 训练</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="callout success">
+        <strong>📐 Rubric 生成方法演进总结</strong><br>
+        人工设计（高质量但不可扩展）→ 对比式自动化（OpenRubrics，可扩展）→ 递归结构化（RRD，高判别性）→ 尾部感知（Chasing Tail，抗过优化）→ 端到端 RL（Rubric-ARM，闭环优化）。这一演进路径体现了从<strong>离线静态 Rubric</strong>向<strong>在线动态 Rubric</strong>的转变趋势。
+      </div>
+    </section>
+
+    <!-- ===== SECTION 3 ===== -->
+    <section class="section" id="sec3">
+      <h2><span class="num">3</span> Rubric-based Reward Modeling</h2>
+
+      <p>传统 Reward Model（RM）输出标量分数，无法解释"为什么"这个分数。Rubric-based Reward Modeling 通过结构化标准生成解释性奖励，成为生成式奖励模型（Generative Reward Model）研究的核心方向。</p>
+
+      <h3 id="sec3-1">3.1 生成式奖励模型（GenRM）</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">Generative Reward Models（GenRM）</div>
+        <div class="paper-meta">
+          ICLR 2025 ·
+          <a href="https://arxiv.org/abs/2410.12832" target="_blank">arXiv:2410.12832</a>
+          <span class="tag">生成式 RM</span><span class="tag">Chain-of-Thought</span>
+        </div>
+        <div class="paper-summary">
+          GenRM 将 Reward Model 设计为生成式模型，通过生成评估理由（rationale）而非直接输出标量分数来提升可靠性。关键发现：零样本 LLM Judge 在分布内任务上的表现不如 Bradley-Terry 奖励模型（差 9–36%），但 GenRM 通过结合 chain-of-thought 推理和 Rubric 格式指导，可在不需要大规模标注数据的前提下实现竞争性表现。
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <div class="paper-title">Generative Reward Modeling via Synthetic Criteria Generation</div>
+        <div class="paper-meta">
+          ACL 2025 ·
+          <a href="https://aclanthology.org/2025.acl-long.1297.pdf" target="_blank">ACL Anthology</a>
+          <span class="tag">合成标准</span><span class="tag">生成式 RM</span>
+        </div>
+        <div class="paper-summary">
+          提出通过<strong>合成 Criteria 生成</strong>来训练生成式奖励模型，模型需顺序生成：标准（criteria）→ Rubric → 判断（judgment）。该方法在无大规模人工标注的情况下实现强大的 OOD 泛化能力。
+        </div>
+      </div>
+
+      <h3 id="sec3-2">3.2 数学推理过程奖励：RRM</h3>
+
+      <div class="paper-card green">
+        <div class="paper-title">Curing "Miracle Steps" in LLM Mathematical Reasoning with Rubric Rewards</div>
+        <div class="paper-meta">
+          Chinese University of Hong Kong et al. · 2025.10 ·
+          <a href="https://arxiv.org/abs/2510.07774" target="_blank">arXiv:2510.07774</a>
+          <span class="tag green">数学推理</span><span class="tag green">过程奖励</span><span class="tag green">RRM</span>
+        </div>
+        <div class="paper-summary">
+          <strong>问题背景</strong>：基于 Outcome-based Reward（结果奖励）的数学推理训练存在"奇迹步骤"（Miracle Steps）问题——模型跳过中间推理步骤直接得出正确答案，形成看似正确但推理过程不合理的虚假解法。
+          <br><br>
+          <strong>Rubric Reward Model (RRM)</strong>：
+          <ul class="styled">
+            <li>针对每道数学题自动生成<strong>过程导向的 Rubric</strong>（如"是否正确建立方程"、"是否处理特殊情形"）</li>
+            <li>Rubric 信号评估<strong>整个推理轨迹</strong>，提供密集的过程奖励</li>
+            <li>与 GRPO 等 RL 算法结合，显著减少奇迹步骤出现率，推理质量大幅提升</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 id="sec3-3">3.3 RaR（Scale AI）——非可验证域对齐</h3>
+
+      <div class="paper-card orange">
+        <div class="paper-title">Rubrics as Rewards: Reinforcement Learning Beyond Verifiable Domains</div>
+        <div class="paper-meta">
+          Scale AI · NeurIPS 2025 ·
+          <a href="https://arxiv.org/abs/2507.17746" target="_blank">arXiv:2507.17746</a>
+          <span class="tag orange">Scale AI</span><span class="tag orange">NeurIPS 2025</span><span class="tag orange">RLVR 扩展</span>
+        </div>
+        <div class="paper-summary">
+          <strong>核心贡献</strong>：RLVR（Reinforcement Learning with Verifiable Rewards）在数学和代码任务上效果显著，但无法适用于创意写作、指令跟随等非可验证域。RaR 将 Rubric 作为奖励信号，将 RLVR 的成功扩展到不可验证领域。
+          <br><br>
+          <strong>关键机制</strong>：
+          <ul class="styled">
+            <li>为每条训练提示词自动生成<strong>提示特定（prompt-specific）Rubric</strong>，而非全局通用标准</li>
+            <li>Rubric 打分替代不可获得的 ground-truth，提供<strong>细粒度对齐信号</strong></li>
+            <li>实验证明在写作质量、指令遵循等任务上显著优于 RLHF 基线</li>
+          </ul>
+          <strong>影响</strong>：RaR 是将 Rubric 正式纳入强化学习 pipeline 的里程碑工作，为后续 Rubric-RL 研究奠定基础。
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 4 ===== -->
+    <section class="section" id="sec4">
+      <h2><span class="num">4</span> Rubric 在 RLHF / RFT / Alignment 中的应用</h2>
+
+      <p>Rubric 在对齐训练中承担双重角色：既作为<strong>评估信号的提供者</strong>（替代人工标注），也作为<strong>对齐目标的描述者</strong>（明确期望行为）。</p>
+
+      <h3>4.1 从 RLHF 到 Rubric-guided RL</h3>
+      <p>
+        传统 RLHF 的 Reward Model 将偏好压缩为标量，导致信息损失严重，且容易被策略模型利用进行奖励黑客（reward hacking）。Rubric-guided RL 通过以下机制改善这一问题：
+      </p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>方法</th>
+              <th>奖励信号类型</th>
+              <th>信号密度</th>
+              <th>解释性</th>
+              <th>可扩展性</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>传统 RLHF</td>
+              <td>标量偏好分</td>
+              <td>稀疏（仅结果）</td>
+              <td>无</td>
+              <td>需大量人工标注</td>
+            </tr>
+            <tr>
+              <td>RLVR（可验证域）</td>
+              <td>正确/错误二值</td>
+              <td>稀疏（仅结果）</td>
+              <td>无</td>
+              <td>仅限数学/代码</td>
+            </tr>
+            <tr>
+              <td>RaR（Rubric RL）</td>
+              <td>多维度 Rubric 分</td>
+              <td>密集（多维度）</td>
+              <td>高</td>
+              <td>可扩展到任意任务</td>
+            </tr>
+            <tr>
+              <td>RRM（过程奖励）</td>
+              <td>步骤级 Rubric 分</td>
+              <td>密集（步骤级）</td>
+              <td>高</td>
+              <td>需问题 Rubric 生成</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>4.2 Reinforcement Fine-tuning (RFT) 中的 Rubric</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">Chasing the Tail：RFT 中的奖励过优化问题</div>
+        <div class="paper-meta">arXiv:2509.21500 · 2025.09</div>
+        <div class="paper-summary">
+          RFT 训练过程中策略模型极易发现 Rubric 中的弱点并加以利用。Chasing the Tail 的理论分析表明：若 Rubric 无法区分"极好"与"好"的回答（尾部分布），则策略优化会过早停止或收敛到次优解。解决方案是在 Rubric 生成阶段就针对高质量响应的细微差别进行设计。
+        </div>
+      </div>
+
+      <h3>4.3 Direct Preference Optimization (DPO) 中的 Rubric</h3>
+      <p>
+        Rubric 在 DPO 及其变体中扮演数据标注增强角色：通过 Rubric 对数据集中的偏好对进行<strong>重新评分和过滤</strong>，去除噪声标注，从而提升 DPO 数据质量。OpenRubrics 中的 preference-label consistency filtering 即是这一思路的实践。
+      </p>
+    </section>
+
+    <!-- ===== SECTION 5 ===== -->
+    <section class="section" id="sec5">
+      <h2><span class="num">5</span> LLM Judge 的偏见问题与缓解策略</h2>
+
+      <h3 id="sec5-1">5.1 偏见分类体系</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">Justice or Prejudice? Quantifying Biases in LLM-as-a-Judge</div>
+        <div class="paper-meta">
+          IBM Research + et al. · ICLR 2025 ·
+          <a href="https://llm-judge-bias.github.io/" target="_blank">项目主页</a>
+          <span class="tag">12 类偏见</span><span class="tag">CALM 框架</span>
+        </div>
+        <div class="paper-summary">
+          该工作系统性地识别了 LLM-as-a-Judge 中的 <strong>12 类偏见</strong>，并提出 CALM（Calibrated Assessment of LLM Metrics）自动化量化框架。主要偏见类型包括：
+          <br><br>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th>偏见类型</th><th>表现</th><th>严重程度</th></tr>
+              </thead>
+              <tbody>
+                <tr><td><strong>位置偏见</strong></td><td>偏爱出现在第一/第二位置的答案</td><td>⭐⭐⭐⭐</td></tr>
+                <tr><td><strong>冗长偏见</strong></td><td>偏爱更长但质量不一定更高的答案</td><td>⭐⭐⭐⭐</td></tr>
+                <tr><td><strong>自我强化偏见</strong></td><td>评估模型偏袒自身风格的输出</td><td>⭐⭐⭐</td></tr>
+                <tr><td><strong>权威偏见</strong></td><td>偏袒被标记为知名机构的输出</td><td>⭐⭐⭐</td></tr>
+                <tr><td><strong>美化偏见</strong></td><td>偏爱格式更好看（如加粗、列表）的答案</td><td>⭐⭐⭐</td></tr>
+                <tr><td><strong>多样性偏见</strong></td><td>对不同文化/语言的回答评分不一致</td><td>⭐⭐</td></tr>
+                <tr><td><strong>从众偏见</strong></td><td>受多数意见影响而非独立判断</td><td>⭐⭐</td></tr>
+                <tr><td><strong>Chain-of-Thought 偏见</strong></td><td>推理链本身影响判断而非内容</td><td>⭐⭐</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <div class="paper-title">Judging the Judges: A Systematic Investigation of Position Bias in LLM-as-a-Judge</div>
+        <div class="paper-meta">
+          2024.06 ·
+          <a href="https://arxiv.org/abs/2406.07791" target="_blank">arXiv:2406.07791</a>
+          <span class="tag">位置偏见</span><span class="tag">系统研究</span>
+        </div>
+        <div class="paper-summary">
+          该工作对位置偏见进行深入实验研究，提出三个量化指标：<strong>重复稳定性</strong>（相同提示多次评估的一致性）、<strong>位置一致性</strong>（交换位置后结果的一致性）、<strong>对抗一致性</strong>（在明确错误答案出现时的判断稳定性）。结果发现 GPT-4 等主流模型均存在显著位置偏见，且偏好方向因模型而异。
+        </div>
+      </div>
+
+      <h3 id="sec5-2">5.2 缓解策略</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">CalibraEval: Calibrating Prediction Distribution to Mitigate LLM Judge Bias</div>
+        <div class="paper-meta">
+          ACL 2025 ·
+          <a href="https://aclanthology.org/2025.acl-long.808.pdf" target="_blank">ACL Anthology</a>
+          <span class="tag">统计校准</span><span class="tag">预测分布</span>
+        </div>
+        <div class="paper-summary">
+          针对系统性偏见，CalibraEval 通过<strong>小样本校准集</strong>估计 LLM Judge 的偏差分布，然后对打分进行后验修正。关键发现：即使是 GPT-4 级别的 judge，在一致性偏见（始终偏好某选项）方面存在显著问题，但可通过校准有效缓解。
+        </div>
+      </div>
+
+      <div class="callout warning">
+        <strong>⚠️ Rubric 对偏见的双刃剑效应</strong><br>
+        Rubric 是缓解 LLM Judge 偏见的有效工具——明确的评估维度减少了 judge 的自由裁量空间，从而抑制了冗长偏见和风格偏见。然而，若 Rubric 本身在生成时就引入了偏见（如仅依赖偏好标注数据），则会将偏见结构化固化。因此，Rubric 的<strong>生成质量</strong>和<strong>多样性覆盖</strong>至关重要。
+      </div>
+
+      <p>当前主流缓解策略汇总：</p>
+      <ul class="styled">
+        <li><strong>Swap Augmentation</strong>：交换评估对的顺序，取平均结果（JudgeLM 采用）</li>
+        <li><strong>统计后校准</strong>：通过小规模人工标注集修正系统性偏差（LLM-Rubric, CalibraEval）</li>
+        <li><strong>结构化 Rubric 提示</strong>：通过明确的维度分解减少自由裁量偏见</li>
+        <li><strong>多 Judge 集成</strong>：采用多个独立评估者投票，降低单一模型偏见</li>
+        <li><strong>Reference-guided</strong>：提供参考答案辅助评估，减少凭空判断</li>
+      </ul>
+    </section>
+
+    <!-- ===== SECTION 6 ===== -->
+    <section class="section" id="sec6">
+      <h2><span class="num">6</span> 专域 Rubric 应用</h2>
+
+      <h3 id="sec6-1">6.1 医疗领域：HealthBench</h3>
+
+      <div class="paper-card green">
+        <div class="paper-title">HealthBench: Evaluating Large Language Models Towards Improved Human Health</div>
+        <div class="paper-meta">
+          OpenAI Health AI Team · 2025.05 ·
+          <a href="https://arxiv.org/html/2505.08775v1" target="_blank">arXiv:2505.08775</a>
+          <span class="tag green">OpenAI</span><span class="tag green">医疗</span><span class="tag green">262名医生</span><span class="tag green">5000个对话</span>
+        </div>
+        <div class="paper-summary">
+          HealthBench 是迄今规模最大的医疗领域 Rubric 评估基准，由 OpenAI 与全球 60 个国家 262 名医生合作构建。
+          <br><br>
+          <strong>核心设计</strong>：
+          <ul class="styled">
+            <li>包含 5000 个真实医疗对话场景，每个场景配有由医生撰写的详细 Rubric</li>
+            <li>Rubric 按<strong>轴（axis）</strong>组织，包括：准确性（Accuracy）、完整性（Completeness）、无害性（Safety）、沟通清晰度（Communication）等</li>
+            <li>采用 GPT-4.1 作为 Grader LLM，对开放式回答按 Rubric 逐条打分</li>
+            <li>特别设计了"Adaptive Precise Boolean rubrics"框架，将评估标准转化为精确的布尔判断</li>
+          </ul>
+          <strong>重要发现</strong>：现有 LLM 在医疗准确性和安全性维度均存在明显不足；基于 Rubric 的评估比人工整体评分更能发现细粒度错误。
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <div class="paper-title">A Scalable Framework for Evaluating Health Language Models（Adaptive Precise Boolean Rubrics）</div>
+        <div class="paper-meta">
+          Nature npj Digital Medicine · 2026.02 ·
+          <a href="https://www.nature.com/articles/s41746-026-02492-x" target="_blank">Nature</a>
+          <span class="tag">自适应布尔 Rubric</span><span class="tag">医疗评估框架</span>
+        </div>
+        <div class="paper-summary">
+          提出 Adaptive Precise Boolean Rubrics 框架，将医疗评估标准转化为精确的布尔问题（"该回答是否正确提及了X"），使自动化和人工评估均可高效执行。该框架显著降低了评估的模糊性，提升了评估者间一致性。
+        </div>
+      </div>
+
+      <h3 id="sec6-2">6.2 代码评估</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">Rubric Is All You Need: Enhancing LLM-based Code Evaluation with Rubrics</div>
+        <div class="paper-meta">
+          2025.03 ·
+          <a href="https://arxiv.org/abs/2503.23989" target="_blank">arXiv:2503.23989</a>
+          <span class="tag">代码评估</span><span class="tag">教育应用</span>
+        </div>
+        <div class="paper-summary">
+          面向代码教育场景，提出三种基于 Rubric 的代码评估技术：<br>
+          <strong>（1）Complete Rubric Evaluation (CRE)</strong>：LLM Agent 对学生代码提交按完整 Rubric 逐项评分<br>
+          <strong>（2）Partial Rubric Evaluation</strong>：重点评估高分关键项，提升效率<br>
+          <strong>（3）Rubric 生成辅助</strong>：自动从参考答案生成评估 Rubric
+          <br><br>
+          实验表明，引入 Rubric 使代码评估的评分一致性从 73% 提升至 89%，接近人类专家水平。
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <div class="paper-title">ContextCRBench: Benchmarking LLMs for Fine-Grained Code Review</div>
+        <div class="paper-meta">
+          2025.11 ·
+          <a href="https://arxiv.org/abs/2511.07017" target="_blank">arXiv:2511.07017</a>
+          <span class="tag">代码审查</span><span class="tag">行级粒度</span>
+        </div>
+        <div class="paper-summary">
+          针对代码审查（Code Review）的细粒度评估 Benchmark，提供行级别的评估标准，覆盖安全性、可读性、效率等多个 Rubric 维度。
+        </div>
+      </div>
+
+      <h3 id="sec6-3">6.3 其他专域</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>领域</th>
+              <th>代表工作/工具</th>
+              <th>Rubric 特点</th>
+              <th>主要挑战</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>数学推理</strong></td>
+              <td>RRM（arXiv:2510.07774）</td>
+              <td>过程级步骤 Rubric</td>
+              <td>Rubric 生成需数学专业知识</td>
+            </tr>
+            <tr>
+              <td><strong>教育评估</strong></td>
+              <td>Concept-based Rubrics<br>PEARL框架</td>
+              <td>概念图谱驱动</td>
+              <td>学科知识与 LLM 能力的匹配</td>
+            </tr>
+            <tr>
+              <td><strong>创意写作</strong></td>
+              <td>RaR（NeurIPS 2025）<br>Rubric-ARM</td>
+              <td>风格+内容多维</td>
+              <td>主观标准难以客观化</td>
+            </tr>
+            <tr>
+              <td><strong>指令遵循</strong></td>
+              <td>IFEval、FollowBench</td>
+              <td>约束型（格式+内容）</td>
+              <td>复合指令的 Rubric 分解</td>
+            </tr>
+            <tr>
+              <td><strong>对话系统</strong></td>
+              <td>MT-Bench（微软 LLM-Rubric）</td>
+              <td>多轮对话多维评估</td>
+              <td>上下文依赖的评估</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 7 ===== -->
+    <section class="section" id="sec7">
+      <h2><span class="num">7</span> 核心 Benchmark 与数据集</h2>
+
+      <h3 id="sec7-1">7.1 BiGGen Bench</h3>
+
+      <div class="paper-card green">
+        <div class="paper-title">The BiGGen Bench: A Principled Benchmark for Fine-grained Evaluation of Language Models with Language Models</div>
+        <div class="paper-meta">
+          KAIST + LG AI Research + CMU · NAACL 2025 Best Paper Award ·
+          <a href="https://arxiv.org/abs/2406.05761" target="_blank">arXiv:2406.05761</a> |
+          <a href="https://huggingface.co/datasets/prometheus-eval/BiGGen-Bench" target="_blank">HuggingFace</a>
+          <span class="tag green">最佳论文奖</span><span class="tag green">实例特定 Rubric</span><span class="tag green">9大能力</span>
+        </div>
+        <div class="paper-summary">
+          BiGGen Bench 是 Prometheus 团队（KAIST）构建的细粒度 LLM 评估 Benchmark，荣获 NAACL 2025 最佳论文奖，是 Rubric-based 评估领域的里程碑工作。
+          <br><br>
+          <strong>设计原则</strong>：
+          <ul class="styled">
+            <li>自顶向下的原则性设计：首先定义 9 大核心能力（指令遵循、推理、安全等），然后衍生出 77 个任务类型</li>
+            <li><strong>实例特定 Rubric（Instance-specific Rubric）</strong>：每个测试实例都有独特的评估标准，而非通用标准</li>
+            <li>765 个精心设计的测试实例，覆盖多样化场景</li>
+            <li>使用 Prometheus 2 作为评估器，通过 5 分制 Rubric 打分</li>
+          </ul>
+          <strong>关键贡献</strong>：首次证明了实例特定 Rubric 能够更准确地捕捉人类评估中细致入微的差异，为 Rubric 个性化方向奠定基础。
+        </div>
+      </div>
+
+      <h3 id="sec7-2">7.2 JudgeBench</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">JudgeBench: A Benchmark for Evaluating LLM-based Judges</div>
+        <div class="paper-meta">
+          2024.10 ·
+          <a href="https://arxiv.org/abs/2410.12784" target="_blank">arXiv:2410.12784</a>
+          <span class="tag">元评估</span><span class="tag">知识/推理/代码</span>
+        </div>
+        <div class="paper-summary">
+          JudgeBench 专门用于评估"评估器"本身的可靠性（元评估）。通过构建<strong>高挑战性响应对</strong>（challenging response pairs）——两个回答在表面上都似乎合理，但存在客观上的优劣差异——来测试 Judge 的辨别能力。涵盖知识、推理、数学、代码 4 大领域。
+          <br><br>
+          <strong>发现</strong>：大多数 LLM Judge 在高挑战性问题对上的表现接近随机，揭示了当前评估器在复杂场景下的严重局限。
+        </div>
+      </div>
+
+      <h3 id="sec7-3">7.3 PPE（Preference Proxy Evaluations）</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">How to Evaluate Reward Models for RLHF（PPE）</div>
+        <div class="paper-meta">
+          Chatbot Arena (lmarena) · ICLR 2025 ·
+          <a href="https://arxiv.org/abs/2410.14872" target="_blank">arXiv:2410.14872</a> |
+          <a href="https://github.com/lmarena/PPE" target="_blank">GitHub</a>
+          <span class="tag">Reward Model 评估</span><span class="tag">12个指标</span><span class="tag">真实人类偏好</span>
+        </div>
+        <div class="paper-summary">
+          PPE 是首个将 Reward Model 评估与<strong>真实 RLHF 后人类偏好</strong>直接关联的基准测试。设计了 12 个指标，跨 12 个领域（含 LLM Judge 和 Reward Model），通过大规模人类偏好数据（Chatbot Arena 数据）提供真实世界校准。PPE 的核心贡献是证明了常用的 Reward Model Benchmark 与实际人类偏好之间存在显著偏差。
+        </div>
+      </div>
+
+      <h3>7.4 其他重要数据集与 Benchmark</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>构建方</th>
+              <th>规模/特点</th>
+              <th>主要用途</th>
+              <th>链接</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>FeedbackBench</td>
+              <td>Prometheus 团队</td>
+              <td>用于训练 Prometheus 的反馈数据</td>
+              <td>训练评估 LM</td>
+              <td>HuggingFace</td>
+            </tr>
+            <tr>
+              <td>RewardBench</td>
+              <td>Allen AI</td>
+              <td>4大类别约3000样本</td>
+              <td>Reward Model 能力评估</td>
+              <td>arXiv:2403.13787</td>
+            </tr>
+            <tr>
+              <td>MT-Bench</td>
+              <td>LMSYS (UCB)</td>
+              <td>80道多轮问题</td>
+              <td>LLM 综合能力评估</td>
+              <td>arXiv:2306.05685</td>
+            </tr>
+            <tr>
+              <td>IFEval</td>
+              <td>Google</td>
+              <td>541道指令遵循题</td>
+              <td>指令约束评估</td>
+              <td>arXiv:2311.07911</td>
+            </tr>
+            <tr>
+              <td>HealthBench</td>
+              <td>OpenAI</td>
+              <td>5000医疗对话+Rubric</td>
+              <td>医疗 LLM 评估</td>
+              <td>arXiv:2505.08775</td>
+            </tr>
+            <tr>
+              <td>OpenRubrics 数据集</td>
+              <td>Purdue/Emory/GT</td>
+              <td>大规模(prompt, rubric)对</td>
+              <td>训练 Rubric 生成模型</td>
+              <td>arXiv:2510.07743</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 8 ===== -->
+    <section class="section" id="sec8">
+      <h2><span class="num">8</span> Fine-tuned Judge 模型全景</h2>
+
+      <h3 id="sec8-1">8.1 Prometheus 系列（KAIST）</h3>
+
+      <div class="paper-card green">
+        <div class="paper-title">Prometheus / Prometheus 2: An Open Source Language Model Specialized in Evaluating Other Language Models</div>
+        <div class="paper-meta">
+          KAIST + LG AI Research + CMU · EMNLP 2024 ·
+          <a href="https://arxiv.org/abs/2405.01535" target="_blank">arXiv:2405.01535</a> |
+          <a href="https://github.com/prometheus-eval/prometheus-eval" target="_blank">GitHub</a>
+          <span class="tag green">开源 Judge</span><span class="tag green">自定义 Rubric</span><span class="tag green">7B/8x7B</span>
+        </div>
+        <div class="paper-summary">
+          Prometheus 系列是目前最具影响力的开源 Rubric-based 评估模型，由 KAIST 主导开发。
+          <br><br>
+          <strong>Prometheus 1（2023）核心设计</strong>：
+          <ul class="styled">
+            <li>训练数据构建：50个种子 Rubric（人工标注）→ LLM 扩充 Rubric 池 → 生成训练样本</li>
+            <li>支持<strong>直接评估（Absolute Grading）</strong>：给定 Rubric 和回答，输出 1-5 分</li>
+            <li>基于 LLaMA-2，7B 参数级别即可与 GPT-4 相当</li>
+          </ul>
+          <strong>Prometheus 2 改进</strong>：
+          <ul class="styled">
+            <li>同时支持<strong>直接评估和成对比较（Pairwise Comparison）</strong></li>
+            <li>使用 Mixtral-8x7B 和 Mistral-7B 两个规模，性能更强</li>
+            <li>开放透明，无 API 费用，可本地部署，避免数据隐私问题</li>
+            <li>在 BiGGen Bench 等 Rubric 评估任务上超越 GPT-3.5，接近 GPT-4</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 id="sec8-2">8.2 JudgeLM 与 PandaLM</h3>
+
+      <div class="paper-card">
+        <div class="paper-title">JudgeLM: Fine-tuned Large Language Models are Scalable Judges</div>
+        <div class="paper-meta">
+          BAAI（北京智源研究院）· 2023.10 ·
+          <a href="https://github.com/baaivision/JudgeLM" target="_blank">GitHub</a> |
+          <a href="https://openreview.net/forum?id=xsELpEPn4A" target="_blank">OpenReview</a>
+          <span class="tag">BAAI</span><span class="tag">Swap Augmentation</span><span class="tag">Reference Support</span>
+        </div>
+        <div class="paper-summary">
+          JudgeLM 是国内最早的大规模 Fine-tuned Judge 工作，由 BAAI 提出。构建了大规模高质量 Judge 训练数据集（JudgeLM-100K），并引入三项关键技术：<br>
+          <strong>① Swap Augmentation</strong>：通过交换评估对顺序来消除位置偏见<br>
+          <strong>② Reference Support</strong>：提供参考答案辅助评估<br>
+          <strong>③ Reference Drop</strong>：随机丢弃参考答案训练，提升无参考场景下的鲁棒性<br>
+          JudgeLM 可评估 LLM 和多模态模型的开放式回答，在与 GPT-4 的一致性上取得强劲表现。
+        </div>
+      </div>
+
+      <div class="paper-card">
+        <div class="paper-title">PandaLM: An Instruction-following Benchmark with Open-Source LLMs as Reference Judges</div>
+        <div class="paper-meta">
+          2023 ·
+          <span class="tag">公平评估</span><span class="tag">低成本</span>
+        </div>
+        <div class="paper-summary">
+          PandaLM 以"更公平但成本更低"为目标，通过训练专用的判断模型减少专有 API 的依赖。其核心贡献在于证明通过调优开源 LLM 可以获得接近 GPT-4 级别的评估性能，为社区提供了一个可控的评估替代方案。
+        </div>
+      </div>
+
+      <h3 id="sec8-3">8.3 横向对比</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>模型</th>
+              <th>来源</th>
+              <th>参数量</th>
+              <th>Rubric 支持</th>
+              <th>评估模式</th>
+              <th>开源</th>
+              <th>主要优势</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Prometheus 2</strong></td>
+              <td>KAIST/LG AI</td>
+              <td>7B / 8x7B</td>
+              <td>✅ 自定义 Rubric</td>
+              <td>绝对 + 成对</td>
+              <td>✅</td>
+              <td>灵活 Rubric，社区活跃</td>
+            </tr>
+            <tr>
+              <td><strong>JudgeLM</strong></td>
+              <td>BAAI</td>
+              <td>7B/13B/33B</td>
+              <td>⚠️ 通用标准</td>
+              <td>成对比较</td>
+              <td>✅</td>
+              <td>Swap 去偏，可扩展</td>
+            </tr>
+            <tr>
+              <td><strong>PandaLM</strong></td>
+              <td>开源社区</td>
+              <td>7B</td>
+              <td>⚠️ 通用标准</td>
+              <td>成对比较</td>
+              <td>✅</td>
+              <td>轻量低成本</td>
+            </tr>
+            <tr>
+              <td><strong>GPT-4 / GPT-4.1</strong></td>
+              <td>OpenAI</td>
+              <td>专有</td>
+              <td>✅ 自定义 Rubric</td>
+              <td>绝对 + 成对</td>
+              <td>❌</td>
+              <td>综合最强，HealthBench 默认</td>
+            </tr>
+            <tr>
+              <td><strong>Claude Sonnet</strong></td>
+              <td>Anthropic</td>
+              <td>专有</td>
+              <td>✅ 自定义 Rubric</td>
+              <td>绝对 + 成对</td>
+              <td>❌</td>
+              <td>安全评估强</td>
+            </tr>
+            <tr>
+              <td><strong>Skywork-RM-V2</strong></td>
+              <td>昆仑万维</td>
+              <td>0.6B–8B</td>
+              <td>⚠️ 偏好分</td>
+              <td>奖励分</td>
+              <td>✅</td>
+              <td>RewardBench SOTA</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 9 ===== -->
+    <section class="section" id="sec9">
+      <h2><span class="num">9</span> 核心论文横向对比总表</h2>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>论文/系统</th>
+              <th>机构</th>
+              <th>时间</th>
+              <th>Rubric 来源</th>
+              <th>应用方向</th>
+              <th>关键创新</th>
+              <th>局限性</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><a href="https://aclanthology.org/2024.acl-long.745/" target="_blank">LLM-Rubric</a></td>
+              <td>Microsoft Research</td>
+              <td>ACL 2024</td>
+              <td>人工构造</td>
+              <td>对话评估</td>
+              <td>统计校准；多维度聚合</td>
+              <td>不可扩展；需专家设计</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2405.01535" target="_blank">Prometheus 2</a></td>
+              <td>KAIST + LG AI</td>
+              <td>EMNLP 2024</td>
+              <td>种子扩充</td>
+              <td>通用评估</td>
+              <td>开源；自定义 Rubric</td>
+              <td>Rubric 需用户自提供</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2406.05761" target="_blank">BiGGen Bench</a></td>
+              <td>KAIST + CMU</td>
+              <td>NAACL 2025</td>
+              <td>人工+实例特定</td>
+              <td>评估基准</td>
+              <td>实例特定 Rubric；最佳论文</td>
+              <td>固定规模，难扩展</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2507.17746" target="_blank">RaR（Scale AI）</a></td>
+              <td>Scale AI</td>
+              <td>NeurIPS 2025</td>
+              <td>LLM 自动生成</td>
+              <td>RLVR 扩展</td>
+              <td>非可验证域 RL 对齐</td>
+              <td>Rubric 质量依赖生成模型</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2510.07743" target="_blank">OpenRubrics</a></td>
+              <td>Purdue+Emory+GT</td>
+              <td>2025.10</td>
+              <td>CRG 对比生成</td>
+              <td>奖励建模</td>
+              <td>大规模数据集；CRG</td>
+              <td>依赖高质量偏好对</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2510.07774" target="_blank">RRM</a></td>
+              <td>CUHK + 港科</td>
+              <td>2025.10</td>
+              <td>问题导向生成</td>
+              <td>数学推理</td>
+              <td>解决奇迹步骤；过程奖励</td>
+              <td>仅限数学领域</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2509.21500" target="_blank">Chasing Tail</a></td>
+              <td>多机构</td>
+              <td>2025.09</td>
+              <td>尾部对比精炼</td>
+              <td>RFT 奖励</td>
+              <td>解决奖励过优化</td>
+              <td>需多样化高质量响应</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2602.05125" target="_blank">RRD（Meta）</a></td>
+              <td>Meta Superintelligence</td>
+              <td>2026.02</td>
+              <td>递归分解</td>
+              <td>LLM Judge + RM</td>
+              <td>递归细化；过滤冗余</td>
+              <td>计算开销较高</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2602.01511" target="_blank">Rubric-ARM</a></td>
+              <td>多机构</td>
+              <td>2026.02</td>
+              <td>端到端 RL 生成</td>
+              <td>非可验证域 RM</td>
+              <td>交替 RL；闭环优化</td>
+              <td>训练不稳定风险</td>
+            </tr>
+            <tr>
+              <td><a href="https://arxiv.org/abs/2505.08775" target="_blank">HealthBench</a></td>
+              <td>OpenAI</td>
+              <td>2025.05</td>
+              <td>262名医生构建</td>
+              <td>医疗评估</td>
+              <td>最大医疗 Rubric 基准</td>
+              <td>仅限医疗场景</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== SECTION 10 ===== -->
+    <section class="section" id="sec10">
+      <h2><span class="num">10</span> 研究趋势与展望</h2>
+
+      <h3>10.1 从静态 Rubric 到动态 Rubric</h3>
+      <p>
+        早期 Rubric 是静态的——由人工设计，对所有实例通用。2024-2026 年的核心演进是<strong>实例特定（Instance-specific）Rubric</strong> 的崛起，即每个提示词都对应一套独特的评估标准。BiGGen Bench 验证了这一方向的必要性，OpenRubrics、RaR、RRD 则展示了自动化生成的可行路径。未来趋势是 Rubric 的<strong>完全在线化</strong>——在 RL 训练过程中实时生成和更新 Rubric（Rubric-ARM 是此方向的先驱）。
+      </p>
+
+      <h3>10.2 Rubric 与推理能力的深度融合</h3>
+      <p>
+        随着 o1、DeepSeek-R1 等推理增强模型的兴起，将 Rubric 生成和评估嵌入<strong>长链推理（long chain-of-thought）</strong>中成为新兴方向。Chain-of-Rubric 方法让模型先推理出"什么是好的回答"，再给出 Rubric，最后评分，三阶段联动提升评估可靠性。这与 Generative Reward Modeling 的趋势高度一致。
+      </p>
+
+      <h3>10.3 Rubric 驱动的数据飞轮</h3>
+      <p>
+        Rubric 的最大战略价值在于构建<strong>数据飞轮</strong>：Rubric → 评估数据 → 奖励模型 → 更好的 LLM → 生成更好的 Rubric。OpenRubrics 和 RRD 都在尝试这一方向。预训练数据团队可以利用 Rubric 系统化地<strong>过滤和重新标注</strong>现有数据集，而非依赖昂贵的人工标注。
+      </p>
+
+      <h3>10.4 跨文化与多语言 Rubric</h3>
+      <p>
+        当前 Rubric 研究主要以英文为主，多语言、跨文化评估标准的构建存在巨大空白。中文 Rubric 的研究几乎处于起步阶段，这对于中国 LLM 评估和对齐来说是重要机遇。
+      </p>
+
+      <h3>10.5 安全与对齐中的 Rubric</h3>
+      <p>
+        HealthBench 等工作证明 Rubric 可以精确描述"安全行为"的具体标准（如"不得给出可能导致伤害的用药建议"）。将 Rubric 纳入 Constitutional AI 等框架，有望替代模糊的宪法原则，提供更可操作的对齐目标。
+      </p>
+
+      <div class="callout info">
+        <strong>🔮 2026-2027 研究热点预测</strong><br>
+        1. <strong>自适应 Rubric 生成</strong>：根据模型能力动态调整 Rubric 难度<br>
+        2. <strong>Rubric 一致性学习</strong>：跨不同 Judge 模型的 Rubric 解释一致性<br>
+        3. <strong>多模态 Rubric</strong>：扩展到图像、视频、音频等模态<br>
+        4. <strong>Rubric 压缩</strong>：如何在保留判别力的同时减少 Rubric 的 token 消耗<br>
+        5. <strong>Rubric 验证</strong>：如何自动验证 Rubric 本身的质量和无偏性
+      </div>
+    </section>
+
+    <!-- ===== SECTION 11 ===== -->
+    <section class="section" id="sec11">
+      <h2><span class="num">11</span> 对预训练数据团队的实践建议</h2>
+
+      <div class="callout success">
+        <strong>🎯 总体建议：将 Rubric 作为预训练数据质量管理的基础设施</strong><br>
+        Rubric 不仅是评估工具，更是数据工程的核心基础设施。以下建议从短期可落地到长期战略布局分层组织。
+      </div>
+
+      <h3>11.1 短期（1-3个月）：立即可行的改进</h3>
+
+      <h4>① 使用 Rubric 替代简单质量过滤</h4>
+      <p>
+        当前预训练数据过滤多依赖困惑度（PPL）、规则过滤等方法，难以捕捉语义层面的质量问题。建议引入<strong>基于 Rubric 的 LLM Judge</strong> 对高价值数据子集进行多维度打分，维度可包括：信息准确性、逻辑连贯性、知识密度、语言流畅度。使用 Prometheus 2（开源，7B 即可）作为 Judge 模型，对 top-K 数据进行精筛。
+      </p>
+
+      <h4>② 偏好数据清洗：preference-label consistency filtering</h4>
+      <p>
+        参考 OpenRubrics 的一致性过滤方法，对现有偏好数据集（如 Alpaca Preference、HH-RLHF）进行 Rubric 二次标注，去除标注噪声，可显著提升 DPO 和 RLHF 数据质量。
+      </p>
+
+      <h4>③ 建立任务特定 Rubric 库</h4>
+      <p>
+        针对团队关注的主要任务类型（数学、代码、中文写作、指令遵循等），参考 BiGGen Bench 的自顶向下设计方法，构建一套内部 Rubric 库，用于评估候选预训练数据的质量分布。
+      </p>
+
+      <h3>11.2 中期（3-6个月）：深度集成</h3>
+
+      <h4>④ 训练内部 Rubric 生成模型</h4>
+      <p>
+        使用 OpenRubrics 数据集（或 CRG 方法对内部偏好数据自动生成 Rubric），微调一个轻量级（7B）Rubric 生成模型。该模型可对任意提示词自动生成多维度评估标准，服务于下游的数据评分和奖励建模。
+      </p>
+
+      <h4>⑤ 引入 Rubric-based Reward Model 替代标量 RM</h4>
+      <p>
+        在 RLHF/DPO 流程中，将现有标量奖励模型升级为 Rubric-based Reward Model（参考 GenRM、RaR 框架）。关键步骤：维护一个 prompt → rubric 的映射；对每个 rollout 按 Rubric 打分；生成多维度奖励向量用于 PPO 优化。
+      </p>
+
+      <h4>⑥ 数学推理数据的 RRM 过程奖励</h4>
+      <p>
+        对于数学推理训练数据，建议引入 RRM（Rubric Reward Model）思路：为每道题自动生成过程导向 Rubric（可参考 arXiv:2510.07774），用于筛选推理步骤合理（而非仅答案正确）的训练样本。
+      </p>
+
+      <h3>11.3 长期（6个月以上）：战略布局</h3>
+
+      <h4>⑦ 构建中文专用 Rubric 评估体系</h4>
+      <p>
+        当前 Rubric 研究几乎全为英文，中文 LLM 评估缺乏可靠的 Rubric 基准。建议参考 BiGGen Bench 方法，构建面向中文的<strong>细粒度评估基准</strong>，覆盖：中文写作质量、文化相关性、中文指令遵循能力等维度。这是差异化竞争的重要机遇。
+      </p>
+
+      <h4>⑧ 端到端 Rubric-RL 闭环</h4>
+      <p>
+        参考 Rubric-ARM 和 RaR 的思路，构建从数据采集到模型优化的完整 Rubric 驱动闭环：高质量 Rubric 生成 → Rubric Judge 评分 → 奖励信号 → RL 策略优化 → 更好的响应 → 更难的 Rubric（递进式难度控制）。
+      </p>
+
+      <h4>⑨ Judge 偏见监控基础设施</h4>
+      <p>
+        建立内部 Judge 偏见监控系统，周期性检测：位置偏见、冗长偏见、中英文评分差异等。参考 CALM 框架，通过小规模人工校准集对自动评估结果进行校正。
+      </p>
+
+      <div class="table-wrap" style="margin-top:20px">
+        <table>
+          <thead>
+            <tr>
+              <th>建议</th>
+              <th>所需资源</th>
+              <th>预期收益</th>
+              <th>参考工作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Rubric 替代 PPL 过滤</td>
+              <td>Prometheus 2 (7B) 部署</td>
+              <td>数据质量提升 15-30%</td>
+              <td>Prometheus 2, BiGGen Bench</td>
+            </tr>
+            <tr>
+              <td>偏好数据 Rubric 清洗</td>
+              <td>CRG 脚本 + 人工验证</td>
+              <td>DPO 性能提升</td>
+              <td>OpenRubrics, RRD</td>
+            </tr>
+            <tr>
+              <td>数学 RRM 过程奖励</td>
+              <td>RRM 训练代码</td>
+              <td>推理链质量提升</td>
+              <td>arXiv:2510.07774</td>
+            </tr>
+            <tr>
+              <td>中文 Rubric 基准</td>
+              <td>人工专家 + BiGGen 框架</td>
+              <td>中文评估标准化</td>
+              <td>BiGGen Bench (NAACL 2025)</td>
+            </tr>
+            <tr>
+              <td>Rubric-RL 闭环</td>
+              <td>完整 RL 基础设施</td>
+              <td>非验证域对齐</td>
+              <td>RaR (NeurIPS 2025), Rubric-ARM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== REFERENCES ===== -->
+    <section class="section" id="refs">
+      <h2><span class="num">📚</span> 参考文献</h2>
+
+      <h3>核心论文（按时间排序）</h3>
+      <ol class="styled" style="font-size:0.87em; font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height:1.9;">
+        <li>Zheng et al. (2023). <em>Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena.</em> NeurIPS 2023. arXiv:2306.05685</li>
+        <li>Zhu et al. (2023). <em>JudgeLM: Fine-tuned Large Language Models are Scalable Judges.</em> BAAI. arXiv:2310.17631</li>
+        <li>Kim et al. (2023). <em>Prometheus: Inducing Fine-grained Evaluation Capability in Language Models.</em> ICLR 2024. arXiv:2310.08491</li>
+        <li>Wang et al. (2024). <em>PandaLM: An Instruction-following Benchmark with Open-Source LLMs as Reference Judges.</em> 2024.</li>
+        <li>Fast et al. (2024). <em>LLM-Rubric: A Multidimensional, Calibrated Approach to Automated Evaluation.</em> ACL 2024. <a href="https://aclanthology.org/2024.acl-long.745/" target="_blank">ACL Anthology</a></li>
+        <li>Shi et al. (2024). <em>JudgeBench: A Benchmark for Evaluating LLM-based Judges.</em> arXiv:2410.12784. Oct 2024.</li>
+        <li>Kim et al. (2024). <em>Prometheus 2: An Open Source Language Model Specialized in Evaluating Other Language Models.</em> EMNLP 2024. arXiv:2405.01535</li>
+        <li>Kim et al. (2024). <em>The BiGGen Bench: A Principled Benchmark for Fine-grained Evaluation.</em> NAACL 2025 Best Paper. arXiv:2406.05761</li>
+        <li>Shen et al. (2024). <em>Judging the Judges: A Systematic Investigation of Position Bias in LLM-as-a-Judge.</em> arXiv:2406.07791</li>
+        <li>Wen et al. (2024). <em>Generative Reward Models.</em> ICLR 2025. arXiv:2410.12832</li>
+        <li>Frick et al. (2024). <em>How to Evaluate Reward Models for RLHF (PPE).</em> ICLR 2025. arXiv:2410.14872</li>
+        <li>Yuan et al. (2025). <em>Curing "Miracle Steps" in LLM Mathematical Reasoning with Rubric Rewards.</em> arXiv:2510.07774. Oct 2025.</li>
+        <li>Liu et al. (2025). <em>OpenRubrics: Towards Scalable Synthetic Rubric Generation for Reward Modeling and LLM Alignment.</em> arXiv:2510.07743. Oct 2025.</li>
+        <li>Zhang et al. (2025). <em>Chasing the Tail: Effective Rubric-based Reward Modeling for LLM Post-Training.</em> arXiv:2509.21500. Sep 2025.</li>
+        <li>Scale AI (2025). <em>Rubrics as Rewards: Reinforcement Learning Beyond Verifiable Domains.</em> NeurIPS 2025. arXiv:2507.17746</li>
+        <li>OpenAI Health AI Team (2025). <em>HealthBench: Evaluating Large Language Models Towards Improved Human Health.</em> arXiv:2505.08775. May 2025.</li>
+        <li>Chen et al. (2025). <em>Rubric Is All You Need: Enhancing LLM-based Code Evaluation with Rubrics.</em> arXiv:2503.23989. Mar 2025.</li>
+        <li>Yang et al. (2025). <em>CalibraEval: Calibrating Prediction Distribution to Mitigate LLM Judge Bias.</em> ACL 2025. <a href="https://aclanthology.org/2025.acl-long.808.pdf" target="_blank">ACL Anthology</a></li>
+        <li>Guo et al. (2025). <em>Justice or Prejudice? Quantifying Biases in LLM-as-a-Judge.</em> ICLR 2025.</li>
+        <li>Various Authors (2025). <em>Generative Reward Modeling via Synthetic Criteria Generation.</em> ACL 2025. <a href="https://aclanthology.org/2025.acl-long.1297.pdf" target="_blank">ACL Anthology</a></li>
+        <li>Liu et al. (2025). <em>PEARL: A Rubric-Driven Multi-Metric Framework for LLM Evaluation.</em> Information 16(11). Oct 2025.</li>
+        <li>Nature npj Digital Medicine (2026). <em>A Scalable Framework for Evaluating Health Language Models (Adaptive Precise Boolean Rubrics).</em> <a href="https://www.nature.com/articles/s41746-026-02492-x" target="_blank">Nature</a></li>
+        <li>Shen et al. (2026). <em>Rethinking Rubric Generation for Improving LLM Judge and Reward Modeling for Open-ended Tasks (RRD).</em> Meta Superintelligence. arXiv:2602.05125. Feb 2026.</li>
+        <li>Xu et al. (2026). <em>Alternating Reinforcement Learning for Rubric-Based Reward Modeling in Non-Verifiable LLM Post-Training (Rubric-ARM).</em> arXiv:2602.01511. Feb 2026.</li>
+      </ol>
+
+      <div class="footnote">
+        <p><strong>免责声明</strong>：本报告基于公开发表的研究成果整理分析，部分论文（尤其 2026 年预印版）尚未经过同行评审，相关结论请结合原始论文审慎参考。</p>
+        <p><strong>报告撰写时间</strong>：2026 年 2 月 28 日 | <strong>面向</strong>：大模型预训练/数据研发 | <strong>版本</strong>：v1.0</p>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- Smooth scroll -->
+<script>
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

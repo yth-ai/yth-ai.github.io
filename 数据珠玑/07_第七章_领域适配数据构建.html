@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第7章 领域适配数据构建 · 数据珠玑</title>
+<style>
+  :root { --primary:#1a3a5c; --accent:#2e7dbe; --light-bg:#f5f8fc; --text:#2c3e50; --muted:#7f8c9a; --border:#d0dce8; --highlight:#fff8e1; --green-bg:#f0faf4; --green-border:#68c98a; --red-bg:#fff5f5; --red-border:#e88; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Georgia','Noto Serif SC',serif; background:#fff; color:var(--text); line-height:1.9; font-size:17px; }
+  .book-header { background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 60%,#2e5f8a 100%); color:#fff; padding:40px 5%; text-align:center; }
+  .book-title { font-size:1.8em; letter-spacing:0.1em; }
+  .book-subtitle { font-size:0.95em; color:#a8c4dc; margin-top:6px; }
+  .chapter-header { padding:48px 5% 32px; border-bottom:2px solid var(--border); background:var(--light-bg); }
+  .chapter-label { color:var(--accent); font-size:0.85em; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; font-family:sans-serif; }
+  .chapter-title { font-size:2.2em; color:var(--primary); line-height:1.3; }
+  .chapter-intro { font-size:1.05em; color:#445; margin-top:16px; max-width:680px; font-style:italic; }
+  .main-content { max-width:860px; margin:0 auto; padding:40px 5%; }
+  h2 { font-size:1.5em; color:var(--primary); margin:52px 0 16px; padding-bottom:8px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:1.15em; color:#1a5080; margin:32px 0 12px; }
+  p { margin-bottom:1.2em; }
+  ul,ol { margin:12px 0 16px 24px; line-height:2; }
+  blockquote { border-left:4px solid var(--accent); background:var(--light-bg); padding:16px 24px; margin:24px 0; font-style:italic; color:#445566; border-radius:0 6px 6px 0; }
+  .highlight-box { background:var(--highlight); border:1px solid #f0d060; border-radius:6px; padding:20px 24px; margin:24px 0; }
+  .highlight-box strong { color:#8b6914; }
+  .info-box { background:var(--light-bg); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .info-box h4 { color:var(--accent); margin-bottom:8px; font-family:sans-serif; }
+  .warning-box { background:var(--red-bg); border:1px solid var(--red-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .warning-box h4 { color:#c0392b; margin-bottom:8px; font-family:sans-serif; }
+  .success-box { background:var(--green-bg); border:1px solid var(--green-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  table { width:100%; border-collapse:collapse; margin:24px 0; font-family:sans-serif; font-size:0.88em; }
+  th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--light-bg); }
+  .domain-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:24px 0; }
+  .domain-card { border:1px solid var(--border); border-radius:8px; padding:18px; }
+  .domain-card .domain-name { font-weight:bold; font-family:sans-serif; color:var(--primary); margin-bottom:8px; font-size:1em; }
+  .domain-card .domain-icon { font-size:1.5em; margin-bottom:6px; }
+  .forgetting-chart { margin:24px 0; }
+  .bar-row { display:flex; align-items:center; gap:12px; margin-bottom:10px; }
+  .bar-row .label { min-width:140px; font-family:sans-serif; font-size:0.85em; color:var(--text); text-align:right; }
+  .bar-container { flex:1; background:#eee; border-radius:3px; height:22px; overflow:hidden; }
+  .bar-fill { height:100%; border-radius:3px; display:flex; align-items:center; padding-left:8px; font-size:0.75em; font-family:sans-serif; color:#fff; }
+  .footnote { font-size:0.82em; color:var(--muted); font-family:sans-serif; border-top:1px solid var(--border); margin-top:40px; padding-top:16px; }
+  .nav-bar { border-top:1px solid var(--border); padding:24px 5%; display:flex; justify-content:space-between; font-family:sans-serif; font-size:0.9em; }
+  .nav-bar a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第二部分：中训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 7 · Domain Adaptation Data Construction</div>
+  <div class="chapter-title">第7章 领域适配数据构建</div>
+  <div class="chapter-intro">如何识别、采集、混合垂直领域数据，如何应对灾难性遗忘，以及如何科学评估领域适配的效果。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>7.1 垂直领域数据识别与采集</h2>
+
+  <p>垂直领域数据构建的第一步是明确"什么是该领域的高价值数据"。不同领域的知识载体差异巨大，需要针对性的采集策略。</p>
+
+  <div class="domain-grid">
+    <div class="domain-card">
+      <div class="domain-icon">🏥</div>
+      <div class="domain-name">医疗健康</div>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>PubMed 文献（3600万+摘要，全文需授权）</li>
+        <li>临床指南与规范（WHO、CDC 等）</li>
+        <li>MIMIC 等去标识化电子健康记录</li>
+        <li>医学教材（Harrison、Cecil 等）</li>
+        <li>药物说明书数据库（FDA、NMPA）</li>
+        <li>医学百科（MedlinePlus、默克手册）</li>
+      </ul>
+    </div>
+    <div class="domain-card">
+      <div class="domain-icon">⚖️</div>
+      <div class="domain-name">法律</div>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>法律法规全文（国家法律数据库）</li>
+        <li>司法判决书（裁判文书网）</li>
+        <li>法律评论与学术论文</li>
+        <li>律师协会发布的行业指引</li>
+        <li>合同模板与法律文书范例</li>
+        <li>法律考试题库与解析</li>
+      </ul>
+    </div>
+    <div class="domain-card">
+      <div class="domain-icon">📈</div>
+      <div class="domain-name">金融</div>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>上市公司年报、财报（SEC EDGAR 等）</li>
+        <li>研究报告与分析师报告</li>
+        <li>金融新闻（彭博、路透历史数据）</li>
+        <li>监管文件（银保监、证监会公告）</li>
+        <li>金融教材与 CFA/FRM 备考材料</li>
+        <li>交易所公告与招股说明书</li>
+      </ul>
+    </div>
+    <div class="domain-card">
+      <div class="domain-icon">💻</div>
+      <div class="domain-name">代码/软件工程</div>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>GitHub 开源代码（The Stack v2）</li>
+        <li>技术文档（官方 API Docs）</li>
+        <li>Stack Overflow 问答</li>
+        <li>代码注释与 commit messages</li>
+        <li>技术博客（Dev.to、Medium 技术栏目）</li>
+        <li>LeetCode/Codeforces 竞赛题解</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>数据采集的质量门槛</h3>
+
+  <p>领域数据采集的关键原则是：<strong>宁缺毋滥</strong>。垂直领域数据中的错误信息比通用数据更危险——一个医疗 LLM 如果在训练数据中摄入了错误的药物剂量信息，可能在部署后造成实际危害。因此，领域数据需要比通用预训练数据更严格的质量控制：</p>
+
+  <ul>
+    <li><strong>权威来源优先</strong>：政府官网、学术期刊（SCI/EI）、行业协会等权威来源的数据优先于网络论坛</li>
+    <li><strong>领域专家审核</strong>：对合成数据和爬取数据进行样本级人工审核，识别领域性错误</li>
+    <li><strong>时效性标注</strong>：为每份文档标注发布时间，避免过期信息（如已撤销的药物指南）被模型内化</li>
+  </ul>
+
+  <h2>7.2 领域数据与通用数据的混合比例</h2>
+
+  <p>领域适配中训练面临的核心配比问题是：<strong>领域数据与通用数据应以何种比例混合</strong>？纯领域数据训练会导致严重的能力退化（详见 7.3），但通用数据比例过高则稀释了领域适配效果。</p>
+
+  <h3>经验性配比参考</h3>
+
+  <table>
+    <thead><tr><th>应用场景</th><th>领域数据比例</th><th>通用数据比例</th><th>依据来源</th></tr></thead>
+    <tbody>
+      <tr><td>代码专项（CodeLlama）</td><td>85%</td><td>15%</td><td>Meta 2023</td></tr>
+      <tr><td>医疗领域适配</td><td>50-70%</td><td>30-50%</td><td>多项研究综合</td></tr>
+      <tr><td>法律领域适配</td><td>40-60%</td><td>40-60%</td><td>LaWler 等工作</td></tr>
+      <tr><td>数学能力强化（Minerva）</td><td>~100%（仅 38.5B Token）</td><td>0%（基础已预训练）</td><td>Google 2022</td></tr>
+      <tr><td>中文领域适配</td><td>60-80%</td><td>20-40%（含英语）</td><td>Chinese LLaMA 等</td></tr>
+    </tbody>
+  </table>
+
+  <p>值得注意的是，Minerva 使用 100% 数学/科学数据进行中训练，看似违反了"保留通用数据"的原则，但这是因为其基座模型（PaLM 540B）的通用能力已极为强大，短期领域中训练不会显著损伤通用性。对于较小的基座模型，这一策略风险较高。</p>
+
+  <h3>渐进式混合策略</h3>
+
+  <p>一种更细致的做法是采用渐进式混合（Progressive Mixing）：在中训练初期使用较高比例的通用数据（如 50%），随着训练推进，逐渐提升领域数据比例（至 70-80%）。这一策略类似于预训练冷却阶段的逻辑，帮助模型在不丢失通用能力的前提下平滑适应领域分布。</p>
+
+  <h2>7.3 遗忘问题（Catastrophic Forgetting）及其缓解策略</h2>
+
+  <p>灾难性遗忘（Catastrophic Forgetting）是持续学习中的经典难题：当模型在新数据上继续训练时，之前习得的知识和能力会被"覆盖"，导致通用性能显著下降。在中训练中，这表现为：专注于领域数据训练后，模型在通用基准（如 MMLU、HellaSwag）上的性能退化。</p>
+
+  <div class="forgetting-chart">
+    <p style="font-family:sans-serif;font-size:0.85em;color:var(--muted);margin-bottom:12px;">示意：不同通用数据混合比例下的能力保留情况（归一化，100%=基线）</p>
+    <div class="bar-row">
+      <div class="label">领域数据 100%</div>
+      <div class="bar-container"><div class="bar-fill" style="width:45%;background:#e74c3c;">45% 通用能力</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="label">领域 80% / 通用 20%</div>
+      <div class="bar-container"><div class="bar-fill" style="width:72%;background:#e67e22;">72% 通用能力</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="label">领域 60% / 通用 40%</div>
+      <div class="bar-container"><div class="bar-fill" style="width:88%;background:#f1c40f;color:#333;">88% 通用能力</div></div>
+    </div>
+    <div class="bar-row">
+      <div class="label">领域 40% / 通用 60%</div>
+      <div class="bar-container"><div class="bar-fill" style="width:96%;background:#27ae60;">96% 通用能力</div></div>
+    </div>
+  </div>
+
+  <h3>缓解灾难性遗忘的主要方法</h3>
+
+  <p><strong>1. 回放策略（Replay）</strong>：在领域数据中混入一定比例的通用预训练数据，让模型在学习新知识的同时不断"复习"旧知识。这是最简单也最有效的方法，即 7.2 节所述的混合配比策略。</p>
+
+  <p><strong>2. 弹性权重固化（EWC, Elastic Weight Consolidation）</strong>：Fisher 信息矩阵标识对通用任务重要的参数，在领域训练时对这些参数施加正则化约束，防止其偏离过大。计算成本较高，适合对遗忘容忍度极低的场景。</p>
+
+  <p><strong>3. LoRA 等参数高效微调（PEFT）</strong>：仅更新少量新增参数（如低秩适配矩阵），冻结原始模型权重，从根本上防止原始参数被修改。在计算效率上远优于全参数中训练，但能力注入效果也相对有限，更适合小规模领域适配。</p>
+
+  <p><strong>4. 渐进式神经网络（Progressive Neural Networks）</strong>：为每个新任务添加新的神经网络模块，完全保留旧模块不变。在 LLM 规模下实现困难，主要用于学术研究。</p>
+
+  <div class="highlight-box">
+    <strong>工业界实践中最常用的方案仍是"回放 + 学习率衰减"的组合</strong>：混入 20-40% 通用数据，配合比预训练低 1-2 个数量级的学习率（如预训练使用 3e-4，中训练使用 5e-5 至 1e-4），实践中能有效在领域能力增益与通用能力保留之间取得平衡。
+  </div>
+
+  <h2>7.4 领域适配效果的评估方法</h2>
+
+  <p>评估领域适配效果需要同时在两个维度进行测量：<strong>领域性能增益</strong>和<strong>通用能力保留</strong>，二者缺一不可。</p>
+
+  <h3>领域性能评估</h3>
+
+  <ul>
+    <li><strong>领域专项基准</strong>：医疗（MedQA、PubMedQA、MedMCQA）、法律（LegalBench、CAIL）、金融（FinQA、TAT-QA）、代码（HumanEval、MBPP、SWE-bench）</li>
+    <li><strong>领域知识渗透率</strong>：在领域专业术语填空、文献摘要生成等任务上的表现</li>
+    <li><strong>专家评估</strong>：邀请领域专家对模型输出进行盲测评分，是最可靠但成本最高的方法</li>
+  </ul>
+
+  <h3>通用能力保留评估</h3>
+
+  <ul>
+    <li><strong>通用基准</strong>：MMLU、HellaSwag、ARC、TruthfulQA 等标准评测集</li>
+    <li><strong>语言能力</strong>：在通用文本生成（BERTScore、ROUGE）、对话自然度（MT-Bench）上的表现</li>
+    <li><strong>迁移能力</strong>：在与领域无关的推理任务（BBH、GSM8K）上的性能变化</li>
+  </ul>
+
+  <div class="success-box">
+    <p><strong>评估框架建议：</strong>构建一个"双维度记分牌"，分别记录领域任务和通用任务的性能变化。理想的中训练应该呈现"领域性能显著提升（+15%以上），通用性能轻微下降（-3%以内）"的模式。如果通用性能下降超过 5%，需要重新审视数据配比；如果领域性能提升不足 10%，则需要检查领域数据质量和数量。</p>
+  </div>
+
+  <div class="footnote">
+    <p><strong>参考文献：</strong>Rozière et al. (2023) "Code Llama"；Lewkowycz et al. (2022) "Minerva"；Singhal et al. (2022) "MedPaLM"；Cui et al. (2023) "Efficient and Effective Text Encoding for Chinese LLaMA"；Kirkpatrick et al. (2017) "Overcoming Catastrophic Forgetting (EWC)"；Hu et al. (2022) "LoRA"；Muennighoff et al. (2023) "Scaling Data-Constrained Language Models"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="06_第六章_中训练的定位与价值.html">← 第6章</a>
+  <a href="08_第八章_能力增强数据.html">第8章 能力增强数据 →</a>
+</div>
+
+</body>
+</html>

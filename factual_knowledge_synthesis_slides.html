@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>事实类知识能力优化：数据合成方案对比 | 技术答辩</title>
+<style>
+  :root {
+    --bg: #0e1117;
+    --card: #161b22;
+    --border: #30363d;
+    --text: #e6edf3;
+    --text-muted: #8b949e;
+    --text-dim: #6e7681;
+    --cyan: #06b6d4;
+    --amber: #f59e0b;
+    --purple: #a855f7;
+    --green: #22c55e;
+    --red: #ef4444;
+    --yellow: #eab308;
+    --blue: #3b82f6;
+    --pink: #ec4899;
+    --cyan-dim: rgba(6,182,212,0.12);
+    --amber-dim: rgba(245,158,11,0.12);
+    --purple-dim: rgba(168,85,247,0.12);
+    --green-dim: rgba(34,197,94,0.12);
+    --red-dim: rgba(239,68,68,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 14px;
+    line-height: 1.6;
+    padding: 32px 16px;
+  }
+
+  .page-header {
+    max-width: 1100px;
+    margin: 0 auto 40px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 24px;
+  }
+
+  .page-header h1 {
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 6px;
+  }
+
+  .page-header .subtitle {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .page-header .tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  .tag {
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    border: 1px solid;
+  }
+
+  .tag-cyan  { color: var(--cyan);   border-color: var(--cyan);   background: var(--cyan-dim); }
+  .tag-amber { color: var(--amber);  border-color: var(--amber);  background: var(--amber-dim); }
+  .tag-purple{ color: var(--purple); border-color: var(--purple); background: var(--purple-dim); }
+  .tag-green { color: var(--green);  border-color: var(--green);  background: var(--green-dim); }
+
+  /* === SLIDE WRAPPER === */
+  .slide {
+    max-width: 1100px;
+    margin: 0 auto 48px;
+  }
+
+  .slide-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  .slide-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .slide-title {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .slide-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* === CARD === */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px 28px;
+  }
+
+  .card-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .card-sub {
+    color: var(--text-muted);
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+
+  /* === PART 0: BACKGROUND === */
+  .bg-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .bg-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .bg-item-num {
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .bg-item h3 {
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text);
+  }
+
+  .bg-item p {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .bg-item cite {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: normal;
+    border-top: 1px solid var(--border);
+    padding-top: 6px;
+  }
+
+  /* === PART 1: TIMELINE === */
+  .timeline {
+    position: relative;
+    padding: 20px 0 10px;
+  }
+
+  .timeline-line {
+    position: absolute;
+    top: 44px;
+    left: 60px;
+    right: 60px;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .timeline-track {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+  }
+
+  .tl-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 120px;
+    position: relative;
+  }
+
+  .tl-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+    margin-top: 38px;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tl-year {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.5px;
+  }
+
+  .tl-label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text);
+    text-align: center;
+    margin-bottom: 4px;
+  }
+
+  .tl-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* === PART 2: METHOD CARDS === */
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .method-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 22px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .method-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    border-radius: 10px 10px 0 0;
+  }
+
+  .mc-cyan::before   { background: var(--cyan); }
+  .mc-amber::before  { background: var(--amber); }
+  .mc-purple::before { background: var(--purple); }
+  .mc-green::before  { background: var(--green); }
+
+  .method-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 12px;
+    gap: 12px;
+  }
+
+  .method-name {
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--text);
+  }
+
+  .method-paper {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-top: 2px;
+  }
+
+  .method-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  .method-section {
+    background: var(--bg);
+    border-radius: 6px;
+    padding: 10px 12px;
+  }
+
+  .method-section.full-width {
+    grid-column: 1 / -1;
+  }
+
+  .ms-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .ms-content {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.55;
+  }
+
+  .ms-content strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  .tech-points {
+    list-style: none;
+    padding: 0;
+  }
+
+  .tech-points li {
+    font-size: 11.5px;
+    color: var(--text-muted);
+    padding: 3px 0;
+    padding-left: 14px;
+    position: relative;
+    line-height: 1.5;
+  }
+
+  .tech-points li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--text-dim);
+  }
+
+  .pros-cons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .pros, .cons {
+    border-radius: 5px;
+    padding: 8px 10px;
+  }
+
+  .pros {
+    background: rgba(34,197,94,0.07);
+    border: 1px solid rgba(34,197,94,0.2);
+  }
+
+  .cons {
+    background: rgba(239,68,68,0.07);
+    border: 1px solid rgba(239,68,68,0.2);
+  }
+
+  .pros-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--green);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .cons-label {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--red);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  .pros li, .cons li {
+    font-size: 11px;
+    color: var(--text-muted);
+    list-style: none;
+    padding: 1px 0 1px 12px;
+    position: relative;
+  }
+
+  .pros li::before {
+    content: '✓';
+    position: absolute;
+    left: 0;
+    color: var(--green);
+    font-size: 10px;
+  }
+
+  .cons li::before {
+    content: '✗';
+    position: absolute;
+    left: 0;
+    color: var(--red);
+    font-size: 10px;
+  }
+
+  .effect-badge {
+    display: inline-block;
+    background: rgba(6,182,212,0.1);
+    border: 1px solid rgba(6,182,212,0.3);
+    color: var(--cyan);
+    border-radius: 4px;
+    padding: 1px 7px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-right: 4px;
+    margin-bottom: 3px;
+  }
+
+  .effect-badge.amber { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.3); color: var(--amber); }
+  .effect-badge.purple { background: rgba(168,85,247,0.1); border-color: rgba(168,85,247,0.3); color: var(--purple); }
+  .effect-badge.green { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(--green); }
+
+  /* === PART 3: MATRIX TABLE === */
+  .matrix-wrap {
+    overflow-x: auto;
+  }
+
+  .matrix-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+    min-width: 900px;
+  }
+
+  .matrix-table th {
+    background: var(--bg);
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 10px 14px;
+    text-align: center;
+    border: 1px solid var(--border);
+    letter-spacing: 0.3px;
+  }
+
+  .matrix-table th.dim-col {
+    text-align: left;
+    width: 160px;
+    color: var(--text-dim);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .matrix-table th.method-col-amber { color: var(--amber); }
+  .matrix-table th.method-col-cyan  { color: var(--cyan); }
+  .matrix-table th.method-col-purple{ color: var(--purple); }
+  .matrix-table th.method-col-green { color: var(--green); }
+
+  .matrix-table td {
+    padding: 9px 14px;
+    border: 1px solid var(--border);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+  }
+
+  .matrix-table td.dim-name {
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 12px;
+    background: rgba(255,255,255,0.02);
+  }
+
+  .matrix-table tr:hover td {
+    background: rgba(255,255,255,0.02);
+  }
+
+  .cell-high {
+    color: var(--green);
+    font-weight: 700;
+  }
+
+  .cell-med {
+    color: var(--yellow);
+    font-weight: 600;
+  }
+
+  .cell-low {
+    color: var(--red);
+  }
+
+  .cell-text {
+    color: var(--text-muted);
+    font-size: 11.5px;
+  }
+
+  /* === PART 4: RECOMMENDATION === */
+  .rec-pyramid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .rec-layer {
+    border-radius: 8px;
+    padding: 16px 20px;
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 16px;
+    align-items: center;
+  }
+
+  .rec-layer-1 {
+    background: rgba(168,85,247,0.08);
+    border: 1px solid rgba(168,85,247,0.25);
+  }
+
+  .rec-layer-2 {
+    background: rgba(6,182,212,0.08);
+    border: 1px solid rgba(6,182,212,0.25);
+  }
+
+  .rec-layer-3 {
+    background: rgba(245,158,11,0.08);
+    border: 1px solid rgba(245,158,11,0.25);
+  }
+
+  .rec-layer-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .rec-layer-1 .rec-layer-label { color: var(--purple); }
+  .rec-layer-2 .rec-layer-label { color: var(--cyan); }
+  .rec-layer-3 .rec-layer-label { color: var(--amber); }
+
+  .rec-layer-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+
+  .rec-layer-desc {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  .rec-arrow {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 18px;
+    line-height: 1;
+  }
+
+  .priority-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+
+  .priority-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 18px;
+  }
+
+  .priority-medal {
+    font-size: 22px;
+    margin-bottom: 8px;
+  }
+
+  .priority-name {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .priority-reason {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  /* === PART 5: OPEN QUESTIONS === */
+  .questions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+
+  .q-item {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .q-num {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--border);
+    line-height: 1;
+    margin-bottom: 10px;
+  }
+
+  .q-title {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 8px;
+    line-height: 1.4;
+  }
+
+  .q-body {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .q-body em {
+    color: var(--text-dim);
+    font-style: normal;
+  }
+
+  /* FOOTER */
+  .footer {
+    max-width: 1100px;
+    margin: 48px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-dim);
+    font-size: 11px;
+  }
+
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 11px;
+  }
+
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+  }
+
+  /* Responsive */
+  @media (max-width: 800px) {
+    .bg-grid, .questions-grid { grid-template-columns: 1fr; }
+    .method-grid { grid-template-columns: 1fr; }
+    .priority-list { grid-template-columns: 1fr; }
+    .method-body { grid-template-columns: 1fr; }
+    .pros-cons { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="slide-num">技术答辩参考 · 预训练/中训练阶段</div>
+  <h1>事实类知识能力优化：数据合成方案对比</h1>
+  <div class="subtitle">目标评测：SimpleQA · TriviaQA · NQ · PopQA &nbsp;|&nbsp; 聚焦预训练/Continued Pretraining 阶段数据工程</div>
+  <div class="tags">
+    <span class="tag tag-amber">风格改写</span>
+    <span class="tag tag-cyan">QA生成</span>
+    <span class="tag tag-purple">内容精炼</span>
+    <span class="tag tag-green">综合合成</span>
+  </div>
+</div>
+
+<!-- ========== SLIDE 00 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 00</span>
+    <span class="slide-title">为什么事实知识难学？</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="card">
+    <div class="bg-grid">
+      <div class="bg-item">
+        <div class="bg-item-num" style="color:#f59e0b">①</div>
+        <h3>Zipf 长尾分布</h3>
+        <p>大多数事实在训练语料中出现极少次。实体出现频率与模型 QA 准确率强正相关——低频实体几乎无法被正确回答。</p>
+        <cite>Kandpal et al., ICML 2023 · 实测验证</cite>
+      </div>
+      <div class="bg-item">
+        <div class="bg-item-num" style="color:#ef4444">②</div>
+        <h3>"知道 vs. 能说"的断层</h3>
+        <p>模型能补全 <em style="color:#e6edf3;font-style:normal">"X 出生于 → Y"</em>，却无法回答 <em style="color:#e6edf3;font-style:normal">"X 在哪里出生？"</em>。知识表征存在方向性偏差，正向链接不等于反向可查。</p>
+        <cite>Berglund et al., 2023 "Reversal Curse" · Kambhampati et al. 同类观察</cite>
+      </div>
+      <div class="bg-item">
+        <div class="bg-item-num" style="color:#a855f7">③</div>
+        <h3>单一视角训练</h3>
+        <p>同一事实在语料中只以一种固定表述出现，导致知识表征脆弱。改变提问方式或句式，模型即失败——泛化性差，非真正"学会"。</p>
+        <cite>WRAP (2024), EntiGraph (2024) 等工作的核心动机</cite>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 01 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 01</span>
+    <span class="slide-title">方案全景图（2023–2025 时间轴）</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="card">
+    <div class="timeline">
+      <div class="timeline-line"></div>
+      <div class="timeline-track">
+
+        <div class="tl-item">
+          <div class="tl-year">2023</div>
+          <div class="tl-dot" style="background:var(--cyan)"></div>
+          <div class="tl-label">Knowledge-Instruct</div>
+          <div class="tl-desc">多视角QA注入<br><span style="color:var(--text-dim);font-size:10px">HuggingFace</span></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2024 Q1</div>
+          <div class="tl-dot" style="background:var(--amber)"></div>
+          <div class="tl-label">WRAP</div>
+          <div class="tl-desc">4风格改写<br><span style="color:var(--text-dim);font-size:10px">arXiv:2401</span></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2024 Q3</div>
+          <div class="tl-dot" style="background:var(--amber)"></div>
+          <div class="tl-label">MAGA / MGA</div>
+          <div class="tl-desc">体裁×受众矩阵<br><span style="color:var(--text-dim);font-size:10px">770B tokens</span></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2024 Q3</div>
+          <div class="tl-dot" style="background:var(--purple)"></div>
+          <div class="tl-label">ProX</div>
+          <div class="tl-desc">程序化精炼<br><span style="color:var(--text-dim);font-size:10px">arXiv:2409</span></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2024 Q4</div>
+          <div class="tl-dot" style="background:var(--cyan)"></div>
+          <div class="tl-label">EntiGraph</div>
+          <div class="tl-desc">实体图谱QA合成<br><span style="color:var(--text-dim);font-size:10px">Stanford+AI2</span></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2024 Q4</div>
+          <div class="tl-dot" style="background:var(--green)"></div>
+          <div class="tl-label">Phi-4</div>
+          <div class="tl-desc">综合合成主力<br><span style="color:var(--text-dim);font-size:10px">Microsoft Research</span></div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-year">2024</div>
+          <div class="tl-dot" style="background:var(--purple)"></div>
+          <div class="tl-label">REWIRE</div>
+          <div class="tl-desc">低质文档回收<br><span style="color:var(--text-dim);font-size:10px">Meta FAIR</span></div>
+        </div>
+
+      </div>
+    </div>
+    <div style="display:flex;gap:20px;justify-content:center;margin-top:8px;flex-wrap:wrap">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div><span style="color:var(--text-muted)">风格改写</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div><span style="color:var(--text-muted)">QA生成</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div><span style="color:var(--text-muted)">内容精炼</span></div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div><span style="color:var(--text-muted)">综合合成</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 02 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 02</span>
+    <span class="slide-title">核心方案详情（Part A：风格改写类）</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="method-grid">
+
+    <!-- WRAP -->
+    <div class="method-card mc-amber">
+      <div class="method-header">
+        <div>
+          <div class="method-name">WRAP</div>
+          <div class="method-paper">arXiv:2401.16380 · Maini et al., 2024</div>
+        </div>
+        <span class="tag tag-amber">风格改写</span>
+      </div>
+      <div class="method-body">
+        <div class="method-section full-width">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">用 LLM 将 CommonCrawl 文本改写为 <strong>Wikipedia / QA / Textbook / Story</strong> 4种风格，增加同一事实的表述多样性</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li>4 style prompts 覆盖不同写作模式</li>
+            <li>每条原始文档生成 4 个改写版本</li>
+            <li>改写数据混入原始数据共训</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">主要效果</div>
+          <div>
+            <span class="effect-badge amber">预训练加速 3×</span>
+            <span class="effect-badge amber">zero-shot factual +2pp</span>
+            <span class="effect-badge amber">perplexity −10%</span>
+          </div>
+        </div>
+        <div class="method-section full-width">
+          <div class="pros-cons">
+            <div class="pros">
+              <div class="pros-label">✦ 优势</div>
+              <ul>
+                <li>实现简单，用小模型即可改写</li>
+                <li>成本低，保持语义忠实</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <div class="cons-label">✦ 局限</div>
+              <ul>
+                <li>不构建新知识结构，关联性弱</li>
+                <li>长尾事实曝光仍不足</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAGA -->
+    <div class="method-card mc-amber">
+      <div class="method-header">
+        <div>
+          <div class="method-name">MAGA / MGA</div>
+          <div class="method-paper">arXiv:2407.14662 · 2024 · ICLR 2026 Accepted</div>
+        </div>
+        <span class="tag tag-amber">风格改写+</span>
+      </div>
+      <div class="method-body">
+        <div class="method-section full-width">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">按 <strong>「体裁 × 受众」矩阵</strong>生成多版本重写，构建 MAGACorpus（<strong>770B tokens</strong>），在数据受限场景下效果突出</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li>多粒度指令矩阵（科普/技术/新闻/对话等）</li>
+            <li>大规模 770B token 语料构建</li>
+            <li>数据受限场景优势最为突出</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">主要效果</div>
+          <div>
+            <span class="effect-badge amber">数据受限下超越 WRAP</span>
+            <span class="effect-badge amber">ICLR 2026 ✓</span>
+          </div>
+        </div>
+        <div class="method-section full-width">
+          <div class="pros-cons">
+            <div class="pros">
+              <div class="pros-label">✦ 优势</div>
+              <ul>
+                <li>体裁多样性更丰富</li>
+                <li>770B 语料规模已验证</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <div class="cons-label">✦ 局限</div>
+              <ul>
+                <li>生成成本高于 WRAP</li>
+                <li>仍是表层改写，不增加新事实关联</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== SLIDE 03 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 03</span>
+    <span class="slide-title">核心方案详情（Part B：QA生成类）</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="method-grid">
+
+    <!-- EntiGraph -->
+    <div class="method-card mc-cyan">
+      <div class="method-header">
+        <div>
+          <div class="method-name">EntiGraph</div>
+          <div class="method-paper">arXiv:2410.02782 · Mallen et al., Stanford + AI2, 2024</div>
+        </div>
+        <span class="tag tag-cyan">实体图QA</span>
+      </div>
+      <div class="method-body">
+        <div class="method-section full-width">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">从语料抽取实体 → 构建实体关系图 → 沿图边生成 <strong>多跳关联</strong> 合成文本，大幅提升事实覆盖密度（<em style="color:var(--text-dim);font-style:normal">Synthetic Continued Pretraining</em>）</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li>Entity extraction → Graph construction（实体关系对）</li>
+            <li>Graph traversal → Diverse QA / narrative generation</li>
+            <li>"Synthetic Continued Pretraining" 统一框架</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">主要效果</div>
+          <div>
+            <span class="effect-badge">PopQA long-tail +6.4pp</span>
+            <span class="effect-badge">（24-shot）知识密集显著↑</span>
+          </div>
+        </div>
+        <div class="method-section full-width">
+          <div class="pros-cons">
+            <div class="pros">
+              <div class="pros-label">✦ 优势</div>
+              <ul>
+                <li>真正引入结构化事实关联</li>
+                <li>长尾实体覆盖好，多跳推理强</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <div class="cons-label">✦ 局限</div>
+              <ul>
+                <li>依赖高质量种子语料</li>
+                <li>图谱构建 + GPT-4 生成成本极高</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Knowledge-Instruct -->
+    <div class="method-card mc-cyan">
+      <div class="method-header">
+        <div>
+          <div class="method-name">Knowledge-Instruct</div>
+          <div class="method-paper">arXiv:2311.08401 · Tunstall et al., HuggingFace, 2023</div>
+        </div>
+        <span class="tag tag-cyan">多视角QA</span>
+      </div>
+      <div class="method-body">
+        <div class="method-section full-width">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">将知识文档分解为 <strong>正向 / 反向 / 多步推理</strong> 三类 QA 对，作为预训练续训数据，系统性缓解 Reversal Curse</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li>Document → {正向QA, 逆向QA, 推理QA} 三类转化</li>
+            <li>系统覆盖同一事实的多种提问角度</li>
+            <li>逆向QA专门针对 Reversal Curse 训练</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">主要效果</div>
+          <div>
+            <span class="effect-badge">factual QA +5~8pp</span>
+            <span class="effect-badge">逆向问答能力显著↑</span>
+          </div>
+        </div>
+        <div class="method-section full-width">
+          <div class="pros-cons">
+            <div class="pros">
+              <div class="pros-label">✦ 优势</div>
+              <ul>
+                <li>直接针对"知道但说不出"的断层问题</li>
+                <li>逆向训练效果尤为明显</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <div class="cons-label">✦ 局限</div>
+              <ul>
+                <li>需要高质量原始文档支撑</li>
+                <li>QA 质量高度依赖生成模型能力</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== SLIDE 04 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 04</span>
+    <span class="slide-title">核心方案详情（Part C：精炼类 + 综合合成）</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="method-grid">
+
+    <!-- Phi-4 -->
+    <div class="method-card mc-green">
+      <div class="method-header">
+        <div>
+          <div class="method-name">Phi-4 Synthetic Data</div>
+          <div class="method-paper">arXiv:2412.08905 · Microsoft Research, 2024</div>
+        </div>
+        <span class="tag tag-green">综合合成</span>
+      </div>
+      <div class="method-body">
+        <div class="method-section full-width">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">大规模合成数据作为训练主力（<strong>~50% tokens</strong>），三大核心技术：多 agent 对话合成、自我修正工作流、指令反转</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li><strong>Multi-agent prompting</strong>：多角色对话覆盖多视角</li>
+            <li><strong>Self-revision workflow</strong>：模型自我修正答案</li>
+            <li><strong>Instruction reversal</strong>：从答案逆向生成问题</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">主要效果</div>
+          <div>
+            <span class="effect-badge green">14B 超越 GPT-4o on GPQA/MATH</span>
+            <span class="effect-badge green">SimpleQA factual 大幅↑</span>
+          </div>
+        </div>
+        <div class="method-section full-width">
+          <div class="pros-cons">
+            <div class="pros">
+              <div class="pros-label">✦ 优势</div>
+              <ul>
+                <li>工业级验证，多策略组合</li>
+                <li>规模化可行，效果最强</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <div class="cons-label">✦ 局限</div>
+              <ul>
+                <li>完整管线复杂，难以复现</li>
+                <li>依赖强 teacher 模型</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REWIRE -->
+    <div class="method-card mc-purple">
+      <div class="method-header">
+        <div>
+          <div class="method-name">REWIRE</div>
+          <div class="method-paper">Meta FAIR, 2024</div>
+        </div>
+        <span class="tag tag-purple">低质回收</span>
+      </div>
+      <div class="method-body">
+        <div class="method-section full-width">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">传统过滤丢弃 99% 爬取数据；REWIRE 识别 <strong>"中等质量但含知识"</strong> 的文档，用小模型重写使其可用，最大化训练数据利用率</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li>Quality classifier 筛选"中等质量"文档</li>
+            <li>小模型（1–7B）精炼重写</li>
+            <li>回收数据混入训练，扩充有效数据量</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">主要效果</div>
+          <div>
+            <span class="effect-badge purple">有效训练数据量↑</span>
+            <span class="effect-badge purple">factual density 提升</span>
+          </div>
+        </div>
+        <div class="method-section full-width">
+          <div class="pros-cons">
+            <div class="pros">
+              <div class="pros-label">✦ 优势</div>
+              <ul>
+                <li>低成本大幅扩大可用数据量</li>
+                <li>小模型可行，工程友好</li>
+              </ul>
+            </div>
+            <div class="cons">
+              <div class="cons-label">✦ 局限</div>
+              <ul>
+                <li>重写质量上限受小模型限制</li>
+                <li>不引入新知识结构</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ProX -->
+    <div class="method-card mc-purple" style="grid-column: 1 / -1;">
+      <div class="method-header">
+        <div>
+          <div class="method-name">ProX（Programmatic Refinement）</div>
+          <div class="method-paper">arXiv:2409.17115 · 2024</div>
+        </div>
+        <span class="tag tag-purple">程序化精炼</span>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-top:4px">
+        <div class="method-section">
+          <div class="ms-label">核心思路</div>
+          <div class="ms-content">用 LLM 生成 <strong>"精炼程序"</strong>（伪代码指令），对原始文档执行结构化改写：删噪声、提取核心事实、规范化格式</div>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">技术要点</div>
+          <ul class="tech-points">
+            <li>LLM 生成 refine program（结构化操作序列）</li>
+            <li>程序可复用、可审查、可迭代</li>
+            <li>适用于低质量文档的知识提炼</li>
+          </ul>
+        </div>
+        <div class="method-section">
+          <div class="ms-label">效果 &amp; 优/劣</div>
+          <div>
+            <span class="effect-badge purple">多 factual benchmark ↑</span>
+            <span class="effect-badge purple">数据效率 ≥ WRAP</span>
+          </div>
+          <div class="pros-cons" style="margin-top:8px">
+            <div class="pros" style="padding:6px 8px">
+              <ul>
+                <li>可解释、可审查</li>
+                <li>适合多类型文档</li>
+              </ul>
+            </div>
+            <div class="cons" style="padding:6px 8px">
+              <ul>
+                <li>程序生成有错误风险</li>
+                <li>复杂文档程序化难</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ========== SLIDE 05 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 05</span>
+    <span class="slide-title">方法对比矩阵</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="card">
+    <div class="matrix-wrap">
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th class="dim-col">评估维度</th>
+            <th class="method-col-amber">WRAP</th>
+            <th class="method-col-amber">MAGA</th>
+            <th class="method-col-cyan">EntiGraph</th>
+            <th class="method-col-cyan">Knowledge-<br>Instruct</th>
+            <th class="method-col-green">Phi-4</th>
+            <th class="method-col-purple">REWIRE</th>
+            <th class="method-col-purple">ProX</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="dim-name">方法类型</td>
+            <td class="cell-text">风格改写</td>
+            <td class="cell-text">风格改写+</td>
+            <td class="cell-text">实体图QA</td>
+            <td class="cell-text">多视角QA</td>
+            <td class="cell-text">综合合成</td>
+            <td class="cell-text">低质回收</td>
+            <td class="cell-text">程序化精炼</td>
+          </tr>
+          <tr>
+            <td class="dim-name">是否引入新知识</td>
+            <td><span class="cell-low">❌</span></td>
+            <td><span class="cell-low">❌</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-low">❌</span></td>
+            <td><span class="cell-low">❌</span></td>
+          </tr>
+          <tr>
+            <td class="dim-name">针对逆向/多角度</td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td style="font-weight:800;color:var(--green)">✅✅</td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-low">❌</span></td>
+            <td><span class="cell-low">❌</span></td>
+          </tr>
+          <tr>
+            <td class="dim-name">长尾事实覆盖</td>
+            <td><span class="cell-low">❌</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td style="font-weight:800;color:var(--green)">✅✅</td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+          </tr>
+          <tr>
+            <td class="dim-name">计算成本</td>
+            <td style="color:var(--green);font-weight:600">低</td>
+            <td style="color:var(--yellow);font-weight:600">中</td>
+            <td style="color:var(--red);font-weight:600">高</td>
+            <td style="color:var(--yellow);font-weight:600">中</td>
+            <td style="color:var(--red);font-weight:600">高</td>
+            <td style="color:var(--green);font-weight:600">低</td>
+            <td style="color:var(--yellow);font-weight:600">中</td>
+          </tr>
+          <tr>
+            <td class="dim-name">工业规模可行</td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-high">✅</span></td>
+            <td><span class="cell-high">✅</span></td>
+          </tr>
+          <tr>
+            <td class="dim-name">SimpleQA 提升潜力</td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+            <td style="font-weight:800;color:var(--green)">✅✅</td>
+            <td style="font-weight:800;color:var(--green)">✅✅</td>
+            <td style="font-weight:800;color:var(--green)">✅✅</td>
+            <td><span class="cell-low">❌</span></td>
+            <td><span class="cell-med">⚠️</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:14px;display:flex;gap:16px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim)">
+        <span style="color:var(--green);font-weight:700">✅ / 高</span> = 优势明显
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim)">
+        <span style="color:var(--yellow);font-weight:700">⚠️ / 中</span> = 部分满足
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim)">
+        <span style="color:var(--red);font-weight:700">❌ / 低</span> = 明显不足
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text-dim)">
+        <span style="color:var(--green);font-weight:800">✅✅</span> = 最强优势
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 06 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 06</span>
+    <span class="slide-title">提升 SimpleQA 的最优数据合成路径</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start">
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-dim);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px">三层策略架构</div>
+        <div class="rec-pyramid">
+          <div class="rec-layer rec-layer-3">
+            <div>
+              <div class="rec-layer-label">Layer 1 · 基础</div>
+              <div class="rec-layer-name">风格多样化</div>
+            </div>
+            <div class="rec-layer-desc">WRAP / MAGA → 确保每个事实有多种表述形式，夯实基础表示多样性</div>
+          </div>
+          <div class="rec-arrow">↑ 叠加</div>
+          <div class="rec-layer rec-layer-2">
+            <div>
+              <div class="rec-layer-label">Layer 2 · 核心</div>
+              <div class="rec-layer-name">QA 视角翻转</div>
+            </div>
+            <div class="rec-layer-desc">Knowledge-Instruct 逆向QA → 直接对抗 Reversal Curse，修复"知道但说不出"</div>
+          </div>
+          <div class="rec-arrow">↑ 叠加</div>
+          <div class="rec-layer rec-layer-1">
+            <div>
+              <div class="rec-layer-label">Layer 3 · 增强</div>
+              <div class="rec-layer-name">实体图谱扩展</div>
+            </div>
+            <div class="rec-layer-desc">EntiGraph → 提升长尾事实覆盖密度，引入多跳结构化知识关联</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:700;color:var(--text-dim);letter-spacing:0.8px;text-transform:uppercase;margin-bottom:14px">推荐优先级（按 ROI）</div>
+        <div class="priority-list" style="grid-template-columns:1fr;gap:10px">
+          <div class="priority-item" style="border-color:rgba(6,182,212,0.3)">
+            <div class="priority-medal">🥇</div>
+            <div class="priority-name" style="color:var(--cyan)">Knowledge-Instruct 逆向QA</div>
+            <div class="priority-reason">成本低，直接针对 SimpleQA 失败模式（Reversal Curse）。每个事实生成正向+逆向+推理 QA 三元组。</div>
+          </div>
+          <div class="priority-item" style="border-color:rgba(245,158,11,0.3)">
+            <div class="priority-medal">🥈</div>
+            <div class="priority-name" style="color:var(--amber)">WRAP / MAGA 风格改写</div>
+            <div class="priority-reason">覆盖广，基础保证。成本可控，适合大规模语料预处理阶段，确保事实多样化表述。</div>
+          </div>
+          <div class="priority-item" style="border-color:rgba(168,85,247,0.3)">
+            <div class="priority-medal">🥉</div>
+            <div class="priority-name" style="color:var(--purple)">EntiGraph 实体图谱</div>
+            <div class="priority-reason">长尾提升最大，但成本高。建议优先聚焦高价值知识域（如人物/机构/事件长尾实体）。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== SLIDE 07 ========== -->
+<div class="slide">
+  <div class="slide-header">
+    <span class="slide-num">Slide 07</span>
+    <span class="slide-title">前沿开放问题</span>
+    <div class="slide-divider"></div>
+  </div>
+  <div class="questions-grid">
+    <div class="q-item">
+      <div class="q-num">01</div>
+      <div class="q-title">合成数据的"知识注入边界"</div>
+      <div class="q-body">
+        何时合成 QA 可以让模型<strong style="color:var(--text)">真正记住新事实</strong>，而不仅仅是改变输出风格？
+        <br><br>
+        合成 QA 对 → 模型学到的是泛化知识表征，还是只是记住了文本格式？这个边界目前还不清楚。
+        <br><br>
+        <em>关联：合成 QA 的知识保留率 vs 原始文档的知识保留率对比研究尚缺</em>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">02</div>
+      <div class="q-title">数据合成 vs RAG：谁更适合长尾事实？</div>
+      <div class="q-body">
+        合成数据提升模型参数化知识；RAG 在推理时检索外部知识。二者目标部分重叠。
+        <br><br>
+        对于极低频的长尾事实，<strong style="color:var(--text)">参数化存储的容量上限</strong>是否根本不如检索？
+        <br><br>
+        <em>关联：SimpleQA 失败案例中，多少是 RAG 能解决但数据合成解决不了的？</em>
+      </div>
+    </div>
+    <div class="q-item">
+      <div class="q-num">03</div>
+      <div class="q-title">评估难题：真正学会 vs 记住QA对？</div>
+      <div class="q-body">
+        如何区分模型<strong style="color:var(--text)">真正内化了事实知识</strong>，vs 只是记住了训练集中的 QA 对表面形式？
+        <br><br>
+        当前 benchmark（SimpleQA 等）是否能有效区分这两种情况？需要更强的 <em>out-of-distribution factual probing</em>。
+        <br><br>
+        <em>关联：知识泛化性测试 — 换个问法、换个语言，准确率是否一致下降？</em>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  <div>
+    <div style="margin-bottom:4px">事实类知识能力优化：数据合成方案对比 · 技术答辩参考</div>
+    <div style="color:var(--text-dim)">目标：SimpleQA · TriviaQA · NQ · PopQA &nbsp;|&nbsp; 阶段：Pre-training / Continued Pre-training</div>
+  </div>
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div><span>风格改写（WRAP · MAGA）</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--cyan)"></div><span>QA生成（EntiGraph · KI）</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div><span>精炼（REWIRE · ProX）</span></div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div><span>综合（Phi-4）</span></div>
+  </div>
+</div>
+
+</body>
+</html>

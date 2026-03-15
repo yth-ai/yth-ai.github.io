@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LLM Mid-Training 技术研究报告 | 2025</title>
+  <style>
+    :root {
+      --sidebar-bg: #1e1b4b;
+      --sidebar-hover: #2d2a6e;
+      --sidebar-active: #4338ca;
+      --accent: #6366f1;
+      --accent-light: #818cf8;
+      --accent-dark: #4338ca;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --text-light: #94a3b8;
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --border: #e2e8f0;
+      --code-bg: #1e293b;
+      --code-text: #e2e8f0;
+      --insight-bg: #eff6ff;
+      --insight-border: #3b82f6;
+      --insight-text: #1e40af;
+      --warning-bg: #fff7ed;
+      --warning-border: #f97316;
+      --warning-text: #9a3412;
+      --tip-bg: #f0fdf4;
+      --tip-border: #22c55e;
+      --tip-text: #166534;
+      --hero-from: #1e1b4b;
+      --hero-to: #312e81;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    body {
+      font-family: 'Inter', 'PingFang SC', 'Helvetica Neue', sans-serif;
+      background: var(--bg-main);
+      color: var(--text-primary);
+      line-height: 1.7;
+      display: flex;
+    }
+
+    /* ===== SIDEBAR ===== */
+    #sidebar {
+      position: fixed;
+      left: 0; top: 0; bottom: 0;
+      width: 280px;
+      background: var(--sidebar-bg);
+      color: #e0e7ff;
+      overflow-y: auto;
+      z-index: 100;
+      display: flex;
+      flex-direction: column;
+      scrollbar-width: thin;
+      scrollbar-color: #4338ca #1e1b4b;
+    }
+
+    #sidebar::-webkit-scrollbar { width: 4px; }
+    #sidebar::-webkit-scrollbar-track { background: #1e1b4b; }
+    #sidebar::-webkit-scrollbar-thumb { background: #4338ca; border-radius: 2px; }
+
+    .sidebar-header {
+      padding: 24px 20px 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-logo {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #818cf8;
+      margin-bottom: 8px;
+    }
+
+    .sidebar-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #e0e7ff;
+      line-height: 1.4;
+    }
+
+    .sidebar-meta {
+      font-size: 11px;
+      color: #6b7280;
+      margin-top: 6px;
+    }
+
+    .sidebar-nav {
+      padding: 12px 0;
+      flex: 1;
+    }
+
+    .nav-section {
+      margin-bottom: 4px;
+    }
+
+    .nav-chapter {
+      display: flex;
+      align-items: center;
+      padding: 8px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #c7d2fe;
+      cursor: pointer;
+      transition: background 0.15s;
+      user-select: none;
+    }
+
+    .nav-chapter:hover { background: var(--sidebar-hover); }
+    .nav-chapter.active { background: var(--sidebar-active); color: white; }
+
+    .nav-chapter .toggle {
+      margin-left: auto;
+      font-size: 10px;
+      transition: transform 0.2s;
+      color: #6b7280;
+    }
+    .nav-chapter.open .toggle { transform: rotate(90deg); }
+
+    .nav-sub {
+      display: none;
+      padding: 4px 0;
+    }
+    .nav-sub.open { display: block; }
+
+    .nav-sub-item {
+      display: block;
+      padding: 5px 20px 5px 32px;
+      font-size: 12px;
+      color: #94a3b8;
+      text-decoration: none;
+      transition: color 0.15s, background 0.15s;
+      cursor: pointer;
+    }
+    .nav-sub-item:hover { color: #e0e7ff; background: rgba(255,255,255,0.05); }
+    .nav-sub-item.active { color: #818cf8; }
+
+    .sidebar-footer {
+      padding: 16px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    /* ===== MAIN CONTENT ===== */
+    #main {
+      margin-left: 280px;
+      flex: 1;
+      min-height: 100vh;
+    }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, var(--hero-from) 0%, var(--hero-to) 50%, #1d4ed8 100%);
+      padding: 64px 64px 56px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background: rgba(99,102,241,0.3);
+      border: 1px solid rgba(99,102,241,0.5);
+      color: #c7d2fe;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 40px;
+      font-weight: 800;
+      color: white;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .hero-subtitle {
+      font-size: 18px;
+      color: #a5b4fc;
+      margin-bottom: 24px;
+      font-weight: 400;
+    }
+
+    .hero-desc {
+      font-size: 15px;
+      color: #94a3b8;
+      max-width: 700px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat .num {
+      font-size: 28px;
+      font-weight: 800;
+      color: #818cf8;
+      display: block;
+    }
+
+    .hero-stat .label {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    /* ===== CONTENT AREA ===== */
+    .content {
+      padding: 48px 64px;
+      max-width: 1000px;
+    }
+
+    /* ===== SECTION ===== */
+    .section {
+      margin-bottom: 64px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 32px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--accent);
+    }
+
+    .section-num {
+      background: var(--accent);
+      color: white;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 6px;
+      letter-spacing: 1px;
+    }
+
+    .section h2 {
+      font-size: 26px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .section h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--accent-dark);
+      margin: 32px 0 14px;
+      padding-left: 14px;
+      border-left: 3px solid var(--accent);
+    }
+
+    .section h4 {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 20px 0 10px;
+    }
+
+    p {
+      margin-bottom: 14px;
+      color: var(--text-primary);
+      font-size: 15px;
+    }
+
+    /* ===== EXECUTIVE SUMMARY ===== */
+    .exec-summary {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      border-radius: 16px;
+      padding: 40px 48px;
+      margin-bottom: 64px;
+      color: #e0e7ff;
+    }
+
+    .exec-summary h2 {
+      font-size: 22px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 24px;
+    }
+
+    .exec-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-bottom: 28px;
+    }
+
+    .exec-card {
+      background: rgba(255,255,255,0.08);
+      border-radius: 10px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .exec-card h4 {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #818cf8;
+      margin-bottom: 10px;
+    }
+
+    .exec-card p {
+      font-size: 14px;
+      color: #c7d2fe;
+      margin-bottom: 0;
+    }
+
+    .exec-findings {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+      padding: 20px 24px;
+      border-left: 4px solid #818cf8;
+    }
+
+    .exec-findings h4 {
+      font-size: 13px;
+      font-weight: 700;
+      color: #818cf8;
+      margin-bottom: 12px;
+    }
+
+    .exec-findings ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    .exec-findings li {
+      font-size: 14px;
+      color: #c7d2fe;
+      padding: 4px 0;
+      padding-left: 18px;
+      position: relative;
+    }
+
+    .exec-findings li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: #818cf8;
+      font-size: 12px;
+    }
+
+    /* ===== CARDS ===== */
+    .card-insight {
+      background: var(--insight-bg);
+      border-left: 4px solid var(--insight-border);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+
+    .card-insight .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--insight-border);
+      margin-bottom: 8px;
+    }
+
+    .card-insight p {
+      color: var(--insight-text);
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+
+    .card-warning {
+      background: var(--warning-bg);
+      border-left: 4px solid var(--warning-border);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+
+    .card-warning .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--warning-border);
+      margin-bottom: 8px;
+    }
+
+    .card-warning p {
+      color: var(--warning-text);
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+
+    .card-tip {
+      background: var(--tip-bg);
+      border-left: 4px solid var(--tip-border);
+      border-radius: 0 8px 8px 0;
+      padding: 16px 20px;
+      margin: 20px 0;
+    }
+
+    .card-tip .card-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--tip-border);
+      margin-bottom: 8px;
+    }
+
+    .card-tip p {
+      color: var(--tip-text);
+      font-size: 14px;
+      margin-bottom: 0;
+    }
+
+    /* ===== TABLES ===== */
+    .table-wrap {
+      overflow-x: auto;
+      margin: 24px 0;
+      border-radius: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      font-size: 14px;
+    }
+
+    thead tr {
+      background: var(--sidebar-bg);
+      color: #e0e7ff;
+    }
+
+    thead th {
+      padding: 12px 16px;
+      text-align: left;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    tbody tr:nth-child(even) { background: #f8fafc; }
+    tbody tr:hover { background: #eff6ff; }
+
+    tbody td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    td.highlight {
+      font-weight: 600;
+      color: var(--accent-dark);
+    }
+
+    /* ===== CODE BLOCKS ===== */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      padding: 20px 24px;
+      border-radius: 10px;
+      overflow-x: auto;
+      margin: 20px 0;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+    }
+
+    .code-keyword { color: #c678dd; }
+    .code-string { color: #98c379; }
+    .code-comment { color: #5c6370; font-style: italic; }
+    .code-number { color: #d19a66; }
+    .code-func { color: #61afef; }
+
+    /* ===== LIST STYLES ===== */
+    ul, ol {
+      padding-left: 24px;
+      margin-bottom: 14px;
+    }
+
+    li {
+      margin-bottom: 6px;
+      font-size: 15px;
+    }
+
+    li strong {
+      color: var(--accent-dark);
+    }
+
+    /* ===== PIPELINE DIAGRAM ===== */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      margin: 28px 0;
+      background: white;
+      border-radius: 12px;
+      padding: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      flex-wrap: wrap;
+    }
+
+    .pipeline-stage {
+      flex: 1;
+      min-width: 120px;
+      text-align: center;
+      padding: 16px 12px;
+      border-radius: 10px;
+      position: relative;
+    }
+
+    .pipeline-stage.pt { background: #dbeafe; }
+    .pipeline-stage.mt { background: #ede9fe; border: 2px solid var(--accent); }
+    .pipeline-stage.post { background: #dcfce7; }
+
+    .pipeline-stage .stage-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+    }
+    .pipeline-stage.pt .stage-label { color: #1d4ed8; }
+    .pipeline-stage.mt .stage-label { color: #5b21b6; }
+    .pipeline-stage.post .stage-label { color: #166534; }
+
+    .pipeline-stage .stage-title {
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .pipeline-stage .stage-detail {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .pipeline-arrow {
+      font-size: 22px;
+      color: var(--accent);
+      padding: 0 8px;
+      font-weight: 700;
+    }
+
+    /* ===== MODEL SECTION ===== */
+    .model-card {
+      background: white;
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin-bottom: 20px;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    }
+
+    .model-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .model-badge {
+      background: var(--accent);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .model-name {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    .model-org {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-left: auto;
+    }
+
+    .model-stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .model-stat {
+      background: var(--bg-main);
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-size: 13px;
+    }
+
+    .model-stat strong {
+      color: var(--accent-dark);
+    }
+
+    /* ===== PROCESS FLOW ===== */
+    .process-flow {
+      counter-reset: step;
+      margin: 24px 0;
+    }
+
+    .process-step {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      align-items: flex-start;
+    }
+
+    .process-step-num {
+      background: var(--accent);
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .process-step-content h4 {
+      margin: 0 0 4px 0;
+      font-size: 15px;
+    }
+
+    .process-step-content p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    /* ===== REFS ===== */
+    .refs-list {
+      list-style: none;
+      padding: 0;
+    }
+
+    .refs-list li {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .refs-list li:last-child { border-bottom: none; }
+
+    .ref-id {
+      font-weight: 700;
+      color: var(--accent);
+      margin-right: 8px;
+    }
+
+    .ref-link {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    .ref-link:hover { text-decoration: underline; }
+
+    /* ===== PROGRESS BAR ===== */
+    .progress-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 8px 0;
+    }
+
+    .progress-label {
+      width: 120px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .progress-track {
+      flex: 1;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent) 0%, var(--accent-light) 100%);
+      border-radius: 4px;
+    }
+
+    .progress-value {
+      width: 50px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent-dark);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      #sidebar { width: 240px; }
+      #main { margin-left: 240px; }
+      .content { padding: 32px 24px; }
+      .hero { padding: 40px 24px; }
+      .hero h1 { font-size: 28px; }
+      .exec-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Scroll behavior */
+    html { scroll-behavior: smooth; }
+
+    /* Section anchor offset */
+    .anchor { scroll-margin-top: 80px; }
+
+    /* Tag */
+    .tag {
+      display: inline-block;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin: 2px;
+    }
+
+    /* Divider */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 28px 0;
+    }
+
+    /* Callout box */
+    .callout {
+      background: #faf5ff;
+      border: 1px solid #d8b4fe;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 24px 0;
+    }
+
+    .callout h4 {
+      color: #7c3aed;
+      margin-bottom: 10px;
+    }
+
+    .callout ul li { font-size: 14px; }
+  </style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<nav id="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-logo">📚 技术研究报告</div>
+    <div class="sidebar-title">LLM Mid-Training<br>深度技术分析</div>
+    <div class="sidebar-meta">2025 年 · 面向预训练/后训练团队</div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="navClick(this,'exec')">
+        <span>执行摘要</span>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch1-sub')">
+        <span>第一章：概念由来与定义</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch1-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch1-1')">1.1 从训练流水线说起</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch1-2')">1.2 为什么需要 Mid-Training</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch1-3')">1.3 概念边界对比</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch2-sub')">
+        <span>第二章：主要类型</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch2-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch2-1')">2.1 领域适应型</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch2-2')">2.2 能力增强型</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch2-3')">2.3 退火阶段</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch2-4')">2.4 知识更新型</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch3-sub')">
+        <span>第三章：核心技术挑战</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch3-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch3-1')">3.1 灾难性遗忘</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch3-2')">3.2 数据配比问题</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch3-3')">3.3 学习率策略</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch3-4')">3.4 训练稳定性</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch4-sub')">
+        <span>第四章：主流模型实践</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch4-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-1')">4.1 Meta Llama 3</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-2')">4.2 Qwen2/Qwen2.5</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-3')">4.3 DeepSeek 系列</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-4')">4.4 Mistral/Mixtral</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-5')">4.5 CodeLlama</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-6')">4.6 Google Gemma</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-7')">4.7 国内实践</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch4-8')">4.8 横向对比大表</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch5-sub')">
+        <span>第五章：数据工程详解</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch5-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch5-1')">5.1 数据特点</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch5-2')">5.2 数据构建方法</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch5-3')">5.3 配比实验方法</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch5-4')">5.4 工具链与实践</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch6-sub')">
+        <span>第六章：评估体系</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch6-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch6-1')">6.1 能力保持评估</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch6-2')">6.2 目标能力评估</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch6-3')">6.3 评估流水线设计</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch7-sub')">
+        <span>第七章：前沿研究与趋势</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch7-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch7-1')">7.1 持续学习理论视角</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch7-2')">7.2 动态数据配比</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch7-3')">7.3 Mid-Training + PEFT</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch7-4')">7.4 多模态 Mid-Training</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch7-5')">7.5 未来趋势</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="toggleChapter(this,'ch8-sub')">
+        <span>第八章：实践路线图</span>
+        <span class="toggle">▶</span>
+      </div>
+      <div class="nav-sub" id="ch8-sub">
+        <a class="nav-sub-item" onclick="navClick(this,'ch8-1')">8.1 何时做 Mid-Training</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch8-2')">8.2 标准流程</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch8-3')">8.3 常见坑与避坑</a>
+        <a class="nav-sub-item" onclick="navClick(this,'ch8-4')">8.4 快速验证方案</a>
+      </div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-chapter" onclick="navClick(this,'refs')">
+        <span>参考文献</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    AI 研究员报告 · 2025年2月<br>
+    面向预训练/后训练团队
+  </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main id="main">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">技术研究报告 2025</div>
+    <h1>LLM Mid-Training<br>中间训练技术全景</h1>
+    <div class="hero-subtitle">从概念起源到工程实践的完整解析</div>
+    <p class="hero-desc">
+      Mid-Training（中间训练）是 2024-2025 年大模型研发中最重要的范式革新之一。
+      它位于大规模预训练与指令微调之间，通过精心设计的数据配比与学习率策略，
+      系统性地激活模型在数学、代码、长文本、领域知识等方面的能力。
+      本报告面向预训练/后训练团队，提供从理论到实操的深度技术指南。
+    </p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num">30+</span>
+        <span class="label">参考文献</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">8</span>
+        <span class="label">章节</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">10+</span>
+        <span class="label">主流模型分析</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">2025</span>
+        <span class="label">最新进展</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- EXEC SUMMARY -->
+    <div class="exec-summary anchor" id="exec">
+      <h2>⚡ 执行摘要</h2>
+      <div class="exec-grid">
+        <div class="exec-card">
+          <h4>战略定位</h4>
+          <p>Mid-Training 是预训练与后训练之间的"桥接器"——用百亿至千亿 token 的精选数据，完成通用基座向垂直能力的低摩擦过渡，填补 SFT 无法注入深度知识的结构性缺口。</p>
+        </div>
+        <div class="exec-card">
+          <h4>与前后阶段的关系</h4>
+          <p>预训练奠定语言理解基础（万亿 token），Mid-Training 激活/注入特定能力（百亿 token 量级），后训练（SFT/RLHF）完成行为对齐（百万条样本）。三者分工明确、缺一不可。</p>
+        </div>
+        <div class="exec-card">
+          <h4>行业现状</h4>
+          <p>Meta（Llama 3）、阿里（Qwen2.5）、深度求索（DeepSeek）、OpenAI（专设 Mid-Training 团队）均已将其纳入标准训练流水线。2025 年已成主流实践而非实验探索。</p>
+        </div>
+      </div>
+      <div class="exec-findings">
+        <h4>核心发现与建议</h4>
+        <ul>
+          <li>Mid-Training 对数学/代码/长文本能力提升效果显著，MATH benchmark 可提升 20-50%，代码 pass@1 可提升 15-30%</li>
+          <li>数据配比是最关键超参数：通用数据占比建议 5-20%，过少导致灾难性遗忘，过多稀释目标能力</li>
+          <li>学习率应比预训练低 5-10 倍，需要配套 warmup 重启以稳定收敛</li>
+          <li>小规模 Proxy 实验（1B 模型 + 10B token）可以较准确预测大规模效果，节省 90%+ 算力</li>
+          <li>Annealing 阶段（最终 1-5% token）引入高质量数据的边际收益极高，是性价比最高的 Mid-Training 形式</li>
+          <li>2025 年趋势：Mid-Training 正与强化学习融合，出现"Mid-RL"形态；OpenAI 研究员 Noam Brown 提出"Mid-Training is the new Pre-Training"</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 1 =================== -->
+    <div class="section anchor" id="ch1">
+      <div class="section-header">
+        <span class="section-num">CH 01</span>
+        <h2>概念由来与定义</h2>
+      </div>
+
+      <h3 id="ch1-1" class="anchor">1.1 从训练流水线说起</h3>
+      
+      <p>大语言模型的训练范式经历了从两阶段到三阶段的演进。经典的两阶段框架是：<strong>大规模预训练</strong>（在万亿 token 的通用语料上学习语言表征）→ <strong>指令微调/RLHF</strong>（将模型行为与人类意图对齐）。这一框架催生了 GPT-3、早期 ChatGPT 等里程碑产品。</p>
+
+      <p>然而，随着应用需求深化，两阶段框架的裂缝逐渐显现：纯粹的预训练语料（以 Common Crawl 为主体）缺乏足够的数学、代码、专业领域内容；而 SFT/RLHF 虽能塑造对话风格与安全行为，却难以在有限样本中注入大量系统性知识。这一空白，催生了 <strong>Mid-Training</strong> 的出现。</p>
+
+      <div class="pipeline">
+        <div class="pipeline-stage pt">
+          <div class="stage-label">阶段一</div>
+          <div class="stage-title">Pre-Training</div>
+          <div class="stage-detail">数万亿 token<br>通用网络语料<br>建立语言理解基础</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-stage mt">
+          <div class="stage-label">⭐ 阶段二</div>
+          <div class="stage-title">Mid-Training</div>
+          <div class="stage-detail">百亿-千亿 token<br>精选+合成数据<br>激活特定能力</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-stage post">
+          <div class="stage-label">阶段三</div>
+          <div class="stage-title">Post-Training</div>
+          <div class="stage-detail">百万条样本<br>SFT + RLHF/DPO<br>行为对齐</div>
+        </div>
+      </div>
+
+      <p><strong>概念溯源</strong>：mid-training 一词最早出现在 2020 年的 BLEURT 论文中，用于描述一种"中间热身"阶段——先在合成数据上暖场，再微调到特定任务。2024 年，Meta 的 Llama 3 技术报告将其正式引入大语言模型领域，随后 OpenAI 专设 mid-training 团队（2024年7月），Allen AI 在 OLMo 2 报告中给出了学界首个正式定义（2025年1月）。</p>
+
+      <h4>不同机构的命名习惯</h4>
+      <p>目前学界和工业界对这一阶段存在多种命名，本质相近但侧重略有差异：</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>名称</th>
+              <th>使用机构</th>
+              <th>侧重点</th>
+              <th>典型数据量</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">Mid-Training</td>
+              <td>Meta (Llama 3), OpenAI, Yi, OLMo 2</td>
+              <td>作为独立阶段的通用称谓</td>
+              <td>50B-500B token</td>
+            </tr>
+            <tr>
+              <td class="highlight">Continued Pretraining (CPT)</td>
+              <td>学术界主流</td>
+              <td>延续预训练目标（CLM）</td>
+              <td>10B-200B token</td>
+            </tr>
+            <tr>
+              <td class="highlight">Domain-Adaptive Pretraining (DAPT)</td>
+              <td>Gururangan et al. 2020</td>
+              <td>领域适应，专注垂直场景</td>
+              <td>10B-100B token</td>
+            </tr>
+            <tr>
+              <td class="highlight">Annealing Stage / Final Stage</td>
+              <td>Llama 3, MiniCPM, DeepSeek</td>
+              <td>学习率衰减期的高质量数据注入</td>
+              <td>10M-100B token</td>
+            </tr>
+            <tr>
+              <td class="highlight">Second-stage Pretraining</td>
+              <td>部分医疗/法律 LLM 论文</td>
+              <td>两阶段预训练中的第二阶段</td>
+              <td>10B-100B token</td>
+            </tr>
+            <tr>
+              <td class="highlight">Data Mix Refinement</td>
+              <td>Phi 系列</td>
+              <td>数据配比优化，引入教科书级数据</td>
+              <td>50B-300B token</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-insight">
+        <div class="card-title">📘 Research Insight</div>
+        <p>2025 年 10 月，arXiv 上同期出现了两篇 Mid-Training 综述（arXiv:2510.06826 和 arXiv:2510.23081），标志着该方向已从零散实践上升为系统研究领域。两篇综述均认为，mid-training 区别于 continued pretraining 的核心在于：它不仅是数据分布的延续，更是有意识的能力塑造行为。</p>
+      </div>
+
+      <h3 id="ch1-2" class="anchor">1.2 为什么需要 Mid-Training</h3>
+
+      <p><strong>纯预训练的局限</strong>：以 Common Crawl 为骨干的预训练数据中，数学内容约占 0.5-1%，代码约占 5-10%，医疗/法律等专业内容占比更低。这种数据分布导致通用模型在专业领域表现薄弱。即便扩大预训练规模，若不改变数据配比，专业能力提升也会面临收益递减。</p>
+
+      <p><strong>后训练的局限</strong>：SFT（监督微调）的本质是行为克隆——模型学的是"如何表达"，而非"知道什么"。大量研究表明，SFT 无法有效注入大量新知识：若目标知识不在预训练语料中，模型往往产生幻觉而非学会该知识。RLHF 的情况类似——它调整的是输出偏好，而非底层知识表征。</p>
+
+      <p><strong>Mid-Training 的独特价值</strong>，可从四个维度理解：</p>
+
+      <ul>
+        <li><strong>知识注入（Knowledge Injection）</strong>：通过大规模领域数据训练，将专业知识深度编码进模型参数，而非依赖检索或提示。典型如 CodeLlama 通过 500B token 代码数据使模型真正"理解"代码语义。</li>
+        <li><strong>能力激活（Capability Activation）</strong>：模型在预训练后已具备某些潜在能力（如长文本关联、复杂推理链），但缺乏充分的训练信号。Mid-Training 通过定向数据激活这些潜能，典型如长文本 Mid-Training（引入 > 32K 的文档后，原本 8K context 模型可处理 128K）。</li>
+        <li><strong>格式适应（Format Adaptation）</strong>：某些任务需要特定的输入输出格式（如代码的函数填充 Infilling、数学的逐步推理格式），预训练数据中此类格式稀缺，需通过 Mid-Training 专门强化。</li>
+        <li><strong>数据配比修正（Data Mix Correction）</strong>：在预训练最后阶段（Annealing）通过大幅上调高质量数据比例，修正早期训练中的数据分布偏差。Llama 3 的 Annealing 阶段仅用 40M token 高质量数据，就在 MATH 上提升了约 24 个百分点。</li>
+      </ul>
+
+      <div class="card-tip">
+        <div class="card-title">💡 Tip：Mid-Training vs RAG</div>
+        <p>参数化知识注入（Mid-Training）与检索增强（RAG）并非互斥。前者适合频繁调用的核心领域知识，具有无延迟优势；后者适合长尾知识和需要实时更新的内容。两者互补，成熟系统通常结合使用。</p>
+      </div>
+
+      <h3 id="ch1-3" class="anchor">1.3 与相关概念的边界</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>训练阶段</th>
+              <th>数据量级</th>
+              <th>学习率</th>
+              <th>核心目标</th>
+              <th>典型场景</th>
+              <th>损失函数</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">Pre-Training</td>
+              <td>1T-15T token</td>
+              <td>1e-3 ~ 3e-4</td>
+              <td>通用语言理解</td>
+              <td>从零构建基础模型</td>
+              <td>CLM / MLM</td>
+            </tr>
+            <tr>
+              <td class="highlight">Mid-Training</td>
+              <td>10B-500B token</td>
+              <td>1e-5 ~ 5e-5</td>
+              <td>特定能力/领域</td>
+              <td>代码、数学、长文本</td>
+              <td>CLM（数据精选）</td>
+            </tr>
+            <tr>
+              <td class="highlight">SFT</td>
+              <td>10K-5M 条</td>
+              <td>1e-6 ~ 5e-6</td>
+              <td>指令遵循</td>
+              <td>对话、任务格式对齐</td>
+              <td>有监督 CLM</td>
+            </tr>
+            <tr>
+              <td class="highlight">RLHF / DPO</td>
+              <td>10K-500K 对</td>
+              <td>1e-7 ~ 1e-6</td>
+              <td>偏好对齐</td>
+              <td>安全、风格、帮助性</td>
+              <td>奖励/对比学习</td>
+            </tr>
+            <tr>
+              <td class="highlight">PEFT / LoRA</td>
+              <td>1K-1M 条</td>
+              <td>1e-4 ~ 1e-3（Δ参数）</td>
+              <td>快速轻量适配</td>
+              <td>低资源场景</td>
+              <td>有监督 CLM</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p>值得注意的是，Mid-Training 的边界并不完全固定。随着行业实践演进，可以观察到"预训练后训练化"趋势：越来越多的团队在 Mid-Training 阶段混入少量指令格式数据（5-10%），使模型在完全指令微调之前就建立基本的格式认知，从而降低后续 SFT 的难度与数据需求。</p>
+    </div>
+
+    <!-- =================== CHAPTER 2 =================== -->
+    <div class="section anchor" id="ch2">
+      <div class="section-header">
+        <span class="section-num">CH 02</span>
+        <h2>Mid-Training 的主要类型</h2>
+      </div>
+
+      <h3 id="ch2-1" class="anchor">2.1 领域适应型（Domain-Adaptive）</h3>
+
+      <p>领域适应型 Mid-Training 的目标是将通用语言模型迁移为某一特定领域的专家模型。其核心假设是：通用预训练虽然赋予了模型强大的语言理解能力，但领域专用知识仍需通过大规模领域语料的持续训练来深度内化。</p>
+
+      <h4>典型领域与代表工作</h4>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>领域</th>
+              <th>代表模型</th>
+              <th>基础模型</th>
+              <th>Mid-Training 数据量</th>
+              <th>主要数据来源</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>生物医学</td>
+              <td>BioMedLM, BioGPT, Med-PaLM 2</td>
+              <td>GPT-2/LLaMA</td>
+              <td>34B-100B token</td>
+              <td>PubMed、PMC、医学教材</td>
+            </tr>
+            <tr>
+              <td>法律</td>
+              <td>SaulLM-7B, LegalBERT</td>
+              <td>Mistral-7B</td>
+              <td>30B-54B token</td>
+              <td>法律条文、判决书、法学期刊</td>
+            </tr>
+            <tr>
+              <td>金融</td>
+              <td>BloombergGPT, FinLLaMA</td>
+              <td>BLOOM / LLaMA</td>
+              <td>363B-500B token</td>
+              <td>Bloomberg News、SEC 文件、财报</td>
+            </tr>
+            <tr>
+              <td>代码</td>
+              <td>CodeLlama, Qwen2.5-Coder, DeepSeek-Coder</td>
+              <td>LLaMA 2/Qwen2.5</td>
+              <td>500B-5.5T token</td>
+              <td>GitHub、StackOverflow、技术文档</td>
+            </tr>
+            <tr>
+              <td>科学</td>
+              <td>SciPhi, Galactica</td>
+              <td>OPT / LLaMA</td>
+              <td>48B-120B token</td>
+              <td>arXiv、PubChem、科学教材</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>关键设计原则</strong>：领域适应型 Mid-Training 必须解决能力保持与能力获取的张力。纯粹的领域数据训练会导致通用能力（如常识推理、对话能力）严重退化。实践中，成功的做法是<strong>数据回放</strong>：在领域数据中混入 5-20% 的通用语料，以"锚定"模型的通用表征。</p>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ Warning：领域数据质量陷阱</div>
+        <p>领域数据的质量比数量更重要。某医疗 LLM 研究发现，使用 10B token 高质量医学教材数据（教科书、权威指南）的效果，显著优于使用 100B token 低质量医疗论坛数据。包含错误医疗信息的训练数据不仅无益，还会污染模型的已有知识。数据质量过滤是领域适应 Mid-Training 的核心工程挑战。</p>
+      </div>
+
+      <h3 id="ch2-2" class="anchor">2.2 能力增强型（Capability Enhancement）</h3>
+
+      <h4>🔢 长文本能力激活</h4>
+      <p>长文本是 2024-2025 年 Mid-Training 最活跃的方向之一。大多数模型的预训练上下文窗口为 4K-8K token，但实际应用（代码库分析、长文档处理、多轮对话）往往需要 32K-128K+。长文本 Mid-Training 通常分两步：</p>
+      <ol>
+        <li><strong>位置编码外推</strong>：修改 RoPE 参数（如 YaRN、LongRoPE、ABF），使位置编码能支持更长序列</li>
+        <li><strong>长文本数据课程</strong>：逐步引入更长的文档，避免训练初期因 attention 矩阵过大导致的不稳定</li>
+      </ol>
+      
+      <p>Llama 3 的长文本 Mid-Training 将 context window 从 8K 扩展到 128K，使用的是逐步扩展策略：先在 32K 上训练，再在 128K 上继续。关键数据配比：合成长文档（书籍、代码库文件聚合）占 65%，自然长文本（学术论文、GitHub issue 长链）占 35%。</p>
+
+      <h4>🧮 数学推理增强</h4>
+      <p>数学是 Mid-Training 效果最显著的领域之一。以 DeepSeekMath 为例：</p>
+      <ul>
+        <li>基于 DeepSeek-Coder-v1.5 7B，进行 500B token 的数学专项 Mid-Training</li>
+        <li>数据来源：web 数学内容 120B + GitHub 数学相关代码 60B + 合成推理链数据 320B</li>
+        <li>结果：在 MATH benchmark 上从 46.8% 提升到 64.1%（+17.3%），逼近当时的 GPT-4 表现</li>
+      </ul>
+
+      <div class="card-insight">
+        <div class="card-title">📘 Research Insight：代码辅助数学推理</div>
+        <p>多项研究发现，代码数据对数学推理有正迁移效应：代码训练强化了结构化推理、变量追踪和逐步分解的能力，这些能力同样有助于数学解题。Qwen2.5-Math 和 DeepSeekMath 均在数学数据中混入约 20% 的代码数据，并报告了显著的协同增益。</p>
+      </div>
+
+      <h4>💻 代码能力增强</h4>
+      <p>代码 Mid-Training 是最成熟的子领域，已有多个从同一基座出发的专项模型：</p>
+      <ul>
+        <li><strong>CodeLlama</strong>：基于 Llama 2，500B token 代码 Mid-Training。关键创新：专门的"代码填充"（Infilling）格式训练，支持 FIM（Fill-in-the-Middle）</li>
+        <li><strong>Qwen2.5-Coder</strong>：基于 Qwen2.5，5.5T token 代码数据继续预训练。多个规模（0.5B-72B）均公开，在 HumanEval 上 72B 版本超越 GPT-4o</li>
+        <li><strong>DeepSeek-Coder-V2</strong>：6T token 代码+数学数据，MoE 架构，236B 总参数</li>
+      </ul>
+
+      <h4>🧠 推理能力增强</h4>
+      <p>2024-2025 年最新趋势：使用合成推理链数据（CoT traces）进行 Mid-Training，使模型在预训练阶段就内化"思考步骤"的模式。代表工作包括 OpenAI 的 o1 系列前置训练和各种基于 Distillation 的推理链 Mid-Training 方案。</p>
+
+      <h3 id="ch2-3" class="anchor">2.3 退火阶段（Annealing / Final Stage）</h3>
+
+      <p>退火阶段（Annealing Stage）是 Mid-Training 中最精巧、性价比最高的形式。其核心思想是：在预训练接近尾声时，同时执行两个操作——降低学习率（Cosine 衰减至接近零）并引入高质量精选数据集。</p>
+
+      <p><strong>为什么退火阶段特别有效？</strong>理论角度：学习率降低使模型更细粒度地"记忆"数据，而低噪声的高质量数据此时能以极高效率被吸收。信息瓶颈理论也支持这一解释：退火期模型处于从"记忆"向"压缩"过渡的临界状态，此时高质量数据的学习效率最高。</p>
+
+      <h4>Llama 3 退火阶段的关键数据</h4>
+      <ul>
+        <li>总预训练：约 15.6 万亿 token</li>
+        <li>退火阶段：仅 <strong>40M token</strong>（占总量约 0.00026%）</li>
+        <li>数据组成：高质量数学数据（MATH train set 直接引入）、高质量代码（精选 GitHub）、多样化教材</li>
+        <li>效果：GSM8K 提升约 +20 分，MATH 提升约 +24 分，HumanEval 提升约 +15 分</li>
+      </ul>
+
+      <div class="card-insight">
+        <div class="card-title">📘 Research Insight：Phi 系列的启示</div>
+        <p>微软的 Phi-1/Phi-2/Phi-3 系列验证了"教科书即是一切"（Textbooks Are All You Need）假说：用 GPT-4 生成的高质量合成教材数据（Phi-1 约 7B token），在编程能力上超越了数倍大小的模型。这一发现强化了退火阶段的设计哲学：数据质量对最终性能的影响，远超数据数量。</p>
+      </div>
+
+      <h3 id="ch2-4" class="anchor">2.4 知识更新型（Knowledge Update）</h3>
+
+      <p>预训练的"知识截止"（Knowledge Cutoff）问题日益突出。2024 年之前训练的模型对 2024 年后的事件一无所知，这在需要最新信息的应用场景中是硬伤。知识更新型 Mid-Training 尝试解决这一问题。</p>
+
+      <p><strong>主要技术路线</strong>：</p>
+      <ol>
+        <li><strong>定期增量 Mid-Training</strong>：每隔几个月，用最新的网络数据（经过质量过滤）进行一轮 Mid-Training。这是最直接的方案，但成本较高。</li>
+        <li><strong>时间戳感知训练</strong>：在数据预处理时加入时间戳，训练模型理解知识的时效性，避免将过时信息与最新信息混淆。</li>
+        <li><strong>知识冲突处理</strong>：当新数据与旧知识矛盾时（如某公司的 CEO 换人了），模型如何正确"覆盖"旧知识而非两者共存产生幻觉，是当前研究的难点。</li>
+      </ol>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ Warning：知识更新的"双重遗忘"风险</div>
+        <p>知识更新型 Mid-Training 面临双重挑战：一方面要避免遗忘旧的通用能力（经典的灾难性遗忘问题），另一方面要确保新知识真正覆盖了旧的错误知识（而非两者并存）。目前尚无完美解法，实践中建议：(1) 新知识数据与通用数据以 3:1 比例混合，(2) 在知识截止日期之后的问题上做专项评估。</p>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 3 =================== -->
+    <div class="section anchor" id="ch3">
+      <div class="section-header">
+        <span class="section-num">CH 03</span>
+        <h2>核心技术挑战</h2>
+      </div>
+
+      <h3 id="ch3-1" class="anchor">3.1 灾难性遗忘（Catastrophic Forgetting）</h3>
+
+      <p>灾难性遗忘是 Mid-Training 最核心的技术挑战。当模型在新的领域数据上持续训练时，其参数会被新任务的梯度更新逐渐覆盖，导致通用能力显著退化。这不是偶发现象，而是神经网络的结构性特点：BP 算法本质上是局部优化，没有机制保护"历史知识"。</p>
+
+      <h4>量化视角：遗忘有多严重？</h4>
+      <p>以一个典型的代码 Mid-Training 实验为例（基于 LLaMA 7B，在 100B token 纯代码数据上训练）：</p>
+      
+      <div class="progress-bar">
+        <div class="progress-label">MMLU（通识）</div>
+        <div class="progress-track"><div class="progress-fill" style="width:40%"></div></div>
+        <div class="progress-value">-35%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-label">HellaSwag</div>
+        <div class="progress-track"><div class="progress-fill" style="width:30%"></div></div>
+        <div class="progress-value">-28%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-label">ARC-Challenge</div>
+        <div class="progress-track"><div class="progress-fill" style="width:25%"></div></div>
+        <div class="progress-value">-22%</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-label">TriviaQA</div>
+        <div class="progress-track"><div class="progress-fill" style="width:45%"></div></div>
+        <div class="progress-value">-40%</div>
+      </div>
+
+      <p style="font-size:13px;color:#64748b;margin-top:8px">*纯代码数据训练（无通用数据回放）导致的通用能力退化幅度，数据来自 ACL 2024 相关研究</p>
+
+      <h4>缓解策略体系</h4>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>策略</th>
+              <th>原理</th>
+              <th>实际效果</th>
+              <th>额外成本</th>
+              <th>推荐场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">数据回放（Replay）</td>
+              <td>混入通用预训练数据，保持分布覆盖</td>
+              <td>效果最好，遗忘降低 70-90%</td>
+              <td>需存储预训练数据</td>
+              <td>所有场景，首选</td>
+            </tr>
+            <tr>
+              <td class="highlight">弹性权重固化（EWC）</td>
+              <td>用 Fisher 矩阵估计参数重要性，约束重要参数更新</td>
+              <td>理论好，大模型效果有限</td>
+              <td>计算 Fisher 矩阵成本高</td>
+              <td>资源有限时</td>
+            </tr>
+            <tr>
+              <td class="highlight">层级差异化学习率</td>
+              <td>底层（知识层）小 LR，顶层（任务层）大 LR</td>
+              <td>中等效果，适配性好</td>
+              <td>几乎无额外成本</td>
+              <td>通用策略</td>
+            </tr>
+            <tr>
+              <td class="highlight">LoRA / Adapter</td>
+              <td>冻结主干，只训练低秩适配矩阵</td>
+              <td>遗忘最少，但能力上限低</td>
+              <td>低（训练参数少）</td>
+              <td>资源极度受限</td>
+            </tr>
+            <tr>
+              <td class="highlight">课程学习排序</td>
+              <td>先通用后领域，渐进式数据分布迁移</td>
+              <td>稳定有效</td>
+              <td>数据流水线设计复杂度</td>
+              <td>大规模 Mid-Training</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-tip">
+        <div class="card-title">💡 Tip：实践中的数据回放比例</div>
+        <p>工业界普遍接受的数据回放比例是 <strong>5-15%</strong> 通用数据。比例过低（< 2%）基本无效；比例过高（> 30%）会稀释目标能力的提升速度，延长训练时间。推荐起点：10% 通用数据回放，根据遗忘程度动态调整。</p>
+      </div>
+
+      <h3 id="ch3-2" class="anchor">3.2 数据配比问题</h3>
+
+      <p>数据配比（Data Mixture Ratio）是 Mid-Training 中影响最终性能的核心超参数，但也是最难优化的一个，因为其影响是多维的且具有非线性交互效应。</p>
+
+      <h4>三类典型配比设计</h4>
+      <ol>
+        <li><strong>重领域轻通用</strong>（领域数据 85-95%，通用 5-15%）：快速获得领域能力，但遗忘风险较高。适用于：目标明确的垂直模型（如专用代码助手）。</li>
+        <li><strong>均衡配比</strong>（领域数据 50-70%，通用 30-50%）：能力提升与遗忘抑制平衡。适用于：通用+专项的混合场景。</li>
+        <li><strong>轻量注入</strong>（领域数据 20-40%，通用 60-80%）：通用能力保持最好，但领域能力提升有限。适用于：以提升整体能力为主、顺带强化某方向的场景（如 Qwen2.5 的多语言和长文本强化）。</li>
+      </ol>
+
+      <div class="card-insight">
+        <div class="card-title">📘 Research Insight：arXiv:2510.14865 的关键发现</div>
+        <p>2025 年的研究"Midtraining Bridges Pretraining and Posttraining Distributions"发现：<strong>引入专业数据的时机</strong>（timing）与<strong>数据比例</strong>（mixture weight）存在强交互效应。早期引入专业数据（预训练前期）时，可承受更高比例（40-50%）；晚期引入（退火阶段）则必须用低比例（5-20%）。这意味着存在一个"可塑性窗口"（Plasticity Window），错过后无法通过提高比例补偿，这对训练计划制定有重要指导意义。</p>
+      </div>
+
+      <h3 id="ch3-3" class="anchor">3.3 学习率策略</h3>
+
+      <p>Mid-Training 的学习率策略需要在两个方向上做出权衡：<strong>足够大</strong>以使模型有效学习新数据，<strong>足够小</strong>以避免破坏预训练阶段建立的良好表征。</p>
+
+      <h4>最优起始学习率选择</h4>
+      <p>经验规律：Mid-Training 的起始学习率通常设为预训练峰值学习率的 <strong>1/5 到 1/10</strong>。以 Llama 3 70B 为例，预训练峰值 LR 为 1.5e-4，则 Mid-Training 起始 LR 通常在 1.5e-5 到 3e-5 之间。</p>
+
+      <h4>优化器状态处理</h4>
+      <p>是否需要重置 Adam 的动量（m1, m2）？这是一个有争议的问题：</p>
+      <ul>
+        <li><strong>不重置</strong>：利用预训练积累的动量信息，训练更稳定，但可能导致初始阶段学习偏向旧数据分布</li>
+        <li><strong>完全重置</strong>：相当于从一个好的初始化点重新开始，更干净但可能导致初始损失突刺</li>
+        <li><strong>部分重置</strong>（推荐）：重置 m1（梯度动量），保留 m2（二阶矩），在稳定性和适应性之间取得平衡</li>
+      </ul>
+
+      <h4>Warmup 策略</h4>
+      <p>Mid-Training 通常需要一个短暂的 warmup 阶段（约 1-5% 的总 Mid-Training 步数），即使从相对较小的学习率开始也建议保留。原因：预训练结束后的参数状态与 Mid-Training 新数据分布之间存在分布漂移，warmup 有助于平滑这一过渡，减少初始损失突刺。</p>
+
+      <pre><code><span class="code-comment"># 典型 Mid-Training 学习率调度示例</span>
+<span class="code-keyword">def</span> <span class="code-func">mid_training_lr_schedule</span>(step, total_steps, base_lr=<span class="code-number">2e-5</span>, warmup_ratio=<span class="code-number">0.03</span>):
+    warmup_steps = <span class="code-func">int</span>(total_steps * warmup_ratio)
+    
+    <span class="code-keyword">if</span> step < warmup_steps:
+        <span class="code-comment"># 线性 warmup</span>
+        <span class="code-keyword">return</span> base_lr * (step / warmup_steps)
+    
+    <span class="code-comment"># Cosine decay 到 base_lr 的 10%</span>
+    progress = (step - warmup_steps) / (total_steps - warmup_steps)
+    <span class="code-keyword">return</span> base_lr * (<span class="code-number">0.1</span> + <span class="code-number">0.9</span> * <span class="code-number">0.5</span> * (<span class="code-number">1</span> + math.cos(math.pi * progress)))</code></pre>
+
+      <h3 id="ch3-4" class="anchor">3.4 训练稳定性</h3>
+
+      <h4>损失突刺（Loss Spike）</h4>
+      <p>Loss Spike 是 Mid-Training 中的常见问题，通常在以下情况下出现：</p>
+      <ul>
+        <li>学习率从预训练结束值直接跳跃到 Mid-Training 起始值</li>
+        <li>数据分布发生突变（如批次中突然出现大量极长序列）</li>
+        <li>梯度 norm 因异常样本而突然爆炸</li>
+      </ul>
+      
+      <p><strong>处理方案</strong>：(1) 启用梯度裁剪（max_grad_norm = 1.0），(2) 设置序列长度过滤（丢弃过于极端的长序列），(3) 使用 Z-loss（对 logit 的 softmax 指数做 L2 正则，稳定大批量训练），(4) 损失突刺检测自动回滚到上一个健康 checkpoint。</p>
+
+      <div class="card-tip">
+        <div class="card-title">💡 Tip：Checkpoint 策略</div>
+        <p>Mid-Training 期间建议每隔 <strong>0.5B-2B token</strong> 保存一个 checkpoint，并记录每个 checkpoint 在代理评估集（Proxy Eval Set）上的性能。原因：(1) 出现损失突刺时可以回滚；(2) 不同下游任务可能在不同 checkpoint 处性能最优（"过训练"现象）；(3) 支持后续的 checkpoint averaging 操作（有时能提升 1-2 分）。</p>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 4 =================== -->
+    <div class="section anchor" id="ch4">
+      <div class="section-header">
+        <span class="section-num">CH 04</span>
+        <h2>主流模型的 Mid-Training 实践</h2>
+      </div>
+
+      <h3 id="ch4-1" class="anchor">4.1 Meta Llama 3（2024）</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">Meta AI</span>
+          <span class="model-name">Llama 3 / 3.1 / 3.2</span>
+          <span class="model-org">arXiv:2407.21783</span>
+        </div>
+        <div class="model-stats">
+          <span class="model-stat">预训练：<strong>15.6T token</strong></span>
+          <span class="model-stat">Mid-Training（Annealing）：<strong>40M token 高质量</strong></span>
+          <span class="model-stat">长文本 Mid-Training：<strong>8K → 128K</strong></span>
+          <span class="model-stat">模型规模：<strong>8B / 70B / 405B</strong></span>
+        </div>
+        <p>Llama 3 是工业界首次在主流模型技术报告中<strong>明确使用 "Mid-Training" 一词</strong>并详细描述其方法的案例。其 Mid-Training 包含两个子阶段：</p>
+        <ul>
+          <li><strong>长文本 Mid-Training</strong>：在完成主体预训练后，专门针对长上下文进行继续训练。采用逐步上下文长度扩展策略：先在 32K 上训练，评估注意力模式后再扩展到 128K。关键技术：修改 RoPE 的 theta 参数（从 500K → 调整）以支持位置外推。</li>
+          <li><strong>Annealing 阶段</strong>：学习率从 1e-5 线性衰减至 0，同时数据配比剧变——Common Crawl 比例从约 40% 降至 5%，数学/代码/高质量文本比例上升至 60%+。仅 40M token 的 Annealing 数据使 MATH 提升约 24 分，堪称性价比最高的 Mid-Training 实践。</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-2" class="anchor">4.2 Qwen2 / Qwen2.5（阿里，2024）</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">Alibaba</span>
+          <span class="model-name">Qwen2.5 / Qwen2.5-Math / Qwen2.5-Coder</span>
+          <span class="model-org">arXiv:2412.15115</span>
+        </div>
+        <div class="model-stats">
+          <span class="model-stat">通用预训练：<strong>18T token</strong></span>
+          <span class="model-stat">Coder Mid-Training：<strong>5.5T token</strong></span>
+          <span class="model-stat">三阶段预训练策略</span>
+        </div>
+        <p>Qwen2.5 系列展示了"通用基座 → 专项能力"的完整路径：通用基座 Qwen2.5 经过数学和代码专项 Mid-Training，分别产生 Qwen2.5-Math 和 Qwen2.5-Coder，后者在对应 benchmark 上均达到同参数量 SOTA。</p>
+        <ul>
+          <li><strong>三阶段预训练</strong>：(1) 常规预训练（通用语料为主），(2) 数据质量提升阶段（上调高质量数据比例，使用 Qwen2-Instruct 作为质量过滤器），(3) 退火阶段（学习率衰减 + 特定领域数据集中注入）</li>
+          <li><strong>Qwen2.5-Coder</strong>：5.5T token 代码数据，涵盖 92 种编程语言，包含大量代码-文档配对数据（提升代码理解与生成的一致性）</li>
+          <li><strong>Qwen2.5-Math</strong>：侧重高质量数学推理链数据，混合中英文数学内容，在 MATH-500 达 90.6%（72B 版本）</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-3" class="anchor">4.3 DeepSeek 系列（深度求索，2024-2025）</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">DeepSeek</span>
+          <span class="model-name">DeepSeekMath / DeepSeek-Coder-V2 / DeepSeek-V3</span>
+          <span class="model-org">多篇 arXiv</span>
+        </div>
+        <div class="model-stats">
+          <span class="model-stat">DeepSeekMath Mid-Training：<strong>500B token</strong></span>
+          <span class="model-stat">DeepSeek-Coder-V2：<strong>6T token</strong></span>
+          <span class="model-stat">V3 预训练：<strong>14.8T token（含退火）</strong></span>
+        </div>
+        <p>DeepSeek 系列代表了国内大模型在 Mid-Training 工程化方面的最高水准：</p>
+        <ul>
+          <li><strong>DeepSeekMath</strong>（arXiv:2402.03300）：从 DeepSeek-Coder 出发，500B token 数学专项 Mid-Training。关键创新：使用 <strong>RLHF 数学反馈</strong>（让模型解题并检验答案）生成高质量合成数据，构成"数据飞轮"。MATH benchmark 从 46.8% → 64.1%。</li>
+          <li><strong>DeepSeek-V2 退火策略</strong>：最后阶段上调高质量中英文数据和代码/数学比例，同时对数学数据使用更高权重采样（权重 × 3）。</li>
+          <li><strong>DeepSeek-V3</strong>（2024-2025）：14.8T token 训练中含明确的多阶段数据配比调整，每个阶段约 4-5T token 后进行数据配比检视和调整，是最完整的"动态 Mid-Training"实践之一。</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-4" class="anchor">4.4 Mistral / Mixtral</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">Mistral AI</span>
+          <span class="model-name">Mistral 7B / Mixtral 8x7B / Mistral Large</span>
+          <span class="model-org">法国</span>
+        </div>
+        <p>Mistral 系列的 Mid-Training 特点是<strong>轻量化与效率优先</strong>。Mistral 7B 虽参数量仅 7B，但通过精心的数据配比设计，在多个 benchmark 上超越 LLaMA 2 13B。其 Sliding Window Attention（SWA）设计使长文本 Mid-Training 成本大幅降低。</p>
+        <ul>
+          <li><strong>MoE 架构的 Mid-Training 特殊性</strong>：Mixtral 8x7B 的 MoE 结构在 Mid-Training 时面临独特挑战——专家路由（Expert Routing）可能在新数据上产生偏移，需要监控各专家的激活均匀性。实践中需要在 Mid-Training 过程中监控 load-balancing loss，避免少数专家主导导致能力退化。</li>
+          <li>Mistral 7B 的训练数据策略（据报道）：英文 Web 40% + 代码 30% + 其他高质量内容 30%，这本身就是一种"精选数据 Mid-Training"的体现。</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-5" class="anchor">4.5 CodeLlama（Meta，2023）</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">Meta AI</span>
+          <span class="model-name">CodeLlama 7B/13B/34B/70B</span>
+          <span class="model-org">arXiv:2308.12950</span>
+        </div>
+        <div class="model-stats">
+          <span class="model-stat">基础模型：<strong>Llama 2</strong></span>
+          <span class="model-stat">代码 Mid-Training：<strong>500B token</strong></span>
+          <span class="model-stat">长上下文版本：<strong>100K context</strong></span>
+        </div>
+        <p>CodeLlama 是代码 Mid-Training 的经典案例，具有高度的可复现性和工程完整性：</p>
+        <ul>
+          <li><strong>代码填充（Infilling/FIM）能力注入</strong>：专门设计 Fill-in-the-Middle 格式（SPM 和 PSM 两种变体），用约 50% 的代码数据进行 FIM 格式训练。这一能力无法通过 SFT 注入，必须在 Mid-Training 阶段完成。</li>
+          <li><strong>指令遵循微调版本</strong>（CodeLlama-Instruct）：在代码 Mid-Training 后再进行代码指令数据 SFT，验证了 Mid-Training → SFT 流水线的有效性。</li>
+          <li><strong>长上下文代码版本</strong>（CodeLlama-Python）：专门针对 Python 代码再做 100B token Mid-Training，并扩展 context 到 100K。</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-6" class="anchor">4.6 Google Gemma 系列</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">Google DeepMind</span>
+          <span class="model-name">Gemma 2 / Gemma 3</span>
+          <span class="model-org">arXiv:2503.19786</span>
+        </div>
+        <p>Gemma 系列的 Mid-Training 重点在于<strong>轻量模型的训练效率</strong>。Gemma 3（2025年3月发布）在 1B-27B 参数规模上均采用了精心设计的数据混合策略：</p>
+        <ul>
+          <li><strong>多阶段数据质量提升</strong>：Gemma 3 使用了类似 Mid-Training 的分阶段策略，在训练后期大幅提升代码、数学和推理数据的比例</li>
+          <li><strong>知识蒸馏辅助</strong>：较小的 Gemma 模型通过从大模型蒸馏出的合成数据进行 Mid-Training，以弥补参数量不足带来的能力上限</li>
+          <li><strong>多语言 Mid-Training</strong>：Gemma 3 在基础预训练后专门增加多语言数据的比重，支持 140+ 语言的基本理解能力</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-7" class="anchor">4.7 国内实践（百川、InternLM 等）</h3>
+
+      <div class="model-card">
+        <div class="model-header">
+          <span class="model-badge">国内实践</span>
+          <span class="model-name">InternLM 2.5 / Baichuan / MiniCPM</span>
+          <span class="model-org">上海人工智能实验室 / 百川智能 / 面壁科技</span>
+        </div>
+        <ul>
+          <li><strong>InternLM 2.5</strong>：明确采用长文本 Mid-Training，将 context 从 32K 扩展到 1M token（使用 LongRoPE 技术）。关键发现：在长文本 Mid-Training 中，<strong>数据类型</strong>比数量更重要——书籍、代码库等天然长文档远优于人工拼接的短文档。</li>
+          <li><strong>MiniCPM</strong>（面壁科技，arXiv:2404.06395）：设计了"WSD（Warmup-Stable-Decay）学习率调度"，将 Annealing 阶段形式化为可插拔组件，支持随时插入新的高质量数据集进行针对性能力增强。MiniCPM 的技术方案为低成本 Mid-Training 实验提供了优秀的工程范本。</li>
+          <li><strong>百川（Baichuan）</strong>：在 Baichuan 2 的训练中采用了领域数据配比渐进调整策略，中文内容比例从预训练的约 35% 在后期阶段上调至 50%+，有效提升了中文任务表现，代价是轻微的英文能力退化。</li>
+        </ul>
+      </div>
+
+      <h3 id="ch4-8" class="anchor">4.8 主流模型 Mid-Training 横向对比</h3>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>模型</th>
+              <th>机构</th>
+              <th>Mid-Training 类型</th>
+              <th>数据量</th>
+              <th>通用数据占比</th>
+              <th>关键技术创新</th>
+              <th>主要提升</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="highlight">Llama 3.1</td>
+              <td>Meta</td>
+              <td>长文本 + Annealing</td>
+              <td>40M(退火)+长文本</td>
+              <td>5%(退火期)</td>
+              <td>逐步上下文扩展</td>
+              <td>MATH +24, HumanEval +15</td>
+            </tr>
+            <tr>
+              <td class="highlight">Qwen2.5-Coder-72B</td>
+              <td>Alibaba</td>
+              <td>代码能力增强</td>
+              <td>5.5T token</td>
+              <td>~20%</td>
+              <td>92种语言代码+文档对齐</td>
+              <td>HumanEval ~95%, 超GPT-4o</td>
+            </tr>
+            <tr>
+              <td class="highlight">DeepSeekMath-7B</td>
+              <td>DeepSeek</td>
+              <td>数学推理增强</td>
+              <td>500B token</td>
+              <td>~15%</td>
+              <td>RLHF数学反馈数据飞轮</td>
+              <td>MATH 46.8%→64.1%</td>
+            </tr>
+            <tr>
+              <td class="highlight">CodeLlama-34B</td>
+              <td>Meta</td>
+              <td>代码能力增强</td>
+              <td>500B token</td>
+              <td>~10%</td>
+              <td>FIM格式注入</td>
+              <td>HumanEval +40分</td>
+            </tr>
+            <tr>
+              <td class="highlight">InternLM 2.5</td>
+              <td>上海AI实验室</td>
+              <td>长文本激活</td>
+              <td>百亿级</td>
+              <td>~30%</td>
+              <td>LongRoPE, 1M context</td>
+              <td>长文档理解 SOTA</td>
+            </tr>
+            <tr>
+              <td class="highlight">MiniCPM-3B</td>
+              <td>面壁科技</td>
+              <td>多轮 Annealing</td>
+              <td>多次小批次</td>
+              <td>动态调整</td>
+              <td>WSD调度，可重入退火</td>
+              <td>超越同量级多数模型</td>
+            </tr>
+            <tr>
+              <td class="highlight">Gemma 3</td>
+              <td>Google</td>
+              <td>多语言+代码强化</td>
+              <td>未完全披露</td>
+              <td>~40%</td>
+              <td>蒸馏辅助Mid-Training</td>
+              <td>多语言理解显著提升</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 5 =================== -->
+    <div class="section anchor" id="ch5">
+      <div class="section-header">
+        <span class="section-num">CH 05</span>
+        <h2>数据工程详解</h2>
+      </div>
+
+      <h3 id="ch5-1" class="anchor">5.1 Mid-Training 数据的特点</h3>
+
+      <p>Mid-Training 数据与预训练数据在质量要求上存在根本差异。预训练数据强调<strong>规模与多样性</strong>，容忍一定的噪声（因为大量重复见到各种文本有助于稳健表征学习）；而 Mid-Training 数据强调<strong>质量与相关性</strong>，低质量数据的危害比预训练期更大，因为此时模型已具备区分"好内容"和"坏内容"的基本能力，但坏内容仍会污染其特定领域的知识。</p>
+
+      <p><strong>关键差异对比</strong>：</p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>维度</th>
+              <th>预训练数据</th>
+              <th>Mid-Training 数据</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>规模</td>
+              <td>T 量级（宽松过滤）</td>
+              <td>B-T 量级（严格过滤）</td>
+            </tr>
+            <tr>
+              <td>质量要求</td>
+              <td>中等（过滤明显垃圾）</td>
+              <td>高（LLM judge 评分）</td>
+            </tr>
+            <tr>
+              <td>领域分布</td>
+              <td>尽量均匀覆盖</td>
+              <td>刻意偏向目标领域</td>
+            </tr>
+            <tr>
+              <td>合成数据比例</td>
+              <td>低（< 5%）</td>
+              <td>高（可达 30-50%）</td>
+            </tr>
+            <tr>
+              <td>重复数据处理</td>
+              <td>全局去重</td>
+              <td>领域内严格去重（更重要）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="ch5-2" class="anchor">5.2 数据构建方法</h3>
+
+      <h4>领域数据采集</h4>
+      <ul>
+        <li><strong>垂直网站定向爬取</strong>：使用领域关键词/URL 白名单精确爬取专业网站。医疗领域：PubMed Central、ClinicalTrials.gov、医学教材扫描版；法律领域：law.cornell.edu、各国法律数据库、判决书数据集；金融领域：SEC EDGAR、财经媒体、研究报告。</li>
+        <li><strong>书籍与教材数字化</strong>：高质量教材是 Mid-Training 数据的"黄金"。Project Gutenberg（古典著作）、O'Reilly（技术书籍）、学术出版社开放获取内容。关键处理步骤：OCR 质量检验、格式标准化（公式 → LaTeX，图表描述化）。</li>
+        <li><strong>学术论文全文</strong>：arXiv（支持 bulk download）、Semantic Scholar Open Corpus、PubMed Open Access。注意：需过滤掉参考文献、致谢等非正文部分。</li>
+        <li><strong>专业问答社区</strong>：StackExchange 的特定子版块（StackOverflow for 代码，Math.StackExchange for 数学，MedSci 等）。QA 格式数据特别有价值：包含问题、回答、评分，天然具有难度标签。</li>
+      </ul>
+
+      <h4>合成数据生成</h4>
+      <p>合成数据在现代 Mid-Training 中占据越来越重要的地位，在某些方向（如数学推理）中甚至成为主导数据源。</p>
+      <ul>
+        <li><strong>基于真实文档生成 QA 对</strong>：使用 GPT-4/Qwen-max 等强模型，对真实文档生成多种类型的问题（事实性问答、推理问答、摘要问答），并提供带推理链的参考答案。质量过滤：保留 LLM self-consistency 分数 > 0.8 的样本。</li>
+        <li><strong>难度分级的练习题生成</strong>：特别适合数学和代码领域。使用 WizardMath/WizardCoder 类方法（Evol-Instruct）：从简单问题开始，通过"增加约束、增加推理步骤、组合多个概念"等方式逐步生成更难的变体。</li>
+        <li><strong>错误示例与纠正对（Error-Correction Pairs）</strong>：生成包含常见错误的解题过程，并提供正确的修正版本。这种数据对训练模型的自我纠错能力尤为有效。</li>
+      </ul>
+
+      <h4>数据清洗与过滤流水线</h4>
+      <pre><code><span class="code-comment"># Mid-Training 数据过滤流水线示例</span>
+<span class="code-keyword">class</span> <span class="code-func">MidTrainingDataPipeline</span>:
+    <span class="code-keyword">def</span> <span class="code-func">process</span>(self, documents):
+        <span class="code-comment"># 1. 基础过滤</span>
+        docs = self.<span class="code-func">filter_basic</span>(documents)
+        <span class="code-comment">  # - 长度过滤 (50-100K chars)</span>
+        <span class="code-comment">  # - 语言检测（确保目标语言）</span>
+        <span class="code-comment">  # - 格式检测（移除乱码/编码错误）</span>
+        
+        <span class="code-comment"># 2. 领域相关性打分</span>
+        docs = self.<span class="code-func">domain_score</span>(docs)
+        <span class="code-comment">  # - 使用领域关键词 TF-IDF 打分</span>
+        <span class="code-comment">  # - 用小型分类器预测领域概率</span>
+        <span class="code-comment">  # - 保留 top-70% 按相关性排序</span>
+        
+        <span class="code-comment"># 3. 质量打分</span>
+        docs = self.<span class="code-func">quality_score</span>(docs)
+        <span class="code-comment">  # - 困惑度过滤（太低=重复，太高=乱码）</span>
+        <span class="code-comment">  # - LLM judge 打分（0-5分，保留>=3分）</span>
+        <span class="code-comment">  # - 事实性检验（领域事实一致性）</span>
+        
+        <span class="code-comment"># 4. 去重</span>
+        docs = self.<span class="code-func">dedup</span>(docs)
+        <span class="code-comment">  # - MinHash LSH 全局去重</span>
+        <span class="code-comment">  # - 同来源文档近重复去重（更严格）</span>
+        
+        <span class="code-comment"># 5. 有害内容过滤（领域特定）</span>
+        docs = self.<span class="code-func">safety_filter</span>(docs)
+        <span class="code-comment">  # - 医疗：过滤错误用药建议</span>
+        <span class="code-comment">  # - 法律：过滤明显错误的法律建议</span>
+        
+        <span class="code-keyword">return</span> docs</code></pre>
+
+      <h3 id="ch5-3" class="anchor">5.3 数据配比实验方法</h3>
+
+      <p>直接在全量模型上搜索最优数据配比成本极高（搜索一次配比可能需要数十万 GPU 小时）。工业界采用分层实验策略：</p>
+
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="process-step-num">1</div>
+          <div class="process-step-content">
+            <h4>构建代理任务（Proxy Tasks）</h4>
+            <p>选择 5-10 个能代表最终目标能力的简短 benchmark（如 MATH-100 子集、HumanEval-20 子集）。代理任务需与最终目标高度相关，且可在小模型上快速计算。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">2</div>
+          <div class="process-step-content">
+            <h4>1B 模型快速 Ablation</h4>
+            <p>用 1B 参数模型 + 10B token 数据，在代理任务上测试多种配比方案。每个配比实验约 4-8 GPU 小时，可并行测试 10-20 种配比。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">3</div>
+          <div class="process-step-content">
+            <h4>7B 验证实验</h4>
+            <p>将 1B 实验中排名前 3 的配比，在 7B 模型 + 50B token 上验证。验证小模型结论是否在更大规模上保持（规模迁移性检验）。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">4</div>
+          <div class="process-step-content">
+            <h4>全量 Mid-Training</h4>
+            <p>使用验证后的最优配比进行正式 Mid-Training。同时设置 checkpoint 评估，监控训练过程中能力的演进曲线，根据需要微调配比。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="ch5-4" class="anchor">5.4 工具链与最佳实践</h3>
+
+      <h4>数据格式统一</h4>
+      <p>Mid-Training 数据格式应与预训练格式完全对齐。推荐使用 <code>jsonl</code> 格式，每行一个 JSON 对象，字段包含 <code>text</code>（正文）、<code>source</code>（来源）、<code>quality_score</code>（质量分）、<code>domain</code>（领域标签）。Tokenization 过程中不应引入特殊 token（除非是专门的格式训练如 FIM），以避免破坏预训练学到的 token 分布。</p>
+
+      <h4>序列长度分布设计</h4>
+      <p>序列长度分布对训练效率影响显著。推荐：(1) 将同领域、长度相近的文档 pack 在一起（document packing），避免过多 padding；(2) 设置合理的长度上限（如 4096 token），超长文档切分时保留语义完整的段落；(3) 在数据 shuffle 时保持 bucket-based shuffle（相同长度的样本优先相邻），减少 padding 浪费。</p>
+
+      <div class="card-tip">
+        <div class="card-title">💡 Tip：Tokenizer 兼容性检查</div>
+        <p>如果 Mid-Training 目标语言与预训练语言不同（如在英文预训练基础上做中文专项训练），需特别检查 Tokenizer 对目标语言的覆盖率。若目标语言词汇碎片化严重（fertility > 3 token/字），建议考虑词表扩充（Vocabulary Extension），并对新增 embedding 进行热启动初始化（使用语义相近的已有 embedding 的均值）。</p>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 6 =================== -->
+    <div class="section anchor" id="ch6">
+      <div class="section-header">
+        <span class="section-num">CH 06</span>
+        <h2>评估体系</h2>
+      </div>
+
+      <h3 id="ch6-1" class="anchor">6.1 能力保持评估</h3>
+
+      <p>Mid-Training 的评估必须是<strong>双维度</strong>的：不能只看目标能力的提升，必须同时监控通用能力的保持情况。这是许多实践中最容易被忽视的环节，导致"偏科"模型——在目标任务上出色，但基础能力严重退化。</p>
+
+      <h4>推荐通用能力监控 Benchmark 组合</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Benchmark</th>
+              <th>评估维度</th>
+              <th>样本数</th>
+              <th>可接受遗忘阈值</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MMLU</td>
+              <td>知识覆盖（57 个学科）</td>
+              <td>14,042</td>
+              <td>≤ 3%</td>
+            </tr>
+            <tr>
+              <td>HellaSwag</td>
+              <td>常识推理/语言理解</td>
+              <td>10,042</td>
+              <td>≤ 2%</td>
+            </tr>
+            <tr>
+              <td>ARC-Challenge</td>
+              <td>科学推理</td>
+              <td>1,172</td>
+              <td>≤ 3%</td>
+            </tr>
+            <tr>
+              <td>TruthfulQA</td>
+              <td>事实准确性/幻觉</td>
+              <td>817</td>
+              <td>≤ 2%</td>
+            </tr>
+            <tr>
+              <td>WinoGrande</td>
+              <td>常识/指代消解</td>
+              <td>1,267</td>
+              <td>≤ 2%</td>
+            </tr>
+            <tr>
+              <td>GSM8K</td>
+              <td>基础数学推理</td>
+              <td>1,319</td>
+              <td>+（通常提升）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>遗忘率（Forgetting Rate）计算</strong>：</p>
+      <pre><code>forgetting_rate = (score_after_midtraining - score_before) / score_before × 100%
+
+<span class="code-comment"># 判断标准：</span>
+<span class="code-comment"># FR > 5%: 严重遗忘，需要调整配比（增加通用数据回放比例）</span>
+<span class="code-comment"># 2% < FR ≤ 5%: 中度遗忘，可接受但需关注</span>
+<span class="code-comment"># FR ≤ 2%: 轻微遗忘，正常范围</span>
+<span class="code-comment"># FR < 0: 能力提升（理想情况，通常在数学等与预训练数据重叠高的任务上出现）</span></code></pre>
+
+      <h3 id="ch6-2" class="anchor">6.2 目标能力评估</h3>
+
+      <p>目标能力评估需要根据 Mid-Training 类型选择合适的 benchmark，避免使用与训练数据高度重叠的"污染" benchmark。</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Mid-Training 类型</th>
+              <th>推荐 Benchmark</th>
+              <th>注意事项</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>数学推理增强</td>
+              <td>MATH, AIME, AMC, OlympiadBench</td>
+              <td>MATH 训练集可能在退火期使用，优先用 AIME 2024/2025</td>
+            </tr>
+            <tr>
+              <td>代码能力增强</td>
+              <td>HumanEval, MBPP, LiveCodeBench, SWE-bench</td>
+              <td>HumanEval 已被广泛训练，LiveCodeBench 持续更新更可靠</td>
+            </tr>
+            <tr>
+              <td>长文本激活</td>
+              <td>SCROLLS, LONGSUMM, Needle-in-a-Haystack</td>
+              <td>测试实际检索精度，而非仅 perplexity</td>
+            </tr>
+            <tr>
+              <td>领域适应（医疗）</td>
+              <td>MedQA (USMLE), PubMedQA, MedMCQA</td>
+              <td>MedQA 测试项目在训练数据中未出现</td>
+            </tr>
+            <tr>
+              <td>领域适应（代码）</td>
+              <td>DS-1000, MultiPL-E</td>
+              <td>覆盖多种编程语言和库</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 id="ch6-3" class="anchor">6.3 评估流水线设计</h3>
+
+      <h4>Checkpoint 评估频率</h4>
+      <p>Mid-Training 过程中的评估频率需要平衡成本与信息密度：</p>
+      <ul>
+        <li><strong>轻量代理评估（Fast Eval）</strong>：每 1B token 一次，仅用 5-10 个代理 benchmark（约 100-200 个测试样本）。目的：早期发现训练问题（Loss Spike、严重遗忘）并触发告警。</li>
+        <li><strong>完整评估（Full Eval）</strong>：每 10-20B token 一次，完整通用+领域 benchmark 套件。目的：精确追踪能力演进曲线，支持配比调整决策。</li>
+        <li><strong>最终评估</strong>：Mid-Training 完成后，全面对比基线模型和 Mid-Training 后模型在所有 benchmark 上的表现，并进行人工评估补充。</li>
+      </ul>
+
+      <h4>Early Stopping 策略</h4>
+      <p>Mid-Training 不像有监督训练那样有明确的 validation loss 作为早停信号。推荐策略：(1) 以目标能力的<strong>改善斜率</strong>作为主要信号——如果连续 3 次评估改善 < 0.5%，说明已接近收益天花板；(2) 以通用能力的<strong>遗忘率</strong>作为约束——若任一指标遗忘超过 5%，强制触发早停；(3) 结合训练效率：若每增加 10B token 的改善小于预设的 ROI 阈值，则停止。</p>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ Warning：避免"过训练"（Over-fitting to Domain）</div>
+        <p>Mid-Training 的"过训练"与监督学习的 overfitting 不同，它表现为：目标领域性能持续上升，但通用能力持续退化，且两者的曲线出现"交叉"。一旦出现交叉信号，应立即停止并回滚到交叉点之前的 checkpoint。这个最优 checkpoint 通常不是训练最长时间的 checkpoint。</p>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 7 =================== -->
+    <div class="section anchor" id="ch7">
+      <div class="section-header">
+        <span class="section-num">CH 07</span>
+        <h2>前沿研究与趋势</h2>
+      </div>
+
+      <h3 id="ch7-1" class="anchor">7.1 持续学习（Continual Learning）理论视角</h3>
+
+      <p>从持续学习理论的视角看，Mid-Training 是解决<strong>稳定性-可塑性困境（Stability-Plasticity Dilemma）</strong>的工程化实践。稳定性（Stability）指模型保持已学知识的能力；可塑性（Plasticity）指模型获取新知识的能力。这两者在共享参数空间中天然存在矛盾。</p>
+
+      <p>持续学习理论将解决方案分为三类：</p>
+      <ul>
+        <li><strong>基于正则化的方法</strong>（EWC, SI, MAS）：通过约束参数更新保护旧知识。理论完善，但在亿级参数模型上计算 Fisher 矩阵代价极高，实用性受限。</li>
+        <li><strong>基于回放的方法</strong>（Experience Replay, Generative Replay）：存储或生成旧任务样本进行复习。工程上简单有效，是当前 LLM Mid-Training 的主流做法。</li>
+        <li><strong>基于架构的方法</strong>（Progressive Neural Networks, PackNet）：为新任务分配专属参数空间，不影响旧参数。LoRA/Adapter 是这类方法在 LLM 中的轻量实现。</li>
+      </ul>
+
+      <div class="card-insight">
+        <div class="card-title">📘 Research Insight：ADEPT 框架（arXiv:2510.10071）</div>
+        <p>2025 年 10 月，ADEPT（Adaptive Expansion for Continual Pretraining）提出了一种结合参数扩展和选择性重用的 Mid-Training 方案：通过动态添加轻量模块（类似于 LoRA 专家）处理新领域，同时保持原有参数冻结。在医疗和法律领域测试显示，ADEPT 比标准 CPT 减少约 60% 遗忘，同时保持 85% 以上的领域能力获取效率。</p>
+      </div>
+
+      <h3 id="ch7-2" class="anchor">7.2 动态数据配比</h3>
+
+      <p>静态数据配比（训练前预先确定，训练中不变）是当前主流做法，但存在明显局限：不同能力的学习速度不同，最优配比会随训练进展变化。动态数据配比是 2024-2025 年的研究热点。</p>
+
+      <p><strong>主要方向</strong>：</p>
+      <ul>
+        <li><strong>基于损失反馈的在线配比调整</strong>：监控每类数据的 perplexity 下降速度，对下降慢的领域增加采样权重（类似 DoReMi 方法）。已有多项研究证明这比静态配比平均提升 1-3%。</li>
+        <li><strong>基于模型能力估计的自适应配比</strong>：每隔一定 step，在代理 benchmark 上评估各维度能力，根据与目标能力的 gap 动态调整配比。开销较大但针对性强。</li>
+        <li><strong>Online Mid-Training</strong>：将 Mid-Training 与部署融合，根据用户实际查询的领域分布动态更新模型。技术上具有挑战性，需要解决训练-推理并发的工程问题。</li>
+      </ul>
+
+      <h3 id="ch7-3" class="anchor">7.3 Mid-Training 与 PEFT 的结合</h3>
+
+      <p>全参数 Mid-Training 的计算成本使许多中小团队望而却步。PEFT（Parameter-Efficient Fine-Tuning）方法与 Mid-Training 的结合是重要的效率优化方向。</p>
+
+      <h4>方案对比</h4>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>方案</th>
+              <th>训练参数量</th>
+              <th>遗忘程度</th>
+              <th>能力上限</th>
+              <th>典型场景</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>全参数 Mid-Training</td>
+              <td>100%</td>
+              <td>中（需回放）</td>
+              <td>最高</td>
+              <td>大型团队，追求极致性能</td>
+            </tr>
+            <tr>
+              <td>LoRA Mid-Training（r=64-128）</td>
+              <td>1-3%</td>
+              <td>最低</td>
+              <td>中等</td>
+              <td>领域适应，快速迭代</td>
+            </tr>
+            <tr>
+              <td>混合方案（底层全参+顶层 LoRA）</td>
+              <td>40-60%</td>
+              <td>低</td>
+              <td>较高</td>
+              <td>资源有限的能力增强</td>
+            </tr>
+            <tr>
+              <td>Prefix Tuning / Prompt Tuning</td>
+              <td>< 0.1%</td>
+              <td>极低（参数冻结）</td>
+              <td>较低</td>
+              <td>格式适应</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <p><strong>实践建议</strong>：数学/代码等需要深度知识改变的能力增强，<strong>全参数训练明显优于 LoRA</strong>（在 70B token 数据量时，全参数 MATH 得分比 LoRA 高约 5-8 分）。但格式适应类任务（如特定输出格式、特定语言风格），LoRA 性价比更高。</p>
+
+      <h3 id="ch7-4" class="anchor">7.4 多模态 Mid-Training</h3>
+
+      <p>随着多模态模型（LLM + Vision）成为主流，多模态 Mid-Training 成为新的热点方向：</p>
+
+      <ul>
+        <li><strong>视觉-语言对齐 Mid-Training</strong>：在语言预训练基础上，注入大量视觉-文本对（图文对、图文交错文档、视觉 QA 数据），激活视觉理解能力。LLaVA、Qwen-VL 等均采用分阶段的视觉 Mid-Training 策略。</li>
+        <li><strong>代码执行能力注入</strong>：通过包含代码执行轨迹（输入代码 → 运行结果）的数据进行 Mid-Training，使模型内化代码语义。这比纯代码文本训练更能提升代码调试和错误理解能力。</li>
+        <li><strong>Tool-use 能力的 Mid-Training</strong>：注入工具调用轨迹数据（如 API 调用记录、搜索轨迹、计算器使用过程），使模型在底层就理解工具的使用模式，而非仅依赖 SFT 阶段的格式学习。</li>
+      </ul>
+
+      <h3 id="ch7-5" class="anchor">7.5 未来趋势预测（2025-2026）</h3>
+
+      <div class="callout">
+        <h4>🔭 趋势一：Mid-Training 即新 Pre-Training</h4>
+        <p>OpenAI 研究员 Noam Brown 在 2025 年 7 月的播客中提出"Mid-Training is the New Pre-Training"观点：随着数据质量优化、合成数据崛起，传统意义上的大规模网络爬取预训练可能逐渐收缩，而以高质量数据为核心的 Mid-Training 将承担更多"教育模型"的职责。这一趋势已体现在 Phi 系列的极简预训练路径上。</p>
+      </div>
+
+      <div class="callout">
+        <h4>🔭 趋势二：与强化学习的融合</h4>
+        <p>Mid-Training + RL 的融合形态（"Mid-RL"）正在兴起。典型范式：先用 Mid-Training 注入领域知识（让模型"知道"该领域的解法框架），再用 RL 强化正确解题行为（让模型"练会"高难度问题）。DeepSeek-R1 的成功部分归功于这一流水线：在基础 Mid-Training 后，GRPO/REINFORCE 强化学习能更高效地激发推理能力。</p>
+      </div>
+
+      <div class="callout">
+        <h4>🔭 趋势三：自动化 Mid-Training 配方搜索</h4>
+        <p>类似 AutoML 的思路，使用小规模代理实验自动搜索最优的数据配比、学习率调度和训练时长。基于梯度的配方优化（如通过元学习估计每类数据对最终能力的贡献梯度）是当前研究热点，有望将配比搜索成本从"数十次实验"压缩到"数次实验"。</p>
+      </div>
+
+      <div class="callout">
+        <h4>🔭 趋势四：快速垂直化模式</h4>
+        <p>Mid-Training 正在成为大模型"快速垂直化"的标准路径：开源通用基座（如 Llama 3.1、Qwen2.5）→ 领域专项 Mid-Training → SFT → 垂直行业模型。这一模式的成本已从数百万美元降至数万美元量级，使中小企业也能打造领域专家模型。2025-2026 年预期将有大量行业专属模型通过此路径诞生。</p>
+      </div>
+    </div>
+
+    <!-- =================== CHAPTER 8 =================== -->
+    <div class="section anchor" id="ch8">
+      <div class="section-header">
+        <span class="section-num">CH 08</span>
+        <h2>实践路线图（面向训练团队）</h2>
+      </div>
+
+      <h3 id="ch8-1" class="anchor">8.1 何时做 Mid-Training</h3>
+
+      <p>不是所有能力需求都需要 Mid-Training。在决策之前，需要进行系统的<strong>能力 Gap 分析</strong>：</p>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>场景描述</th>
+              <th>推荐方案</th>
+              <th>原因</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>模型"知道"答案但回答格式不对</td>
+              <td>SFT 即可</td>
+              <td>格式问题通过行为克隆解决</td>
+            </tr>
+            <tr>
+              <td>模型在简单问题上表现好，但复杂问题差</td>
+              <td>SFT + 困难样本</td>
+              <td>推理链数据的 SFT 可能足够</td>
+            </tr>
+            <tr>
+              <td>模型对专业领域知识完全不熟悉（大量幻觉）</td>
+              <td><strong>必须 Mid-Training</strong></td>
+              <td>知识缺口无法靠 SFT 填补</td>
+            </tr>
+            <tr>
+              <td>模型无法处理长文本（> 4 倍训练长度）</td>
+              <td><strong>长文本 Mid-Training</strong></td>
+              <td>位置编码问题需要在预训练层级解决</td>
+            </tr>
+            <tr>
+              <td>代码能力差但语言理解好</td>
+              <td><strong>代码 Mid-Training</strong></td>
+              <td>代码是新的语言，需要足够的代码 token 训练</td>
+            </tr>
+            <tr>
+              <td>轻微能力不足，有充足的高质量 SFT 数据</td>
+              <td>SFT 先试</td>
+              <td>避免 Mid-Training 的过高成本</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h4>资源评估</h4>
+      <p>Mid-Training 的计算成本估算（以 7B 模型为例）：</p>
+      <ul>
+        <li>50B token Mid-Training ≈ 50,000 GPU 小时（A100 80G）≈ 约 50 万元人民币（公有云价格）</li>
+        <li>100B token Mid-Training ≈ 100,000 GPU 小时 ≈ 约 100 万元</li>
+        <li>使用 Proxy 实验（1B 模型 + 10B token）预实验成本：约 2,000 GPU 小时 ≈ 2 万元</li>
+      </ul>
+
+      <div class="card-tip">
+        <div class="card-title">💡 Tip：算力预算不足时的替代方案</div>
+        <p>如果算力预算不足以支撑全参数 Mid-Training，考虑：(1) <strong>LoRA Mid-Training</strong>：成本降至约 1/10，能力提升约 60-70%；(2) <strong>更小的基础模型</strong>：7B 模型的 Mid-Training 成本约为 70B 的 1/10；(3) <strong>仅做 Annealing</strong>：在预训练最后 1% token 阶段引入高质量数据，成本极低，但要求能控制或影响预训练进程。</p>
+      </div>
+
+      <h3 id="ch8-2" class="anchor">8.2 标准 Mid-Training 流程</h3>
+
+      <div class="process-flow">
+        <div class="process-step">
+          <div class="process-step-num">1</div>
+          <div class="process-step-content">
+            <h4>确定目标能力与评估指标</h4>
+            <p>明确目标领域/能力，选定 3-5 个核心 benchmark 作为成功标准（如"在 MATH 上从 40% → 65%"）。同时确定通用能力保持的下限（如"MMLU 不低于基线 3%"）。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">2</div>
+          <div class="process-step-content">
+            <h4>数据采集与构建</h4>
+            <p>按 5.2 节方法构建目标领域数据集。同时准备通用数据回放池（从预训练数据中随机抽取约 5-10% 比例）。建议数据集规模：10-50B token（用于后续代理实验）。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">3</div>
+          <div class="process-step-content">
+            <h4>小规模 Proxy 实验</h4>
+            <p>用 1B 模型测试 5-10 种数据配比方案（覆盖通用数据比例 5%/10%/20%/30%）。每个实验训练 10B token，在代理 benchmark 上评估。选择能力提升最大且遗忘率 < 5% 的配比。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">4</div>
+          <div class="process-step-content">
+            <h4>全量 Mid-Training</h4>
+            <p>使用验证后的最优配比，设置合适的学习率（预训练峰值 LR 的 1/5-1/10），启用梯度裁剪（max_grad_norm=1.0），每 5B token 保存一个 checkpoint，每 10B token 进行一次完整评估。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">5</div>
+          <div class="process-step-content">
+            <h4>评估：双维度系统评估</h4>
+            <p>目标能力提升 + 通用能力保持，选择两个维度综合最优的 checkpoint（非训练最长的 checkpoint）。进行人工评估补充，测试模型在真实场景下的表现。</p>
+          </div>
+        </div>
+        <div class="process-step">
+          <div class="process-step-num">6</div>
+          <div class="process-step-content">
+            <h4>迭代优化 → 后训练</h4>
+            <p>根据评估结果决定是否需要第二轮 Mid-Training（通常不需要超过 2 轮）。确认 Mid-Training 效果后，进行 SFT 和 RLHF 阶段，将预训练期注入的知识与指令遵循能力融合。</p>
+          </div>
+        </div>
+      </div>
+
+      <h3 id="ch8-3" class="anchor">8.3 常见坑与避坑</h3>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ 坑 1：忘记加回放数据</div>
+        <p>最常见的错误。纯领域数据训练会导致通用能力快速退化，MMLU 可能在 50B token 训练后下降 30%+。<strong>避坑</strong>：强制要求数据配方中至少包含 5% 通用数据，并将其写入训练配置文件的必填项中，设置 lint 检查。</p>
+      </div>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ 坑 2：学习率设置过大</div>
+        <p>从预训练峰值 LR（如 1e-4）直接开始 Mid-Training 会导致严重的 Loss Spike 甚至训练崩溃。<strong>避坑</strong>：起始 LR 设为预训练峰值的 1/5-1/10，并设置短暂 warmup（3% 步数）。如果出现 Loss Spike，立即回滚到上一个稳定 checkpoint，将 LR 降低 2 倍后重启。</p>
+      </div>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ 坑 3：只看目标能力不看通用能力</div>
+        <p>兴奋于目标能力提升，忽视通用能力退化，导致交付一个"偏科"模型。<strong>避坑</strong>：在训练 Dashboard 中将通用能力监控 benchmark（MMLU, HellaSwag）与目标 benchmark 放在同一个看板上，设置通用能力下降 5% 的自动告警。</p>
+      </div>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ 坑 4：领域数据质量不足时适得其反</div>
+        <p>有时低质量领域数据（如充满错误的医疗论坛帖子）会使模型在领域任务上的表现比基线更差，因为它"学到"了错误的知识。<strong>避坑</strong>：在大规模 Mid-Training 前，先用 1B token 小实验验证数据质量——如果在这个规模上领域能力没有提升，不要期望更多数据会神奇地改善情况。先解决数据质量问题再扩大规模。</p>
+      </div>
+
+      <div class="card-warning">
+        <div class="card-title">⚠️ 坑 5：使用被污染的 Benchmark 评估</div>
+        <p>如果训练数据中包含了 benchmark 的测试题（即使是无意的），评估结果会虚高。尤其是 MATH 和 HumanEval 这类数量有限的 benchmark。<strong>避坑</strong>：在数据清洗阶段，用 N-gram 匹配过滤掉与常见 benchmark 测试集高度重合的样本。使用 LiveCodeBench（持续更新）替代 HumanEval 评估代码能力。</p>
+      </div>
+
+      <h3 id="ch8-4" class="anchor">8.4 快速验证方案（低成本 Proxy 实验）</h3>
+
+      <p>Mid-Training 团队面临的核心工程问题是：如何以最低成本验证数据配比假设？以下是一套经过验证的 Proxy 实验方法论：</p>
+
+      <h4>Scale-Down 原则</h4>
+      <p>核心假设：在小规模实验中，数据配比对性能的<strong>相对排序</strong>具有规模迁移性（即 1B 模型上最好的配比，在 70B 上通常也最好），但<strong>绝对值</strong>会不同（大模型的提升通常更大）。</p>
+
+      <pre><code><span class="code-comment"># Proxy 实验设计示例</span>
+proxy_experiments = {
+    <span class="code-string">"baseline"</span>: {<span class="code-string">"domain"</span>: <span class="code-number">0.0</span>, <span class="code-string">"general"</span>: <span class="code-number">1.0</span>},  <span class="code-comment"># 无 Mid-Training</span>
+    <span class="code-string">"heavy_domain"</span>: {<span class="code-string">"domain"</span>: <span class="code-number">0.9</span>, <span class="code-string">"general"</span>: <span class="code-number">0.1</span>},
+    <span class="code-string">"balanced"</span>: {<span class="code-string">"domain"</span>: <span class="code-7">.7</span>, <span class="code-string">"general"</span>: <span class="code-number">0.3</span>},
+    <span class="code-string">"mild"</span>: {<span class="code-string">"domain"</span>: <span class="code-number">0.5</span>, <span class="code-string">"general"</span>: <span class="code-number">0.5</span>},
+    <span class="code-string">"light"</span>: {<span class="code-string">"domain"</span>: <span class="code-number">0.3</span>, <span class="code-string">"general"</span>: <span class="code-number">0.7</span>},
+}
+
+<span class="code-comment"># 每个实验：1B 模型，10B token，约 4 GPU 小时</span>
+<span class="code-comment"># 并行 5 个实验：总计约 20 GPU 小时 ≈ 2000 元</span></code></pre>
+
+      <h4>规模推断规则（Scale-Up Rules）</h4>
+      <ul>
+        <li><strong>能力提升幅度</strong>：7B/70B 模型的绝对提升通常是 1B 模型的 1.5-2.5 倍（对数线性关系）</li>
+        <li><strong>遗忘幅度</strong>：大模型通常比小模型遗忘<strong>更少</strong>（更大的参数空间有更好的表征分离）</li>
+        <li><strong>最优配比迁移性</strong>：1B 实验中排名第一的配比，在 7B/70B 上维持第一的概率约 70-80%</li>
+        <li><strong>警惕反常现象</strong>：若 1B 实验中不同配比的差异极小（< 1%），可能需要更长的训练来分辨，不要据此下结论</li>
+      </ul>
+    </div>
+
+    <!-- =================== REFERENCES =================== -->
+    <div class="section anchor" id="refs">
+      <div class="section-header">
+        <span class="section-num">REF</span>
+        <h2>参考文献</h2>
+      </div>
+
+      <ul class="refs-list">
+        <li>
+          <span class="ref-id">[1]</span>
+          Mo, K. et al. <em>Mid-Training of Large Language Models: A Survey.</em> arXiv:2510.06826, 2025.
+          <a class="ref-link" href="https://arxiv.org/abs/2510.06826" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[2]</span>
+          Tu, X. et al. <em>A Survey on LLM Mid-Training.</em> arXiv:2510.23081, 2025.
+          <a class="ref-link" href="https://arxiv.org/abs/2510.23081" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[3]</span>
+          Liu, E. et al. <em>Midtraining Bridges Pretraining and Posttraining Distributions.</em> arXiv:2510.14865, 2025.
+          <a class="ref-link" href="https://arxiv.org/abs/2510.14865" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[4]</span>
+          Grattafiori, A. et al. (Meta AI). <em>The Llama 3 Herd of Models.</em> arXiv:2407.21783, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2407.21783" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[5]</span>
+          Qwen Team. <em>Qwen2.5 Technical Report.</em> arXiv:2412.15115, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2412.15115" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[6]</span>
+          Shao, Z. et al. (DeepSeek). <em>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models.</em> arXiv:2402.03300, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2402.03300" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[7]</span>
+          Rozière, B. et al. (Meta AI). <em>Code Llama: Open Foundation Models for Code.</em> arXiv:2308.12950, 2023.
+          <a class="ref-link" href="https://arxiv.org/abs/2308.12950" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[8]</span>
+          Hui, B. et al. <em>Qwen2.5-Coder Technical Report.</em> arXiv:2409.12186, 2024.
+        </li>
+        <li>
+          <span class="ref-id">[9]</span>
+          Yang, A. et al. <em>Qwen2.5-Math Technical Report.</em> arXiv:2409.12122, 2024.
+        </li>
+        <li>
+          <span class="ref-id">[10]</span>
+          DeepSeek-AI. <em>DeepSeek-V3 Technical Report.</em> arXiv:2412.19437, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2412.19437" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[11]</span>
+          DeepSeek-AI. <em>DeepSeek-Coder-V2: Breaking the Barrier of Closed-Source Models in Code Intelligence.</em> arXiv:2406.11931, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2406.11931" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[12]</span>
+          Gemma Team. <em>Gemma 3 Technical Report.</em> arXiv:2503.19786, 2025.
+          <a class="ref-link" href="https://arxiv.org/abs/2503.19786" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[13]</span>
+          Gururangan, S. et al. <em>Don't Stop Pretraining: Adapt Language Models to Domains and Tasks.</em> arXiv:2004.10964, 2020.
+          <a class="ref-link" href="https://arxiv.org/abs/2004.10964" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[14]</span>
+          Hu, S. et al. <em>MiniCPM: Scaling Small Language Models with Scalable Training Strategies.</em> arXiv:2404.06395, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2404.06395" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[15]</span>
+          Ibrahim, A. et al. <em>Simple and Scalable Strategies to Continually Pre-train Large Language Models.</em> arXiv:2403.08763, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2403.08763" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[16]</span>
+          Javaheripi, M. & Bubeck, S. (Microsoft). <em>Phi-2: The Surprising Power of Small Language Models.</em> 2023.
+        </li>
+        <li>
+          <span class="ref-id">[17]</span>
+          Gunasekar, S. et al. <em>Textbooks Are All You Need.</em> arXiv:2306.11644, 2023.
+          <a class="ref-link" href="https://arxiv.org/abs/2306.11644" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[18]</span>
+          Peng, B. et al. <em>YaRN: Efficient Context Window Extension of Large Language Models.</em> arXiv:2309.00071, 2023.
+          <a class="ref-link" href="https://arxiv.org/abs/2309.00071" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[19]</span>
+          Chen, S. et al. <em>Extending Context Window of Large Language Models via Positional Interpolation.</em> arXiv:2306.15595, 2023.
+          <a class="ref-link" href="https://arxiv.org/abs/2306.15595" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[20]</span>
+          Lv, K. et al. <em>Full Parameter Fine-tuning for Large Language Models with Limited Resources.</em> arXiv:2306.09782, 2023.
+        </li>
+        <li>
+          <span class="ref-id">[21]</span>
+          Kirkpatrick, J. et al. <em>Overcoming Catastrophic Forgetting in Neural Networks (EWC).</em> PNAS, 2017.
+        </li>
+        <li>
+          <span class="ref-id">[22]</span>
+          Lopez-Paz, D. & Ranzato, M. <em>Gradient Episodic Memory for Continual Learning.</em> NeurIPS, 2017.
+        </li>
+        <li>
+          <span class="ref-id">[23]</span>
+          Xue, F. et al. <em>Investigating Continual Pretraining in Large Language Models: Insights and Implications.</em> arXiv:2402.17400, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2402.17400" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[24]</span>
+          Shi, Y. et al. <em>ADEPT: Continual Pretraining via Adaptive Expansion and Pruning.</em> arXiv:2510.10071, 2025.
+          <a class="ref-link" href="https://arxiv.org/abs/2510.10071" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[25]</span>
+          Biderman, S. et al. (EleutherAI). <em>Pythia: A Suite for Analyzing Large Language Models Across Training and Scaling.</em> ICML 2023.
+        </li>
+        <li>
+          <span class="ref-id">[26]</span>
+          Wu, J. et al. <em>SaulLM-7B: A Pioneering Large Language Model for Law.</em> arXiv:2403.03883, 2024.
+        </li>
+        <li>
+          <span class="ref-id">[27]</span>
+          Wu, S. et al. <em>BloombergGPT: A Large Language Model for Finance.</em> arXiv:2303.17564, 2023.
+          <a class="ref-link" href="https://arxiv.org/abs/2303.17564" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[28]</span>
+          Luo, Z. et al. <em>WizardCoder: Empowering Code Large Language Models with Evol-Instruct.</em> arXiv:2306.08568, 2023.
+          <a class="ref-link" href="https://arxiv.org/abs/2306.08568" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[29]</span>
+          Liao, X. et al. <em>How to Train Long-Context Language Models (Effectively).</em> ACL 2025.
+          <a class="ref-link" href="https://aclanthology.org/2025.acl-long.366.pdf" target="_blank">ACL</a>
+        </li>
+        <li>
+          <span class="ref-id">[30]</span>
+          Groeneveld, D. et al. (Allen AI). <em>OLMo 2: Open Language Model 2.</em> arXiv:2501.00656, 2025.
+          <a class="ref-link" href="https://arxiv.org/abs/2501.00656" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[31]</span>
+          Penedo, G. et al. <em>The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale.</em> arXiv:2406.17557, 2024.
+        </li>
+        <li>
+          <span class="ref-id">[32]</span>
+          Xia, M. et al. <em>LLM-R: A Large Language Model Enhanced Rule-based Rewriting System for Boosting Query Reformulation.</em> 2024.
+        </li>
+        <li>
+          <span class="ref-id">[33]</span>
+          Zeng, Y. et al. <em>InternLM2.5 Technical Report.</em> arXiv:2501.12599, 2025.
+        </li>
+        <li>
+          <span class="ref-id">[34]</span>
+          Abdin, M. et al. (Microsoft). <em>Phi-3 Technical Report.</em> arXiv:2404.14219, 2024.
+          <a class="ref-link" href="https://arxiv.org/abs/2404.14219" target="_blank">arXiv</a>
+        </li>
+        <li>
+          <span class="ref-id">[35]</span>
+          Langlais, P.C. <em>What's the Deal with Mid-Training?</em> Vintage Data Blog, January 2025.
+          <a class="ref-link" href="https://vintagedata.org/blog/posts/what-is-mid-training" target="_blank">Blog</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align:center;padding:40px 0;color:#94a3b8;font-size:13px;border-top:1px solid #e2e8f0;margin-top:40px">
+      <p>LLM Mid-Training 技术研究报告 · 2025年2月 · 面向预训练/后训练团队</p>
+      <p style="margin-top:8px">如有问题，请联系研究团队</p>
+    </div>
+
+  </div>
+</main>
+
+<script>
+  // Toggle chapter in sidebar
+  function toggleChapter(el, subId) {
+    const sub = document.getElementById(subId);
+    if (!sub) return;
+    el.classList.toggle('open');
+    sub.classList.toggle('open');
+  }
+
+  // Navigate to section
+  function navClick(el, sectionId) {
+    const target = document.getElementById(sectionId);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    // Highlight active
+    document.querySelectorAll('.nav-sub-item').forEach(i => i.classList.remove('active'));
+    document.querySelectorAll('.nav-chapter').forEach(i => i.classList.remove('active'));
+    el.classList.add('active');
+  }
+
+  // Scroll spy - highlight current section
+  function initScrollSpy() {
+    const sections = document.querySelectorAll('.anchor');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          document.querySelectorAll('.nav-sub-item').forEach(item => {
+            item.classList.remove('active');
+          });
+          const activeLink = document.querySelector(`.nav-sub-item[onclick*="${id}"]`);
+          if (activeLink) {
+            activeLink.classList.add('active');
+            // Auto-open parent
+            const parentSub = activeLink.closest('.nav-sub');
+            if (parentSub && !parentSub.classList.contains('open')) {
+              parentSub.classList.add('open');
+              const parentChapter = parentSub.previousElementSibling;
+              if (parentChapter) parentChapter.classList.add('open');
+            }
+          }
+        }
+      });
+    }, { threshold: 0.3, rootMargin: '-10% 0px -70% 0px' });
+
+    sections.forEach(section => observer.observe(section));
+  }
+
+  // Open first chapter by default
+  document.addEventListener('DOMContentLoaded', () => {
+    initScrollSpy();
+    // Open first few chapters
+    const firstChapter = document.querySelector('.nav-chapter');
+    if (firstChapter) firstChapter.classList.add('active');
+  });
+</script>
+
+</body>
+</html>

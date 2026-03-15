@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Terminal-Bench 训练数据构建技术方案</title>
+  <style>
+    :root {
+      --primary: #1e3a5f;
+      --accent: #2d7dd2;
+      --accent2: #0ead69;
+      --bg: #f7f9fc;
+      --card: #ffffff;
+      --border: #dde3ea;
+      --text: #1a1a2e;
+      --text-muted: #5a6880;
+      --code-bg: #1e2639;
+      --code-text: #e8edf5;
+      --tag-bg: #e8f0fd;
+      --tag-text: #1a56b0;
+      --warn: #fff3cd;
+      --warn-border: #f0ad4e;
+      --tip: #d4edda;
+      --tip-border: #28a745;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Noto Sans CJK SC", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 15px;
+    }
+    /* ── Header ── */
+    header {
+      background: linear-gradient(135deg, var(--primary) 0%, #2563a8 100%);
+      color: #fff;
+      padding: 48px 40px 36px;
+    }
+    header h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+    header p.subtitle {
+      margin-top: 10px;
+      font-size: 1rem;
+      opacity: 0.82;
+    }
+    header .meta {
+      margin-top: 18px;
+      display: flex;
+      gap: 20px;
+      font-size: 0.82rem;
+      opacity: 0.72;
+      flex-wrap: wrap;
+    }
+    /* ── TOC ── */
+    .toc-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px 28px;
+      margin: 32px 40px;
+      max-width: 900px;
+    }
+    .toc-wrap h2 { font-size: 1rem; color: var(--text-muted); margin-bottom: 12px; }
+    .toc-wrap ol { padding-left: 20px; }
+    .toc-wrap li { margin: 5px 0; }
+    .toc-wrap a { color: var(--accent); text-decoration: none; }
+    .toc-wrap a:hover { text-decoration: underline; }
+    /* ── Main Layout ── */
+    main { max-width: 960px; margin: 0 auto; padding: 0 40px 60px; }
+    /* ── Sections ── */
+    section { margin-top: 44px; }
+    h2.sec-title {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--primary);
+      border-left: 4px solid var(--accent);
+      padding-left: 14px;
+      margin-bottom: 18px;
+    }
+    h3.sub-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 20px 0 10px;
+    }
+    h4.sub-sub-title {
+      font-size: 0.96rem;
+      font-weight: 600;
+      color: var(--accent);
+      margin: 14px 0 8px;
+    }
+    p { margin-bottom: 10px; }
+    ul, ol { padding-left: 22px; margin-bottom: 12px; }
+    li { margin: 5px 0; }
+    /* ── Cards / Boxes ── */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 14px 0;
+    }
+    .card.accent-border { border-left: 4px solid var(--accent); }
+    .card.green-border  { border-left: 4px solid var(--accent2); }
+    .tip-box {
+      background: var(--tip); border: 1px solid var(--tip-border);
+      border-radius: 8px; padding: 14px 18px; margin: 12px 0;
+      font-size: 0.93rem;
+    }
+    .warn-box {
+      background: var(--warn); border: 1px solid var(--warn-border);
+      border-radius: 8px; padding: 14px 18px; margin: 12px 0;
+      font-size: 0.93rem;
+    }
+    /* ── Pipeline Steps ── */
+    .pipeline {
+      display: flex;
+      gap: 0;
+      margin: 18px 0;
+      flex-wrap: wrap;
+    }
+    .step {
+      flex: 1;
+      min-width: 120px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 0;
+      padding: 14px 16px;
+      text-align: center;
+      position: relative;
+    }
+    .step:first-child { border-radius: 8px 0 0 8px; }
+    .step:last-child  { border-radius: 0 8px 8px 0; }
+    .step:not(:last-child)::after {
+      content: "→";
+      position: absolute;
+      right: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.2rem;
+      color: var(--accent);
+      z-index: 1;
+    }
+    .step .step-num {
+      display: inline-block;
+      width: 24px; height: 24px;
+      background: var(--accent);
+      color: #fff;
+      border-radius: 50%;
+      font-size: 0.78rem;
+      font-weight: 700;
+      line-height: 24px;
+      margin-bottom: 6px;
+    }
+    .step .step-label { font-size: 0.82rem; font-weight: 600; color: var(--primary); }
+    .step .step-desc  { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; }
+    /* ── Code Blocks ── */
+    pre {
+      background: var(--code-bg);
+      color: var(--code-text);
+      border-radius: 8px;
+      padding: 18px 20px;
+      overflow-x: auto;
+      font-size: 0.83rem;
+      line-height: 1.6;
+      margin: 14px 0;
+      font-family: "JetBrains Mono", "Fira Code", "Cascadia Code", Consolas, monospace;
+    }
+    code {
+      background: #e9eef6;
+      color: #1a3a5c;
+      border-radius: 4px;
+      padding: 2px 6px;
+      font-size: 0.87em;
+      font-family: "JetBrains Mono", Consolas, monospace;
+    }
+    pre code { background: none; color: inherit; padding: 0; }
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.88rem;
+    }
+    th {
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 14px;
+      text-align: left;
+      font-weight: 600;
+    }
+    td {
+      border: 1px solid var(--border);
+      padding: 9px 14px;
+    }
+    tr:nth-child(even) td { background: #f2f5f9; }
+    /* ── Tags ── */
+    .tag {
+      display: inline-block;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      border-radius: 20px;
+      padding: 2px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin: 2px;
+    }
+    /* ── Architecture Diagram ── */
+    .arch-box {
+      background: var(--code-bg);
+      color: #a8d8ea;
+      border-radius: 10px;
+      padding: 20px 24px;
+      font-family: "Cascadia Code", Consolas, monospace;
+      font-size: 0.82rem;
+      line-height: 1.8;
+      overflow-x: auto;
+      margin: 14px 0;
+    }
+    /* ── Grid ── */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin: 14px 0;
+    }
+    @media (max-width: 680px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      main, .toc-wrap { padding: 0 16px 40px; margin: 16px; }
+      header { padding: 28px 16px 22px; }
+      .pipeline { flex-direction: column; }
+      .step:first-child { border-radius: 8px 8px 0 0; }
+      .step:last-child  { border-radius: 0 0 8px 8px; }
+      .step:not(:last-child)::after { content: "↓"; right: 50%; top: auto; bottom: -12px; }
+    }
+    /* ── Appendix ── */
+    .appendix-block {
+      background: #f0f4fa;
+      border: 1px solid #c5d5ea;
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 16px 0;
+    }
+    .appendix-block h4 { color: var(--primary); margin-bottom: 10px; font-size: 1rem; }
+    .prompt-label {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 10px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .hr { border: none; border-top: 1px solid var(--border); margin: 36px 0; }
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      padding: 24px;
+      border-top: 1px solid var(--border);
+      margin-top: 48px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>🖥️ Terminal-Bench 训练数据构建技术方案</h1>
+  <p class="subtitle">面向终端智能体能力提升的数据工程全流程方案（SFT + RL 双路径）</p>
+  <div class="meta">
+    <span>📅 2026-02-28</span>
+    <span>🔬 参考论文：arXiv:2602.21193 · arXiv:2602.07274</span>
+    <span>📦 数据集：nvidia/Nemotron-Terminal-Corpus</span>
+    <span>🏆 基准：Terminal-Bench 2.0</span>
+  </div>
+</header>
+
+<div class="toc-wrap">
+  <h2>📋 目录</h2>
+  <ol>
+    <li><a href="#s1">背景与目标</a></li>
+    <li><a href="#s2">Terminal-Bench 基准概览</a></li>
+    <li><a href="#s3">数据构建整体架构</a></li>
+    <li><a href="#s4">路径一：数据集适配（Dataset Adaptation）</a></li>
+    <li><a href="#s5">路径二：合成任务生成（Synthetic Task Generation）</a></li>
+    <li><a href="#s6">路径三：多智能体并行生成（Multi-Agent Pipeline）</a></li>
+    <li><a href="#s7">轨迹生成与环境执行</a></li>
+    <li><a href="#s8">数据质量控制与后处理</a></li>
+    <li><a href="#s9">强化学习训练数据构建（RL 路径）</a></li>
+    <li><a href="#s10">训练策略：课程学习与数据配比</a></li>
+    <li><a href="#s11">开源资源与复用指南</a></li>
+    <li><a href="#s12">工程实施路线图</a></li>
+    <li><a href="#appendix">附录：可用 Prompt 模板</a></li>
+  </ol>
+</div>
+
+<main>
+
+<!-- =================== S1 =================== -->
+<section id="s1">
+  <h2 class="sec-title">1. 背景与目标</h2>
+  <p>终端交互能力（Terminal Capability）是大模型走向实际工程应用的核心瓶颈之一。不同于孤立的代码生成，终端任务要求模型在真实 Docker 容器内完成端到端工作流：配置环境、编译运行、调试、管理文件系统等。</p>
+
+  <div class="grid-2">
+    <div class="card accent-border">
+      <h4 class="sub-sub-title">核心挑战</h4>
+      <ul>
+        <li>高质量任务 Prompt 稀缺</li>
+        <li>可执行验证环境构建成本高</li>
+        <li>多轮交互轨迹采集复杂</li>
+        <li>开源模型与闭源模型差距巨大（基线仅 2-4%）</li>
+      </ul>
+    </div>
+    <div class="card green-border">
+      <h4 class="sub-sub-title">方案目标</h4>
+      <ul>
+        <li>构建覆盖多域的高质量 SFT 数据</li>
+        <li>构建 RL 训练所需 reward-verifiable 数据</li>
+        <li>提供可复用的合成数据 pipeline</li>
+        <li>最终在 Terminal-Bench 2.0 上取得显著提升</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="tip-box">
+    <strong>📈 参考效果：</strong>NVIDIA Nemotron-Terminal 系列基于本方案思路，Qwen3-32B 基线 3.4% → Nemotron-Terminal-32B 27.4%，提升约 8 倍，超越 480B 参数的 Qwen3-Coder。
+  </div>
+</section>
+
+<!-- =================== S2 =================== -->
+<section id="s2">
+  <h2 class="sec-title">2. Terminal-Bench 基准概览</h2>
+
+  <h3 class="sub-title">2.1 任务结构</h3>
+  <p>Terminal-Bench 每个任务由四个组件构成：</p>
+  <table>
+    <tr><th>组件</th><th>说明</th><th>文件名（参考）</th></tr>
+    <tr><td>自然语言指令</td><td>描述目标的任务描述</td><td><code>prompt.md</code></td></tr>
+    <tr><td>Docker 环境</td><td>提供执行上下文的容器化环境</td><td><code>Dockerfile</code> + 依赖文件</td></tr>
+    <tr><td>验证测试套件</td><td>以编程方式检查任务完成情况</td><td><code>tests.py</code></td></tr>
+    <tr><td>参考解决方案</td><td>展示有效方法的 Oracle 方案</td><td><code>solution/</code></td></tr>
+  </table>
+
+  <h3 class="sub-title">2.2 评测智能体：Terminus 2</h3>
+  <p>Terminus 2 仅通过交互式 tmux session 与 Docker 容器通信，要求模型输出结构化 JSON：</p>
+  <pre>{
+  "analysis": "当前状态分析...",
+  "plan": "下一步计划...",
+  "commands": ["pip install ...", "python train.py"],
+  "task_complete": false
+}</pre>
+
+  <h3 class="sub-title">2.3 覆盖域分布</h3>
+  <div class="grid-2">
+    <div>
+      <p><span class="tag">软件工程</span><span class="tag">系统管理</span><span class="tag">安全</span><span class="tag">数据处理</span></p>
+      <p><span class="tag">调试</span><span class="tag">机器学习</span><span class="tag">文件操作</span><span class="tag">科学计算</span></p>
+    </div>
+    <div class="card">
+      <p style="font-size:0.85rem;color:var(--text-muted)">Terminal-Bench 2.0 共 89 个精心手工标注的任务，覆盖上述所有领域，需要模型完成真实环境中的端到端工作流。</p>
+    </div>
+  </div>
+</section>
+
+<!-- =================== S3 =================== -->
+<section id="s3">
+  <h2 class="sec-title">3. 数据构建整体架构</h2>
+
+  <p>推荐采用<strong>双流 + 后处理</strong>的数据构建架构（参考 NVIDIA Terminal-Task-Gen）：</p>
+
+  <div class="arch-box">
+┌─────────────────────────────────────────────────────────────────┐
+│                    Terminal-Task-Gen Pipeline                    │
+│                                                                  │
+│  ┌──────────────────────┐    ┌───────────────────────────────┐  │
+│  │  Stream A: Adapter   │    │  Stream B: Synthetic Task Gen │  │
+│  │                      │    │                               │  │
+│  │  Math / Code / SWE   │    │   Seed Tasks + Skill Taxonomy │  │
+│  │  datasets → wrap     │    │   → LLM 生成任务 + Dockerfile │  │
+│  │  into terminal fmt   │    │   → 验证 + 迭代优化           │  │
+│  └──────────┬───────────┘    └──────────────┬────────────────┘  │
+│             └─────────────┬─────────────────┘                   │
+│                           ▼                                      │
+│            ┌──────────────────────────────┐                     │
+│            │   Trajectory Generation      │                     │
+│            │   Agent × Dockerized Env     │                     │
+│            │   → multi-turn 交互轨迹       │                     │
+│            └──────────────┬───────────────┘                     │
+│                           ▼                                      │
+│            ┌──────────────────────────────┐                     │
+│            │   Post-Processing            │                     │
+│            │   去污染 / 过滤 / 质量控制    │                     │
+│            └──────────────┬───────────────┘                     │
+│                           ▼                                      │
+│               ┌───────────────────────┐                         │
+│               │   Final SFT Dataset   │                         │
+│               │  ~366k trajectories   │                         │
+│               └───────────────────────┘                         │
+└─────────────────────────────────────────────────────────────────┘
+  </div>
+
+  <div class="pipeline">
+    <div class="step"><span class="step-num">1</span><div class="step-label">任务构建</div><div class="step-desc">适配 + 合成</div></div>
+    <div class="step"><span class="step-num">2</span><div class="step-label">环境准备</div><div class="step-desc">Docker 验证</div></div>
+    <div class="step"><span class="step-num">3</span><div class="step-label">轨迹采集</div><div class="step-desc">Agent Rollout</div></div>
+    <div class="step"><span class="step-num">4</span><div class="step-label">质量过滤</div><div class="step-desc">去污 / 筛选</div></div>
+    <div class="step"><span class="step-num">5</span><div class="step-label">训练集成</div><div class="step-desc">SFT / RL</div></div>
+  </div>
+</section>
+
+<!-- =================== S4 =================== -->
+<section id="s4">
+  <h2 class="sec-title">4. 路径一：数据集适配（Dataset Adaptation）</h2>
+
+  <p>将现有高质量数据集（数学/代码/SWE）转化为 Terminal-Bench 格式的任务，是快速扩充数据规模的核心路径。</p>
+
+  <h3 class="sub-title">4.1 适配源数据集选择</h3>
+  <table>
+    <tr><th>类型</th><th>推荐数据集</th><th>适配侧重</th></tr>
+    <tr><td>代码竞赛</td><td>APPS, CodeForces, LiveCodeBench</td><td>算法实现 + 测试运行</td></tr>
+    <tr><td>软件工程</td><td>SWE-bench, SWE-bench Verified</td><td>仓库级修复 + 测试验证</td></tr>
+    <tr><td>数学推理</td><td>MATH, GSM8K, AIME</td><td>Python 脚本计算 + 结果校验</td></tr>
+    <tr><td>系统任务</td><td>OSWorld, AgentBench-OS</td><td>系统管理 + Shell 操作</td></tr>
+    <tr><td>机器学习</td><td>自定义 ML 任务集</td><td>模型训练 + 评估报告</td></tr>
+  </table>
+
+  <h3 class="sub-title">4.2 适配 Adapter 实现要点</h3>
+  <div class="card accent-border">
+    <h4 class="sub-sub-title">Adapter 核心组件</h4>
+    <ul>
+      <li><strong>Prompt Wrapper：</strong>将原始问题转化为终端交互式指令</li>
+      <li><strong>Dockerfile 生成：</strong>自动生成包含依赖的执行环境</li>
+      <li><strong>验证脚本：</strong>将原始测试用例转化为 pytest 测试套件</li>
+      <li><strong>初始文件系统：</strong>准备必要的代码框架/数据文件</li>
+    </ul>
+  </div>
+
+  <h3 class="sub-title">4.3 适配质量过滤标准</h3>
+  <ul>
+    <li>✅ Docker 镜像构建成功率 100%</li>
+    <li>✅ 测试套件在干净环境中初始失败（确保任务有效性）</li>
+    <li>✅ Oracle 解决方案使测试通过</li>
+    <li>✅ 任务指令与终端操作强相关（过滤纯计算类任务）</li>
+    <li>❌ 剔除需要 GUI 的任务</li>
+    <li>❌ 剔除需要外网访问的任务</li>
+  </ul>
+
+  <div class="warn-box">
+    <strong>⚠️ 注意：</strong>Adapter 数据继承了源数据集的结构假设，可能与真实终端交互模式存在偏差。建议 Adapter 数据（~60%）与合成数据（~40%）混合使用。
+  </div>
+</section>
+
+<!-- =================== S5 =================== -->
+<section id="s5">
+  <h2 class="sec-title">5. 路径二：合成任务生成（Synthetic Task Generation）</h2>
+
+  <p>合成任务生成提供更精细的控制，能针对特定技能缺口定向补充数据。</p>
+
+  <h3 class="sub-title">5.1 技能分类体系（Skill Taxonomy）</h3>
+  <p>构建覆盖终端核心技能的分层分类体系：</p>
+
+  <table>
+    <tr><th>一级技能</th><th>子技能示例</th></tr>
+    <tr><td>文件系统操作</td><td>目录遍历、权限管理、文件格式转换、压缩解压</td></tr>
+    <tr><td>进程与系统管理</td><td>服务启停、资源监控、定时任务、系统日志分析</td></tr>
+    <tr><td>网络与通信</td><td>HTTP 请求、端口管理、防火墙配置、SSL 证书</td></tr>
+    <tr><td>代码编译与运行</td><td>多语言编译、依赖管理、虚拟环境、容器化</td></tr>
+    <tr><td>调试与故障排查</td><td>错误诊断、性能分析、内存泄漏、竞态条件</td></tr>
+    <tr><td>数据处理与分析</td><td>ETL 管道、数据库操作、数据格式转换、可视化</td></tr>
+    <tr><td>机器学习工程</td><td>模型训练、评估、部署、超参数调优</td></tr>
+    <tr><td>安全</td><td>漏洞修复、身份认证、加密解密、审计日志</td></tr>
+  </table>
+
+  <h3 class="sub-title">5.2 两阶段合成流程</h3>
+
+  <div class="card">
+    <h4 class="sub-sub-title">阶段一：任务生成（Seed-Based / Skill-Based）</h4>
+    <ul>
+      <li><strong>Seed-Based：</strong>基于 Terminal-Bench 现有任务，通过 LLM 生成 n×multiplier 的变体（难度递增、场景迁移、技术组合）</li>
+      <li><strong>Skill-Based：</strong>基于技能分类体系，定向生成覆盖特定技能的任务</li>
+      <li><strong>关键创新：</strong>先自由头脑风暴，再提供细化标准（Two-Phase Brainstorm），最大化创意多样性</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h4 class="sub-sub-title">阶段二：环境生成与验证</h4>
+    <ul>
+      <li>LLM 自动生成 Dockerfile + 初始文件</li>
+      <li>在真实 Docker 容器内执行验证循环</li>
+      <li>迭代修复环境问题（最多 N 次重试）</li>
+      <li>确保测试在介入前失败、介入后通过</li>
+    </ul>
+  </div>
+
+  <div class="tip-box">
+    <strong>💡 对比 TermiGen：</strong>TermiGen (arXiv:2602.07274) 采用更重量级的多智能体迭代精化，在真实 Docker 内验证消除幻觉，Generator-Critic 协议主动注入错误构建纠错轨迹，在 Terminal-Bench 上达到 31.3% SOTA（开源模型）。
+  </div>
+</section>
+
+<!-- =================== S6 =================== -->
+<section id="s6">
+  <h2 class="sec-title">6. 路径三：多智能体并行生成（Multi-Agent Pipeline）</h2>
+
+  <p>参考 tbench-agentic-data-pipeline 项目，使用 20+ 并行 Agent 实例加速数据生成。</p>
+
+  <h3 class="sub-title">6.1 三阶段智能体架构</h3>
+
+  <div class="arch-box">
+┌─────────────────────────────────────────────────────┐
+│              Multi-Agent Data Pipeline               │
+│                                                      │
+│  Seed Tasks                                          │
+│      │                                               │
+│      ▼                                               │
+│  ┌─────────────┐                                     │
+│  │  Idea Agents │  × N (并行)                        │
+│  │  分析核心技能 │                                     │
+│  │  生成 M 个变体│                                     │
+│  │  筛选最佳想法 │                                     │
+│  └──────┬──────┘                                     │
+│         ▼                                            │
+│  ┌─────────────┐                                     │
+│  │Builder Agents│  × N (并行)                        │
+│  │  构建完整场景 │                                     │
+│  │  软件验证脚本 │                                     │
+│  │  迭代直到通过 │                                     │
+│  └──────┬──────┘                                     │
+│         ▼                                            │
+│  ┌─────────────┐                                     │
+│  │Review Agents │  × N (并行)                        │
+│  │  质量检查   │                                      │
+│  │  分类标注   │                                      │
+│  │  审批/拒绝  │                                      │
+│  └──────┬──────┘                                     │
+│         ▼                                            │
+│  Production-Ready Training Data                      │
+└─────────────────────────────────────────────────────┘
+  </div>
+
+  <h3 class="sub-title">6.2 Task Manager 协调机制</h3>
+  <pre><code class="python"># 原子性任务领取，防止并发冲突
+task = tm.get_next_task("idea-agent-07", task_types=["generate_idea"])
+
+# 独立处理（不依赖其他 Agent 状态）
+draft_ideas = generate_creative_variations(task["seed_data"])
+
+# 完成并提交结果
+tm.complete_task(task["id"], "idea-agent-07", {"drafts": draft_ideas})
+
+# 自动超时恢复
+# 父子任务追踪
+# 实时状态监控</code></pre>
+
+  <h3 class="sub-title">6.3 数据点结构</h3>
+  <pre>task_001/
+├── prompt.md          # 1-3 句话的任务描述（简洁自然）
+├── Dockerfile         # Ubuntu 24.04 + 依赖环境
+├── tests.py           # pytest 验证套件（weights sum = 1.0）
+├── solution/          # 参考解法（用于生成训练轨迹）
+└── metadata.json      # 类别、难度、技能标签</pre>
+</section>
+
+<!-- =================== S7 =================== -->
+<section id="s7">
+  <h2 class="sec-title">7. 轨迹生成与环境执行</h2>
+
+  <h3 class="sub-title">7.1 标准轨迹生成（SFT 数据）</h3>
+  <p>使用强教师模型（如 Claude Sonnet / GPT-4o）在 Docker 容器中执行任务，采集完整交互轨迹：</p>
+
+  <div class="card accent-border">
+    <h4 class="sub-sub-title">轨迹格式（Terminus 2 风格）</h4>
+    <pre>{
+  "messages": [
+    {"role": "system", "content": "...system prompt..."},
+    {"role": "user",   "content": "Task: [任务描述]\n\nCurrent terminal output:\n$ "},
+    {"role": "assistant", "content": "{\"analysis\":\"...\",\"plan\":\"...\",\"commands\":[\"ls -la\"],\"task_complete\":false}"},
+    {"role": "user",   "content": "[terminal output after ls -la]"},
+    ...
+    {"role": "assistant", "content": "{\"analysis\":\"任务完成\",\"task_complete\":true}"}
+  ],
+  "task_id": "task_001",
+  "success": true,
+  "steps": 7
+}</pre>
+  </div>
+
+  <h3 class="sub-title">7.2 错误注入轨迹（TermiGen Generator-Critic）</h3>
+  <p>标准专家轨迹几乎不含错误，导致小模型在部署时遭遇分布偏移。TermiGen 方案主动注入错误：</p>
+
+  <table>
+    <tr><th>注入类型</th><th>示例</th><th>训练效果</th></tr>
+    <tr><td>依赖冲突</td><td>pip 安装版本冲突</td><td>学习依赖诊断与回退</td></tr>
+    <tr><td>语法错误</td><td>Python 缩进错误</td><td>学习错误定位与修复</td></tr>
+    <tr><td>权限错误</td><td>Permission denied</td><td>学习权限管理</td></tr>
+    <tr><td>超时</td><td>命令执行超时</td><td>学习任务分解与超时处理</td></tr>
+    <tr><td>路径错误</td><td>文件不存在</td><td>学习文件系统探索</td></tr>
+  </table>
+
+  <div class="tip-box">
+    <strong>📊 效果：</strong>加入错误纠正轨迹后，模型 pass rate 相比纯专家轨迹提升显著（TermiGen 消融实验中提升超 12%）。
+  </div>
+
+  <h3 class="sub-title">7.3 Rejection Sampling 策略</h3>
+  <ul>
+    <li>每个任务生成 K 条轨迹（推荐 K=4~8）</li>
+    <li>保留通过验证测试的轨迹（Success filtering）</li>
+    <li>对长轨迹进行步数过滤（避免过长无效探索）</li>
+    <li>混合保留部分失败轨迹（含错误恢复过程）</li>
+  </ul>
+</section>
+
+<!-- =================== S8 =================== -->
+<section id="s8">
+  <h2 class="sec-title">8. 数据质量控制与后处理</h2>
+
+  <h3 class="sub-title">8.1 去污染（Decontamination）</h3>
+  <ul>
+    <li>与 Terminal-Bench 官方 89 个任务进行相似度检测</li>
+    <li>使用 embedding 相似度 + 精确匹配双重过滤</li>
+    <li>过滤阈值：余弦相似度 &gt; 0.85 的样本丢弃</li>
+  </ul>
+
+  <h3 class="sub-title">8.2 多维质量过滤指标</h3>
+  <table>
+    <tr><th>指标</th><th>标准</th></tr>
+    <tr><td>任务可解率</td><td>Oracle 解法必须通过所有测试</td></tr>
+    <tr><td>环境可靠性</td><td>Dockerfile 构建成功率 100%</td></tr>
+    <tr><td>测试有效性</td><td>tests.py 权重之和 = 1.0，覆盖核心功能</td></tr>
+    <tr><td>指令质量</td><td>LLM 评分 prompt 清晰度 ≥ 4/5</td></tr>
+    <tr><td>轨迹长度</td><td>步数在合理范围（5~30 步）</td></tr>
+    <tr><td>重复性</td><td>MinHash 去重，Jaccard 相似度 &lt; 0.7</td></tr>
+  </table>
+
+  <h3 class="sub-title">8.3 难度分级</h3>
+  <div class="grid-2">
+    <div class="card">
+      <h4 class="sub-sub-title">基于解法步数</h4>
+      <ul>
+        <li><strong>Easy：</strong>1-5 步，单一命令</li>
+        <li><strong>Medium：</strong>6-15 步，多步操作</li>
+        <li><strong>Hard：</strong>16+ 步，复杂工作流</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h4 class="sub-sub-title">基于通过率</h4>
+      <ul>
+        <li>使用若干个弱模型（7B/8B）评估通过率</li>
+        <li>通过率 &gt; 0.8：Easy</li>
+        <li>通过率 0.2~0.8：Medium</li>
+        <li>通过率 &lt; 0.2：Hard</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================== S9 =================== -->
+<section id="s9">
+  <h2 class="sec-title">9. 强化学习训练数据构建（RL 路径）</h2>
+
+  <p>RL 路径不需要完整轨迹，而是需要能验证的任务 + 奖励信号。</p>
+
+  <h3 class="sub-title">9.1 RL 数据结构要求</h3>
+  <div class="card accent-border">
+    <pre>rl_task/
+├── prompt.md           # 任务描述
+├── Dockerfile          # 执行环境（必须可重现）
+├── tests.py            # 验证测试（程序化 reward 来源）
+└── metadata.json       # 难度等级、技能标签</pre>
+  </div>
+
+  <h3 class="sub-title">9.2 混合奖励信号设计（参考 Terminal-Bench-RL）</h3>
+  <table>
+    <tr><th>奖励类型</th><th>权重</th><th>说明</th></tr>
+    <tr><td>单元测试验证（Answer Verification）</td><td>65%</td><td>运行 tests.py，基于测试通过率</td></tr>
+    <tr><td>LLM-as-Judge</td><td>35%</td><td>评估过程质量、代码风格、错误处理</td></tr>
+  </table>
+
+  <h3 class="sub-title">9.3 奖励函数实现</h3>
+  <pre><code class="python">def compute_reward(trajectory, task):
+    """
+    混合奖励函数
+    """
+    # 1. 程序化验证奖励（主要信号）
+    test_result = run_tests_in_docker(
+        container=task.dockerfile,
+        tests=task.tests_py,
+        trajectory=trajectory
+    )
+    test_reward = test_result.weighted_pass_rate  # [0, 1]
+    
+    # 2. LLM Judge 奖励（辅助信号）
+    judge_score = llm_judge(
+        task_prompt=task.prompt,
+        trajectory=trajectory,
+        criteria=[
+            "是否有清晰的分析计划",
+            "命令是否简洁高效",
+            "是否正确处理错误",
+            "是否达到任务目标"
+        ]
+    )  # [0, 1]
+    
+    # 3. 合并
+    final_reward = 0.65 * test_reward + 0.35 * judge_score
+    
+    # 4. 步数惩罚（鼓励高效解法）
+    step_penalty = max(0, (len(trajectory) - 20) * 0.01)
+    
+    return max(0, final_reward - step_penalty)</code></pre>
+
+  <h3 class="sub-title">9.4 RL 训练框架选型</h3>
+  <table>
+    <tr><th>框架</th><th>算法</th><th>适用规模</th><th>特点</th></tr>
+    <tr><td>rLLM (UC Berkeley)</td><td>GRPO</td><td>8B-32B</td><td>专为长 horizon 设计，支持多节点</td></tr>
+    <tr><td>OpenRLHF</td><td>PPO / GRPO</td><td>7B-70B</td><td>工业级，生产稳定</td></tr>
+    <tr><td>veRL</td><td>PPO / GRPO</td><td>7B-72B</td><td>高效，支持 Ray</td></tr>
+    <tr><td>TRL (HuggingFace)</td><td>PPO / DPO</td><td>7B-13B</td><td>易用性高，适合快速实验</td></tr>
+  </table>
+
+  <div class="tip-box">
+    <strong>💡 关键挑战：</strong>长 horizon RL（30+ 步）的训练稳定性是核心难点。GRPO 相比 PPO 在长序列上更稳定。Terminal-Bench-RL 项目提供了完整的 GRPO 基础设施，支持从 2×A100 扩展到 32×H100。
+  </div>
+</section>
+
+<!-- =================== S10 =================== -->
+<section id="s10">
+  <h2 class="sec-title">10. 训练策略：课程学习与数据配比</h2>
+
+  <h3 class="sub-title">10.1 课程学习（Curriculum Learning）</h3>
+  <p>按照难度逐步增加训练数据复杂度：</p>
+  <div class="card">
+    <pre>Phase 1 (Warm-up):   Easy tasks (60%)  → 建立基础终端能力
+Phase 2 (Core):      Mixed (40E/60M)   → 扩展多步操作能力  
+Phase 3 (Advanced):  Hard tasks (50%)  → 解锁复杂工作流</pre>
+  </div>
+
+  <h3 class="sub-title">10.2 推荐数据配比（基于 NVIDIA 实验结论）</h3>
+  <table>
+    <tr><th>数据来源</th><th>比例</th><th>规模（参考）</th></tr>
+    <tr><td>Dataset Adapters（代码+SWE）</td><td>~62%</td><td>~226k</td></tr>
+    <tr><td>Skill-Based 合成任务</td><td>~38%</td><td>~140k</td></tr>
+    <tr><td>错误纠正轨迹（TermiGen 风格）</td><td>适量混入</td><td>~10-20%</td></tr>
+  </table>
+
+  <h3 class="sub-title">10.3 长上下文训练</h3>
+  <ul>
+    <li>大部分终端任务轨迹超过 8k tokens</li>
+    <li>建议 context length 至少 32k，推荐 64k</li>
+    <li>使用 Rope scaling / Yarn 扩展上下文窗口</li>
+    <li>长上下文数据与短上下文数据混合比例约 3:7</li>
+  </ul>
+
+  <h3 class="sub-title">10.4 Scaling 规律</h3>
+  <div class="tip-box">
+    <strong>📈 NVIDIA 实验发现：</strong>数据量从 10k 扩展到 366k，性能持续提升且未见明显饱和。在 32B 规模，数据量翻倍带来约 3-5% 绝对性能提升（Terminal-Bench 2.0）。
+  </div>
+</section>
+
+<!-- =================== S11 =================== -->
+<section id="s11">
+  <h2 class="sec-title">11. 开源资源与复用指南</h2>
+
+  <table>
+    <tr><th>资源</th><th>地址</th><th>用途</th></tr>
+    <tr><td>Terminal-Bench 官方仓库</td><td><code>github.com/laude-institute/terminal-bench</code></td><td>基准任务 + 适配器参考</td></tr>
+    <tr><td>Nemotron-Terminal-Corpus</td><td><code>huggingface.co/datasets/nvidia/Nemotron-Terminal-Corpus</code></td><td>366k 高质量 SFT 轨迹</td></tr>
+    <tr><td>Nemotron-Terminal 模型</td><td><code>huggingface.co/collections/nvidia/nemotron-terminal</code></td><td>8B/14B/32B 微调基线</td></tr>
+    <tr><td>TermiGen 环境数据</td><td><code>github.com/ucsb-mlsec/terminal-bench-env</code></td><td>高保真 Docker 环境</td></tr>
+    <tr><td>tbench-agentic-pipeline</td><td><code>github.com/Danau5tin/tbench-agentic-data-pipeline</code></td><td>多智能体生成系统</td></tr>
+    <tr><td>Terminal-Bench-RL</td><td><code>github.com/Danau5tin/terminal-bench-rl</code></td><td>GRPO RL 训练基础设施</td></tr>
+  </table>
+
+  <div class="tip-box">
+    <strong>🚀 快速启动建议：</strong>直接使用 Nemotron-Terminal-Corpus 作为 SFT 数据起点，基于 Qwen3-8B/14B 微调，可在 8×A100 内完成训练，Terminal-Bench 2.0 预期可达 13-20%。
+  </div>
+</section>
+
+<!-- =================== S12 =================== -->
+<section id="s12">
+  <h2 class="sec-title">12. 工程实施路线图</h2>
+
+  <table>
+    <tr><th>阶段</th><th>时间</th><th>目标</th><th>关键交付物</th></tr>
+    <tr>
+      <td><strong>Phase 0</strong><br/>环境搭建</td>
+      <td>Week 1</td>
+      <td>基础设施就绪</td>
+      <td>Docker 执行环境、Terminal-Bench 评测复现、Terminus 2 集成</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 1</strong><br/>Adapter 数据</td>
+      <td>Week 2-3</td>
+      <td>10k+ SFT 样本</td>
+      <td>2-3 个 Adapter（代码+SWE），基础过滤流水线</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 2</strong><br/>合成数据</td>
+      <td>Week 3-5</td>
+      <td>5k+ 合成任务</td>
+      <td>Skill Taxonomy、任务生成 Prompt、Docker 验证循环</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 3</strong><br/>轨迹采集</td>
+      <td>Week 5-7</td>
+      <td>50k+ 轨迹</td>
+      <td>并行 Agent Rollout、Rejection Sampling、错误轨迹</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 4</strong><br/>SFT 训练</td>
+      <td>Week 7-8</td>
+      <td>首个 SFT 基线</td>
+      <td>Qwen3-8B/14B SFT、Terminal-Bench 2.0 评测</td>
+    </tr>
+    <tr>
+      <td><strong>Phase 5</strong><br/>RL 提升</td>
+      <td>Week 9-12</td>
+      <td>RL 进一步提升</td>
+      <td>GRPO 训练、混合奖励信号、扩展至 32B</td>
+    </tr>
+  </table>
+</section>
+
+<div class="hr"></div>
+
+<!-- =================== APPENDIX =================== -->
+<section id="appendix">
+  <h2 class="sec-title">附录：可用 Prompt 模板</h2>
+
+  <!-- A1 -->
+  <div class="appendix-block">
+    <h4>A1. Dataset Adapter — Prompt 包装模板</h4>
+    <span class="prompt-label">System Prompt</span>
+    <pre>You are an expert at converting programming problems into terminal-based tasks.
+Given a coding problem, you must:
+1. Reframe it as a terminal task that requires executing commands in a Linux environment
+2. Create a Dockerfile that sets up the environment with necessary dependencies
+3. Create pytest tests that verify the solution is correct
+4. Ensure the task requires actual terminal interaction (file creation, compilation, execution, etc.)
+
+Output format:
+&lt;prompt&gt;
+[1-3 sentence task description in natural language]
+&lt;/prompt&gt;
+
+&lt;dockerfile&gt;
+FROM ubuntu:24.04
+RUN apt-get update && apt-get install -y [dependencies]
+WORKDIR /workspace
+[environment setup]
+&lt;/dockerfile&gt;
+
+&lt;tests&gt;
+import pytest
+# test weights must sum to 1.0
+def test_main_functionality():  # weight: 0.6
+    ...
+def test_edge_cases():  # weight: 0.4
+    ...
+&lt;/tests&gt;</pre>
+    <span class="prompt-label">User Prompt</span>
+    <pre>Convert the following programming problem into a terminal task:
+
+Problem: {original_problem}
+Original Tests: {original_tests}
+Language: {language}
+Difficulty: {difficulty}
+
+Requirements:
+- The task should require installing dependencies, writing code, and running it
+- Tests should check the final state of files/processes, not just function output
+- The Dockerfile should pre-install base dependencies but NOT the solution code</pre>
+  </div>
+
+  <!-- A2 -->
+  <div class="appendix-block">
+    <h4>A2. Skill-Based 合成任务生成 Prompt</h4>
+    <span class="prompt-label">Phase 1 — 创意头脑风暴</span>
+    <pre>You are generating diverse terminal task ideas for training AI agents.
+
+Target skill: {skill_name}
+Skill description: {skill_description}
+Difficulty level: {difficulty}  # easy / medium / hard
+
+Generate {N} creative and diverse task ideas that:
+- Primarily test the target skill
+- Are realistic scenarios a developer/sysadmin might encounter
+- Require terminal interaction to solve
+- Have clear, verifiable success criteria
+
+For each idea, provide:
+- Title (5-10 words)
+- Scenario (2-3 sentences describing the context)
+- Core challenge (what skill/knowledge is being tested)
+- Verification approach (how to check if solved)
+
+Output as JSON array. Be creative and vary the scenarios significantly.</pre>
+    <span class="prompt-label">Phase 2 — 细化标准过滤</span>
+    <pre>Review these task ideas and select the {K} best ones based on:
+1. Technical accuracy and feasibility
+2. Clear verification criteria (can be automated with pytest)
+3. Appropriate difficulty for the target level
+4. Diversity from each other
+5. Educational value (tests genuine terminal skills)
+
+Reject ideas that:
+- Require internet access
+- Need GUI interaction
+- Are too similar to each other
+- Cannot be verified programmatically
+
+Selected ideas: {selected_ideas}</pre>
+  </div>
+
+  <!-- A3 -->
+  <div class="appendix-block">
+    <h4>A3. Dockerfile + 测试套件生成 Prompt</h4>
+    <span class="prompt-label">System Prompt</span>
+    <pre>You are an expert DevOps engineer creating Docker environments for coding challenges.
+Create a complete, reproducible Docker environment for a terminal task.
+
+Requirements:
+- Base image: ubuntu:24.04 (preferred) or specific if needed
+- Pre-install all dependencies the agent will need
+- Set up initial state (broken configs, partial code, test data, etc.)
+- Do NOT include the solution
+- The initial state should make tests FAIL
+- After the agent's correct intervention, tests should PASS</pre>
+    <span class="prompt-label">User Prompt</span>
+    <pre>Task: {task_prompt}
+Core challenge: {core_challenge}
+Required skills: {skills}
+
+Create:
+1. Dockerfile that sets up the environment
+2. Any initial files needed (with appropriate issues/incompleteness)
+3. pytest test suite (tests.py) with weighted tests summing to 1.0
+4. Brief solution description (for validation, not included in training)
+
+Validation checklist:
+- [ ] Docker builds successfully
+- [ ] Tests FAIL before intervention
+- [ ] Solution makes all tests PASS
+- [ ] All dependencies are installed in Docker
+- [ ] Test weights sum to exactly 1.0</pre>
+  </div>
+
+  <!-- A4 -->
+  <div class="appendix-block">
+    <h4>A4. Terminus 2 风格 Agent System Prompt（轨迹采集用）</h4>
+    <span class="prompt-label">System Prompt（训练数据采集 Agent）</span>
+    <pre>You are an expert terminal agent. You will be given tasks to complete in a Linux terminal environment.
+
+At each step, you will receive the current terminal output and must respond with a JSON object:
+{
+  "analysis": "What you observe about the current state",
+  "plan": "What you plan to do next and why",
+  "commands": ["command1", "command2"],  // commands to execute
+  "task_complete": false  // set to true when done
+}
+
+Guidelines:
+- Analyze the output carefully before acting
+- Plan efficient command sequences
+- Handle errors gracefully and try alternative approaches
+- Use appropriate tools: pip, apt, git, python, bash, etc.
+- Verify your work before marking task_complete
+- Be concise but thorough in analysis
+- Prefer non-destructive operations when exploring
+
+You have access to a full Ubuntu 24.04 environment with internet access disabled.
+The task is complete when all verification tests pass.</pre>
+  </div>
+
+  <!-- A5 -->
+  <div class="appendix-block">
+    <h4>A5. TermiGen 风格 Generator-Critic 错误注入 Prompt</h4>
+    <span class="prompt-label">Error Injection Prompt（Critic）</span>
+    <pre>You are simulating a realistic error in a terminal session for training purposes.
+
+Current trajectory step: {step_number}
+Previous command: {last_command}
+Expected output: {expected_output}
+Error type to inject: {error_type}
+
+Error types and their realistic manifestations:
+- dependency_conflict: "ERROR: pip's dependency resolver does not currently take into account all the packages..."
+- permission_denied: "Permission denied: '/etc/nginx/nginx.conf'"
+- module_not_found: "ModuleNotFoundError: No module named '{module}'"
+- syntax_error: "SyntaxError: invalid syntax (file.py, line {n})"
+- port_in_use: "OSError: [Errno 98] Address already in use"
+- file_not_found: "FileNotFoundError: [Errno 2] No such file or directory: '{path}'"
+
+Generate a realistic error output that:
+1. Matches the error_type
+2. Is contextually appropriate for the current task
+3. Contains enough information for the agent to diagnose and fix it
+
+Return ONLY the error output text, no explanation.</pre>
+    <span class="prompt-label">Recovery Prompt（Generator after error injection）</span>
+    <pre>You encountered the following error:
+{injected_error}
+
+Diagnose the error and provide a recovery plan. Then execute the necessary commands to fix the issue and continue with the original task.
+
+Your response format:
+{
+  "analysis": "Root cause analysis of the error",
+  "diagnosis": "What specifically went wrong",
+  "recovery_plan": "Steps to fix and continue",
+  "commands": ["fix_command_1", "fix_command_2", "continue_command"],
+  "task_complete": false
+}</pre>
+  </div>
+
+  <!-- A6 -->
+  <div class="appendix-block">
+    <h4>A6. LLM-as-Judge 奖励评估 Prompt</h4>
+    <span class="prompt-label">Judge Prompt（RL 奖励信号）</span>
+    <pre>You are evaluating the quality of an AI agent's solution to a terminal task.
+
+Task: {task_prompt}
+Agent Trajectory: {trajectory}
+Final State: {final_terminal_output}
+Tests Passed: {test_results}
+
+Evaluate on the following criteria (score 0-10 each):
+
+1. **Plan Quality** (0-10): Did the agent have a clear, logical plan?
+2. **Command Efficiency** (0-10): Were commands concise and non-redundant?
+3. **Error Handling** (0-10): Did the agent handle errors gracefully?
+4. **Task Completion** (0-10): Was the task goal fully achieved?
+
+For each criterion, provide:
+- Score (0-10)
+- Brief justification (1 sentence)
+
+Output as JSON:
+{
+  "plan_quality": {"score": X, "reason": "..."},
+  "command_efficiency": {"score": X, "reason": "..."},
+  "error_handling": {"score": X, "reason": "..."},
+  "task_completion": {"score": X, "reason": "..."},
+  "overall_score": X,  // weighted average: 0.2 + 0.2 + 0.2 + 0.4
+  "summary": "One sentence overall assessment"
+}</pre>
+  </div>
+
+  <!-- A7 -->
+  <div class="appendix-block">
+    <h4>A7. Idea Agent — 种子扩展 Prompt（多智能体流水线）</h4>
+    <span class="prompt-label">Idea Generation Agent</span>
+    <pre>You are a creative AI tasked with generating training data variations for terminal agents.
+
+Seed task: {seed_task}
+Core skills demonstrated: {core_skills}
+Target domain: {target_domain}
+
+Generate {multiplier} diverse variations of this task that:
+1. Test the same core skills in different scenarios
+2. Vary in: technology stack, problem complexity, domain context
+3. Are all solvable in a terminal environment
+4. Have clear, automatable verification criteria
+
+Variation strategies:
+- Change the programming language or framework
+- Change the domain (web → data science → ML → systems)
+- Increase/decrease complexity by adding/removing requirements
+- Change the error/bug type to diagnose and fix
+- Replace the tool (nginx → apache, mysql → postgres, etc.)
+
+Output: Array of {multiplier} task specifications, each with:
+{
+  "title": "...",
+  "scenario": "...",
+  "core_challenge": "...",
+  "technologies": ["..."],
+  "estimated_steps": N,
+  "difficulty": "easy|medium|hard"
+}
+
+IMPORTANT: Brainstorm freely first, then apply quality filters. Maximize diversity.</pre>
+  </div>
+
+</section>
+
+</main>
+
+<footer>
+  <p>基于 Terminal-Bench 社区最新研究整理 · arXiv:2602.21193 (NVIDIA) · arXiv:2602.07274 (TermiGen) · Terminal-Bench-RL</p>
+  <p style="margin-top:6px">数据集：<code>nvidia/Nemotron-Terminal-Corpus</code> (366k SFT) · 基准：Terminal-Bench 2.0 · 2026-02-28</p>
+</footer>
+
+</body>
+</html>

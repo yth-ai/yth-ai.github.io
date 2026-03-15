@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第8章 能力增强数据 · 数据珠玑</title>
+<style>
+  :root { --primary:#1a3a5c; --accent:#2e7dbe; --light-bg:#f5f8fc; --text:#2c3e50; --muted:#7f8c9a; --border:#d0dce8; --highlight:#fff8e1; --green-bg:#f0faf4; --green-border:#68c98a; --purple-bg:#f5f0ff; --purple-border:#9b59b6; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Georgia','Noto Serif SC',serif; background:#fff; color:var(--text); line-height:1.9; font-size:17px; }
+  .book-header { background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 60%,#2e5f8a 100%); color:#fff; padding:40px 5%; text-align:center; }
+  .book-title { font-size:1.8em; letter-spacing:0.1em; }
+  .book-subtitle { font-size:0.95em; color:#a8c4dc; margin-top:6px; }
+  .chapter-header { padding:48px 5% 32px; border-bottom:2px solid var(--border); background:var(--light-bg); }
+  .chapter-label { color:var(--accent); font-size:0.85em; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; font-family:sans-serif; }
+  .chapter-title { font-size:2.2em; color:var(--primary); line-height:1.3; }
+  .chapter-intro { font-size:1.05em; color:#445; margin-top:16px; max-width:680px; font-style:italic; }
+  .main-content { max-width:860px; margin:0 auto; padding:40px 5%; }
+  h2 { font-size:1.5em; color:var(--primary); margin:52px 0 16px; padding-bottom:8px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:1.15em; color:#1a5080; margin:32px 0 12px; }
+  p { margin-bottom:1.2em; }
+  ul,ol { margin:12px 0 16px 24px; line-height:2; }
+  blockquote { border-left:4px solid var(--accent); background:var(--light-bg); padding:16px 24px; margin:24px 0; font-style:italic; color:#445566; border-radius:0 6px 6px 0; }
+  .highlight-box { background:var(--highlight); border:1px solid #f0d060; border-radius:6px; padding:20px 24px; margin:24px 0; }
+  .highlight-box strong { color:#8b6914; }
+  .info-box { background:var(--light-bg); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .info-box h4 { color:var(--accent); margin-bottom:8px; font-family:sans-serif; }
+  .success-box { background:var(--green-bg); border:1px solid var(--green-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .purple-box { background:var(--purple-bg); border:1px solid var(--purple-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  table { width:100%; border-collapse:collapse; margin:24px 0; font-family:sans-serif; font-size:0.88em; }
+  th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--light-bg); }
+  .formula-box { background:#f8f4ff; border:1px solid #c9b8f0; border-radius:6px; padding:16px 24px; margin:20px 0; font-family:'Courier New',monospace; font-size:0.92em; color:#3d1f7a; }
+  .code-block { background:#1e2a3a; color:#e8f0f8; padding:18px 22px; border-radius:6px; margin:16px 0; font-family:'Courier New',monospace; font-size:0.88em; line-height:1.7; overflow-x:auto; }
+  .code-block .comment { color:#6a9955; }
+  .code-block .keyword { color:#569cd6; }
+  .footnote { font-size:0.82em; color:var(--muted); font-family:sans-serif; border-top:1px solid var(--border); margin-top:40px; padding-top:16px; }
+  .nav-bar { border-top:1px solid var(--border); padding:24px 5%; display:flex; justify-content:space-between; font-family:sans-serif; font-size:0.9em; }
+  .nav-bar a { color:var(--accent); text-decoration:none; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第二部分：中训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 8 · Capability Enhancement Data</div>
+  <div class="chapter-title">第8章 能力增强数据</div>
+  <div class="chapter-intro">面向数学推理、长上下文、代码和多语言的专项能力数据构建——让模型在特定维度上突破通用预训练的能力天花板。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>8.1 数学与推理能力的专项训练数据</h2>
+
+  <p>数学推理被广泛视为衡量 LLM 通用推理能力的"金标准"。从 GPT-3 在 GSM8K 上接近随机的表现，到 GPT-4/Claude 3/Gemini Ultra 接近完美的解题能力，数学能力的飞跃背后，有着数据策略的根本性变革。</p>
+
+  <h3>数学数据的类型层次</h3>
+
+  <p>数学训练数据可以按复杂度分为四个层次：</p>
+
+  <table>
+    <thead><tr><th>层次</th><th>数据类型</th><th>代表数据集</th><th>能力培养目标</th></tr></thead>
+    <tbody>
+      <tr><td>L1</td><td>数学文本（教材、百科）</td><td>ArXiv、Wikipedia 数学页面</td><td>数学概念与术语理解</td></tr>
+      <tr><td>L2</td><td>数学题目+答案</td><td>GSM8K、MATH、AMC/AIME 题库</td><td>基础解题能力</td></tr>
+      <tr><td>L3</td><td>题目+完整推理链（CoT）</td><td>NuminaMath、MetaMath</td><td>分步推理能力</td></tr>
+      <tr><td>L4</td><td>题目+验证过程+错误分析</td><td>DeepSeek-R1 生成数据、OpenAI o1（推测）</td><td>自我验证与纠错</td></tr>
+    </tbody>
+  </table>
+
+  <h3>合成数学数据的主要范式</h3>
+
+  <p><strong>MetaMath（Yu et al., 2023）</strong>：对 GSM8K 和 MATH 中的题目进行多维度改写（问题重述、答案增强、逆向问题生成），将原始 ~15K 题扩展到 395K 条训练数据。在 7B 模型上，MetaMath 数据使 GSM8K 准确率从约 50% 提升至 66.5%，证明了通过数据扩充进行数学能力增强的有效性。</p>
+
+  <p><strong>NuminaMath（2024）</strong>：收集和整理来自 AMC、AIME、奥林匹克数学竞赛、中国高考等高质量竞赛题，配合完整的 CoT 解题过程，总量约 860K 道题。作为 2024 年 AIMO Progress Prize 竞赛中多个冠军方案的训练数据，是目前公开的高质量数学数据集中最具竞争力的之一。</p>
+
+  <p><strong>过程奖励模型（PRM）数据</strong>：不仅对最终答案打标，而是对每一步推理过程给出正确/错误的标注。代表工作是 OpenAI 发布的 PRM800K（800K 步级标注），以及 Math-Shepherd（基于自动验证的大规模步级标注）。过程监督被认为是突破复杂数学推理能力天花板的关键数据策略。</p>
+
+  <div class="formula-box">
+    <strong>过程奖励 vs 结果奖励（训练信号对比）：</strong><br>
+    结果奖励（ORM）：仅对最终答案正确与否给 +1/-1<br>
+    过程奖励（PRM）：对每个推理步骤给 {+1, -1, 0} 的评分<br><br>
+    PRM 优势：稀疏奖励问题得到缓解，模型能从中间步骤错误中学习<br>
+    PRM 难点：需要人工或强模型对每个步骤进行正确性判断，成本高
+  </div>
+
+  <h2>8.2 长上下文能力的数据构建</h2>
+
+  <p>标准预训练数据通常将文本截断为固定长度（如 2K 或 4K Token），导致模型缺乏处理长文档的能力。长上下文中训练通过专门的数据构建策略，将模型的有效上下文窗口从数千 Token 扩展至十万乃至百万 Token。</p>
+
+  <h3>长上下文预训练的数据要求</h3>
+
+  <ul>
+    <li><strong>天然长文档</strong>：书籍全章、长篇学术论文、法律合同、代码仓库等，避免简单拼接造成的语义不连贯</li>
+    <li><strong>多跳推理数据</strong>：需要跨越多个文档段落、整合多个信息片段才能回答的问题，如长文档问答、多文档摘要</li>
+    <li><strong>位置编码训练数据</strong>：为确保模型在长距离位置上的注意力机制有效，训练数据应包含各种长度分布的样本，不能仅有短文本</li>
+  </ul>
+
+  <h3>RoPE 扩展与数据配合</h3>
+
+  <p>长上下文训练通常伴随着位置编码（Position Embedding）的修改。LongRoPE、YaRN、Positional Interpolation（PI）等方法通过修改 RoPE 的频率参数，将位置编码外推到更长的序列。但仅修改位置编码还不够——必须用足够长的上下文数据进行中训练，才能激活模型在长距离上的注意力能力。</p>
+
+  <div class="info-box">
+    <h4>LongLLaMA 与 LongLoRA 的数据策略</h4>
+    <p><strong>LongLoRA（2023）</strong>：仅需少量长文本数据（约 1B Token）+LoRA 参数高效微调，将 LLaMA-2 的上下文从 4K 扩展到 100K。关键发现：在长上下文中训练中，不需要所有序列都是目标最大长度——混合不同长度（4K、8K、32K、100K）的数据，训练效率更高。</p>
+    <p><strong>数据来源建议</strong>：书籍数据（GutenbergProject、Books3 残余）、长篇新闻文章、代码仓库拼接、维基百科全文，这些来源能提供天然连贯的长文档，避免"拼接文档带来的语义噪声"。</p>
+  </div>
+
+  <h2>8.3 代码能力中训练：Fill-in-the-Middle 与仓库级代码</h2>
+
+  <p>代码中训练除了第2章介绍的标准代码预训练外，还有两种高价值的专项数据构建策略：Fill-in-the-Middle（FIM）和仓库级代码（Repository-level Code）。</p>
+
+  <h3>Fill-in-the-Middle（FIM）</h3>
+
+  <p>标准的自回归语言建模只训练模型从左到右生成文本，无法处理"代码补全"（光标中间填写代码）的场景。FIM 通过重新排列训练序列解决这一问题：</p>
+
+  <div class="code-block">
+<span class="comment"># 原始代码：</span>
+<span class="keyword">def</span> calculate_area(radius):
+    pi = 3.14159
+    area = pi * radius * radius
+    <span class="keyword">return</span> area
+
+<span class="comment"># FIM 变换后的训练格式（PSM：Prefix-Suffix-Middle）：</span>
+&lt;PRE&gt; def calculate_area(radius):
+    pi = 3.14159 &lt;SUF&gt;
+    return area &lt;MID&gt; area = pi * radius * radius
+  </div>
+
+  <p>Bavarian et al.（2022）的研究表明，用约 50% FIM 格式数据训练，可以在不损失自回归生成能力（Prefix completion）的同时，大幅提升代码补全能力。CodeLlama、StarCoder2 等主流代码模型均采用了 FIM 训练策略。</p>
+
+  <h3>仓库级代码（Repository-level Code）</h3>
+
+  <p>单文件代码训练让模型看到的是代码的"碎片"，缺乏跨文件的依赖关系理解。仓库级代码数据将整个代码仓库的文件按依赖关系（import 顺序）拼接，使模型学习完整的项目结构和跨文件调用关系。</p>
+
+  <div class="success-box">
+    <p><strong>RepoCoder 与 DeepSeek-Coder 的实验（2023）：</strong>使用仓库级代码训练的模型，在"跨文件代码补全"任务（CrossCodeEval）上比单文件训练的同规模模型提升 15-25%，在实际工程场景（修改已有代码库中的 bug）中表现更接近真实开发者的行为模式。</p>
+  </div>
+
+  <h3>代码执行反馈数据</h3>
+
+  <p>最新趋势是引入"代码执行反馈"（Execution Feedback）数据——将模型生成的代码实际运行，根据测试用例通过情况构建训练信号。代表工作包括 CodeRL、PPOCoder、RLTF 等。这一策略将在后训练章节详细讨论，但在中训练阶段，基于执行反馈的拒绝采样（Rejection Sampling）已被证明是提升代码正确率的有效手段。</p>
+
+  <h2>8.4 多语言能力的持续增强</h2>
+
+  <p>即使预训练阶段已包含多语言数据，许多低资源语言的能力仍远未达到英语水平。中训练阶段可以针对特定语言进行专项能力增强，同时借助跨语言迁移加速低资源语言的学习。</p>
+
+  <h3>跨语言迁移的工程利用</h3>
+
+  <p>多项研究表明，在预训练基础上，即使以较少量（数十亿 Token）的目标语言数据进行中训练，也能显著提升该语言的能力——因为模型已经通过英语数据学习了大量通用知识，中训练只需"激活"这些知识与目标语言的映射关系。</p>
+
+  <p><strong>平行语料的价值</strong>：高质量的平行语料（同一内容的多语言版本）在多语言中训练中具有极高价值，帮助模型建立跨语言语义对齐。来源包括：OPUS 平行语料库、维基百科多语言版本、联合国文件等。</p>
+
+  <div class="purple-box">
+    <p><strong>Chinese-LLaMA 系列的工程实践（Cui et al., 2023）：</strong>在 LLaMA（英语为主）基础上，仅使用约 20B Token 的中文数据（中文维基、C4-zh、百度百科等）进行中训练，并扩展词表（加入中文字符）以提升 tokenization 效率，最终在中文理解基准上从接近随机提升至接近 BELLE、ChatGLM 等专项中文模型的水平。这证明了跨语言迁移的巨大潜力——英语预训练的通用知识可以高效地迁移到中文能力上。</p>
+  </div>
+
+  <h3>多语言能力增强的数据优先级</h3>
+
+  <p>在有限资源下，多语言中训练数据应优先覆盖：</p>
+  <ol>
+    <li><strong>高质量百科数据</strong>：维基百科、Baidu Baike 等，知识密度高</li>
+    <li><strong>新闻与正式文本</strong>：语言规范，减少口语化噪声</li>
+    <li><strong>与英语的平行语料</strong>：最大化跨语言知识迁移</li>
+    <li><strong>目标语言的指令数据前驱</strong>：包含少量问答、摘要等任务型数据，为后续 SFT 预热</li>
+  </ol>
+
+  <div class="footnote">
+    <p><strong>参考文献：</strong>Yu et al. (2023) "MetaMath"；Lightman et al. (2023) "Let's Verify Step by Step (PRM800K)"；Bavarian et al. (2022) "Fill-in-the-Middle"；Guo et al. (2024) "DeepSeek-Coder"；Chen et al. (2023) "LongLoRA"；Cui et al. (2023) "Efficient and Effective Text Encoding for Chinese LLaMA and Alpaca"；Lu et al. (2023) "NuminaMath"；Wang et al. (2024) "Math-Shepherd"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="07_第七章_领域适配数据构建.html">← 第7章</a>
+  <a href="09_第九章_知识更新与时效性.html">第9章 知识更新与时效性 →</a>
+</div>
+
+</body>
+</html>

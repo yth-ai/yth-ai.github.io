@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第一章：Attention Is All You Need — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第一部分：播种（2017-2020）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第一章</div>
+  <h1 class="chapter-title">Attention Is All You Need</h1>
+  <div class="chapter-epigraph">
+    "我们只是想做一个更好的翻译系统。没有人想到这会变成现在这个样子。"
+    <cite>—— Noam Shazeer，Transformer作者之一，2021年回忆录</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#googlebrain">谷歌大脑的午后</a></li>
+      <li><a href="#rnn-problem">RNN的枷锁</a></li>
+      <li><a href="#attention">注意力机制的顿悟</a></li>
+      <li><a href="#paper">那篇论文</a></li>
+      <li><a href="#reaction">世界的反应：沉默</a></li>
+      <li><a href="#legacy">被低估的遗产</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="googlebrain">谷歌大脑的午后</h2>
+  <p>
+    2017年的春天，谷歌大脑（Google Brain）的一个会议室里，八个研究员正在争论一个问题：能不能把注意力机制做到极致，彻底扔掉循环神经网络？
+  </p>
+  <p>
+    这八个人后来都成了AI历史上最重要的人物之一。Ashish Vaswani、Noam Shazeer、Niki Parmar、Jakob Uszkoreit、Llion Jones、Aidan Gomez、Łukasz Kaiser、Illia Polosukhin——他们的名字被写进了一篇论文的作者栏，而这篇论文的标题，后来被无数人引用、膜拜、文身：<strong>Attention Is All You Need</strong>。
+  </p>
+  <p>
+    当时，这只是一个内部项目。目的很朴素：改进谷歌翻译的质量。机器翻译是NLP领域的"圣杯"之一，谷歌在这上面投入了巨大资源。但主流的方法——基于循环神经网络（RNN）和长短期记忆网络（LSTM）的序列到序列（Seq2Seq）模型——有一个让人头疼的问题：它们在处理长序列时，表现会急剧下降。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2014 年</div>
+    <div class="event">注意力机制的早期形态</div>
+    <div class="desc">Bahdanau等人在论文中首次将注意力机制（attention mechanism）引入Seq2Seq模型，但仍基于RNN框架。</div>
+  </div>
+
+  <h2 id="rnn-problem">RNN的枷锁</h2>
+  <p>
+    要理解这次革命，你得先理解被推翻的那个旧世界。
+  </p>
+  <p>
+    循环神经网络处理语言的方式，和人类阅读有几分相似：一个字一个字地读，把"记忆"藏在一个隐状态里，随着序列向前滚动。这个设计在1980年代提出时非常优雅，因为语言本来就是顺序的——你得先读"我"，才能知道后面的"爱"指向什么。
+  </p>
+  <p>
+    但顺序性带来了两个致命缺陷。第一，梯度消失：在反向传播训练时，长序列中的远程依赖关系很难被学习到，信息仿佛在时间中消散。LSTM通过引入"遗忘门"缓解了这个问题，但没有根本解决。第二，无法并行：因为每个时间步都依赖上一步的输出，训练时只能串行计算，既慢又贵。
+  </p>
+  <p>
+    这在深度学习大规模工业化的时代，是一个越来越难以接受的代价。GPU是并行计算的利器，但RNN的设计天然排斥并行。就像把赛跑运动员绑在一起串联奔跑，速度必然受制于最慢的那个。
+  </p>
+
+  <blockquote>
+    "当时大家都知道RNN不是最终答案，但没有人知道答案是什么。"
+    <cite>—— Illia Polosukhin，Transformer论文作者之一，后创立NEAR Protocol</cite>
+  </blockquote>
+
+  <h2 id="attention">注意力机制的顿悟</h2>
+  <p>
+    注意力机制的基本思想其实很直观：当你翻译一句话时，你不需要等读完整段才能开始翻译——你可以"注意"到当前词与整个序列中所有词的相关性，动态地调整权重。
+  </p>
+  <p>
+    Vaswani和同事们的关键想法是：如果注意力可以完全替代循环结构呢？如果我们把整个序列的所有词同时输入，让模型学会每个词应该"关注"哪些其他词，来理解上下文——这不就解决了并行化问题，同时保留了长程依赖的捕捉能力吗？
+  </p>
+  <p>
+    这就是"自注意力"（Self-Attention）的核心。每个词生成三个向量：Query（我在找什么）、Key（我是什么）、Value（我能提供什么）。通过Query和Key的点积，计算出这个词对所有其他词的注意力分数，然后用这个分数加权求和Value，得到新的表示。
+  </p>
+  <p>
+    看起来简单，但把这个机制叠加多头（Multi-Head Attention）、加上位置编码（Positional Encoding）、套上前馈网络（Feed-Forward Network）、再堆叠多层——他们发现，这个结构学到了一些令人惊讶的东西。它不只是翻译。它开始捕捉句子的深层结构、跨语言的语义对应、甚至某种语言的"世界模型"的雏形。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2017 年 6 月</div>
+    <div class="event">论文预印本发布</div>
+    <div class="desc">《Attention Is All You Need》在arXiv上发布，标志着Transformer架构的公开亮相。同年12月，在NeurIPS正式发表。</div>
+  </div>
+
+  <h2 id="paper">那篇论文</h2>
+  <p>
+    2017年6月12日，这篇论文出现在arXiv上。它的核心贡献是提出了一种全新的神经网络架构——Transformer——完全基于注意力机制，没有任何循环或卷积结构。
+  </p>
+  <p>
+    论文中的结果令人信服：在英德翻译和英法翻译的标准基准测试上，这个模型打破了当时的最高记录，而训练时间只需要之前最好模型的一小部分。更重要的是，它用漂亮的可视化图表展示了注意力机制确实学到了有意义的东西——句法关系、指代消解、跨句依赖……
+  </p>
+  <p>
+    这篇论文的写作风格也值得一提。相比很多学术论文的保守措辞，它的标题就是一个宣言——"注意力就是你所需要的一切"，带着一种几乎傲慢的自信。这种语气，配上扎实的实验结果，在学术圈内部激起了强烈反响。
+  </p>
+
+  <blockquote>
+    "那个标题是Noam（Shazeer）起的，我们当时还在讨论是不是太张扬了。但他说，就叫这个，让它清晰。"
+    <cite>—— Jakob Uszkoreit，Transformer论文作者，后创立Inceptive</cite>
+  </blockquote>
+
+  <h2 id="reaction">世界的反应：沉默</h2>
+  <p>
+    有趣的是，这篇论文发表时，世界的大多数人根本没有注意到它。
+  </p>
+  <p>
+    2017年的AI圈，深度学习已经火了好几年，ImageNet挑战赛上的突破、AlphaGo的壮举、自动驾驶的浪潮——每周都有令人兴奋的进展。一篇关于机器翻译架构改进的论文，即便获得了NeurIPS的最佳论文提名，也只是诸多重要工作之一。
+  </p>
+  <p>
+    主流媒体没有报道。硅谷的创业公司们没有立刻改变方向。大多数机器学习研究者读完这篇论文，觉得"不错，有意思"，然后继续自己的工作。
+  </p>
+  <p>
+    甚至论文的作者们自己，也没有意识到他们刚刚做了什么。Polosukhin很快离开谷歌去创业了；Shazeer在谷歌继续做了几年，后来去创业做了Character.ai；Vaswani也在谷歌待了一段时间后离开……
+  </p>
+  <p>
+    没有人在2017年预言，这篇论文会成为整个AI时代最重要的基础。没有人。
+  </p>
+
+  <h2 id="legacy">被低估的遗产</h2>
+  <p>
+    回头看，Transformer的真正革命性，在于它是一个几乎无限可扩展的框架。
+  </p>
+  <p>
+    RNN和LSTM，当你往里面堆参数时，很快就会遇到训练稳定性和计算效率的天花板。但Transformer的设计天然友好于规模化——你可以把层数堆得很深，可以把注意力头做得很多，可以在越来越大的数据上训练，而且全程可以高效地并行。
+  </p>
+  <p>
+    这个特性，在2017年没有人特别在意——因为当时的计算资源还没有大到足以验证它。但在接下来的几年里，随着GPU集群的扩张和数据的积累，有一群人开始问一个问题：如果我们用一个非常非常大的Transformer，在非常非常多的文本上训练，会发生什么？
+  </p>
+  <p>
+    这个问题，将在下一章找到它的第一个答案。
+  </p>
+
+  <div class="highlight-box">
+    🔍 <strong>Transformer的关键创新</strong>：自注意力（Self-Attention）+ 多头注意力（Multi-Head Attention）+ 位置编码（Positional Encoding）+ 残差连接（Residual Connection）。这四个组件的组合，构成了此后所有大语言模型的基础框架。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="00_序言.html" class="nav-btn">← 序言</a>
+  <a href="02_GPT1的安静诞生.html" class="nav-btn">第二章：GPT-1的安静诞生 →</a>
+</nav>
+
+</body>
+</html>

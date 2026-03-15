@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>大模型发展历程全景报告（2017-2025）</title>
+<style>
+:root {
+  --bg: #0d1117;
+  --bg2: #161b22;
+  --bg3: #21262d;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text2: #8b949e;
+  --openai: #10a37f;
+  --anthropic: #d4720c;
+  --google: #4285f4;
+  --meta: #0866ff;
+  --domestic: #9333ea;
+  --nvidia: #76b900;
+  --accent: #58a6ff;
+  --yellow: #f0c040;
+  --red: #f85149;
+  --green: #3fb950;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.7; }
+
+/* Sidebar */
+#sidebar {
+  position: fixed; left: 0; top: 0; width: 260px; height: 100vh;
+  background: var(--bg2); border-right: 1px solid var(--border);
+  overflow-y: auto; z-index: 100; padding: 20px 0;
+}
+#sidebar h2 { font-size: 13px; color: var(--text2); padding: 0 20px 10px; text-transform: uppercase; letter-spacing: 1px; }
+#sidebar a { display: block; padding: 6px 20px; color: var(--text2); text-decoration: none; font-size: 13px; border-left: 2px solid transparent; transition: all 0.2s; }
+#sidebar a:hover, #sidebar a.active { color: var(--accent); border-left-color: var(--accent); background: rgba(88,166,255,0.06); }
+#sidebar .sub { padding-left: 32px; font-size: 12px; }
+
+/* Main */
+#main { margin-left: 260px; padding: 40px 60px; max-width: 1100px; }
+
+h1 { font-size: 2.2em; background: linear-gradient(135deg, #58a6ff, #bc8cff, #ff7b72); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+h2 { font-size: 1.5em; color: var(--accent); margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid var(--border); }
+h3 { font-size: 1.15em; color: #bc8cff; margin: 24px 0 10px; }
+h4 { font-size: 1em; color: var(--yellow); margin: 18px 0 8px; }
+p { margin-bottom: 12px; color: var(--text); }
+ul, ol { margin: 8px 0 12px 20px; }
+li { margin-bottom: 6px; color: var(--text2); }
+li strong { color: var(--text); }
+
+/* Hero */
+.hero { background: linear-gradient(135deg, #0d1117 0%, #1a1f35 50%, #0d1117 100%); border: 1px solid var(--border); border-radius: 12px; padding: 40px; margin-bottom: 40px; text-align: center; }
+.hero p { color: var(--text2); font-size: 1.05em; max-width: 700px; margin: 12px auto 0; }
+
+/* Cards */
+.milestone { background: linear-gradient(135deg, rgba(88,166,255,0.1), rgba(188,140,255,0.1)); border: 1px solid rgba(88,166,255,0.3); border-radius: 10px; padding: 20px 24px; margin: 16px 0; }
+.milestone .date { font-size: 12px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+.milestone h4 { color: var(--text); margin: 4px 0 8px; font-size: 1.1em; }
+.insight { background: rgba(63,185,80,0.08); border-left: 3px solid var(--green); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 12px 0; }
+.warning { background: rgba(248,81,73,0.08); border-left: 3px solid var(--red); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 12px 0; }
+.tip { background: rgba(88,166,255,0.08); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 18px; margin: 12px 0; }
+
+/* Badges */
+.badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 11px; font-weight: 600; margin: 2px; }
+.b-openai { background: rgba(16,163,127,0.2); color: var(--openai); border: 1px solid var(--openai); }
+.b-anthropic { background: rgba(212,114,12,0.2); color: var(--anthropic); border: 1px solid var(--anthropic); }
+.b-google { background: rgba(66,133,244,0.2); color: var(--google); border: 1px solid var(--google); }
+.b-meta { background: rgba(8,102,255,0.2); color: var(--meta); border: 1px solid var(--meta); }
+.b-domestic { background: rgba(147,51,234,0.2); color: var(--domestic); border: 1px solid var(--domestic); }
+.b-nvidia { background: rgba(118,185,0,0.2); color: var(--nvidia); border: 1px solid var(--nvidia); }
+
+/* Table */
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); padding: 10px 14px; text-align: left; border: 1px solid var(--border); font-size: 12px; text-transform: uppercase; }
+td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text2); }
+tr:hover td { background: rgba(88,166,255,0.04); }
+td strong { color: var(--text); }
+
+/* Timeline */
+.timeline { position: relative; padding: 20px 0; }
+.timeline::before { content: ''; position: absolute; left: 20px; top: 0; bottom: 0; width: 2px; background: linear-gradient(to bottom, var(--accent), #bc8cff, var(--red)); }
+.tl-item { position: relative; padding: 0 0 28px 56px; }
+.tl-dot { position: absolute; left: 12px; top: 4px; width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--bg2); }
+.tl-date { font-size: 11px; color: var(--text2); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+.tl-title { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.tl-desc { font-size: 13px; color: var(--text2); line-height: 1.5; }
+
+/* Stats grid */
+.stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 20px 0; }
+.stat-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 20px; text-align: center; }
+.stat-num { font-size: 2em; font-weight: 700; color: var(--accent); }
+.stat-label { font-size: 12px; color: var(--text2); margin-top: 4px; }
+
+@media (max-width: 900px) {
+  #sidebar { display: none; }
+  #main { margin-left: 0; padding: 20px; }
+  .stat-grid { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <h2>目录导航</h2>
+  <a href="#summary">执行摘要</a>
+  <a href="#ch1">第一章：奠基时代 2017-2020</a>
+  <a href="#ch2">第二章：爆发前夜 2021-2022</a>
+  <a href="#ch3">第三章：ChatGPT 时刻 2022-2023</a>
+  <a href="#ch4">第四章：能力跃迁 2024上半年</a>
+  <a href="#ch5">第五章：推理模型革命 2024下半年</a>
+  <a href="#ch6">第六章：DeepSeek 冲击与 2025</a>
+  <a href="#ch7">第七章：重大行业事件</a>
+  <a href="#ch8">第八章：关键技术演进</a>
+  <a href="#ch9">第九章：展望 2025-2027</a>
+  <a href="#timeline">附录：大事记时间线</a>
+</nav>
+
+<div id="main">
+
+<div class="hero">
+  <h1>大模型发展历程全景报告</h1>
+  <p style="color:#bc8cff;font-size:1.1em;margin-top:8px;">2017 — 2025</p>
+  <p>从 Transformer 诞生到 AGI 边缘，记录这五年改变世界的技术跃迁。覆盖国内外主要模型版本、产品发布、行业事件与技术趋势。</p>
+</div>
+
+<div class="stat-grid">
+  <div class="stat-card"><div class="stat-num">8年</div><div class="stat-label">从 Transformer 到推理模型革命</div></div>
+  <div class="stat-card"><div class="stat-num">~100+</div><div class="stat-label">2023年国内发布的大模型数量</div></div>
+  <div class="stat-card"><div class="stat-num">10x/年</div><div class="stat-label">API 成本年均下降幅度</div></div>
+</div>
+
+<!-- ===== SUMMARY ===== -->
+<section id="summary">
+<h2>执行摘要</h2>
+<p>大模型的发展可以划分为几个清晰的转折点：</p>
+<ul>
+  <li><strong>2017</strong>：Transformer 架构确立，奠定一切基础</li>
+  <li><strong>2020</strong>：GPT-3 证明 Scaling Law，开启大模型时代</li>
+  <li><strong>2022.11</strong>：ChatGPT 发布，大模型走向大众，引爆全球 AI 热潮</li>
+  <li><strong>2023</strong>：开源生态爆发（LLaMA），国内百模大战</li>
+  <li><strong>2024.09</strong>：OpenAI o1 开创推理模型范式，Test-time Compute 崛起</li>
+  <li><strong>2025.01</strong>：DeepSeek-R1 以极低成本比肩 o1，冲击全球 AI 格局</li>
+</ul>
+<div class="insight">
+  <strong>核心洞察：</strong>大模型竞争已从"参数量竞赛"演变为"推理质量+成本效率"的多维竞争，开源与闭源的差距持续缩小，中国团队从追赶者变为同台竞技的参与者。
+</div>
+</section>
+
+<!-- ===== CH1 ===== -->
+<section id="ch1">
+<h2>第一章：奠基时代（2017-2020）</h2>
+
+<h3>1.1 Transformer 的诞生（2017）</h3>
+<p><span class="badge b-google">Google</span> 2017年6月，Google 发表 <strong>"Attention is All You Need"</strong>，提出 Transformer 架构。抛弃 RNN/LSTM 的顺序依赖，完全基于自注意力机制（Self-Attention），实现并行计算与长距离依赖建模。这篇论文截至2025年引用量超过10万次，是 AI 史上最重要的论文之一。</p>
+<div class="milestone">
+  <div class="date">2017.06</div>
+  <h4>Attention is All You Need</h4>
+  <p>Vaswani et al. (Google)，提出 Transformer，Multi-Head Attention + Position Encoding + Feed-Forward 的经典架构沿用至今。</p>
+</div>
+
+<h3>1.2 BERT 时代（2018-2019）</h3>
+<p><span class="badge b-google">Google</span> 2018年10月，Google 发布 <strong>BERT</strong>（Bidirectional Encoder Representations from Transformers），使用双向预训练在11项 NLP 任务上刷新 SOTA。BERT 的 MLM（Masked Language Modeling）和 NSP 预训练范式影响了后续数年的 NLP 研究。随后出现 RoBERTa（Facebook）、XLNet（CMU+Google）、ALBERT 等改进版本。</p>
+
+<h3>1.3 GPT 系列起步（2018-2020）</h3>
+<p><span class="badge b-openai">OpenAI</span> OpenAI 选择了与 BERT 截然不同的路线——自回归语言模型（GPT）：</p>
+<ul>
+  <li><strong>GPT-1（2018）</strong>：1.17亿参数，验证预训练+微调范式</li>
+  <li><strong>GPT-2（2019.02）</strong>：15亿参数，零样本能力惊艳，OpenAI 以"too dangerous to release"为由分阶段发布，引发广泛讨论</li>
+  <li><strong>GPT-3（2020.06）</strong>：<strong>1750亿参数</strong>，训练数据 570GB 文本，few-shot 学习能力震撼世界。API 发布后引爆开发者社区，奠定"大模型 = 通用智能基础"的认知</li>
+</ul>
+
+<h3>1.4 Scaling Law 的确立</h3>
+<p><span class="badge b-openai">OpenAI</span> 2020年，Kaplan et al. 发表 <strong>Scaling Laws for Neural Language Models</strong>，系统证明：模型性能随参数量、数据量、计算量的增加呈幂律提升。这一发现成为后续几年"大力出奇迹"的理论依据。2022年，DeepMind 的 <strong>Chinchilla</strong> 论文修正了最优计算配比——同等算力下，模型和数据应同比例增长，而非只追求参数量。</p>
+
+<h3>1.5 国内早期布局</h3>
+<p><span class="badge b-domestic">国内</span></p>
+<ul>
+  <li><strong>悟道 2.0（智源研究院，2021.06）</strong>：1.75万亿参数（MoE架构），宣称超越 GPT-3，引发广泛关注</li>
+  <li><strong>盘古 Alpha（华为，2021）</strong>：2000亿参数中文语言模型</li>
+  <li><strong>源 1.0（浪潮，2021）</strong>：2457亿参数</li>
+</ul>
+</section>
+
+<!-- ===== CH2 ===== -->
+<section id="ch2">
+<h2>第二章：爆发前夜（2021-2022）</h2>
+
+<h3>2.1 指令微调的突破</h3>
+<p><span class="badge b-openai">OpenAI</span> 2022年1月，OpenAI 发表 <strong>InstructGPT</strong>，将 RLHF（人类反馈强化学习）引入对齐训练。核心创新：通过人类偏好数据训练奖励模型，再用 PPO 优化语言模型，使其生成更符合人类期望的回复。这是 ChatGPT 的直接前身，也奠定了"RLHF = 对齐技术标准"的认知。</p>
+<p><span class="badge b-google">Google</span> 2021年，FLAN（Fine-tuned Language Net）证明指令微调可以大幅提升零样本泛化能力。</p>
+
+<h3>2.2 代码能力崛起</h3>
+<ul>
+  <li><strong>Codex（OpenAI，2021.08）</strong>：基于 GPT-3 在代码数据上微调，HumanEval 通过率 28.8%，成为 GitHub Copilot 的底层引擎</li>
+  <li><strong>AlphaCode（DeepMind，2022.02）</strong>：在竞赛编程中达到约 50% 参赛选手水平，引发轰动</li>
+</ul>
+
+<h3>2.3 多模态萌芽</h3>
+<ul>
+  <li><strong>CLIP（OpenAI，2021.01）</strong>：图文对比学习，奠定多模态理解基础</li>
+  <li><strong>DALL-E（2021.01）</strong>：文本生成图像，首次展示大模型创意生成能力</li>
+  <li><strong>DALL-E 2（2022.04）</strong>：质量大幅提升</li>
+  <li><strong>Stable Diffusion 开源（2022.08）</strong>：AI 生图民主化，引爆创作者社区</li>
+</ul>
+
+<h3>2.4 开源运动开始</h3>
+<p><span class="badge b-meta">Meta</span> <span class="badge b-domestic">开源</span></p>
+<ul>
+  <li><strong>OPT（Meta，2022.05）</strong>：175B 参数开源模型，与 GPT-3 对标</li>
+  <li><strong>BLOOM（BigScience，2022.07）</strong>：1760亿参数，46种语言，史上最大多语言开源模型</li>
+  <li><strong>EleutherAI 系列</strong>：GPT-Neo、GPT-J、GPT-NeoX，推动开源社区发展</li>
+</ul>
+</section>
+
+<!-- ===== CH3 ===== -->
+<section id="ch3">
+<h2>第三章：ChatGPT 时刻（2022.11-2023）</h2>
+
+<div class="milestone">
+  <div class="date">2022.11.30</div>
+  <h4>🚀 ChatGPT 震撼发布 <span class="badge b-openai">OpenAI</span></h4>
+  <p>5天达100万用户，2个月突破1亿月活——史上用户增长最快的消费级应用。技术本质是 InstructGPT + 对话格式，但极致的产品体验使普通大众第一次真实感受到 AI 的能力边界。</p>
+</div>
+
+<h3>3.1 GPT-4 与多模态（2023.03）</h3>
+<p><span class="badge b-openai">OpenAI</span> 2023年3月14日，GPT-4 发布。主要进展：</p>
+<ul>
+  <li>支持图像输入（多模态）</li>
+  <li>律师资格考试排名前10%，医学执照考试通过</li>
+  <li>MMLU 达 86.4%（GPT-3.5 为 70%）</li>
+  <li>上下文窗口扩展至 32K（后来 128K）</li>
+  <li>System Prompt 机制标准化</li>
+</ul>
+
+<h3>3.2 开源大爆发</h3>
+<p><span class="badge b-meta">Meta</span> LLaMA 系列引爆开源生态：</p>
+<ul>
+  <li><strong>LLaMA 1（2023.02）</strong>：7B/13B/33B/65B，泄露后引爆社区</li>
+  <li><strong>LLaMA 2（2023.07）</strong>：可商用授权，Meta 官方发布</li>
+  <li><strong>Alpaca（斯坦福）</strong>：52K 指令数据，600美元复刻 InstructGPT</li>
+  <li><strong>Vicuna（UC Berkeley）</strong>：LLaMA 微调，接近 ChatGPT 90% 性能</li>
+  <li><strong>Mistral 7B（2023.09）</strong>：Sliding Window Attention，7B 超越 LLaMA 2 13B</li>
+</ul>
+
+<h3>3.3 国内"百模大战"</h3>
+<p><span class="badge b-domestic">国内</span> 2023年是中国大模型元年，数百家公司争相发布：</p>
+<table>
+  <tr><th>模型</th><th>发布方</th><th>发布时间</th><th>特点</th></tr>
+  <tr><td><strong>文心一言</strong></td><td>百度</td><td>2023.03</td><td>首批国内 ChatGPT 竞品，发布会演示出错引争议</td></tr>
+  <tr><td><strong>通义千问</strong></td><td>阿里</td><td>2023.04</td><td>后续持续迭代，开源策略成功</td></tr>
+  <tr><td><strong>讯飞星火</strong></td><td>科大讯飞</td><td>2023.05</td><td>教育场景深耕</td></tr>
+  <tr><td><strong>ChatGLM-6B</strong></td><td>清华/智谱</td><td>2023.03</td><td>开源先锋，轻量可本地部署，开发者最爱</td></tr>
+  <tr><td><strong>Baichuan</strong></td><td>百川智能</td><td>2023.06</td><td>王小川创业，开源7B/13B，中英双语</td></tr>
+  <tr><td><strong>Yi</strong></td><td>零一万物</td><td>2023.11</td><td>李开复，34B性能亮眼</td></tr>
+  <tr><td><strong>MiniCPM</strong></td><td>面壁智能</td><td>2024.02</td><td>2B端侧，性能超越7B竞品</td></tr>
+</table>
+
+<h3>3.4 Anthropic Claude 登场</h3>
+<p><span class="badge b-anthropic">Anthropic</span></p>
+<ul>
+  <li><strong>Claude 1（2023.03）</strong>：Constitutional AI 方法，更安全的对话模型</li>
+  <li><strong>Claude 2（2023.07）</strong>：100K context 震撼，长文档处理领先</li>
+</ul>
+
+<h3>3.5 Google 的回应</h3>
+<p><span class="badge b-google">Google</span></p>
+<ul>
+  <li><strong>Bard 发布（2023.02）</strong>：发布会演示错误（James Webb 望远镜问题），市值单日蒸发 1000 亿美元</li>
+  <li><strong>PaLM 2（2023.05）</strong>：多语言、推理增强</li>
+  <li><strong>Gemini 预告</strong>：年底发布计划引期待</li>
+</ul>
+
+<h3>3.6 重大产品事件</h3>
+<ul>
+  <li><strong>Microsoft Bing + ChatGPT（2023.02）</strong>：AI 搜索时代开启，Bing 日活大增</li>
+  <li><strong>GitHub Copilot X（2023.03）</strong>：代码补全→代码对话</li>
+  <li><strong>OpenAI DevDay（2023.11）</strong>：GPTs（定制 ChatGPT）、Assistants API、GPT-4 Turbo（128K, 降价10x）</li>
+</ul>
+<div class="warning">
+  <strong>重大危机：Sam Altman 被驱逐（2023.11.17）</strong><br>
+  OpenAI 董事会突然宣布解雇 CEO Sam Altman，称其"与董事会沟通不诚实"。500+ 员工联名要求其回归，微软宣布聘用 Altman。5天后，2023.11.22，Altman 回归 OpenAI，大部分原董事会成员被替换。这是 AI 历史上最戏剧性的公司治理事件。
+</div>
+</section>
+
+<!-- ===== CH4 ===== -->
+<section id="ch4">
+<h2>第四章：能力跃迁（2024上半年）</h2>
+
+<h3>4.1 Gemini 系列</h3>
+<p><span class="badge b-google">Google</span></p>
+<ul>
+  <li><strong>Gemini 1.0（2023.12）</strong>：Ultra/Pro/Nano 三档，Ultra 声称超越 GPT-4（争议颇多）</li>
+  <li><strong>Gemini 1.5 Pro（2024.02）</strong>：<strong>100万 token 上下文</strong>，Multi-Query Attention，真正实用的超长上下文；可处理整部代码库、1小时视频、11小时音频</li>
+  <li><strong>Gemini 1.5 Flash（2024.05）</strong>：速度与成本优化，适合高频调用</li>
+</ul>
+
+<h3>4.2 Claude 3 系列（2024.03）</h3>
+<p><span class="badge b-anthropic">Anthropic</span> 三档策略奠定市场格局：</p>
+<table>
+  <tr><th>版本</th><th>定位</th><th>MMLU</th><th>特点</th></tr>
+  <tr><td><strong>Claude 3 Opus</strong></td><td>旗舰</td><td>86.8%</td><td>超越 GPT-4，多模态视觉</td></tr>
+  <tr><td><strong>Claude 3 Sonnet</strong></td><td>均衡</td><td>79.0%</td><td>性价比最优</td></tr>
+  <tr><td><strong>Claude 3 Haiku</strong></td><td>轻量</td><td>75.2%</td><td>最快最便宜</td></tr>
+</table>
+<p>200K context 实用化，coding 能力显著，Constitutional AI 安全性受好评。</p>
+
+<div class="milestone">
+  <div class="date">2024.05.13</div>
+  <h4>🎤 GPT-4o 发布 — "Her" 时刻 <span class="badge b-openai">OpenAI</span></h4>
+  <p>统一多模态（文本/图像/音频），实时语音对话（延迟~320ms），情感理解（能感知用户情绪），成本降低50%。Spring Demo 展示的 AI 与女声实时对话引发"AI 是否已经有情感"的广泛讨论，被称为"Her 时刻"（参考电影《Her》）。</p>
+</div>
+
+<h3>4.3 开源反超</h3>
+<p><span class="badge b-meta">Meta</span> Llama 3 系列（2024.04）彻底改写开源格局：</p>
+<ul>
+  <li>8B/70B/405B 三个尺寸，405B 与 GPT-4 级别对齐</li>
+  <li>训练数据 15T tokens（7倍于 LLaMA 2）</li>
+  <li>明确披露 Mid-Training 阶段（长文本、退火策略）</li>
+  <li>开源商用，推动整个生态</li>
+</ul>
+<p><span class="badge b-domestic">国内</span> DeepSeek-V2（2024.05）：671B MoE，每月 API 价格仅 1 元/百万 token（GPT-4 的 1/70），引发国内价格战，多家厂商跟进降价。</p>
+
+<div class="milestone">
+  <div class="date">2024.02</div>
+  <h4>🎬 Sora 发布 <span class="badge b-openai">OpenAI</span></h4>
+  <p>文本生成视频，60秒高质量视频，物理世界建模能力令人震惊。视频生成进入新时代，引爆多模态生成领域。国内可灵（快手）、即梦（字节）相继跟进。</p>
+</div>
+
+<h3>4.4 国内持续追赶</h3>
+<ul>
+  <li><strong>Kimi（月之暗面，2024）</strong>：200K 长文本对话，爆火出圈，单轮融资 10 亿美元</li>
+  <li><strong>Qwen1.5 系列（阿里）</strong>：0.5B 到 72B 全系开源，国内开源最积极</li>
+  <li><strong>文心 4.0（百度）</strong>：追平 GPT-4 水准</li>
+  <li><strong>豆包（字节跳动）</strong>：消费端产品，月活快速增长</li>
+</ul>
+</section>
+
+<!-- ===== CH5 ===== -->
+<section id="ch5">
+<h2>第五章：推理模型革命（2024下半年）</h2>
+
+<div class="milestone">
+  <div class="date">2024.09.12</div>
+  <h4>🧠 OpenAI o1 发布 — 推理时代开启 <span class="badge b-openai">OpenAI</span></h4>
+  <p>"Slow Thinking"范式：模型在回答前进行大量内部推理（Chain of Thought），推理 token 不对用户可见。AIME 2024 数学竞赛 74.4%（GPT-4o 仅 9.3%），Codeforces 评级 1673，超越 89% 人类程序员。开创 Test-time Compute 新范式。</p>
+</div>
+
+<h3>5.1 o1 系列演进</h3>
+<table>
+  <tr><th>版本</th><th>发布时间</th><th>AIME 2024</th><th>特点</th></tr>
+  <tr><td>o1-preview</td><td>2024.09</td><td>74.4%</td><td>首发推理模型</td></tr>
+  <tr><td>o1</td><td>2024.12</td><td>83.3%</td><td>正式版，支持视觉</td></tr>
+  <tr><td>o1-mini</td><td>2024.09</td><td>70%</td><td>低成本推理</td></tr>
+  <tr><td>o3（preview）</td><td>2024.12</td><td>96.7%</td><td>ARC-AGI 87.5%，惊艳业界</td></tr>
+</table>
+
+<h3>5.2 Claude 3.5 系列</h3>
+<p><span class="badge b-anthropic">Anthropic</span></p>
+<ul>
+  <li><strong>Claude 3.5 Sonnet（2024.06）</strong>：性能超越 Claude 3 Opus，Coding 能力业界顶尖，SWE-bench 49%</li>
+  <li><strong>Claude 3.5 Haiku（2024.10）</strong>：以 Haiku 价格达到 Sonnet 水准</li>
+  <li><strong>Computer Use（2024.10）</strong>：首个可操作电脑桌面的 AI（截图→理解→点击/输入），Agent 时代重要里程碑</li>
+</ul>
+
+<h3>5.3 Gemini 2.0（2024.12）</h3>
+<p><span class="badge b-google">Google</span> 全系更新：</p>
+<ul>
+  <li>原生多模态输出（不仅输入图像，还能生成图像/音频）</li>
+  <li>Gemini 2.0 Flash 速度极快，性能超越 1.5 Pro</li>
+  <li>Deep Research 功能：自主规划多步研究任务</li>
+  <li>Project Astra（实时视觉理解助手）公开演示</li>
+</ul>
+
+<h3>5.4 国内推理模型跟进</h3>
+<ul>
+  <li><strong>QwQ-32B（阿里，2024.11）</strong>：首个媲美 o1-preview 的开源推理模型，数学竞赛能力出色</li>
+  <li><strong>DeepSeek-R1-Lite-Preview（2024.11）</strong>：预告版，AIME 成绩接近 o1</li>
+  <li><strong>Kimi k1.5（月之暗面，2025.01）</strong>：长上下文推理，RL 训练方法</li>
+</ul>
+</section>
+
+<!-- ===== CH6 ===== -->
+<section id="ch6">
+<h2>第六章：DeepSeek 冲击与2025格局</h2>
+
+<div class="milestone" style="border-color: rgba(248,81,73,0.5); background: linear-gradient(135deg, rgba(248,81,73,0.08), rgba(188,140,255,0.08));">
+  <div class="date" style="color:var(--red);">2025.01.20</div>
+  <h4>💥 DeepSeek-R1 引爆全球 <span class="badge b-domestic">DeepSeek</span></h4>
+  <p>性能比肩 o1，API 成本仅为 o1 的 1/20-1/30，全面开源（权重+技术报告+训练方法）。发布后，英伟达股价单日暴跌约17%，市值蒸发近6000亿美元——史称"DeepSeek时刻"。引发全球对美国 AI 领导地位、算力封锁有效性、开源战略的深度反思。</p>
+</div>
+
+<h3>6.1 DeepSeek-V3（2024.12）技术突破</h3>
+<p><span class="badge b-domestic">DeepSeek</span> 671B MoE 架构，实际激活37B参数，训练成本仅约 <strong>558万美元</strong>（GPT-4 预估训练成本的 1%）：</p>
+<ul>
+  <li><strong>MLA（Multi-head Latent Attention）</strong>：压缩 KV Cache，显著降低推理成本</li>
+  <li><strong>MTP（Multi-Token Prediction）</strong>：一次预测多个 token，提升训练效率</li>
+  <li><strong>FP8 混合精度训练</strong>：首次大规模验证 FP8 训练的稳定性</li>
+  <li><strong>无辅助损失负载均衡</strong>：MoE 路由更稳定</li>
+</ul>
+
+<h3>6.2 DeepSeek-R1 技术创新</h3>
+<ul>
+  <li><strong>GRPO（Group Relative Policy Optimization）</strong>：无需 Critic 模型的 RL 训练</li>
+  <li><strong>冷启动数据</strong>：少量高质量 CoT 数据引导 RL 探索</li>
+  <li><strong>多阶段训练</strong>：SFT → RL → 拒绝采样 SFT → RL</li>
+  <li>涌现出"啊哈时刻"（Aha Moment）——模型自发学会反思和验证</li>
+</ul>
+
+<h3>6.3 2025上半年模型格局</h3>
+<table>
+  <tr><th>模型</th><th>发布方</th><th>发布时间</th><th>核心特点</th></tr>
+  <tr><td><strong>GPT-4.5</strong></td><td>OpenAI</td><td>2025.02</td><td>情感智能方向，"更像人"</td></tr>
+  <tr><td><strong>Claude 3.7 Sonnet</strong></td><td>Anthropic</td><td>2025.02</td><td>扩展思考（Extended Thinking）+Coding大幅提升，SWE-bench 70%+</td></tr>
+  <tr><td><strong>Gemini 2.0 Pro</strong></td><td>Google</td><td>2025.02</td><td>推理能力大幅增强</td></tr>
+  <tr><td><strong>Grok 3</strong></td><td>xAI</td><td>2025.02</td><td>马斯克，数学/推理突出</td></tr>
+  <tr><td><strong>Qwen2.5-Max</strong></td><td>阿里</td><td>2025.01</td><td>旗舰对话模型，对标 GPT-4o</td></tr>
+  <tr><td><strong>Qwen2.5（开源）</strong></td><td>阿里</td><td>2024.09</td><td>全系开源，72B性能惊人</td></tr>
+</table>
+
+<div class="insight">
+  <strong>格局变化：</strong>DeepSeek 证明"算力封锁≠技术封锁"，高效训练算法可以在有限资源下实现顶级性能。开源+中国团队的组合正在重塑全球 AI 竞争格局。
+</div>
+</section>
+
+<!-- ===== CH7 ===== -->
+<section id="ch7">
+<h2>第七章：重大行业事件</h2>
+
+<h3>7.1 融资与估值里程碑</h3>
+<table>
+  <tr><th>公司</th><th>融资金额</th><th>时间</th><th>估值</th></tr>
+  <tr><td><strong>OpenAI</strong></td><td>Microsoft 130亿美元</td><td>2023.01</td><td>290亿美元</td></tr>
+  <tr><td><strong>OpenAI</strong></td><td>新一轮 66亿美元</td><td>2024.10</td><td>1570亿美元</td></tr>
+  <tr><td><strong>Anthropic</strong></td><td>Google 20亿美元</td><td>2023.02</td><td>—</td></tr>
+  <tr><td><strong>Anthropic</strong></td><td>Amazon 40亿美元</td><td>2023.09</td><td>~150亿美元</td></tr>
+  <tr><td><strong>Anthropic</strong></td><td>Google 再投 5亿</td><td>2024.04</td><td>~180亿美元</td></tr>
+  <tr><td><strong>月之暗面（Kimi）</strong></td><td>10亿美元</td><td>2024.02</td><td>~25亿美元</td></tr>
+  <tr><td><strong>Mistral AI</strong></td><td>6亿美元</td><td>2024.06</td><td>~60亿美元</td></tr>
+  <tr><td><strong>SSI（Ilya）</strong></td><td>10亿美元</td><td>2024.09</td><td>50亿美元</td></tr>
+</table>
+
+<h3>7.2 重大人事变动</h3>
+<ul>
+  <li><strong>Ilya Sutskever 离开 OpenAI（2024.05）</strong>：OpenAI 联合创始人、首席科学家出走，创立 SSI（Safe Superintelligence Inc.），专注安全超级智能研究，首轮融资 10 亿美元</li>
+  <li><strong>Jan Leike 等安全团队出走（2024.05）</strong>：OpenAI 负责任扩展策略团队多人离职，引发安全承诺争议</li>
+  <li><strong>Google DeepMind 合并（2023.04）</strong>：Google Brain 与 DeepMind 正式合并</li>
+  <li><strong>Demis Hassabis 领导 Google DeepMind</strong>：诺贝尔化学奖得主（AlphaFold，2024）</li>
+</ul>
+
+<h3>7.3 监管政策</h3>
+<ul>
+  <li><strong>EU AI Act（2024.03通过，2024.08生效）</strong>：全球首个全面 AI 监管法规，按风险分级，禁止实时人脸识别等高风险应用</li>
+  <li><strong>拜登 AI 行政令（2023.10）</strong>：要求高级 AI 系统向政府报告安全测试结果</li>
+  <li><strong>中国《生成式人工智能服务管理暂行办法》（2023.08）</strong>：上线前需备案，内容安全红线</li>
+  <li><strong>美国对华芯片出口管制升级（2023.10, 2024.10）</strong>：A100/H100 禁止，A800/H800 也被限制</li>
+  <li><strong>前沿模型论坛成立（2023.07）</strong>：Google/Microsoft/OpenAI/Anthropic 自律组织</li>
+</ul>
+
+<h3>7.4 AI 产品生态演变</h3>
+<ul>
+  <li><strong>AI IDE 崛起</strong>：Cursor（2024 年 ARR 突破 1 亿美元）、Windsurf（Codeium），重新定义开发工具</li>
+  <li><strong>Devin（Cognition，2024.03）</strong>：号称"第一个 AI 软件工程师"，SWE-bench 13.86%</li>
+  <li><strong>Perplexity AI</strong>：AI 搜索新范式，估值 90 亿美元（2024）</li>
+  <li><strong>Apple Intelligence（2024 WWDC）</strong>：端侧+云端混合，集成 ChatGPT，首次将 AI 带入主流消费设备</li>
+  <li><strong>Microsoft Copilot</strong>：全线产品（Office/Windows/Bing）集成</li>
+</ul>
+
+<h3>7.5 算力基础设施</h3>
+<ul>
+  <li><strong>NVIDIA</strong>：H100 → H200 → B200，供不应求，黄仁勋成科技界最耀眼明星</li>
+  <li><strong>英伟达市值</strong>：2024年6月超越苹果和微软，成为全球市值第一（约3.3万亿美元）</li>
+  <li><strong>Stargate（OpenAI+微软+SoftBank）</strong>：2025年1月，5年内投资 5000 亿美元建设 AI 基础设施</li>
+  <li><strong>国内算力</strong>：华为昇腾910B 集群规模逐步扩大，寒武纪、海光等持续发力</li>
+</ul>
+</section>
+
+<!-- ===== CH8 ===== -->
+<section id="ch8">
+<h2>第八章：关键技术演进</h2>
+
+<h3>8.1 Benchmark 进步曲线</h3>
+<table>
+  <tr><th>模型</th><th>MMLU</th><th>HumanEval</th><th>MATH</th><th>时间</th></tr>
+  <tr><td>GPT-3</td><td>43.9%</td><td>—</td><td>—</td><td>2020.06</td></tr>
+  <tr><td>GPT-3.5-Turbo</td><td>70%</td><td>48.1%</td><td>57.1%</td><td>2022.11</td></tr>
+  <tr><td>GPT-4</td><td>86.4%</td><td>67%</td><td>42.5%</td><td>2023.03</td></tr>
+  <tr><td>Claude 3 Opus</td><td>86.8%</td><td>84.9%</td><td>60.1%</td><td>2024.03</td></tr>
+  <tr><td>GPT-4o</td><td>87.2%</td><td>90.2%</td><td>76.6%</td><td>2024.05</td></tr>
+  <tr><td>Llama 3.1 405B</td><td>88.6%</td><td>89%</td><td>73.8%</td><td>2024.07</td></tr>
+  <tr><td>o1</td><td>92.3%</td><td>92.4%</td><td>96.4%</td><td>2024.12</td></tr>
+  <tr><td>DeepSeek-R1</td><td>90.8%</td><td>96.3%</td><td>97.3%</td><td>2025.01</td></tr>
+</table>
+
+<h3>8.2 API 成本曲线（每百万 token）</h3>
+<table>
+  <tr><th>模型</th><th>输入价格</th><th>时间</th><th>相对 GPT-4</th></tr>
+  <tr><td>GPT-4（8K）</td><td>$30</td><td>2023.03</td><td>基准</td></tr>
+  <tr><td>GPT-4 Turbo</td><td>$10</td><td>2023.11</td><td>1/3x</td></tr>
+  <tr><td>GPT-4o</td><td>$5</td><td>2024.05</td><td>1/6x</td></tr>
+  <tr><td>GPT-4o mini</td><td>$0.15</td><td>2024.07</td><td>1/200x</td></tr>
+  <tr><td>DeepSeek-R1</td><td>$0.55</td><td>2025.01</td><td>1/54x</td></tr>
+  <tr><td>DeepSeek-V3</td><td>$0.27</td><td>2025.01</td><td>1/111x</td></tr>
+</table>
+
+<h3>8.3 关键规律总结</h3>
+<div class="insight">
+  <strong>Scaling Law 的验证与边界：</strong>更大模型 + 更多数据 + 更多算力 = 更好性能的规律基本成立，但边际收益递减。Chinchilla 修正表明数据量应与参数量同比例增长。
+</div>
+<div class="insight">
+  <strong>Test-time Compute 的崛起：</strong>o1 证明推理时投入更多计算（更长的思考链）可以显著提升性能，尤其在数学/逻辑任务上，这是继 Scaling 之后的第二条性能提升路线。
+</div>
+<div class="insight">
+  <strong>数据质量 > 数据数量：</strong>Phi（微软）系列用更少但更高质量数据训出超出规模预期的模型；DeepSeek 用更少算力实现顶级性能，都指向数据质量的核心地位。
+</div>
+<div class="insight">
+  <strong>开源缩小与闭源差距：</strong>从 2023 年的"开源落后6-12个月"到 2025 年 DeepSeek-R1 开源直接比肩 o1，这个差距已经压缩到几乎为零。
+</div>
+</section>
+
+<!-- ===== CH9 ===== -->
+<section id="ch9">
+<h2>第九章：展望（2025-2027）</h2>
+
+<h3>9.1 下一代旗舰模型预期</h3>
+<ul>
+  <li><strong>GPT-5</strong>：预期 2025 年内发布，可能深度整合推理与多模态</li>
+  <li><strong>Claude 4</strong>：Anthropic 2025-2026 发布，强化 Agentic 能力</li>
+  <li><strong>Gemini 3 / Ultra 2.0</strong>：Google 深度整合搜索+多模态</li>
+  <li><strong>Llama 4</strong>：Meta 2025，原生多模态，MoE 架构</li>
+</ul>
+
+<h3>9.2 AGI 时间线各方预测</h3>
+<table>
+  <tr><th>人物/机构</th><th>AGI 预测时间</th><th>备注</th></tr>
+  <tr><td>Sam Altman（OpenAI）</td><td>2025-2026年内</td><td>近年多次提到"AGI即将到来"</td></tr>
+  <tr><td>Demis Hassabis（DeepMind）</td><td>5-10年</td><td>更审慎，强调安全</td></tr>
+  <tr><td>Geoffrey Hinton</td><td>5-20年</td><td>对 AI 风险高度警惕</td></tr>
+  <tr><td>Yann LeCun（Meta）</td><td>几十年甚至更长</td><td>认为当前路线无法达到 AGI</td></tr>
+</table>
+
+<h3>9.3 技术趋势预测</h3>
+<ul>
+  <li><strong>Agentic AI 大规模落地</strong>：AI Agent 从 demo 到真实生产，改造软件开发、数据分析等工作流</li>
+  <li><strong>多模态深度融合</strong>：输入/输出全面多模态（文/图/音/视频），实时交互</li>
+  <li><strong>具身智能</strong>：大模型 + 机器人（Figure、1X、Unitree），物理世界操作</li>
+  <li><strong>个人 AI</strong>：设备端 AI（手机/PC/眼镜），记忆一致性，个人数据飞轮</li>
+  <li><strong>中美 AI 竞争</strong>：DeepSeek 之后，算力封锁效果受质疑，技术层面竞争更白热化</li>
+</ul>
+</section>
+
+<!-- ===== TIMELINE ===== -->
+<section id="timeline">
+<h2>附录：大事记时间线（2017-2025）</h2>
+
+<div class="timeline">
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--google)"></div>
+  <div class="tl-date">2017.06</div>
+  <div class="tl-title">Transformer 诞生 <span class="badge b-google">Google</span></div>
+  <div class="tl-desc">"Attention is All You Need"，改变 AI 历史走向</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--google)"></div>
+  <div class="tl-date">2018.10</div>
+  <div class="tl-title">BERT 发布 <span class="badge b-google">Google</span></div>
+  <div class="tl-desc">双向预训练，11项 NLP 任务刷新 SOTA</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2020.06</div>
+  <div class="tl-title">GPT-3 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">1750亿参数，few-shot 能力震撼世界，Scaling Law 确立</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2021.01</div>
+  <div class="tl-title">CLIP & DALL-E 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">多模态 AI 萌芽，图文理解与生成</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2021.08</div>
+  <div class="tl-title">Codex 发布，GitHub Copilot 上线 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">AI 代码补全走入开发者日常</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--domestic)"></div>
+  <div class="tl-date">2021.06</div>
+  <div class="tl-title">悟道 2.0 发布 <span class="badge b-domestic">智源研究院</span></div>
+  <div class="tl-desc">1.75万亿参数（MoE），中国大模型早期布局</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2022.01</div>
+  <div class="tl-title">InstructGPT 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">RLHF 对齐技术，ChatGPT 的直接前身</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2022.11.30</div>
+  <div class="tl-title">🚀 ChatGPT 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">5天100万用户，2月1亿月活，AI 历史的分水岭</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--google)"></div>
+  <div class="tl-date">2023.02</div>
+  <div class="tl-title">Google Bard 发布（翻车） <span class="badge b-google">Google</span></div>
+  <div class="tl-desc">演示出错，市值单日蒸发1000亿美元</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--meta)"></div>
+  <div class="tl-date">2023.02</div>
+  <div class="tl-title">LLaMA 1 发布 <span class="badge b-meta">Meta</span></div>
+  <div class="tl-desc">开源生态引爆，Alpaca/Vicuna 等微调模型涌现</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--domestic)"></div>
+  <div class="tl-date">2023.03</div>
+  <div class="tl-title">文心一言 & ChatGLM 发布 <span class="badge b-domestic">百度/清华</span></div>
+  <div class="tl-desc">国内百模大战正式开始</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2023.03.14</div>
+  <div class="tl-title">GPT-4 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">多模态，律师/医学考试表现突出，MMLU 86.4%</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--anthropic)"></div>
+  <div class="tl-date">2023.07</div>
+  <div class="tl-title">Claude 2 发布 <span class="badge b-anthropic">Anthropic</span></div>
+  <div class="tl-desc">100K context，Constitutional AI</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2023.11.06</div>
+  <div class="tl-title">OpenAI DevDay <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">GPTs、Assistants API、GPT-4 Turbo（128K + 降价10x）</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--red)"></div>
+  <div class="tl-date">2023.11.17-22</div>
+  <div class="tl-title">⚡ Sam Altman 被驱逐又回归事件</div>
+  <div class="tl-desc">OpenAI 历史上最戏剧性的5天，500+员工联名，微软宣布聘用，最终 Altman 回归</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--google)"></div>
+  <div class="tl-date">2023.12</div>
+  <div class="tl-title">Gemini 1.0 发布 <span class="badge b-google">Google</span></div>
+  <div class="tl-desc">Ultra/Pro/Nano 三档，视频演示被发现剪辑造假引争议</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2024.02</div>
+  <div class="tl-title">🎬 Sora 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">文生视频里程碑，60秒高质量视频，物理世界建模</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--google)"></div>
+  <div class="tl-date">2024.02</div>
+  <div class="tl-title">Gemini 1.5 Pro 发布 <span class="badge b-google">Google</span></div>
+  <div class="tl-desc">100万 token 上下文，真正实用的超长上下文</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--anthropic)"></div>
+  <div class="tl-date">2024.03</div>
+  <div class="tl-title">Claude 3 系列发布 <span class="badge b-anthropic">Anthropic</span></div>
+  <div class="tl-desc">Haiku/Sonnet/Opus 三档，Opus 超越 GPT-4，200K context</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--meta)"></div>
+  <div class="tl-date">2024.04</div>
+  <div class="tl-title">Llama 3 发布 <span class="badge b-meta">Meta</span></div>
+  <div class="tl-desc">405B 对齐 GPT-4，开源生态里程碑</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--domestic)"></div>
+  <div class="tl-date">2024.05</div>
+  <div class="tl-title">DeepSeek-V2 发布 <span class="badge b-domestic">DeepSeek</span></div>
+  <div class="tl-desc">MoE 极致性价比，引发国内大模型价格战</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2024.05.13</div>
+  <div class="tl-title">GPT-4o 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">统一多模态，实时语音对话，"Her 时刻"</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2024.05</div>
+  <div class="tl-title">Ilya Sutskever 离开 OpenAI <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">联合创始人、首席科学家出走，创立 SSI，融资10亿</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--anthropic)"></div>
+  <div class="tl-date">2024.06</div>
+  <div class="tl-title">Claude 3.5 Sonnet 发布 <span class="badge b-anthropic">Anthropic</span></div>
+  <div class="tl-desc">超越 Opus，Coding 业界顶尖，SWE-bench 49%</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--nvidia)"></div>
+  <div class="tl-date">2024.06</div>
+  <div class="tl-title">英伟达市值登顶全球第一 <span class="badge b-nvidia">NVIDIA</span></div>
+  <div class="tl-desc">约3.3万亿美元，超越苹果和微软</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2024.09.12</div>
+  <div class="tl-title">🧠 OpenAI o1 发布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">推理时代开启，AIME 74.4%，Test-time Compute 新范式</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--anthropic)"></div>
+  <div class="tl-date">2024.10</div>
+  <div class="tl-title">Computer Use 发布 <span class="badge b-anthropic">Anthropic</span></div>
+  <div class="tl-desc">AI 操作电脑桌面，Agent 时代重要里程碑</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--domestic)"></div>
+  <div class="tl-date">2024.11</div>
+  <div class="tl-title">QwQ-32B 发布 <span class="badge b-domestic">阿里</span></div>
+  <div class="tl-desc">首个媲美 o1-preview 的开源推理模型</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--google)"></div>
+  <div class="tl-date">2024.12</div>
+  <div class="tl-title">Gemini 2.0 发布 <span class="badge b-google">Google</span></div>
+  <div class="tl-desc">原生多模态输出，Deep Research，Flash 超越 1.5 Pro</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--domestic)"></div>
+  <div class="tl-date">2024.12</div>
+  <div class="tl-title">DeepSeek-V3 发布 <span class="badge b-domestic">DeepSeek</span></div>
+  <div class="tl-desc">671B MoE，仅558万美元训练，MLA+MTP+FP8</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--domestic)"></div>
+  <div class="tl-date">2025.01.20</div>
+  <div class="tl-title">💥 DeepSeek-R1 引爆全球 <span class="badge b-domestic">DeepSeek</span></div>
+  <div class="tl-desc">比肩 o1 性能，1/20 成本，全面开源，英伟达单日蒸发6000亿美元市值</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--openai)"></div>
+  <div class="tl-date">2025.01</div>
+  <div class="tl-title">Stargate 计划宣布 <span class="badge b-openai">OpenAI</span></div>
+  <div class="tl-desc">OpenAI+微软+SoftBank，5年内投资5000亿美元建 AI 基础设施</div>
+</div>
+
+<div class="tl-item">
+  <div class="tl-dot" style="background:var(--anthropic)"></div>
+  <div class="tl-date">2025.02</div>
+  <div class="tl-title">Claude 3.7 Sonnet 发布 <span class="badge b-anthropic">Anthropic</span></div>
+  <div class="tl-desc">Extended Thinking + Coding 大幅提升，SWE-bench 70%+</div>
+</div>
+
+</div><!-- end timeline -->
+</section>
+
+<div style="margin-top:60px; padding:24px; background:var(--bg2); border-radius:10px; border:1px solid var(--border); text-align:center; color:var(--text2); font-size:13px;">
+  <p>大模型发展历程全景报告 · 2017-2025 · 基于公开技术报告、论文及媒体报道整理</p>
+  <p style="margin-top:4px;">数据截至 2025年2月 | 仅供研究参考</p>
+</div>
+
+</div><!-- end main -->
+
+<script>
+// Scroll spy
+const sections = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('#sidebar a');
+window.addEventListener('scroll', () => {
+  let cur = '';
+  sections.forEach(s => { if (window.scrollY >= s.offsetTop - 80) cur = s.id; });
+  links.forEach(l => {
+    l.classList.remove('active');
+    if (l.getAttribute('href') === '#' + cur) l.classList.add('active');
+  });
+});
+</script>
+</body>
+</html>

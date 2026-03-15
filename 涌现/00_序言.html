@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>序言 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e;
+  --secondary: #16213e;
+  --accent: #e94560;
+  --accent2: #0f3460;
+  --text: #e0e0e0;
+  --text-muted: #9a9a9a;
+  --light-bg: #1e1e2e;
+  --card-bg: #252535;
+  --border: #333355;
+  --highlight: #2a2a4a;
+  --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--primary);
+  color: var(--text);
+  font-family: 'Georgia', 'Noto Serif SC', serif;
+  line-height: 1.9;
+  font-size: 17px;
+}
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+.book-header {
+  background: linear-gradient(135deg, var(--secondary) 0%, var(--accent2) 100%);
+  border-bottom: 3px solid var(--accent);
+  padding: 2rem 0 1.5rem;
+  text-align: center;
+}
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; letter-spacing: 0.05em; }
+.part-tag {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.3rem 1rem;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.85rem;
+  border-radius: 20px;
+  letter-spacing: 0.1em;
+}
+
+.chapter-header {
+  background: var(--secondary);
+  padding: 3rem 2rem 2rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph {
+  max-width: 600px;
+  margin: 0 auto;
+  font-style: italic;
+  color: var(--text-muted);
+  border-left: 3px solid var(--accent);
+  padding-left: 1.2rem;
+  text-align: left;
+  font-size: 1rem;
+}
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+.toc {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin: 2rem 0;
+}
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; }
+.toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; }
+.toc a:hover { color: var(--accent); }
+
+h2 {
+  font-size: 1.5rem;
+  color: #fff;
+  margin: 2.5rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+p { margin-bottom: 1.2rem; }
+
+blockquote {
+  background: var(--highlight);
+  border-left: 4px solid var(--accent);
+  margin: 2rem 0;
+  padding: 1.2rem 1.5rem;
+  border-radius: 0 8px 8px 0;
+  font-style: italic;
+  color: var(--text);
+}
+blockquote cite {
+  display: block;
+  margin-top: 0.6rem;
+  font-style: normal;
+  font-size: 0.85rem;
+  color: var(--accent);
+}
+
+.timeline-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 0 8px 8px 0;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+}
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+
+.chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 1.5rem;
+  border-top: 1px solid var(--border);
+  max-width: 800px;
+  margin: 0 auto;
+}
+.nav-btn {
+  padding: 0.6rem 1.2rem;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.nav-disabled { opacity: 0.3; pointer-events: none; }
+
+.highlight-box {
+  background: var(--highlight);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem 1.5rem;
+  margin: 1.5rem 0;
+  font-size: 1.05rem;
+  line-height: 1.8;
+}
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">序言</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">序言</div>
+  <h1 class="chapter-title">一切从一个词开始</h1>
+  <div class="chapter-epigraph">
+    "涌现，是复杂系统中，整体超越部分之和的那一刻。"
+    <cite>—— 系统论基本概念</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#emergence">关于"涌现"这个词</a></li>
+      <li><a href="#moment">一个不寻常的时刻</a></li>
+      <li><a href="#why">为什么要写这本书</a></li>
+      <li><a href="#how">这本书的写法</a></li>
+      <li><a href="#invitation">一封邀请函</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="emergence">关于"涌现"这个词</h2>
+  <p>
+    在复杂系统科学里，"涌现"（emergence）描述的是一种特殊现象：当足够多的简单元素以特定方式组合在一起时，会突然出现任何单个元素都不具备的全新性质。水分子本身没有湿润感，但足够多的水分子聚集在一起，就产生了流动、表面张力、折射光线的能力。单个神经元不会思考，但一千亿个神经元织成的网络，涌现出了意识、语言、艺术、哲学和爱。
+  </p>
+  <p>
+    这个词，在2022年之后，成了人工智能领域最常被提起的词汇之一。不是因为科学家们突然爱上了哲学，而是因为在大语言模型的训练过程中，真的发生了某种令人不安的事情——随着参数规模的增长，模型突然在某个阈值之后，获得了任何人都没有明确教过它的能力：做数学题、写代码、理解隐喻、跨语言推理……
+  </p>
+  <p>
+    没有人事先知道这会发生。这是一本关于这件事的书。
+  </p>
+
+  <h2 id="moment">一个不寻常的时刻</h2>
+  <p>
+    2022年11月30日，一个周三的下午，OpenAI悄悄上线了一款产品，没有发布会，没有广告，只有一封内部邮件和一条推文。五天后，它的注册用户突破了一百万。两个月后，超过一亿。这个速度，TikTok用了九个月，Instagram用了两年半。
+  </p>
+  <p>
+    这款产品叫做ChatGPT。
+  </p>
+  <p>
+    但这本书不打算从ChatGPT开始讲。因为那只是故事的中途，是冰山浮出水面的瞬间。在那之前，有五年漫长而艰辛的地下工作——一篇颠覆性的论文、数次孤注一掷的赌注、无数次质疑与自我怀疑、以及几个人坚定地相信某件在当时看起来近乎荒谬的事情：给语言模型足够的规模，它会学会一切。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2017 — 2022</div>
+    <div class="event">大语言模型的地下岁月</div>
+    <div class="desc">从一篇论文到一款改变世界的产品，五年间发生了什么，大多数人完全不知道。</div>
+  </div>
+
+  <blockquote>
+    "我们没有预料到它会这么快就发生。没有人预料到。"
+    <cite>—— Sam Altman，2023年3月，在GPT-4发布后接受采访</cite>
+  </blockquote>
+
+  <h2 id="why">为什么要写这本书</h2>
+  <p>
+    关于人工智能，已经有太多书了。有预言末日的，有宣告乌托邦的，有分析商业模式的，有探讨伦理风险的。但我发现，很少有书真正地、忠实地还原那段历史本身——那些做出关键决策的人，当时并不知道自己在做什么。那些被认为走错路的人，有时候是对的。那些自信满满的先知，有时候完全错了。
+  </p>
+  <p>
+    历史从来不是直线的。大语言模型的崛起，充满了偶然、误解、商业压力、个人意志的碰撞，以及运气。这本书想要还原的，是那种质感——是2020年的GPT-3让整个AI界目瞪口呆时的震惊；是2022年底ChatGPT爆红后，全球各地CEO们的那种慌乱；是2023年Geoffrey Hinton宣布离开谷歌时的那种凝重气氛。
+  </p>
+  <p>
+    历史中有活生生的人，有血有肉的故事。
+  </p>
+
+  <blockquote>
+    "这些模型的能力让我自己都感到惊讶。我不是在吹牛，我是真的每天都感到惊讶。"
+    <cite>—— Andrej Karpathy，2023年，离开OpenAI前的一次分享</cite>
+  </blockquote>
+
+  <h2 id="how">这本书的写法</h2>
+  <p>
+    本书按时间顺序展开，但不是编年史。每一章聚焦一个关键节点或关键问题，试图回答：这件事为什么会发生？当时的人们怎么理解它？它改变了什么？
+  </p>
+  <p>
+    全书分六个部分。第一部分"播种"（2017-2020），讲述Transformer架构的诞生和GPT系列的早期探索。第二部分"震惊"（2020-2022），以GPT-3的爆炸性亮相为核心，还原那段既兴奋又迷茫的时期。第三部分"引爆"（2022-2023），是ChatGPT横空出世前后的故事。第四部分"混沌"（2023-2024），描绘一个全新产业爆炸式涌现时的混乱景象。第五部分"深水区"（2024-2025），聚焦更深层的技术演进：推理能力、Agent、开源浪潮与东方的崛起。第六部分"此刻与以后"，是对这场变革的思考与追问。
+  </p>
+  <p>
+    每一章都有时间、地点、人物。我尽量让它读起来像一部纪录片，而不是一份报告。
+  </p>
+
+  <div class="highlight-box">
+    📚 <strong>关于真实性</strong>：本书涉及的人物、事件、论文、日期均有据可查。引言中标注"虚构"的，是对那个时代精神的文学性还原，并非伪造历史。
+  </div>
+
+  <h2 id="invitation">一封邀请函</h2>
+  <p>
+    我想邀请你做一次时间旅行。
+  </p>
+  <p>
+    回到2017年的谷歌大脑实验室，去看看八个研究员是如何在一个午后写下那句改变一切的标题："Attention Is All You Need"。去感受2020年GPT-3的API首批用户在拿到权限那一刻的战栗。去和2022年底那些在ChatGPT上线后彻夜不眠的工程师们一起坐在那个办公室里。
+  </p>
+  <p>
+    这不是一个关于未来的故事。这是一个关于现在的故事——关于我们正在亲历的、一次可能比印刷术、比蒸汽机还要深刻的技术革命。而我们，就像所有历史中的当事人一样，站在它的中间，既惊叹，又惶惑，不知道它通向何处。
+  </p>
+  <p>
+    翻过这一页，让我们一起回到起点。
+  </p>
+</div>
+
+<nav class="chapter-nav">
+  <span class="nav-btn nav-disabled">← 上一章</span>
+  <a href="01_Attention_Is_All_You_Need.html" class="nav-btn">第一章：Attention Is All You Need →</a>
+</nav>
+
+</body>
+</html>

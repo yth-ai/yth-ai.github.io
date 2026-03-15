@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>《数据珠玑》— 详细目录</title>
+<style>
+:root {
+  --bg1: #0a0f1a;
+  --bg2: #0f1726;
+  --card: #131e30;
+  --border: #1e2e44;
+  --accent1: #e94560;
+  --accent2: #3a7bd5;
+  --accent3: #2ec4a0;
+  --text1: #cdd9e5;
+  --text2: #5a7090;
+  --text3: #3a5070;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: var(--bg1);
+  color: var(--text1);
+  font-family: -apple-system, 'PingFang SC', sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+  padding: 20px;
+}
+a { color: inherit; text-decoration: none; }
+.toc-header {
+  max-width: 900px;
+  margin: 0 auto 40px;
+}
+.book-label {
+  font-size: 11px;
+  color: var(--accent1);
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-family: Arial, sans-serif;
+  margin-bottom: 12px;
+}
+.book-title {
+  font-size: 52px;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 8px;
+}
+.book-subtitle {
+  font-size: 18px;
+  color: var(--accent3);
+  font-style: italic;
+  margin-bottom: 18px;
+}
+.book-desc {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+.toc-container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+.part-block {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 28px;
+}
+.part-header {
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.chapter-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.chapter-item {
+  padding: 14px 18px;
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  border-left: 3px solid var(--accent2);
+  transition: all 0.15s;
+}
+.chapter-item:hover {
+  background: rgba(255,255,255,0.07);
+  border-left-color: var(--accent1);
+}
+.chapter-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #d0dde8;
+  margin-bottom: 4px;
+  display: block;
+}
+.section-list {
+  list-style: none;
+  padding-left: 0;
+  margin: 6px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.section-list li {
+  font-size: 12px;
+  color: var(--text2);
+  background: rgba(255,255,255,0.05);
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+}
+.part-desc {
+  font-size: 13px;
+  color: var(--text2);
+  font-style: italic;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.footer {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text3);
+  margin-top: 48px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 768px) {
+  .book-title { font-size: 36px; }
+}
+</style>
+</head>
+<body>
+
+<div class="toc-header">
+  <div class="book-label">数据珠玑 · TOC</div>
+  <h1 class="book-title">《数据珠玑》</h1>
+  <p class="book-subtitle">大语言模型训练数据全景</p>
+  <p class="book-desc">
+    覆盖 LLM 训练数据完整生命周期的专业著作。从预训练数据的本质与规模演进，到数据清洗、配比策略、中训练、后训练的全链路技术深度解析，兼顾学术前沿与工程实践。
+  </p>
+</div>
+
+<div class="toc-container">
+
+  <div class="part-block">
+    <div class="part-header">序言</div>
+    <div class="part-desc">为什么数据正在成为最重要的护城河</div>
+    <div class="chapter-list">
+      <a href="00_序言.html" class="chapter-item">
+        <span class="chapter-title">序言：被遗忘的基础与正在显现的价值</span>
+        <ul class="section-list">
+          <li>一、被遗忘的基础</li>
+          <li>二、数据为何被低估</li>
+          <li>三、数据正在成为最重要的护城河</li>
+          <li>四、本书的结构与阅读方式</li>
+          <li>五、一点坦诚的说明</li>
+        </ul>
+      </a>
+    </div>
+  </div>
+
+  <div class="part-block">
+    <div class="part-header">第一部分：预训练数据基础</div>
+    <div class="part-desc">预训练数据的本质、来源、清洗过滤、配比策略——构建模型能力的底层数据基础</div>
+    <div class="chapter-list">
+      <a href="01_第一章_预训练数据总论.html" class="chapter-item">
+        <span class="chapter-title">第一章：预训练数据总论</span>
+        <ul class="section-list">
+          <li>1.1 预训练数据的本质</li>
+          <li>1.2 数据规模演进</li>
+          <li>1.3 数据与算力配比</li>
+          <li>1.4 质量 vs 数量权衡</li>
+        </ul>
+      </a>
+      <a href="02_第二章_原始数据来源.html" class="chapter-item">
+        <span class="chapter-title">第二章：原始数据来源</span>
+        <ul class="section-list">
+          <li>2.1 网络爬虫数据</li>
+          <li>2.2 书籍与学术论文</li>
+          <li>2.3 代码数据</li>
+          <li>2.4 多语言数据策略</li>
+          <li>2.5 专有数据源与版权</li>
+        </ul>
+      </a>
+      <a href="03_第三章_数据清洗与过滤.html" class="chapter-item">
+        <span class="chapter-title">第三章：数据清洗与过滤</span>
+        <ul class="section-list">
+          <li>3.1 去重策略</li>
+          <li>3.2 质量过滤</li>
+          <li>3.3 毒性内容过滤</li>
+          <li>3.4 数据偏差校正</li>
+          <li>3.5 清洗流水线实践</li>
+        </ul>
+      </a>
+      <a href="04_第四章_数据配比与混合策略.html" class="chapter-item">
+        <span class="chapter-title">第四章：数据配比与混合策略</span>
+        <ul class="section-list">
+          <li>4.1 Domain Mixture</li>
+          <li>4.2 Upsampling/Downsampling</li>
+          <li>4.3 多语言平衡</li>
+          <li>4.4 代码数据迁移效应</li>
+          <li>4.5 数据配比搜索</li>
+        </ul>
+      </a>
+      <a href="05_第五章_预训练数据前沿问题.html" class="chapter-item">
+        <span class="chapter-title">第五章：预训练数据前沿问题</span>
+        <ul class="section-list">
+          <li>5.1 数据污染检测</li>
+          <li>5.2 互联网数据枯竭</li>
+          <li>5.3 多模态数据构建</li>
+          <li>5.4 数据归因与版权</li>
+        </ul>
+      </a>
+    </div>
+  </div>
+
+  <div class="part-block">
+    <div class="part-header">第二部分：中训练数据工程</div>
+    <div class="part-desc">在预训练基础上，针对特定领域、能力、知识进行高效适配——数据工程的核心战场</div>
+    <div class="chapter-list">
+      <a href="06_第六章_中训练的定位与价值.html" class="chapter-item">
+        <span class="chapter-title">第六章：中训练的定位与价值</span>
+        <ul class="section-list">
+          <li>6.1 什么是中训练</li>
+          <li>6.2 三类目标</li>
+          <li>6.3 成本对比</li>
+          <li>6.4 代表性工作</li>
+        </ul>
+      </a>
+      <a href="07_第七章_领域适配数据构建.html" class="chapter-item">
+        <span class="chapter-title">第七章：领域适配数据构建</span>
+        <ul class="section-list">
+          <li>7.1 领域数据识别</li>
+          <li>7.2 混合比例</li>
+          <li>7.3 遗忘问题缓解</li>
+          <li>7.4 评估方法</li>
+        </ul>
+      </a>
+      <a href="08_第八章_能力增强数据.html" class="chapter-item">
+        <span class="chapter-title">第八章：能力增强数据</span>
+        <ul class="section-list">
+          <li>8.1 数学与推理数据</li>
+          <li>8.2 长上下文数据</li>
+          <li>8.3 代码能力中训练</li>
+          <li>8.4 多语言能力增强</li>
+        </ul>
+      </a>
+      <a href="09_第九章_知识更新与时效性.html" class="chapter-item">
+        <span class="chapter-title">第九章：知识更新与时效性</span>
+        <ul class="section-list">
+          <li>9.1 知识截止问题</li>
+          <li>9.2 持续预训练策略</li>
+          <li>9.3 检索增强 vs 参数更新</li>
+          <li>9.4 新知识冲突解决</li>
+        </ul>
+      </a>
+    </div>
+  </div>
+
+  <div class="part-block">
+    <div class="part-header">第三部分：后训练数据</div>
+    <div class="part-desc">从指令微调到数据对齐，让人工智能"对齐人类意图"——最靠近用户的数据层</div>
+    <div class="chapter-list">
+      <a href="10_第十章_后训练数据总论.html" class="chapter-item">
+        <span class="chapter-title">第十章：后训练数据总论</span>
+        <ul class="section-list">
+          <li>10.1 范式演进</li>
+          <li>10.2 指令跟随数据</li>
+          <li>10.3 数据质量权重</li>
+          <li>10.4 评估框架</li>
+        </ul>
+      </a>
+      <a href="11_第十一章_指令微调数据.html" class="chapter-item">
+        <span class="chapter-title">第十一章：指令微调数据</span>
+        <ul class="section-list">
+          <li>11.1 人工标注数据</li>
+          <li>11.2 模型生成数据</li>
+          <li>11.3 对话数据构建</li>
+          <li>11.4 拒绝采样数据</li>
+          <li>11.5 格式数据</li>
+        </ul>
+      </a>
+    </div>
+  </div>
+
+  <div class="footer">
+    数据珠玑 · 大语言模型训练数据全景 · 完整可跳转目录
+  </div>
+
+</div>
+</body>
+</html>
+EOF

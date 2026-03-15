@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第二章：GPT-1的安静诞生 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第一部分：播种（2017-2020）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第二章</div>
+  <h1 class="chapter-title">GPT-1的安静诞生</h1>
+  <div class="chapter-epigraph">
+    "我们的核心假设是：如果模型足够大，数据足够多，语言模型本身就是理解语言的正确路径。"
+    <cite>—— Alec Radford，GPT-1论文第一作者，OpenAI，2018</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#openai-origin">OpenAI的初心与危机</a></li>
+      <li><a href="#bet">一个不流行的赌注</a></li>
+      <li><a href="#gpt1">GPT-1：语言模型的新路</a></li>
+      <li><a href="#pretraining">预训练范式的革命</a></li>
+      <li><a href="#bert-war">GPT vs BERT：一场路线之争</a></li>
+      <li><a href="#quiet">为什么它这么安静</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="openai-origin">OpenAI的初心与危机</h2>
+  <p>
+    2015年12月，OpenAI在旧金山宣告成立。创始人名单里有Elon Musk、Sam Altman、Greg Brockman、Ilya Sutskever，以及Pieter Abbeel、Wojciech Zaremba等人。承诺书上写着：这是一家非营利机构，使命是"确保人工通用智能（AGI）造福全人类"。
+  </p>
+  <p>
+    在当时，这个宣言听起来有些奇怪。深度学习刚刚在图像识别上取得突破，离"通用智能"还差着银河系的距离。但创始团队的想法是：既然AGI迟早会来，不如提前占住道德高地，开放研究成果，对抗谷歌、Facebook这样的商业巨头对技术的垄断。
+  </p>
+  <p>
+    那时候，"开放"（Open）这个词在OpenAI的名字里是认真的。论文公开发表，部分代码开源，研究者可以自由加入讨论。这种氛围，吸引了一批在谷歌、Facebook感到窒息的顶级研究员来到这里。
+  </p>
+  <p>
+    但很快，现实带来了压力。研究是烧钱的，OpenAI的初期资金来自Musk、Thiel等人的捐款，几千万美元听起来很多，但在AI算力消耗面前不值一提。更麻烦的是，到2017年，团队内部对方向的判断出现了分歧：该继续追求基础研究，还是转向应用落地？
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2015 年 12 月</div>
+    <div class="event">OpenAI 成立</div>
+    <div class="desc">以"非营利"形式在旧金山成立，由Elon Musk、Sam Altman联合创立，初始承诺资金10亿美元，但实际到位的远少于此。</div>
+  </div>
+
+  <h2 id="bet">一个不流行的赌注</h2>
+  <p>
+    2017年，Alec Radford和Ilya Sutskever在OpenAI内部推动了一个研究方向，这在当时并不流行：用无监督的方式在大量文本上预训练一个语言模型，然后在少量标注数据上微调，解决下游任务。
+  </p>
+  <p>
+    这个思路的对立面，是当时NLP领域的主流范式：针对每一个任务（情感分析、问答、命名实体识别……），单独收集标注数据，单独训练一个专门模型。这种"有监督学习"方法需要大量人工标注，但效果稳定，是学术界和工业界默认的做法。
+  </p>
+  <p>
+    Radford他们的想法是反主流的：语言模型在预测下一个词的时候，必须理解语法、语义、世界知识——这个预训练任务本身，就会教会模型大量有用的知识。我们只需要把预训练模型稍微调整一下，就能用于各种下游任务，而不需要从头训练。
+  </p>
+  <p>
+    听起来很合理，但在2017-2018年，这是一个需要勇气才能坚持的方向。当时大多数NLP研究者认为，无监督语言模型的表示不够好，没法通用于任务。
+  </p>
+
+  <blockquote>
+    "当时大家都说，你们这个方向走不通，语言模型的representation不够丰富。我们说，让我们先试试。"
+    <cite>—— Alec Radford，OpenAI研究员，GPT系列的主要推动者</cite>
+  </blockquote>
+
+  <h2 id="gpt1">GPT-1：语言模型的新路</h2>
+  <p>
+    2018年6月，OpenAI发布了GPT-1的论文：《Improving Language Understanding by Generative Pre-Training》（通过生成式预训练改进语言理解）。
+  </p>
+  <p>
+    GPT-1采用了Transformer的解码器部分（Decoder-only架构），在约8亿词的BooksCorpus数据集上做了无监督预训练——任务很简单，预测下一个词。然后，在这个预训练模型的基础上，用少量标注数据对下游任务进行微调。
+  </p>
+  <p>
+    结果令人印象深刻。在12个NLP基准测试中，GPT-1在9个上超过了当时最好的有监督学习方法，尽管它的下游标注数据少得多。这证明了预训练范式的有效性。
+  </p>
+  <p>
+    但GPT-1并不算惊天动地。1.17亿参数，在今天看来小得可怜。它的文本生成质量也有限，常常前言不搭后语。论文引用量在发布时增长缓慢——学术界礼貌地点了点头，然后继续干自己的事。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2018 年 6 月</div>
+    <div class="event">GPT-1 发布</div>
+    <div class="desc">1.17亿参数，Transformer Decoder架构，在BooksCorpus上预训练。论文题目：《Improving Language Understanding by Generative Pre-Training》</div>
+  </div>
+
+  <h2 id="pretraining">预训练范式的革命</h2>
+  <p>
+    GPT-1真正的意义，不在于它自己的能力，而在于它开创的范式——"预训练+微调"（Pre-train then Fine-tune）。
+  </p>
+  <p>
+    这个范式有一种极其优雅的逻辑：人类也是这样学习的。我们花了几十年积累语言、知识、常识——这是"预训练"。当我们面对一个新工作时，只需要几天或几周的"微调"，就能上手。语言模型为什么不能这样？
+  </p>
+  <p>
+    更深的洞见是：语言是万能的接口。如果一个模型真正理解了语言，它就能通过语言去表达、接受任何任务。数学题可以用语言描述，编程任务可以用语言描述，情感分析的结果可以用语言输出……语言模型，不只是一个文字工具，它是一个通用认知的基础。
+  </p>
+  <p>
+    这个思想，在GPT-1里是模糊的雏形，在GPT-2里开始清晰，在GPT-3里爆炸性地展现。
+  </p>
+
+  <h2 id="bert-war">GPT vs BERT：一场路线之争</h2>
+  <p>
+    就在GPT-1发布几个月后，谷歌发布了BERT（Bidirectional Encoder Representations from Transformers）。这场时间上的巧合，引发了NLP史上最有趣的"路线之争"。
+  </p>
+  <p>
+    GPT是"单向"的：从左到右预测下一个词，Decoder-only。BERT是"双向"的：通过掩码语言模型（MLM），同时利用一个词左右两侧的上下文，Encoder-only。
+  </p>
+  <p>
+    BERT的论文一出来，立刻在各大NLP基准测试上创下了新记录，引爆了学术界。它的双向性被认为更适合理解任务（分类、问答等）。媒体报道铺天盖地，"BERT打败了NLP所有任务"的标题到处都是。
+  </p>
+  <p>
+    OpenAI那边很安静。但Radford和团队已经在准备下一步。他们的判断是：BERT的双向性对理解有帮助，但它是一个"填空机"，不是一个"生成机"。而生成，才是通往通用智能的路。
+  </p>
+
+  <blockquote>
+    "BERT是一个非常优雅的工程，但它解决的是理解问题。我们想解决的是更难的问题：生成。"
+    <cite>—— Ilya Sutskever，OpenAI首席科学家，2019年内部分享（转述）</cite>
+  </blockquote>
+
+  <h2 id="quiet">为什么它这么安静</h2>
+  <p>
+    GPT-1的"安静"，有几个原因。第一，它的能力确实有限，生成的文本质量不高，实用性不强。第二，BERT的出现抢走了所有的聚光灯。第三，OpenAI本身当时存在感不强——那时谷歌Brain、DeepMind、Facebook AI Research（FAIR）才是媒体和学界的宠儿。
+  </p>
+  <p>
+    但在OpenAI内部，有一种执拗的乐观在生长。Ilya Sutskever对这个方向的信念，是近乎宗教性的。他认为，语言模型的规模化（Scaling）是正确的方向，而且是唯一的方向。给它足够的参数，足够的数据，足够的计算——它会学会一切。
+  </p>
+  <p>
+    没有人知道"足够"是多少。没有人知道这条路的尽头在哪里。但1亿参数的GPT-1开了一个口子，下一步，是把这个口子撑大——大到让所有人都无法忽视。
+  </p>
+
+  <div class="highlight-box">
+    📌 <strong>GPT-1 vs BERT</strong>：两个方向在当时看起来势均力敌，但历史最终证明，生成式（GPT路线）对于推动AI能力边界更为关键，而BERT式的编码器在搜索、理解类任务上则长期占有一席之地。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="01_Attention_Is_All_You_Need.html" class="nav-btn">← 第一章</a>
+  <a href="03_规模的预感.html" class="nav-btn">第三章：规模的预感 →</a>
+</nav>
+
+</body>
+</html>

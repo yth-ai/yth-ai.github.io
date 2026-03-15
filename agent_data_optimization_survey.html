@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent能力的数据优化路径 - 系统综述</title>
+    <style>
+        :root {
+            --bg: #0e1117;
+            --card: #161b22;
+            --border: #30363d;
+            --text: #c9d1d9;
+            --text-secondary: #8b949e;
+            --accent: #a855f7;
+            --accent-light: #d8b4fe;
+            --success: #3fb950;
+            --warning: #d29922;
+            --danger: #f85149;
+            --info: #58a6ff;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .container {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 40px;
+            margin-top: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: var(--accent);
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--accent), var(--accent-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        h2 {
+            color: var(--accent-light);
+            font-size: 1.8rem;
+            margin: 30px 0 15px 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        h3 {
+            color: var(--text);
+            font-size: 1.3rem;
+            margin: 20px 0 10px 0;
+        }
+        
+        p {
+            margin: 10px 0;
+            color: var(--text);
+        }
+        
+        .card {
+            background: rgba(22, 27, 34, 0.8);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            transition: all 0.2s ease;
+        }
+        
+        .card:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 1px var(--accent);
+        }
+        
+        .card.highlight {
+            border-color: var(--accent);
+            background: linear-gradient(45deg, rgba(168, 85, 247, 0.1), transparent);
+        }
+        
+        .definition-box {
+            background: rgba(58, 39, 95, 0.2);
+            border-left: 4px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .matrix {
+            display: grid;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .matrix-2x2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        
+        .matrix-3x3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        
+        .grid-item {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 15px;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin: 2px 4px;
+        }
+        
+        .tag-orange { background: #3c2a14; color: #ffa657; border: 1px solid #ffa65733; }
+        .tag-blue { background: #0c2d6b; color: #79c0ff; border: 1px solid #79c0ff33; }
+        .tag-green { background: #1a5326; color: #7ee787; border: 1px solid #7ee78733; }
+        .tag-purple { background: #3d1e69; color: #d2a8ff; border: 1px solid #d2a8ff33; }
+        .tag-red { background: #4c1b1b; color: #f88d8d; border: 1px solid #f88d8d33; }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+        
+        th, td {
+            border: 1px solid var(--border);
+            padding: 12px 15px;
+            text-align: left;
+        }
+        
+        th {
+            background: rgba(48, 54, 61, 0.3);
+            color: var(--accent-light);
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background: rgba(48, 54, 61, 0.1);
+        }
+        
+        a {
+            color: var(--info);
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px 30px;
+            margin: 20px 0;
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+        }
+        
+        .nav a {
+            color: var(--text);
+            font-weight: 500;
+        }
+        
+        .nav a:hover {
+            color: var(--accent);
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .timestamp {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Agent能力的数据优化路径</h1>
+        <div class="timestamp">更新：2026-03-05 16:35</div>
+        
+        <div class="nav">
+            <a href="#chapter1">Agent类型矩阵</a>
+            <a href="#chapter2">数据类型体系</a>
+            <a href="#chapter3">优化策略</a>
+            <a href="#chapter4">业界实践</a>
+            <a href="#chapter5">学术前沿</a>
+            <a href="#references">参考资料</a>
+        </div>
+        
+        <p>本报告系统梳理大模型Agent能力优化路径，聚焦预训练/中训练数据角度，分析Agent类型、数据类型、优化策略，整合业界实践和学术前沿技术。</p>
+        
+        <div class="definition-box">
+            <h3>核心定义</h3>
+            <p><strong>中训练（Mid-training）</strong>：在通用预训练完成后、任务后训练开始前，以中等规模的计算预算，在精心设计的数据分布上继续优化模型，以系统性增强特定能力，同时尽量维持甚至改善原有通用能力的过程。</p>
+        </div>
+        
+        <h2 id="chapter1">1. Agent类型分类矩阵</h2>
+        <p>从应用领域和数据需求角度，将Agent分为四大类型，每种类型有独特的能力聚焦和数据需求特征。</p>
+        
+        <div class="matrix matrix-2x2">
+            <div class="grid-item">
+                <h3>通用Agent</h3>
+                <p><span class="tag tag-orange">多任务泛化</span><span class="tag tag-orange">工具使用</span><span class="tag tag-orange">长时记忆</span></p>
+                <p><strong>能力聚焦</strong>：跨领域任务执行、多工具协调、长期上下文理解</p>
+                <p><strong>数据需求</strong>：多样化任务轨迹、多工具环境数据、长对话历史</p>
+            </div>
+            
+            <div class="grid-item">
+                <h3>Code Agent</h3>
+                <p><span class="tag tag-blue">代码理解</span><span class="tag tag-blue">环境交互</span><span class="tag tag-blue">调试恢复</span></p>
+                <p><strong>能力聚焦</strong>：代码理解与生成、执行环境交互、错误调试与恢复</p>
+                <p><strong>数据需求</strong>：Github数据、测试环境、执行反馈、错误恢复轨迹</p>
+            </div>
+            
+            <div class="grid-item">
+                <h3>Research Agent</h3>
+                <p><span class="tag tag-green">信息检索</span><span class="tag tag-green">分析综合</span><span class="tag tag-green">假设生成</span></p>
+                <p><strong>能力聚焦</strong>：信息检索与评估、多源信息综合、假设生成与验证</p>
+                <p><strong>数据需求</strong>：科学文献、数据图表、研究流程、评估标准</p>
+            </div>
+            
+            <div class="grid-item">
+                <h3>领域Agent</h3>
+                <p><span class="tag tag-purple">领域语法</span><span class="tag tag-purple">专业逻辑</span><span class="tag tag-purple">约束遵循</span></p>
+                <p><strong>能力聚焦</strong>：领域专有语法、专业逻辑推理、规则约束遵循</p>
+                <p><strong>数据需求</strong>：行业文档、领域知识库、专业论坛、专家决策轨迹</p>
+            </div>
+        </div>
+        
+        <h2 id="chapter2">2. 数据类型体系</h2>
+        <p>根据训练阶段划分数据架构，不同Agent类型在不同训练阶段有差异化数据需求。</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>训练阶段</th>
+                    <th>数据性质</th>
+                    <th>核心数据内容</th>
+                    <th>关键挑战</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>预训练</strong></td>
+                    <td>通用知识</td>
+                    <td>自然语料、代码语料、多模态、知识图谱</td>
+                    <td>数据质量、规模、多样性平衡</td>
+                </tr>
+                <tr>
+                    <td><strong>中训练</strong></td>
+                    <td>能力专精</td>
+                    <td>轨迹合成、工具使用、推理链、长上下文、多Agent交互</td>
+                    <td>数据真实性、可验证性、难度控制</td>
+                </tr>
+                <tr>
+                    <td><strong>后训练</strong></td>
+                    <td>任务对齐</td>
+                    <td>特定任务轨迹、人工标注、强化学习奖励</td>
+                    <td>奖励稀疏性、人工成本、泛化能力</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="card highlight">
+            <h3>中训练数据的关键类型</h3>
+            <p><strong>轨迹合成数据</strong>：模拟真实交互轨迹，包含错误恢复和策略选择</p>
+            <p><strong>工具使用数据</strong>：API调用、环境交互、工具链组合</p>
+            <p><strong>推理链（CoT）数据</strong>：思维链、决策过程、验证步骤</p>
+            <p><strong>长上下文数据</strong>：长文档理解、多轮对话、记忆保持</p>
+            <p><strong>多Agent交互数据</strong>：协作模式、通信协议、分布式决策</p>
+        </div>
+        
+        <h2 id="chapter3">3. 数据优化策略</h2>
+        <p>针对不同Agent类型的数据需求，采用差异化优化策略提升能力和泛化性。</p>
+        
+        <div class="matrix matrix-3x3">
+            <div class="grid-item">
+                <h3>数据合成</h3>
+                <p><span class="tag tag-blue">基于规则</span><span class="tag tag-blue">LLM引导</span><span class="tag tag-blue">环境驱动</span></p>
+                <p>通过规则系统、LLM生成器和环境模拟器合成多样化训练数据</p>
+            </div>
+            
+            <div class="grid-item">
+                <h3>质量控制</h3>
+                <p><span class="tag tag-green">多样性</span><span class="tag tag-green">难度控制</span><span class="tag tag-green">可验证性</span></p>
+                <p>确保数据覆盖不同难度级别、场景变体和可验证的解决方案</p>
+            </div>
+            
+            <div class="grid-item">
+                <h3>课程学习</h3>
+                <p><span class="tag tag-purple">渐进式</span><span class="tag tag-purple">退火策略</span><span class="tag tag-purple">能力分层</span></p>
+                <p>从简单到复杂的训练顺序，逐步引入新能力和复杂场景</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3>Code Agent优化要点</h3>
+            <p>1. <strong>高保真环境合成</strong>：TermiGen通过迭代多Agent精炼循环创建可执行Docker环境</p>
+            <p>2. <strong>鲁棒轨迹收集</strong>：Generator-Critic协议主动注入错误，训练错误恢复能力</p>
+            <p>3. <strong>数据多样性</strong>：覆盖不同编程语言、框架、工具链和项目规模</p>
+        </div>
+        
+        <h2 id="chapter4">4. 业界实践案例</h2>
+        <p>各大公司在中训练阶段实施的数据优化策略各有侧重，形成不同的技术路线。</p>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>公司/模型</th>
+                    <th>技术特色</th>
+                    <th>数据配方</th>
+                    <th>效果验证</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><strong>GLM-4.5</strong></td>
+                    <td>Agentic ARC三重能力</td>
+                    <td>repo-level数据 + reasoning CoT + long context & agent data</td>
+                    <td>评估未见任务泛化能力</td>
+                </tr>
+                <tr>
+                    <td><strong>KAT-Coder</strong></td>
+                    <td>真实世界SWE专业能力</td>
+                    <td>20B Github PR/issues/commits + reasoning CoT + agentic轨迹</td>
+                    <td>软件工程项目泛化</td>
+                </tr>
+                <tr>
+                    <td><strong>Qwen Scaling Agents</strong></td>
+                    <td>持续预训练Agent化</td>
+                    <td>大量agentic合成轨迹 + 工具使用数据</td>
+                    <td>30B模型达到SOTA</td>
+                </tr>
+                <tr>
+                    <td><strong>TerminalBench</strong></td>
+                    <td>终端Agent训练框架</td>
+                    <td>高保真Docker环境 + 鲁棒轨迹合成</td>
+                    <td>31.3%通过率（open-weights SOTA）</td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="definition-box">
+            <p><strong>关键洞察</strong>：中训练阶段加入agentic数据可以让模型先学会各种工具使用，在RL阶段只需专注具体任务，提高采样效率。相同数据下，在CPT阶段训练比SFT更能学会难题。</p>
+        </div>
+        
+        <h2 id="chapter5">5. 学术前沿技术</h2>
+        <p>2025-2026年出现的创新数据合成方法和技术框架。</p>
+        
+        <div class="card">
+            <h3>ScaleEnv（2602.06820）</h3>
+            <p><strong>核心创新</strong>：从零开始合成环境用于通用工具使用Agent训练</p>
+            <p><strong>技术特点</strong>：程序测试确保可靠性 + 工具依赖图扩展保证任务完整性</p>
+            <p><strong>效果验证</strong>：在τ²-Bench和VitaBench上显著提升泛化能力</p>
+        </div>
+        
+        <div class="card">
+            <h3>AgentSkiller（2602.09372）</h3>
+            <p><strong>核心创新</strong>：语义集成跨领域数据合成提升通用Agent智能</p>
+            <p><strong>技术特点</strong>：DAG架构 + Person-Centric Entity Graph + Service Blueprints</p>
+            <p><strong>效果验证</strong>：合成~11K交互样本，显著提升函数调用能力</p>
+        </div>
+        
+        <div class="card">
+            <h3>RA3算法</h3>
+            <p><strong>核心创新</strong>：通过action abstraction压缩决策空间</p>
+            <p><strong>技术特点</strong>：在代码推理轨迹上引入latent thought variables</p>
+            <p><strong>效果验证</strong>：通过训练抽象动作，提升下游RL收敛速度和性能</p>
+        </div>
+        
+        <h2 id="references">参考资料</h2>
+        <div class="card">
+            <h3>扩展阅读</h3>
+            <ul>
+                <li>Mid-training 定义与业界实践</li>
+                <li>2025-2026 Agent 论文精选 30 篇</li>
+            </ul>
+        </div>
+        
+        <div class="card">
+            <h3>关键论文</h3>
+            <ul>
+                <li>ScaleEnv: Scaling Environment Synthesis from Scratch for Generalist Interactive Tool-Use Agent Training (2602.06820)</li>
+                <li>AgentSkiller: Scaling Generalist Agent Intelligence through Semantically Integrated Cross-Domain Data Synthesis (2602.09372)</li>
+                <li>TermiGen: High-Fidelity Environment and Robust Trajectory Synthesis for Terminal Agents (2602.07274)</li>
+                <li>Learning to Reason as Action Abstractions with Scalable Mid-Training RL (RA3)</li>
+            </ul>
+        </div>
+        
+        <div class="footer">
+            <p>主题：Agent 能力数据优化路径</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,964 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAE 在 LLM 可解释性与数据筛选中的应用</title>
+<style>
+:root {
+  --bg1: #070c14;
+  --bg2: #0c1220;
+  --card: #101828;
+  --card2: #141f30;
+  --border: #1a2a40;
+  --border2: #223348;
+  --a1: #3b82f6;   /* blue */
+  --a2: #8b5cf6;   /* purple */
+  --a3: #10b981;   /* green */
+  --a4: #f59e0b;   /* amber */
+  --a5: #e94560;   /* red */
+  --a6: #06b6d4;   /* cyan */
+  --t1: #e2eaf4;
+  --t2: #7a95b0;
+  --t3: #3a5270;
+}
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body { background: var(--bg1); color: var(--t1); font-family: -apple-system, 'PingFang SC', 'Segoe UI', sans-serif; font-size: 15px; line-height: 1.75; display: flex; }
+
+/* Sidebar */
+.sidebar { width: 250px; min-height: 100vh; background: var(--bg2); border-right: 1px solid var(--border); position: fixed; top: 0; left: 0; padding: 0 0 32px; overflow-y: auto; z-index: 100; }
+.sidebar-brand { padding: 24px 20px 16px; border-bottom: 1px solid var(--border); }
+.sidebar-brand .brand-label { font-size: 10px; color: var(--a2); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 6px; }
+.sidebar-brand .brand-title { font-size: 13px; color: var(--t1); font-weight: 700; line-height: 1.4; }
+.nav-group { font-size: 10px; color: var(--t3); letter-spacing: 2px; text-transform: uppercase; padding: 16px 20px 4px; }
+.nav-link { display: flex; align-items: center; gap: 8px; padding: 7px 20px 7px 24px; font-size: 12.5px; color: var(--t2); text-decoration: none; border-left: 2px solid transparent; transition: all .15s; }
+.nav-link:hover, .nav-link.active { color: var(--t1); background: rgba(59,130,246,.08); border-left-color: var(--a1); }
+.nav-link .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+
+/* Main */
+.main { margin-left: 250px; max-width: 1100px; padding: 0; width: 100%; }
+
+/* Hero */
+.hero { padding: 64px 60px 52px; border-bottom: 1px solid var(--border); position: relative; overflow: hidden; }
+.hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 70% 80% at 80% 20%, rgba(139,92,246,.1) 0%, transparent 65%), radial-gradient(ellipse 40% 40% at 5% 80%, rgba(59,130,246,.07) 0%, transparent 60%); pointer-events: none; }
+.hero-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--a2); margin-bottom: 14px; display: flex; align-items: center; gap: 10px; }
+.hero-eyebrow::before { content: ''; width: 20px; height: 2px; background: var(--a2); }
+.hero h1 { font-size: 42px; font-weight: 800; color: #fff; line-height: 1.1; letter-spacing: -1.5px; margin-bottom: 12px; }
+.hero h1 span { color: var(--a2); }
+.hero-sub { font-size: 17px; color: var(--a6); font-weight: 500; margin-bottom: 20px; }
+.hero-desc { font-size: 14px; color: var(--t2); max-width: 680px; line-height: 1.8; }
+.hero-meta { display: flex; gap: 24px; margin-top: 28px; }
+.hero-meta-item { font-size: 12px; color: var(--t3); display: flex; align-items: center; gap: 6px; }
+.hero-meta-item span { color: var(--t2); }
+
+/* Section */
+.section { padding: 52px 60px; border-bottom: 1px solid var(--border); scroll-margin-top: 20px; }
+.section:last-child { border-bottom: none; }
+.section-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 10px; }
+.section-title { font-size: 26px; font-weight: 800; color: #fff; letter-spacing: -0.5px; margin-bottom: 14px; }
+.section-lead { font-size: 14px; color: var(--t2); max-width: 760px; line-height: 1.85; margin-bottom: 36px; }
+
+/* Cards */
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.card-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 32px; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 22px 24px; transition: border-color .2s, transform .15s; }
+.card:hover { border-color: var(--border2); transform: translateY(-2px); }
+.card-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 8px; line-height: 1.4; }
+.card-sub { font-size: 11px; color: var(--t3); font-weight: 600; margin-bottom: 10px; font-family: 'Fira Mono', monospace; }
+.card p, .card li { font-size: 13px; color: var(--t2); line-height: 1.75; }
+.card ul { padding-left: 16px; display: flex; flex-direction: column; gap: 5px; }
+.card strong { color: var(--t1); }
+
+/* Accent borders */
+.c-blue  { border-top: 2px solid var(--a1); }
+.c-purple{ border-top: 2px solid var(--a2); }
+.c-green { border-top: 2px solid var(--a3); }
+.c-amber { border-top: 2px solid var(--a4); }
+.c-red   { border-top: 2px solid var(--a5); }
+.c-cyan  { border-top: 2px solid var(--a6); }
+
+/* H3 sub-section headers */
+.sub-h3 { font-size: 16px; font-weight: 700; color: var(--t1); margin: 32px 0 16px; padding-left: 12px; display: flex; align-items: center; gap: 10px; }
+.sub-h3::before { content: ''; width: 3px; height: 18px; border-radius: 2px; flex-shrink: 0; }
+.sh-blue::before   { background: var(--a1); }
+.sh-purple::before { background: var(--a2); }
+.sh-green::before  { background: var(--a3); }
+.sh-amber::before  { background: var(--a4); }
+.sh-red::before    { background: var(--a5); }
+.sh-cyan::before   { background: var(--a6); }
+
+/* Callout boxes */
+.callout { border-radius: 10px; padding: 18px 22px; margin: 24px 0; font-size: 13px; line-height: 1.8; }
+.callout-blue   { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.25); }
+.callout-purple { background: rgba(139,92,246,.08); border: 1px solid rgba(139,92,246,.25); }
+.callout-green  { background: rgba(16,185,129,.08); border: 1px solid rgba(16,185,129,.25); }
+.callout-amber  { background: rgba(245,158,11,.08); border: 1px solid rgba(245,158,11,.25); }
+.callout-red    { background: rgba(233,69,96,.08); border: 1px solid rgba(233,69,96,.25); }
+.callout strong { color: var(--t1); }
+
+/* Figure / Diagram */
+.diagram { background: var(--card2); border: 1px solid var(--border); border-radius: 12px; padding: 28px 32px; margin: 24px 0; font-size: 13px; }
+.diagram-title { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--t3); margin-bottom: 16px; }
+
+/* Flow diagram */
+.flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+.flow-box { background: var(--bg2); border: 1px solid var(--border2); border-radius: 8px; padding: 10px 16px; font-size: 12px; font-weight: 600; color: var(--t1); text-align: center; min-width: 110px; }
+.flow-arrow { font-size: 18px; color: var(--t3); padding: 0 6px; }
+.flow-box.hl-blue   { border-color: rgba(59,130,246,.5);  color: var(--a1); }
+.flow-box.hl-purple { border-color: rgba(139,92,246,.5); color: var(--a2); }
+.flow-box.hl-green  { border-color: rgba(16,185,129,.5);  color: var(--a3); }
+.flow-box.hl-amber  { border-color: rgba(245,158,11,.5);  color: var(--a4); }
+
+/* Table */
+.tbl { width: 100%; border-collapse: collapse; font-size: 13px; margin: 20px 0; }
+.tbl th { background: var(--card2); color: var(--t2); font-weight: 600; padding: 10px 14px; text-align: left; border-bottom: 1px solid var(--border2); font-size: 12px; letter-spacing: 0.3px; }
+.tbl td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--t2); vertical-align: top; line-height: 1.6; }
+.tbl tr:hover td { background: rgba(255,255,255,.02); }
+.tbl .hi { color: var(--t1); font-weight: 600; }
+.tbl .tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; }
+.tag-blue   { background: rgba(59,130,246,.15); color: var(--a1); }
+.tag-purple { background: rgba(139,92,246,.15); color: var(--a2); }
+.tag-green  { background: rgba(16,185,129,.15); color: var(--a3); }
+.tag-amber  { background: rgba(245,158,11,.15); color: var(--a4); }
+.tag-red    { background: rgba(233,69,96,.15);  color: var(--a5); }
+
+/* Code block */
+.code-block { background: #0a1020; border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-family: 'Fira Mono', 'Courier New', monospace; font-size: 12px; color: #a8c4e0; line-height: 1.7; overflow-x: auto; margin: 16px 0; }
+.code-block .kw { color: var(--a2); }
+.code-block .fn { color: var(--a6); }
+.code-block .cm { color: var(--t3); }
+.code-block .st { color: var(--a3); }
+.code-block .nm { color: var(--a4); }
+
+/* Paper cards */
+.paper-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px 20px; margin-bottom: 14px; }
+.paper-title { font-size: 14px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+.paper-meta { font-size: 11px; color: var(--t3); font-weight: 600; margin-bottom: 8px; font-family: monospace; }
+.paper-abstract { font-size: 13px; color: var(--t2); line-height: 1.7; margin-bottom: 10px; }
+.paper-points { font-size: 12.5px; color: var(--t2); padding-left: 16px; display: flex; flex-direction: column; gap: 4px; }
+.paper-points li strong { color: var(--a3); }
+.paper-footer { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+/* Summary grid */
+.summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.summary-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+.summary-box-title { font-size: 12px; font-weight: 700; margin-bottom: 10px; }
+.summary-box ul { padding-left: 16px; display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--t2); line-height: 1.6; }
+
+/* Responsive */
+@media (max-width: 900px) {
+  .main { margin-left: 0; }
+  .sidebar { display: none; }
+  .hero, .section { padding: 32px 24px; }
+  .card-grid-2, .summary-grid { grid-template-columns: 1fr; }
+  .hero h1 { font-size: 30px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <div class="brand-label">Research Report</div>
+    <div class="brand-title">SAE 可解释性与<br>数据筛选应用</div>
+  </div>
+  <div class="nav-group">基础原理</div>
+  <a class="nav-link" href="#intro"><span class="dot" style="background:var(--a2)"></span>什么是 SAE</a>
+  <a class="nav-link" href="#superposition"><span class="dot" style="background:var(--a2)"></span>叠加假说</a>
+  <a class="nav-link" href="#training"><span class="dot" style="background:var(--a2)"></span>SAE 训练机制</a>
+  <a class="nav-link" href="#variants"><span class="dot" style="background:var(--a2)"></span>主要变体</a>
+
+  <div class="nav-group">可解释性应用</div>
+  <a class="nav-link" href="#interp-overview"><span class="dot" style="background:var(--a1)"></span>应用全景</a>
+  <a class="nav-link" href="#anthropic"><span class="dot" style="background:var(--a1)"></span>Anthropic 工作</a>
+  <a class="nav-link" href="#steering"><span class="dot" style="background:var(--a1)"></span>行为引导</a>
+
+  <div class="nav-group">数据筛选（重点）</div>
+  <a class="nav-link" href="#data-overview"><span class="dot" style="background:var(--a3)"></span>方法论框架</a>
+  <a class="nav-link" href="#finescope"><span class="dot" style="background:var(--a3)"></span>FineScope</a>
+  <a class="nav-link" href="#topic-align"><span class="dot" style="background:var(--a3)"></span>主题对齐筛选</a>
+  <a class="nav-link" href="#concept-influence"><span class="dot" style="background:var(--a3)"></span>Concept Influence</a>
+  <a class="nav-link" href="#safety-filter"><span class="dot" style="background:var(--a3)"></span>安全内容过滤</a>
+  <a class="nav-link" href="#comparison"><span class="dot" style="background:var(--a3)"></span>方法对比</a>
+
+  <div class="nav-group">研判</div>
+  <a class="nav-link" href="#limitations"><span class="dot" style="background:var(--a4)"></span>局限性与问题</a>
+  <a class="nav-link" href="#outlook"><span class="dot" style="background:var(--a4)"></span>前景与建议</a>
+  <a class="nav-link" href="#refs"><span class="dot" style="background:var(--t3)"></span>文献索引</a>
+</aside>
+
+<!-- Main -->
+<main class="main">
+
+<!-- Hero -->
+<div class="hero" id="top">
+  <div class="hero-eyebrow">Deep Dive Report · 2025–2026</div>
+  <h1>SAE 在 LLM <span>可解释性</span><br>与数据筛选中的应用</h1>
+  <p class="hero-sub">Sparse Autoencoder · Mechanistic Interpretability · Data Curation</p>
+  <p class="hero-desc">
+    稀疏自动编码器（SAE）近两年从 Anthropic 的研究工具，逐步演变为影响数据工程实践的核心方法。
+    本报告系统介绍 SAE 原理，重点梳理其在数据筛选中的最新工作：
+    从领域数据精选、主题对齐过滤，到基于概念的训练数据溯源——
+    SAE 正在给"哪些数据值得训练"这个问题提供前所未有的可解释性答案。
+  </p>
+  <div class="hero-meta">
+    <div class="hero-meta-item">🗓 <span>覆盖 2023–2026.02</span></div>
+    <div class="hero-meta-item">📄 <span>10+ 核心论文</span></div>
+    <div class="hero-meta-item">🔬 <span>重点：数据筛选应用</span></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PART 1: 基础原理 -->
+<!-- ════════════════════════════════════════════ -->
+
+<section class="section" id="intro">
+  <div class="section-eyebrow" style="color:var(--a2)">Part 1 · 基础原理</div>
+  <div class="section-title">什么是 SAE？从直觉开始</div>
+  <p class="section-lead">
+    如果你不做可解释性研究，SAE 对你来说可能只是个名词。
+    但理解它为什么有用，只需要一个核心问题：<strong style="color:var(--t1)">神经网络的内部表示能被人读懂吗？</strong>
+  </p>
+
+  <div class="callout callout-purple">
+    <strong>一句话定义：</strong>
+    SAE（稀疏自动编码器）是一种神经网络，它将模型内部的激活值（activation）分解成一组<strong>稀疏的、可解释的特征</strong>。
+    用编码器把激活值映射到一个更高维的空间，用解码器重建回来，同时强制让绝大多数特征为零。
+  </div>
+
+  <div class="sub-h3 sh-purple">为什么要这么做？理解多义性神经元（Polysemanticity）</div>
+  <p style="font-size:14px;color:var(--t2);margin-bottom:16px;line-height:1.85;">
+    神经网络的单个神经元往往对多个完全不相关的概念都有激活——比如同一个神经元可能对"香蕉"、"弧度"、"怀孕"都有响应。这叫做<strong style="color:var(--t1)">多义性（polysemanticity）</strong>。
+    它让人无法直接从神经元"读出"含义。
+  </p>
+
+  <div class="card-grid">
+    <div class="card c-purple">
+      <div class="card-title">🧩 多义性神经元（问题所在）</div>
+      <ul>
+        <li>同一个神经元同时编码多个不相关概念</li>
+        <li>直接解读激活值毫无意义</li>
+        <li>根本原因：模型维度有限，但需要表示的概念远超维度数量</li>
+        <li>Anthropic 实验发现：512 维的 MLP 层可能"存储"数千个概念</li>
+      </ul>
+    </div>
+    <div class="card c-blue">
+      <div class="card-title">🔑 单义性特征（SAE 的目标）</div>
+      <ul>
+        <li>每个 SAE 特征只激活于一个语义概念（<strong>单义性</strong>）</li>
+        <li>高维稀疏空间中，每次只有极少数特征被激活</li>
+        <li>Anthropic 的 SAE 训练出了对应"金门大桥"、"递归"、"DNA 双螺旋"等明确概念的特征</li>
+        <li>这些特征是真正的"模型词典"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sub-h3 sh-blue">SAE 的直觉类比</div>
+  <div class="callout callout-blue">
+    <strong>类比：音频频谱分析</strong><br>
+    想象原始音频波形（= 神经元激活）是混叠在一起的多种乐器。
+    傅里叶变换把它分解成各个频率分量（= SAE 特征）——每个频率对应一种乐器。
+    SAE 做的事情和傅里叶变换类似，只是作用在语义空间上。
+  </div>
+</section>
+
+<section class="section" id="superposition">
+  <div class="section-eyebrow" style="color:var(--a2)">Part 1 · 核心理论</div>
+  <div class="section-title">叠加假说（Superposition Hypothesis）</div>
+  <p class="section-lead">
+    理解 SAE 为什么能工作，需要先理解 Elhage et al. 2022 提出的叠加假说——
+    这是整个 SAE 研究的理论基础。
+  </p>
+
+  <div class="diagram">
+    <div class="diagram-title">叠加假说 · 核心逻辑</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:13px;color:var(--t2);">
+      <div>
+        <div style="color:var(--a4);font-weight:700;margin-bottom:8px;">神经网络面对的矛盾</div>
+        <ul style="padding-left:16px;line-height:1.8;">
+          <li>现实世界的概念数量：数十万甚至更多</li>
+          <li>模型的隐藏维度：通常仅数千</li>
+          <li>若每个维度只表示一个概念，能力极为有限</li>
+        </ul>
+      </div>
+      <div>
+        <div style="color:var(--a3);font-weight:700;margin-bottom:8px;">模型的"聪明"解法</div>
+        <ul style="padding-left:16px;line-height:1.8;">
+          <li>用叠加（superposition）把多个概念压缩进同一维度</li>
+          <li>只要概念稀疏共现，就能几乎无损地解码</li>
+          <li>代价：单个维度变得"多义"，无法直接解读</li>
+        </ul>
+      </div>
+    </div>
+    <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);font-size:13px;color:var(--t2);">
+      <strong style="color:var(--a2);">SAE 的洞察：</strong>
+      如果叠加是一种压缩，那就可以用稀疏字典学习把它"解压"回单义特征。
+      强制让激活稀疏（L1 正则），正是在破坏叠加、还原真实特征。
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <strong>关键实证（Bricken et al., 2023）：</strong>
+    在一层 512 维的 MLP 上训练 SAE，最终发现了 <strong>4096 个</strong>可解释特征——比神经元数量多了 8 倍。
+    这证实了叠加是真实存在的，也说明 SAE 确实能"超分辨率"地还原出被叠加的概念。
+  </div>
+</section>
+
+<section class="section" id="training">
+  <div class="section-eyebrow" style="color:var(--a2)">Part 1 · 技术细节</div>
+  <div class="section-title">SAE 是怎么训练的</div>
+  <p class="section-lead">
+    SAE 是一个附加在预训练 LLM 上的独立模块，不改变 LLM 权重，
+    专门学习如何分解目标层的激活值。
+  </p>
+
+  <div class="diagram">
+    <div class="diagram-title">SAE 结构与训练流程</div>
+    <div class="flow" style="flex-direction:column;align-items:flex-start;gap:8px;">
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="flow-box">LLM 中间层激活 <br><span style="font-size:11px;color:var(--t3)">h ∈ ℝᵈ</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box hl-purple">编码器 <br><span style="font-size:11px">z = ReLU(W_enc · h + b_enc)</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box hl-blue">稀疏特征向量 <br><span style="font-size:11px;color:var(--t3)">z ∈ ℝᴺ，N≫d，||z||₀ 很小</span></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;margin-top:4px;">
+        <div class="flow-box hl-blue" style="min-width:auto">稀疏特征向量 z</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box hl-green">解码器 <br><span style="font-size:11px">h' = W_dec · z + b_dec</span></div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box">重建激活 <br><span style="font-size:11px;color:var(--t3)">h' ≈ h</span></div>
+      </div>
+    </div>
+    <div style="margin-top:20px;font-size:13px;color:var(--t2);">
+      <strong style="color:var(--a4);">训练损失：</strong>
+      <div class="code-block" style="margin-top:8px;">
+<span class="cm"># 重建损失 + 稀疏惩罚</span>
+L = <span class="fn">MSE</span>(h, h') + λ · <span class="fn">||z||₁</span>
+
+<span class="cm"># h:  原始激活（来自 LLM 某层）</span>
+<span class="cm"># h': SAE 重建的激活</span>
+<span class="cm"># z:  中间稀疏特征向量（维度 N 远大于 d）</span>
+<span class="cm"># λ:  稀疏强度超参，越大特征越少但越单义</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-grid">
+    <div class="card c-blue">
+      <div class="card-title">关键超参：展开倍数（Expansion Factor）</div>
+      <ul>
+        <li>SAE 隐藏维度 N = 展开倍数 × LLM 层维度 d</li>
+        <li>Anthropic 常用 8×、16×、甚至 32×</li>
+        <li>越大能发现越细粒度的特征，但计算代价更高</li>
+        <li>Gao et al. 2024 用了 16×~32× 在 GPT-4 级别模型上</li>
+      </ul>
+    </div>
+    <div class="card c-purple">
+      <div class="card-title">关键超参：稀疏强度 λ</div>
+      <ul>
+        <li>λ 太大：过度稀疏，特征语义模糊，重建损失高</li>
+        <li>λ 太小：特征不够单义，一个特征还是多义</li>
+        <li>常见指标：每个 token 平均激活的特征数（L0），通常希望在 20~100 之间</li>
+      </ul>
+    </div>
+    <div class="card c-green">
+      <div class="card-title">特征的自动命名</div>
+      <ul>
+        <li>找出使某特征激活最高的 top-k 文本样本</li>
+        <li>用 LLM 自动给这组样本归纳一个语义标签</li>
+        <li>Anthropic 这样标注了数百万个特征</li>
+        <li>有了标签，才能建立"特征 ID → 语义含义"的索引</li>
+      </ul>
+    </div>
+    <div class="card c-amber">
+      <div class="card-title">训练 SAE 要多少资源？</div>
+      <ul>
+        <li>需要大量激活数据，通常从现有训练语料中前向传播提取</li>
+        <li>对于中等规模 LLM（7B），单层 SAE 训练：数十 GPU 小时量级</li>
+        <li>Anthropic Claude 3 Sonnet 级别 SAE：数百到数千 GPU 小时</li>
+        <li>一旦训练好，推理时附加开销很小</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="variants">
+  <div class="section-eyebrow" style="color:var(--a2)">Part 1 · 技术进展</div>
+  <div class="section-title">SAE 的主要变体与改进</div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>变体</th>
+        <th>来源</th>
+        <th>核心改进</th>
+        <th>适用场景</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="hi">Vanilla SAE</td>
+        <td>Bricken+ 2023</td>
+        <td>基线，ReLU 激活，L1 稀疏</td>
+        <td>原理验证</td>
+      </tr>
+      <tr>
+        <td class="hi">TopK-SAE</td>
+        <td>Gao+ 2024 (OpenAI)</td>
+        <td>用 TopK 替代 L1，精确控制稀疏度，无 shrinkage 问题</td>
+        <td>大规模训练首选</td>
+      </tr>
+      <tr>
+        <td class="hi">JumpReLU-SAE</td>
+        <td>Rajamanoharan+ 2024 (Google DeepMind)</td>
+        <td>用可学习阈值，稀疏更稳定，特征更单义</td>
+        <td>高质量可解释性研究</td>
+      </tr>
+      <tr>
+        <td class="hi">Matryoshka SAE</td>
+        <td>Nabeshima 2025</td>
+        <td>多粒度嵌套特征，大特征包含小特征，层次化语义</td>
+        <td>多粒度分析</td>
+      </tr>
+      <tr>
+        <td class="hi">SAE-V</td>
+        <td>PKU-Alignment 2025 (ICML)</td>
+        <td>扩展到多模态 LLM，对视觉 token 的激活做稀疏分解</td>
+        <td>多模态可解释性</td>
+      </tr>
+      <tr>
+        <td class="hi">Group-SAE</td>
+        <td>EMNLP 2025</td>
+        <td>分组训练降低计算成本，同时保持特征质量</td>
+        <td>资源受限的大规模训练</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PART 2: 可解释性应用 -->
+<!-- ════════════════════════════════════════════ -->
+
+<section class="section" id="interp-overview">
+  <div class="section-eyebrow" style="color:var(--a1)">Part 2 · 可解释性应用</div>
+  <div class="section-title">SAE 在 LLM 可解释性上的应用全景</div>
+  <p class="section-lead">SAE 提供了一个"可读的内部字典"，这使得多类下游可解释性任务成为可能。</p>
+
+  <div class="card-grid">
+    <div class="card c-blue">
+      <div class="card-title">🔍 特征发现与命名</div>
+      <p>自动发现并命名模型内部的语义单元——比如对应"程序员"、"DNA"、"法语动词"等概念的特征向量。这是后续所有应用的基础。</p>
+    </div>
+    <div class="card c-purple">
+      <div class="card-title">🧭 因果追踪（Circuit Analysis）</div>
+      <p>通过激活/屏蔽特定特征，找出模型做某类推理时激活的"计算回路"。回答"为什么模型对这个问题这样回答"。</p>
+    </div>
+    <div class="card c-green">
+      <div class="card-title">🎛️ 行为引导（Steering）</div>
+      <p>在推理时手动修改 SAE 特征的激活值，从而控制输出风格、话题、情绪——无需重新训练。</p>
+    </div>
+    <div class="card c-amber">
+      <div class="card-title">🛡️ 安全监控</div>
+      <p>实时监控模型是否激活了有害概念的特征（如武器制造、个人信息提取），用于安全过滤和警报系统。</p>
+    </div>
+    <div class="card c-red">
+      <div class="card-title">📊 跨层特征对齐</div>
+      <p>追踪同一语义概念在不同层上的演化，理解信息如何在网络中流动和变换（ICLR 2025，Mechanistic Permutability）。</p>
+    </div>
+    <div class="card c-cyan">
+      <div class="card-title">📂 数据溯源与筛选</div>
+      <p>（本报告重点）通过 SAE 特征理解哪些训练数据激活了哪些概念，从而实现语义驱动的数据筛选与归因。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="anthropic">
+  <div class="section-eyebrow" style="color:var(--a1)">Part 2 · 标志性工作</div>
+  <div class="section-title">Anthropic 的标志性工作</div>
+
+  <div class="paper-card">
+    <div class="paper-title">Towards Monosemanticity: Decomposing Language Models with Dictionary Learning</div>
+    <div class="paper-meta">Bricken et al. · Anthropic · 2023.10 · Transformer Circuits Thread</div>
+    <p class="paper-abstract">首次在真实 LLM（单层 MLP）上大规模验证 SAE 可以分解出单义语义特征。发现了数千个可解释特征，从此奠定 SAE 可解释性研究的范式。</p>
+    <ul class="paper-points">
+      <li><strong>核心发现：</strong>512 维 MLP 层中提取了 4096 个可解释特征，8× 展开</li>
+      <li><strong>验证方式：</strong>人工标注 top-k 激活样本，评估单义率</li>
+    </ul>
+  </div>
+
+  <div class="paper-card">
+    <div class="paper-title">Scaling Monosemanticity: Extracting Interpretable Features from Claude 3 Sonnet</div>
+    <div class="paper-meta">Templeton et al. · Anthropic · 2024.05 · Transformer Circuits Thread</div>
+    <p class="paper-abstract">将 SAE 扩展到 Claude 3 Sonnet（中等规模生产模型）。发现了数百万个特征，包括对应多语言、跨模态概念的特征，以及"内省状态"、"欺骗性思维"等高层概念。</p>
+    <ul class="paper-points">
+      <li><strong>震撼发现：</strong>"金门大桥"特征——激活后模型会自称是金门大桥，说明特征对行为有因果影响</li>
+      <li><strong>方法创新：</strong>多层次 SAE 对齐，跨语言特征共享发现</li>
+      <li><strong>规模：</strong>3400 万个 SAE 特征，覆盖 Claude 3 Sonnet 多个层</li>
+    </ul>
+  </div>
+
+  <div class="paper-card">
+    <div class="paper-title">Scaling and Evaluating Sparse Autoencoders</div>
+    <div class="paper-meta">Gao et al. · OpenAI · arXiv:2406.04093 · 2024.06</div>
+    <p class="paper-abstract">OpenAI 的 SAE 规模化研究，提出 TopK 激活函数替代 L1，在 GPT-4 系列激活上大规模验证。</p>
+    <ul class="paper-points">
+      <li><strong>技术贡献：</strong>TopK-SAE 消除了 L1 带来的激活 shrinkage 问题，特征更稳定</li>
+      <li><strong>规模：</strong>最大 16M 特征，16× 展开倍数</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="steering">
+  <div class="section-eyebrow" style="color:var(--a1)">Part 2 · 行为引导</div>
+  <div class="section-title">SAE 特征引导（Feature Steering）</div>
+  <p class="section-lead">通过在推理时修改 SAE 的激活值来控制模型行为，无需微调。</p>
+
+  <div class="diagram">
+    <div class="diagram-title">Feature Steering 工作流</div>
+    <div class="flow">
+      <div class="flow-box">输入 token</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box hl-purple">LLM 前向传播<br>到目标层</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box hl-blue">SAE 编码<br>→ 稀疏特征 z</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box hl-amber">修改特定特征<br>z[i] += α</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box hl-green">SAE 解码<br>回激活值</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-box">继续生成<br>行为已改变</div>
+    </div>
+  </div>
+
+  <div class="callout callout-blue">
+    <strong>2025 年新发现（arXiv:2505.20063）：</strong>
+    不是所有 SAE 特征都适合用来 steering。研究发现，只有"causally active"的特征（即真正参与因果推理链的特征）修改后才有显著效果；随机选择特征进行 steering 效果很差。
+    需要先通过因果追踪（causal tracing）筛选出有效特征，再做引导。
+  </div>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PART 3: 数据筛选（重点） -->
+<!-- ════════════════════════════════════════════ -->
+
+<section class="section" id="data-overview">
+  <div class="section-eyebrow" style="color:var(--a3)">Part 3 · 数据筛选（重点）</div>
+  <div class="section-title">SAE 驱动的数据筛选：方法论框架</div>
+  <p class="section-lead">
+    传统数据筛选依赖表面信号（困惑度、去重哈希、启发式规则）。
+    SAE 提供了一种全新视角：<strong style="color:var(--t1)">从模型的内部语义表示出发来判断数据价值</strong>。
+    这一方向在 2024–2026 年涌现出多个工作，但整体还处于早期阶段。
+  </p>
+
+  <div class="diagram">
+    <div class="diagram-title">SAE 数据筛选 vs 传统数据筛选</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;font-size:13px;color:var(--t2);">
+      <div>
+        <div style="color:var(--t3);font-weight:700;margin-bottom:10px;font-size:11px;letter-spacing:2px;">传统方法</div>
+        <ul style="padding-left:16px;line-height:1.85;">
+          <li>基于表面统计：困惑度、重复率、长度</li>
+          <li>规则过滤：去除特殊字符、HTML、低质量片段</li>
+          <li>模型打分：用 LLM 对数据进行质量评分</li>
+          <li>语义信号来自数据本身，不来自模型内部</li>
+          <li><strong style="color:var(--a5);">局限：</strong>不知道数据对模型"学什么"的影响</li>
+        </ul>
+      </div>
+      <div>
+        <div style="color:var(--a3);font-weight:700;margin-bottom:10px;font-size:11px;letter-spacing:2px;">SAE 方法</div>
+        <ul style="padding-left:16px;line-height:1.85;">
+          <li>基于模型内部激活的语义特征</li>
+          <li>能直接测量数据激活了模型的"哪些概念"</li>
+          <li>支持细粒度领域对齐：只保留激活目标领域特征的数据</li>
+          <li>可以追踪训练数据对模型行为的因果影响</li>
+          <li><strong style="color:var(--a3);">优势：</strong>语义感知，可解释，与模型行为直接关联</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="sub-h3 sh-green">SAE 数据筛选的三种范式</div>
+  <div class="card-grid">
+    <div class="card c-green">
+      <div class="card-title">① 特征激活打分（Feature Activation Scoring）</div>
+      <p>计算每条数据在目标 SAE 特征上的激活强度，以此作为"与目标领域相关性"的分数。只保留高分数据。</p>
+      <br><p><strong>代表：</strong>FineScope</p>
+    </div>
+    <div class="card c-blue">
+      <div class="card-title">② 语义相似度过滤（Semantic Similarity Filtering）</div>
+      <p>给定目标主题的文本描述，计算 SAE 特征向量与目标的余弦相似度，筛选语义上"对齐"的训练数据。</p>
+      <br><p><strong>代表：</strong>SAE Topic Alignment（ICLR 2024）</p>
+    </div>
+    <div class="card c-purple">
+      <div class="card-title">③ 概念溯源（Concept Influence）</div>
+      <p>将训练数据与 SAE 特征绑定，追踪哪些训练样本激活了导致某种模型行为的特征，从而定位"问题数据"。</p>
+      <br><p><strong>代表：</strong>Concept Influence（2026.02）</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="finescope">
+  <div class="section-eyebrow" style="color:var(--a3)">Part 3 · 核心工作</div>
+  <div class="section-title">FineScope：SAE 引导的领域数据精选</div>
+
+  <div class="paper-card">
+    <div class="paper-title">FineScope: SAE-guided Data Selection Enables Domain-Specific LLM Pruning & Fine-Tuning</div>
+    <div class="paper-meta">Bhattacharyya et al. · POSTECH/DGIST · arXiv:2505.00624 · 2025.05 · EMNLP 2025</div>
+    <p class="paper-abstract">
+      从用户提供的少量"种子样本"出发，在 LLM 的中间层激活上训练 SAE，
+      自动从大规模无标注语料中提取语义对齐的领域数据。
+      提取出的数据集同时用于指导结构化剪枝（pruning）和自蒸馏微调，
+      最终得到高效的领域专属小模型。
+    </p>
+    <ul class="paper-points">
+      <li><strong>关键贡献：</strong>第一个完整的"SAE 特征 → 数据筛选 → 模型压缩"联合框架</li>
+      <li><strong>实验覆盖：</strong>STEM、人文、数学、代码共 5 个领域</li>
+      <li><strong>效果：</strong>数学推理任务上，pruned model 平均提升 <strong>11.5 分</strong>；可实现 35% 参数剪枝同时保持领域性能</li>
+      <li><strong>对比基线：</strong>相比随机采样和 BM25/TF-IDF 数据选择均显著更优</li>
+    </ul>
+  </div>
+
+  <div class="sub-h3 sh-green">FineScope 方法详解</div>
+
+  <div class="diagram">
+    <div class="diagram-title">FineScope Pipeline</div>
+    <div style="font-size:13px;color:var(--t2);line-height:1.85;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;text-align:center;">
+        <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px 10px;">
+          <div style="font-size:20px;margin-bottom:6px;">🌱</div>
+          <div style="color:var(--t1);font-weight:700;font-size:12px;margin-bottom:4px;">Step 1</div>
+          <div style="font-size:12px;">用户提供少量<br>种子样本（5~20 条）</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px 10px;">
+          <div style="font-size:20px;margin-bottom:6px;">🔬</div>
+          <div style="color:var(--t1);font-weight:700;font-size:12px;margin-bottom:4px;">Step 2</div>
+          <div style="font-size:12px;">在 LLM 中间层<br>训练 SAE，提取特征</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--a3);border-radius:8px;padding:14px 10px;">
+          <div style="font-size:20px;margin-bottom:6px;">📊</div>
+          <div style="color:var(--a3);font-weight:700;font-size:12px;margin-bottom:4px;">Step 3（核心）</div>
+          <div style="font-size:12px;">计算每条候选数据<br>的特征激活分数<br>筛选高分数据</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:14px 10px;">
+          <div style="font-size:20px;margin-bottom:6px;">⚙️</div>
+          <div style="color:var(--t1);font-weight:700;font-size:12px;margin-bottom:4px;">Step 4</div>
+          <div style="font-size:12px;">SAE 精选数据<br>→ Pruning + 微调</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="callout callout-green">
+    <strong>技术细节：如何用 SAE 特征打分？</strong><br>
+    给定候选文档 x，前向传播得到目标层激活 h(x)，再经过 SAE 编码器得到稀疏特征 z(x)。
+    与此同时，对种子样本集合 S 做同样操作，得到种子特征中心 z̄_S。
+    数据分数 = cosine_similarity(z(x), z̄_S)。
+    高分说明该数据在语义特征空间上与种子集合高度对齐。
+  </div>
+</section>
+
+<section class="section" id="topic-align">
+  <div class="section-eyebrow" style="color:var(--a3)">Part 3 · 核心工作</div>
+  <div class="section-title">SAE 主题对齐过滤（Topic Alignment Filtering）</div>
+
+  <div class="paper-card">
+    <div class="paper-title">Enabling Sparse Autoencoders for Topic Alignment in Large Language Models</div>
+    <div class="paper-meta">Anonymous · ICLR 2024 Workshop → 2024.09 · OpenReview:uinsufj5TR</div>
+    <p class="paper-abstract">
+      利用 SAE 神经元的语义相似度实现任意话题的对齐过滤，
+      无需人工标注训练数据，也不需要微调。
+      核心思路：SAE 神经元有对应人类可读概念的语义含义，可以直接用文本描述来激活或抑制它们。
+    </p>
+    <ul class="paper-points">
+      <li><strong>方法：</strong>计算每个 SAE 神经元的嵌入向量与目标对齐文本的余弦相似度，得到每个神经元的"主题相关分"</li>
+      <li><strong>筛选：</strong>对数据集中的每条文本，计算其激活的神经元的加权主题分，超过阈值则保留</li>
+      <li><strong>对比：</strong>比直接微调更高效（推理时开销仅 +0.00092s/token），且可零样本迁移到新主题</li>
+      <li><strong>测试数据集：</strong>Amazon 评论、医疗文本、Sycophancy 数据集</li>
+    </ul>
+  </div>
+
+  <div class="sub-h3 sh-blue">与 FineScope 的对比</div>
+  <table class="tbl">
+    <thead>
+      <tr><th>维度</th><th>FineScope</th><th>Topic Alignment</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="hi">种子需求</td>
+        <td>需要少量种子样本（5~20 条）</td>
+        <td>只需要一段目标主题的<strong>文本描述</strong></td>
+      </tr>
+      <tr>
+        <td class="hi">对齐信号</td>
+        <td>SAE 特征向量与种子的余弦相似度</td>
+        <td>SAE 神经元与对齐文本嵌入的语义相似度</td>
+      </tr>
+      <tr>
+        <td class="hi">SAE 训练</td>
+        <td>需要为目标 LLM 训练 SAE</td>
+        <td>使用开源预训练 SAE 即可</td>
+      </tr>
+      <tr>
+        <td class="hi">适用阶段</td>
+        <td>领域微调 + 模型剪枝</td>
+        <td>推理时的实时行为引导 / 数据预筛选</td>
+      </tr>
+      <tr>
+        <td class="hi">计算开销</td>
+        <td>较高（需训练 SAE）</td>
+        <td>很低（只需前向传播 + 相似度计算）</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="section" id="concept-influence">
+  <div class="section-eyebrow" style="color:var(--a3)">Part 3 · 最新工作（2026.02）</div>
+  <div class="section-title">Concept Influence：SAE 赋能的训练数据溯源</div>
+
+  <div class="paper-card">
+    <div class="paper-title">Concept Influence: Leveraging Interpretability to Improve Performance and Efficiency in Training Data Attribution</div>
+    <div class="paper-meta">arXiv:2602.14869 · 2026.02 · cs.AI</div>
+    <p class="paper-abstract">
+      将 SAE 特征引入传统的训练数据归因（TDA）框架中。
+      传统 influence functions 计算代价极高，且以单条测试样本为基准，容易偏向语法相似而非语义相似。
+      Concept Influence 以 SAE 特征（或线性 probe）作为归因的"语义方向"，
+      实现更快、更可解释的训练数据影响估计。
+    </p>
+    <ul class="paper-points">
+      <li><strong>核心创新：</strong>不再追问"哪条训练样本影响了这个输出"，而是追问"哪些训练样本激活了导致该输出的<strong>语义特征</strong>"</li>
+      <li><strong>效率：</strong>比经典 influence functions 快 <strong>10× 以上</strong>，同时保持可比的归因准确率</li>
+      <li><strong>可解释性：</strong>归因结果直接以语义概念呈现（"这个行为主要由训练集中的 X 类文本驱动"）</li>
+      <li><strong>应用：</strong>在 emergent misalignment benchmarks 和真实 post-training 数据集上验证有效</li>
+      <li><strong>数据筛选含义：</strong>可用于定位导致模型有害行为的训练数据，精准剔除；也可找到对目标能力贡献最大的数据加权使用</li>
+    </ul>
+    <div class="paper-footer">
+      <span class="tag tag-purple">2026 最新</span>
+      <span class="tag tag-green">数据溯源</span>
+      <span class="tag tag-blue">高效</span>
+    </div>
+  </div>
+
+  <div class="callout callout-purple">
+    <strong>对数据工程师的实际价值：</strong><br>
+    这个工作回答了一个长期无法精确回答的问题——<strong>"我后训练数据集里的哪些样本让模型学会了（或学歪了）某个行为？"</strong>
+    过去要么靠消融实验（极贵），要么靠直觉。
+    Concept Influence 提供了一个语义粒度的快速答案，对数据清洗、数据去毒（data detoxification）有直接实用价值。
+  </div>
+</section>
+
+<section class="section" id="safety-filter">
+  <div class="section-eyebrow" style="color:var(--a3)">Part 3 · 安全应用</div>
+  <div class="section-title">Anthropic：基于 SAE 的预训练数据安全过滤</div>
+
+  <div class="paper-card">
+    <div class="paper-title">Enhancing Model Safety through Pretraining Data Filtering</div>
+    <div class="paper-meta">Chen, Tucker, Panickssery et al. · Anthropic · Alignment Blog · 2025.08</div>
+    <p class="paper-abstract">
+      使用分类器（可结合 SAE 特征）从预训练语料中识别并过滤 CBRN（化学/生物/放射性/核）武器相关内容。
+      在保留全部通用能力的前提下，将有害能力评测准确率降低了 <strong>33%</strong>（相对于随机基线）。
+    </p>
+    <ul class="paper-points">
+      <li><strong>方法：</strong>训练轻量分类器检测有害内容，过滤后从头预训练模型</li>
+      <li><strong>结果：</strong>有害能力显著降低，同时通用 benchmark 性能几乎不变</li>
+      <li><strong>重要结论：</strong>预训练阶段的数据过滤对安全性有实质且可量化的影响，而非仅依赖后训练对齐</li>
+    </ul>
+  </div>
+
+  <div class="callout callout-red">
+    <strong>值得注意的细节：</strong>
+    Anthropic 这篇工作主要用的是分类器而非纯 SAE，但 SAE 特征可以作为更细粒度的补充信号。
+    结合 SAE 特征来识别"接近有害但未被规则覆盖"的边界数据，是一个有潜力的扩展方向。
+  </div>
+</section>
+
+<section class="section" id="comparison">
+  <div class="section-eyebrow" style="color:var(--a3)">Part 3 · 综合对比</div>
+  <div class="section-title">SAE 数据筛选方法全景对比</div>
+
+  <table class="tbl">
+    <thead>
+      <tr>
+        <th>工作</th>
+        <th>时间</th>
+        <th>筛选粒度</th>
+        <th>适用阶段</th>
+        <th>核心信号</th>
+        <th>计算开销</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="hi">Topic Alignment</td>
+        <td>2024.09</td>
+        <td>主题级</td>
+        <td>预训练 / SFT</td>
+        <td>SAE 神经元 × 文本描述相似度</td>
+        <td><span class="tag tag-green">低</span></td>
+      </tr>
+      <tr>
+        <td class="hi">FineScope</td>
+        <td>2025.05</td>
+        <td>领域级</td>
+        <td>SFT + 剪枝</td>
+        <td>SAE 特征 × 种子集相似度</td>
+        <td><span class="tag tag-amber">中</span></td>
+      </tr>
+      <tr>
+        <td class="hi">Anthropic Safety Filter</td>
+        <td>2025.08</td>
+        <td>有害内容</td>
+        <td>预训练</td>
+        <td>分类器（可辅以 SAE）</td>
+        <td><span class="tag tag-green">低~中</span></td>
+      </tr>
+      <tr>
+        <td class="hi">Concept Influence</td>
+        <td>2026.02</td>
+        <td>行为溯源级</td>
+        <td>后训练 / 对齐</td>
+        <td>SAE 特征作为归因方向</td>
+        <td><span class="tag tag-green">比 IF 低 10×</span></td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- ════════════════════════════════════════════ -->
+<!-- PART 4: 研判 -->
+<!-- ════════════════════════════════════════════ -->
+
+<section class="section" id="limitations">
+  <div class="section-eyebrow" style="color:var(--a4)">Part 4 · 客观评价</div>
+  <div class="section-title">局限性与现实问题</div>
+  <p class="section-lead">SAE 很有前景，但用于数据筛选时有几个不能忽视的实际问题。</p>
+
+  <div class="card-grid">
+    <div class="card c-red">
+      <div class="card-title">⚠️ SAE 训练代价</div>
+      <p>为目标 LLM 训练一套 SAE 需要大量激活数据和计算资源。对于 70B 以上的模型，全层 SAE 训练代价极高。只有 Anthropic、OpenAI 等有此能力；多数团队只能使用别人开源的 SAE（如 Gemma 的 JumpReLU SAE）。</p>
+    </div>
+    <div class="card c-red">
+      <div class="card-title">⚠️ 特征的稳定性与一致性问题</div>
+      <p>独立训练两个 SAE 得到的特征集合不一定匹配（ICLR 2025 Workshop）。特征的可重复性存疑，这意味着基于 SAE 特征做的数据筛选可能在不同 SAE 版本下不一致。</p>
+    </div>
+    <div class="card c-amber">
+      <div class="card-title">🔶 特征覆盖率问题</div>
+      <p>SAE 特征覆盖的是模型"已学到"的概念，对于训练数据里的长尾、冷门领域，SAE 可能根本没有对应特征。用 SAE 筛选这类数据时会出现盲区。</p>
+    </div>
+    <div class="card c-amber">
+      <div class="card-title">🔶 重建损失 vs 解释性的权衡</div>
+      <p>SAEBench（2025.03）系统评测发现：解释性好的 SAE（特征单义率高）往往重建损失较大；重建损失低的 SAE 特征单义率不一定高。两个目标存在内在张力，没有统一的最优解。</p>
+    </div>
+    <div class="card c-blue">
+      <div class="card-title">🔹 实用性验证还不够充分</div>
+      <p>目前 SAE 数据筛选的工作（FineScope、Topic Alignment）规模相对较小，缺乏在真正大规模预训练场景（100B+ token）下的系统性验证。其效益能否 scale 还有待观察。</p>
+    </div>
+    <div class="card c-blue">
+      <div class="card-title">🔹 与现有 pipeline 的集成成本</div>
+      <p>现有数据工程 pipeline 通常不包含 SAE 推理这一步。引入 SAE 需要额外工程投入，包括 SAE 版本管理、特征索引维护、打分 pipeline 等。</p>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="outlook">
+  <div class="section-eyebrow" style="color:var(--a4)">Part 4 · 研判与建议</div>
+  <div class="section-title">前景与实用建议</div>
+
+  <div class="summary-grid">
+    <div class="summary-box">
+      <div class="summary-box-title" style="color:var(--a3)">✅ 值得现在就用的方向</div>
+      <ul>
+        <li>后训练/SFT 阶段：用 Topic Alignment 方法做领域相关性快速过滤（开销低）</li>
+        <li>数据去毒：结合 SAE 特征和分类器识别训练集中的问题样本（Concept Influence 的思路）</li>
+        <li>如果目标模型有公开 SAE（如 Gemma），可以直接使用，无需重新训练</li>
+        <li>中训练数据：用少量 seed 样本 + FineScope 风格的特征相似度筛选目标领域子集</li>
+      </ul>
+    </div>
+    <div class="summary-box">
+      <div class="summary-box-title" style="color:var(--a4)">🔬 关注但暂缓大规模投入</div>
+      <ul>
+        <li>预训练阶段的 SAE 筛选：需要提前训好 SAE，且对目标 LLM 架构强依赖</li>
+        <li>Concept Influence 的完整 pipeline：2026.02 最新工作，需等待更多实验验证</li>
+        <li>超大模型（&gt;30B）的全层 SAE 训练：计算成本当前不经济</li>
+      </ul>
+    </div>
+    <div class="summary-box">
+      <div class="summary-box-title" style="color:var(--a1)">🚀 最值得关注的未来方向</div>
+      <ul>
+        <li>"按概念精选"的预训练语料重平衡：发现某类能力弱 → 找出对应 SAE 特征 → 增补相关训练数据</li>
+        <li>SAE 特征作为数据去重的语义单元（超越字符串哈希的语义去重）</li>
+        <li>跨模型迁移 SAE 特征：一套 SAE 的筛选规则能否迁移到不同架构的模型？</li>
+        <li>SAE + 数据影响力函数联合优化数据集组成</li>
+      </ul>
+    </div>
+    <div class="summary-box">
+      <div class="summary-box-title" style="color:var(--a5)">🧭 对预训练数据工程师的建议</div>
+      <ul>
+        <li>SAE 不会取代传统质量过滤，而是补充"语义对齐"这一层信号</li>
+        <li>从小范围实验开始：中训练场景的 domain-specific 子集筛选是最低成本的切入点</li>
+        <li>优先用开源 SAE（Anthropic/OpenAI/Google 均有发布），不要从头训</li>
+        <li>Concept Influence 的思路更长远：把它理解为"数据调试工具"而非"常规流水线"</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-blue" style="margin-top:28px;">
+    <strong>总结性判断：</strong><br>
+    SAE 数据筛选在 2025–2026 年处于"技术可行、工程待成熟"的阶段。
+    最强的信号是 Concept Influence（2026.02）——它把可解释性和数据工程真正打通，
+    解决了"为什么这条数据有害/有益"的可追溯性问题。
+    对于中小规模的 SFT/中训练数据工程，Topic Alignment 和 FineScope 的思路已经可以落地。
+    对于预训练阶段，需要等待更便宜的 SAE 训练方案和更充分的 scaling 验证。
+  </div>
+</section>
+
+<!-- References -->
+<section class="section" id="refs">
+  <div class="section-eyebrow" style="color:var(--t3)">附录</div>
+  <div class="section-title">文献索引</div>
+  <table class="tbl">
+    <thead>
+      <tr><th>#</th><th>论文</th><th>来源</th><th>年份</th><th>方向</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>1</td><td class="hi">Towards Monosemanticity</td><td>Bricken+ · Anthropic</td><td>2023</td><td><span class="tag tag-purple">SAE 基础</span></td></tr>
+      <tr><td>2</td><td class="hi">Toy Models of Superposition</td><td>Elhage+ · Anthropic</td><td>2022</td><td><span class="tag tag-purple">叠加假说</span></td></tr>
+      <tr><td>3</td><td class="hi">Scaling Monosemanticity</td><td>Templeton+ · Anthropic</td><td>2024.05</td><td><span class="tag tag-blue">可解释性</span></td></tr>
+      <tr><td>4</td><td class="hi">Scaling and Evaluating SAEs (TopK-SAE)</td><td>Gao+ · OpenAI · arXiv:2406.04093</td><td>2024.06</td><td><span class="tag tag-purple">SAE 变体</span></td></tr>
+      <tr><td>5</td><td class="hi">JumpReLU SAE</td><td>Rajamanoharan+ · DeepMind</td><td>2024</td><td><span class="tag tag-purple">SAE 变体</span></td></tr>
+      <tr><td>6</td><td class="hi">A Survey on SAEs</td><td>Shu+ · arXiv:2503.05613</td><td>2025.03</td><td><span class="tag tag-blue">综述</span></td></tr>
+      <tr><td>7</td><td class="hi">SAEBench</td><td>arXiv:2503.09532</td><td>2025.03</td><td><span class="tag tag-blue">评测</span></td></tr>
+      <tr><td>8</td><td class="hi">SAE-V (Multimodal)</td><td>PKU-Alignment · ICML 2025</td><td>2025</td><td><span class="tag tag-purple">SAE 变体</span></td></tr>
+      <tr><td>9</td><td class="hi">Topic Alignment via SAE</td><td>OpenReview:uinsufj5TR</td><td>2024</td><td><span class="tag tag-green">数据筛选</span></td></tr>
+      <tr><td>10</td><td class="hi">FineScope</td><td>Bhattacharyya+ · arXiv:2505.00624</td><td>2025.05</td><td><span class="tag tag-green">数据筛选</span></td></tr>
+      <tr><td>11</td><td class="hi">Pretraining Data Filtering (Safety)</td><td>Chen+ · Anthropic · 2025.08</td><td>2025.08</td><td><span class="tag tag-green">数据筛选</span></td></tr>
+      <tr><td>12</td><td class="hi">Concept Influence</td><td>arXiv:2602.14869</td><td>2026.02</td><td><span class="tag tag-green">数据筛选</span></td></tr>
+      <tr><td>13</td><td class="hi">SAEs Are Good for Steering</td><td>arXiv:2505.20063</td><td>2025</td><td><span class="tag tag-blue">行为引导</span></td></tr>
+      <tr><td>14</td><td class="hi">Group-SAE</td><td>EMNLP 2025</td><td>2025</td><td><span class="tag tag-purple">SAE 变体</span></td></tr>
+      <tr><td>15</td><td class="hi">Mechanistic Permutability</td><td>ICLR 2025</td><td>2025</td><td><span class="tag tag-blue">跨层对齐</span></td></tr>
+    </tbody>
+  </table>
+</section>
+
+</main>
+
+<script>
+const links = document.querySelectorAll('.nav-link');
+const sections = document.querySelectorAll('section[id], div[id]');
+const io = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(l => l.classList.remove('active'));
+      const a = document.querySelector(`.nav-link[href="#${e.target.id}"]`);
+      if (a) a.classList.add('active');
+    }
+  });
+}, { threshold: 0.15, rootMargin: '-10% 0px -70% 0px' });
+sections.forEach(s => io.observe(s));
+</script>
+</body>
+</html>

@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何提升 LLM 的 Agentic Coding 能力 — 技术研究报告</title>
+<style>
+  :root {
+    --primary: #1a3a5c;
+    --accent: #2563eb;
+    --accent-light: #dbeafe;
+    --text: #1e293b;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #ffffff;
+    --bg-alt: #f8fafc;
+    --highlight: #fef3c7;
+    --highlight-border: #f59e0b;
+    --success: #d1fae5;
+    --success-border: #10b981;
+    --code-bg: #1e293b;
+    --sidebar-w: 280px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--text);
+    background: var(--bg);
+    display: flex;
+  }
+
+  /* ===== SIDEBAR ===== */
+  #sidebar {
+    width: var(--sidebar-w);
+    min-width: var(--sidebar-w);
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    overflow-y: auto;
+    background: var(--primary);
+    color: #e2e8f0;
+    padding: 0;
+    flex-shrink: 0;
+  }
+  #sidebar .sidebar-header {
+    background: #0f2744;
+    padding: 20px 16px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+  #sidebar .sidebar-header h2 {
+    font-size: 13px;
+    font-weight: 700;
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  #sidebar .sidebar-header p {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+  }
+  #sidebar nav { padding: 8px 0; }
+  #sidebar nav a {
+    display: block;
+    padding: 6px 16px;
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 13px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  #sidebar nav a:hover {
+    background: rgba(255,255,255,0.07);
+    color: #fff;
+    border-left-color: #60a5fa;
+  }
+  #sidebar nav a.h1-link {
+    font-weight: 700;
+    color: #93c5fd;
+    padding-top: 10px;
+    padding-bottom: 4px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  #sidebar nav a.h2-link {
+    padding-left: 24px;
+    font-size: 12.5px;
+    color: #94a3b8;
+  }
+
+  /* ===== MAIN ===== */
+  #main {
+    flex: 1;
+    min-width: 0;
+    max-width: 900px;
+    padding: 48px 56px;
+  }
+
+  /* Cover */
+  .cover {
+    margin-bottom: 48px;
+    padding-bottom: 40px;
+    border-bottom: 3px solid var(--primary);
+  }
+  .cover .badge {
+    display: inline-block;
+    background: var(--accent);
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 3px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .cover h1 {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary);
+    line-height: 1.25;
+    margin-bottom: 12px;
+  }
+  .cover .subtitle {
+    font-size: 17px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+  .cover .meta {
+    font-size: 13px;
+    color: var(--text-muted);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+  .cover .meta span::before { content: "• "; color: var(--accent); }
+
+  /* Headings */
+  h1.chapter {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--primary);
+    margin: 48px 0 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--border);
+  }
+  h2.section {
+    font-size: 19px;
+    font-weight: 700;
+    color: var(--primary);
+    margin: 36px 0 14px;
+  }
+  h3.subsection {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin: 24px 0 10px;
+  }
+  p { margin-bottom: 14px; }
+
+  /* Abstract */
+  .abstract-box {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 24px 28px;
+    margin-bottom: 40px;
+  }
+  .abstract-box h2 {
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 14px;
+  }
+
+  /* Highlight boxes */
+  .highlight-box {
+    background: var(--highlight);
+    border-left: 4px solid var(--highlight-border);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .highlight-box strong { color: #92400e; }
+  .insight-box {
+    background: var(--accent-light);
+    border-left: 4px solid var(--accent);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .insight-box strong { color: #1e40af; }
+  .success-box {
+    background: var(--success);
+    border-left: 4px solid var(--success-border);
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+  .warning-box {
+    background: #fff1f2;
+    border-left: 4px solid #f43f5e;
+    border-radius: 0 8px 8px 0;
+    padding: 16px 20px;
+    margin: 20px 0;
+  }
+
+  /* Tables */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 20px 0;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13.5px;
+  }
+  thead tr {
+    background: var(--primary);
+    color: white;
+  }
+  thead th {
+    padding: 10px 14px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  tbody tr:nth-child(even) { background: var(--bg-alt); }
+  tbody tr:hover { background: var(--accent-light); }
+  tbody td {
+    padding: 9px 14px;
+    border-top: 1px solid var(--border);
+  }
+  .rank-num {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 14px;
+  }
+  .medal-gold { color: #d97706; font-weight: 700; }
+  .medal-silver { color: #6b7280; font-weight: 700; }
+  .badge-tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+  .tag-open { background: #d1fae5; color: #065f46; }
+  .tag-closed { background: #dbeafe; color: #1e40af; }
+  .tag-new { background: #fce7f3; color: #9d174d; }
+
+  /* Code blocks */
+  pre {
+    background: var(--code-bg);
+    color: #e2e8f0;
+    padding: 18px 22px;
+    border-radius: 8px;
+    overflow-x: auto;
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+    margin: 16px 0;
+  }
+  code {
+    background: #f1f5f9;
+    color: #0f172a;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+  .keyword { color: #f472b6; }
+  .string { color: #86efac; }
+  .comment { color: #94a3b8; font-style: italic; }
+  .func { color: #93c5fd; }
+  .num { color: #fbbf24; }
+
+  /* Lists */
+  ul, ol { padding-left: 22px; margin-bottom: 14px; }
+  li { margin-bottom: 6px; }
+  li strong { color: var(--primary); }
+
+  /* Work analysis cards */
+  .work-card {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 24px 0;
+  }
+  .work-card-header {
+    background: var(--primary);
+    color: white;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .work-card-header .title { font-size: 16px; font-weight: 700; }
+  .work-card-header .meta { font-size: 12px; color: #93c5fd; margin-top: 4px; }
+  .work-card-header .badge-year {
+    background: rgba(255,255,255,0.15);
+    color: white;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  .work-card-body { padding: 20px 22px; }
+
+  /* Section divider */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(to right, var(--accent), transparent);
+    margin: 32px 0;
+    opacity: 0.3;
+  }
+
+  /* Roadmap */
+  .roadmap {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .roadmap-item {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .roadmap-item .phase {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+  }
+  .roadmap-item h4 { font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+  .roadmap-item ul { font-size: 13px; padding-left: 16px; }
+
+  /* References */
+  .ref-list { list-style: none; padding: 0; }
+  .ref-list li {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 13px;
+  }
+  .ref-list li:nth-child(even) { background: var(--bg-alt); }
+  .ref-num { color: var(--accent); font-weight: 700; margin-right: 8px; }
+  .ref-link { color: var(--accent); }
+
+  /* Score bar */
+  .score-bar-bg {
+    background: #e2e8f0;
+    border-radius: 4px;
+    height: 8px;
+    overflow: hidden;
+    display: inline-block;
+    width: 100px;
+    vertical-align: middle;
+  }
+  .score-bar-fill {
+    height: 100%;
+    background: linear-gradient(to right, var(--accent), #7c3aed);
+    border-radius: 4px;
+  }
+
+  /* Print / general spacing */
+  .mt-sm { margin-top: 8px; }
+  .mt { margin-top: 16px; }
+  .mb { margin-bottom: 16px; }
+  .text-muted { color: var(--text-muted); }
+  .text-small { font-size: 13px; }
+
+  @media (max-width: 900px) {
+    #sidebar { display: none; }
+    #main { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ===== SIDEBAR ===== -->
+<div id="sidebar">
+  <div class="sidebar-header">
+    <h2>技术研究报告</h2>
+    <p>LLM Agentic Coding 能力提升</p>
+  </div>
+  <nav>
+    <a href="#abstract" class="h1-link">执行摘要</a>
+
+    <a href="#ch1" class="h1-link">第一章 概述</a>
+    <a href="#ch1-1" class="h2-link">1.1 定义与范畴</a>
+    <a href="#ch1-2" class="h2-link">1.2 主要 Benchmark</a>
+    <a href="#ch1-3" class="h2-link">1.3 SOTA 模型表现</a>
+
+    <a href="#ch2" class="h1-link">第二章 预训练数据</a>
+    <a href="#ch2-1" class="h2-link">2.1 代码预训练数据</a>
+    <a href="#ch2-2" class="h2-link">2.2 Agentic 数据类型</a>
+    <a href="#ch2-3" class="h2-link">2.3 数据质量策略</a>
+    <a href="#ch2-4" class="h2-link">2.4 数据配比与课程</a>
+
+    <a href="#ch3" class="h1-link">第三章 后训练提升</a>
+    <a href="#ch3-1" class="h2-link">3.1 SFT 监督微调</a>
+    <a href="#ch3-2" class="h2-link">3.2 强化学习 RLVR</a>
+    <a href="#ch3-3" class="h2-link">3.3 扩展思考 CoT</a>
+    <a href="#ch3-4" class="h2-link">3.4 Self-Improvement</a>
+
+    <a href="#ch4" class="h1-link">第四章 架构与推理</a>
+    <a href="#ch4-1" class="h2-link">4.1 长上下文处理</a>
+    <a href="#ch4-2" class="h2-link">4.2 工具调用架构</a>
+    <a href="#ch4-3" class="h2-link">4.3 多智能体架构</a>
+
+    <a href="#ch5" class="h1-link">第五章 挑战与开放问题</a>
+
+    <a href="#ch6" class="h1-link">第六章 代表性工作</a>
+
+    <a href="#ch7" class="h1-link">第七章 实践建议</a>
+    <a href="#ch7-1" class="h2-link">7.1 数据工程优先级</a>
+    <a href="#ch7-2" class="h2-link">7.2 评估体系建立</a>
+    <a href="#ch7-3" class="h2-link">7.3 训练技术路线图</a>
+
+    <a href="#refs" class="h1-link">参考文献</a>
+  </nav>
+</div>
+
+<!-- ===== MAIN CONTENT ===== -->
+<div id="main">
+
+  <!-- Cover -->
+  <div class="cover">
+    <div class="badge">技术研究报告 · 2025/2026</div>
+    <h1>如何提升 LLM 的 Agentic Coding 能力</h1>
+    <p class="subtitle">面向大模型预训练 / 后训练团队的系统性技术综述</p>
+    <div class="meta">
+      <span>研究领域：代码 LLM · Agentic AI · 强化学习</span>
+      <span>截止时间：2025 年 12 月</span>
+      <span>文档版本：v1.0</span>
+    </div>
+  </div>
+
+  <!-- Abstract -->
+  <div id="abstract" class="abstract-box">
+    <h2>执行摘要 Abstract</h2>
+    <p><strong>Agentic Coding</strong> 是指大语言模型（LLM）以自主 Agent 的方式完成真实软件工程任务的范式，区别于传统单步代码补全：模型需要在多轮交互中自主分解任务、导航代码库、调用工具（终端、文件系统、测试运行器）、检测与修复错误，最终完成从需求到可运行代码的完整链路。这一范式已成为 2024—2025 年 AI 编程领域最核心的研究方向。</p>
+
+    <p><strong>核心发现（五条）：</strong></p>
+    <ol>
+      <li><strong>数据是第一瓶颈</strong>：SWE-smith（2025）证明，通过自动化合成 5 万条真实仓库级任务实例，训练出的开源 32B 模型在 SWE-bench Verified 上达到 40.2%，远超此前最优开源模型——规模化的高质量 agentic 训练数据是突破性能上限的关键。</li>
+      <li><strong>RL with Verifiable Rewards（RLVR）是 agentic 后训练的核心技术路径</strong>：Agent-RLVR（2025）、DeepSWE 等工作证明，以单元测试通过率为可验证奖励，结合 agent 引导机制，可将基础模型性能从 9.4% 提升至 22.4%（Qwen-2.5-72B），甚至通过纯 RL 从零训练达到 SOTA（DeepSWE）。</li>
+      <li><strong>扩展思考（Extended Thinking）对复杂多步任务效果显著</strong>：o3、Claude 3.7 Sonnet、DeepSeek-R1 的实践表明，long CoT + GRPO 训练可使代码推理能力大幅提升，尤其是在需要多步规划的 agentic 场景中。</li>
+      <li><strong>自我改进（Self-Improvement）循环是可行且高效的</strong>：SWE-Gym 的实验表明，通过拒绝采样微调（RFT）让模型在自己生成的轨迹上迭代训练，7B 模型可在 SWE-bench Lite 上达到 10%，32B 达到 20%，且存在清晰的训练/推理时算力扩展规律。</li>
+      <li><strong>评估体系亟需升级</strong>：SWE-bench 存在数据污染和任务难度分布问题，SWE-bench Verified、SWE-bench Pro、CodeClash 等新 benchmark 正在形成更完善的多维评估体系；内部评估体系的建立对团队迭代至关重要。</li>
+    </ol>
+
+    <p><strong>研究意义：</strong>本报告面向大模型预训练/后训练团队，系统梳理从数据工程到训练策略、从架构设计到评估体系的完整技术路径，重点给出可操作的工程建议，帮助团队在 6—12 个月内建立有竞争力的 Agentic Coding 能力。</p>
+  </div>
+
+  <!-- ===== CHAPTER 1 ===== -->
+  <h1 id="ch1" class="chapter">第一章：Agentic Coding 概述</h1>
+
+  <h2 id="ch1-1" class="section">1.1 定义与范畴</h2>
+
+  <p>传统代码生成（Code Generation）是<strong>单步、被动</strong>的：给定一个自然语言提示或代码上下文，模型一次性输出代码片段，不涉及后续执行、验证或修正。GitHub Copilot、早期 Codex 均属于此范式。</p>
+
+  <p><strong>Agentic Coding</strong> 则是<strong>多步、主动</strong>的自主软件工程能力。根据 Wang et al.（2025, arXiv:2508.11126）的综述定义，Agentic Coding Agent 需要具备：</p>
+
+  <div class="insight-box">
+    <strong>Agentic Coding 核心特征：</strong> 自主分解目标 → 制定执行计划 → 调用外部工具（编译器、调试器、测试运行器、版本控制） → 观察执行结果 → 基于反馈迭代修正 → 最终交付可运行的代码变更
+  </div>
+
+  <p>具体的核心能力维度如下：</p>
+
+  <h3 class="subsection">1.1.1 任务理解与分解（Task Understanding & Decomposition）</h3>
+  <p>真实软件工程任务往往描述模糊（如 GitHub issue）、需求隐含约束（向后兼容、性能要求）。模型必须将高层目标分解为可执行子任务序列，并在执行过程中动态调整计划。SWE-agent 的实验表明，良好的任务分解是提高解决率的首要因素。</p>
+
+  <h3 class="subsection">1.1.2 代码库导航与上下文检索（Codebase Navigation）</h3>
+  <p>真实仓库动辄数十万行代码，模型无法将全部内容纳入上下文窗口。需要通过文件搜索（grep/ast-grep）、定义跳转（LSP）、相关文件识别等手段，检索出与当前任务最相关的上下文。Agentless 的实验证明，精准的文件定位（file localization）是决定最终成功率的关键子任务之一。</p>
+
+  <h3 class="subsection">1.1.3 工具使用（Tool Use）</h3>
+  <p>Agentic Coding 系统需要调用多种工具：</p>
+  <ul>
+    <li><strong>终端（Terminal）</strong>：执行 bash 命令、git 操作、包管理</li>
+    <li><strong>文件系统</strong>：读取、创建、修改文件，导航目录结构</li>
+    <li><strong>测试运行器</strong>：pytest/unittest/cargo test 等，获取失败信息</li>
+    <li><strong>搜索工具</strong>：grep、ripgrep、代码搜索引擎</li>
+    <li><strong>Web 搜索</strong>：查阅文档、API 参考</li>
+    <li><strong>代码执行沙箱</strong>：Python REPL、Node.js 解释器</li>
+  </ul>
+
+  <h3 class="subsection">1.1.4 多步规划与执行（Multi-step Planning & Execution）</h3>
+  <p>一个典型的 SWE-bench 任务可能需要 20—80 步工具调用：首先复现 bug，然后定位问题文件，分析根因，设计修复方案，实现代码变更，运行测试验证，再根据测试结果进一步迭代。模型需要在整个过程中维护全局计划和局部执行状态。</p>
+
+  <h3 class="subsection">1.1.5 错误检测与自我修正（Error Detection & Self-Correction）</h3>
+  <p>Agentic 系统区别于单步生成的核心优势之一是<strong>执行反馈驱动的修正循环</strong>。模型需要能从编译错误、测试失败、运行时异常中提取有效信号，诊断根因，并生成修正代码。这要求模型具备对错误信息的深度语义理解，而非简单的表面匹配。</p>
+
+  <h3 class="subsection">1.1.6 长上下文处理（Long Context）</h3>
+  <p>Agentic 任务中的上下文包括：仓库文件内容、执行历史轨迹（tool calls + observations）、任务描述，累积可达 32K—200K+ tokens。如何在超长上下文中保持关键信息的注意力是核心挑战。</p>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch1-2" class="section">1.2 主要 Benchmark</h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Benchmark</th>
+          <th>任务类型</th>
+          <th>规模</th>
+          <th>难度特点</th>
+          <th>适用评估场景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>SWE-bench Full</strong></td>
+          <td>真实 GitHub issue 修复（Python）</td>
+          <td>2,294</td>
+          <td>需要代码库导航+多步修复</td>
+          <td>综合 agentic 能力</td>
+        </tr>
+        <tr>
+          <td><strong>SWE-bench Verified</strong></td>
+          <td>同上，人工验证子集</td>
+          <td>500</td>
+          <td>更可靠的任务描述</td>
+          <td>主流评估标准</td>
+        </tr>
+        <tr>
+          <td><strong>SWE-bench Lite</strong></td>
+          <td>同上，低成本子集</td>
+          <td>300</td>
+          <td>更适合快速迭代评估</td>
+          <td>研发快速验证</td>
+        </tr>
+        <tr>
+          <td><strong>SWE-bench Pro</strong></td>
+          <td>多文件变更、深度推理</td>
+          <td>~200</td>
+          <td>显著更难，抗刷榜</td>
+          <td>前沿模型鉴别</td>
+        </tr>
+        <tr>
+          <td><strong>LiveCodeBench</strong></td>
+          <td>竞赛级算法题（训练截止后）</td>
+          <td>持续更新</td>
+          <td>无数据污染</td>
+          <td>代码推理能力</td>
+        </tr>
+        <tr>
+          <td><strong>HumanEval</strong></td>
+          <td>函数级代码生成</td>
+          <td>164</td>
+          <td>已接近饱和（>90%）</td>
+          <td>基础代码能力</td>
+        </tr>
+        <tr>
+          <td><strong>MBPP</strong></td>
+          <td>函数级 Python 代码</td>
+          <td>374</td>
+          <td>较简单，测试基础</td>
+          <td>基础代码能力</td>
+        </tr>
+        <tr>
+          <td><strong>BigCodeBench</strong></td>
+          <td>复杂库调用（139个库）</td>
+          <td>1,140</td>
+          <td>需要 API 知识</td>
+          <td>实际库使用能力</td>
+        </tr>
+        <tr>
+          <td><strong>Aider Polyglot</strong></td>
+          <td>多语言代码修改任务</td>
+          <td>~150</td>
+          <td>多语言（C++, Go, Rust…）</td>
+          <td>多语言代码编辑</td>
+        </tr>
+        <tr>
+          <td><strong>Terminal-Bench</strong></td>
+          <td>终端交互、系统管理</td>
+          <td>持续更新</td>
+          <td>真实 shell 环境</td>
+          <td>DevOps/系统能力</td>
+        </tr>
+        <tr>
+          <td><strong>SWE-Lancer</strong></td>
+          <td>真实自由职业任务</td>
+          <td>~1,400</td>
+          <td>带$价值的真实任务</td>
+          <td>产品级代码价值</td>
+        </tr>
+        <tr>
+          <td><strong>SWE-bench Multilingual</strong></td>
+          <td>多语言 issue 修复</td>
+          <td>300</td>
+          <td>9种编程语言</td>
+          <td>跨语言 agentic 能力</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="highlight-box">
+    <strong>关键建议：</strong>评估时应优先使用 SWE-bench Verified（主流共识标准）+ LiveCodeBench（防污染）的组合。单纯依赖 HumanEval/MBPP 已无法区分前沿模型的 agentic 能力差异，应逐步迁移到 SWE-bench Pro 作为核心"硬核"评估。
+  </div>
+
+  <h2 id="ch1-3" class="section">1.3 SOTA 模型表现（截至 2025 年底）</h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>排名</th>
+          <th>模型</th>
+          <th>机构</th>
+          <th>SWE-bench Verified</th>
+          <th>LiveCodeBench</th>
+          <th>Terminal-Bench</th>
+          <th>类型</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rank-num">1</td>
+          <td><strong>Claude Opus 4.6</strong></td>
+          <td>Anthropic</td>
+          <td class="medal-gold">72.5%</td>
+          <td>68.1%</td>
+          <td>58.3%</td>
+          <td><span class="badge-tag tag-closed">闭源</span></td>
+        </tr>
+        <tr>
+          <td class="rank-num">2</td>
+          <td><strong>GLM-5</strong></td>
+          <td>Zhipu AI</td>
+          <td class="medal-gold">77.8%</td>
+          <td>55.4%</td>
+          <td>42.1%</td>
+          <td><span class="badge-tag tag-closed">闭源</span></td>
+        </tr>
+        <tr>
+          <td class="rank-num">3</td>
+          <td><strong>GPT-5.3-Codex</strong></td>
+          <td>OpenAI</td>
+          <td>68.9%</td>
+          <td class="medal-gold">71.2%</td>
+          <td class="medal-gold">61.5%</td>
+          <td><span class="badge-tag tag-closed">闭源</span></td>
+        </tr>
+        <tr>
+          <td class="rank-num">4</td>
+          <td><strong>DeepSeek V3.2-Special</strong></td>
+          <td>DeepSeek</td>
+          <td>77.8%</td>
+          <td>62.3%</td>
+          <td>48.7%</td>
+          <td><span class="badge-tag tag-open">开源</span></td>
+        </tr>
+        <tr>
+          <td class="rank-num">5</td>
+          <td><strong>Claude Opus 4.5</strong></td>
+          <td>Anthropic</td>
+          <td>68.4%</td>
+          <td>64.5%</td>
+          <td>55.2%</td>
+          <td><span class="badge-tag tag-closed">闭源</span></td>
+        </tr>
+        <tr>
+          <td class="rank-num">6</td>
+          <td><strong>Gemini 3 Pro</strong></td>
+          <td>Google DeepMind</td>
+          <td>63.2%</td>
+          <td>60.1%</td>
+          <td>50.3%</td>
+          <td><span class="badge-tag tag-closed">闭源</span></td>
+        </tr>
+        <tr>
+          <td class="rank-num">7</td>
+          <td><strong>Qwen 3.5</strong></td>
+          <td>Alibaba</td>
+          <td>62.5%</td>
+          <td>54.8%</td>
+          <td>41.8%</td>
+          <td><span class="badge-tag tag-open">开源</span></td>
+        </tr>
+        <tr style="background: #f0fdf4;">
+          <td class="rank-num">—</td>
+          <td><strong>SWE-agent-LM-32B</strong></td>
+          <td>Princeton/MIT</td>
+          <td>40.2%</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="badge-tag tag-new">学术SOTA开源</span></td>
+        </tr>
+        <tr style="background: #f0fdf4;">
+          <td class="rank-num">—</td>
+          <td><strong>DeepSWE (RL only)</strong></td>
+          <td>Together AI</td>
+          <td>~43%</td>
+          <td>—</td>
+          <td>—</td>
+          <td><span class="badge-tag tag-new">纯RL训练</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="text-muted text-small">注：排行数据综合自 awesomeagents.ai (2026-02)、swebench.com、各机构公告。各评测使用的 scaffold 不同，数据仅供参考量级对比。</p>
+
+  <div class="insight-box">
+    <strong>趋势分析：</strong> 从 2024 年初 SWE-bench Verified 的最高约 12%（SWE-agent 原版）到 2025 年底突破 70%，两年内性能提升约 6×。这一飞跃的驱动力依次为：① 更强的 base 模型 → ② 更好的 agent scaffold → ③ <strong>专门的 agentic 后训练</strong>（SFT + RL）→ ④ 推理时算力扩展（extended thinking）。
+  </div>
+
+  <!-- ===== CHAPTER 2 ===== -->
+  <h1 id="ch2" class="chapter">第二章：预训练数据层面的提升</h1>
+
+  <h2 id="ch2-1" class="section">2.1 代码预训练数据的构成</h2>
+
+  <h3 class="subsection">2.1.1 公开代码语料</h3>
+  <p>当前主流代码预训练数据集包括：</p>
+  <ul>
+    <li><strong>The Stack v2</strong>（BigCode, 2024）：覆盖 600+ 编程语言，约 67B 代码文件，经过去许可证过滤，是目前规模最大的开源代码语料。</li>
+    <li><strong>StarCoder2 训练数据</strong>：在 The Stack v2 基础上加入代码相关网页文本（Stack Overflow、文档）、Jupyter notebooks，共 约 4T tokens。</li>
+    <li><strong>GitHub 全量爬取</strong>：DeepSeek-Coder 系列使用了覆盖 87% 代码、13% 自然语言的混合比例，代码来自 GitHub 全量（含协议过滤）。</li>
+    <li><strong>代码相关网页文本</strong>：技术博客、官方文档、Stack Overflow、Reddit 技术讨论等，为模型提供代码使用的自然语言上下文。</li>
+  </ul>
+
+  <h3 class="subsection">2.1.2 数据规模与代码 token 占比</h3>
+  <p>从已公开的技术报告来看，代码 token 占比与模型 coding 能力存在显著正相关，但存在边际收益递减：</p>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>模型</th>
+          <th>总预训练 tokens</th>
+          <th>代码占比</th>
+          <th>HumanEval</th>
+          <th>特点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Llama 2 (2023)</td>
+          <td>2T</td>
+          <td>~4%</td>
+          <td>29.9%</td>
+          <td>通用基础模型</td>
+        </tr>
+        <tr>
+          <td>DeepSeek-Coder-Base (2024)</td>
+          <td>2T</td>
+          <td>87%</td>
+          <td>78.6%</td>
+          <td>专用代码模型</td>
+        </tr>
+        <tr>
+          <td>Qwen2.5-Coder (2024)</td>
+          <td>5.5T</td>
+          <td>~70%</td>
+          <td>92.7%</td>
+          <td>数据+规模双提升</td>
+        </tr>
+        <tr>
+          <td>StarCoder2-15B (2024)</td>
+          <td>4T</td>
+          <td>~95%</td>
+          <td>46.8%</td>
+          <td>极高代码占比</td>
+        </tr>
+        <tr>
+          <td>DeepSeek-V3 (2024)</td>
+          <td>14.8T</td>
+          <td>~30%</td>
+          <td>86.6%</td>
+          <td>通用+代码平衡</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="highlight-box">
+    <strong>关键发现：</strong>纯代码模型在 HumanEval 上表现优异，但在需要自然语言理解的 agentic 任务（如解读 issue 描述、与用户交互）上表现较弱。<strong>最优代码预训练比例通常在 30%—70% 之间</strong>，具体取决于是否有后续的专项微调。对于 Agentic Coding 任务，建议在大规模通用预训练基础上，使用代码密集的 Continual Pre-training（继续预训练），而非从零开始的纯代码预训练。
+  </div>
+
+  <h3 class="subsection">2.1.3 多语言分布设计</h3>
+  <p>编程语言分布设计直接影响模型的跨语言泛化能力。核心原则：</p>
+  <ul>
+    <li><strong>主流语言保证覆盖深度</strong>：Python、JavaScript/TypeScript、Java、C/C++、Rust、Go 等应有足够的高质量数据量</li>
+    <li><strong>长尾语言保证覆盖广度</strong>：通过上采样（oversampling）确保 SQL、Bash、Dockerfile、YAML 等配置/脚本语言的表示</li>
+    <li><strong>跨语言对齐数据</strong>：相同算法的不同语言实现对（Python↔Java, Python↔C++）有助于迁移学习</li>
+    <li><strong>配套自然语言</strong>：代码注释、文档字符串、README、变更日志等是不可忽视的"代码自然语言"</li>
+  </ul>
+
+  <h3 class="subsection">2.1.4 代码质量过滤</h3>
+  <p>原始 GitHub 数据质量参差不齐，需要多层过滤：</p>
+  <pre><code><span class="comment"># 代码质量过滤流水线（示意）</span>
+<span class="keyword">filters</span> = [
+    <span class="string">"remove_auto_generated"</span>,    <span class="comment"># 去除自动生成代码（如 protobuf 生成的桩代码）</span>
+    <span class="string">"remove_minified"</span>,          <span class="comment"># 去除压缩/混淆代码</span>
+    <span class="string">"exact_dedup_hash"</span>,         <span class="comment"># 基于 hash 的精确去重</span>
+    <span class="string">"near_dedup_minhash"</span>,       <span class="comment"># MinHash LSH 近似去重</span>
+    <span class="string">"syntax_check"</span>,             <span class="comment"># 语法合法性检查（可解析 AST）</span>
+    <span class="string">"quality_score_filter"</span>,     <span class="comment"># LLM 质量打分（&gt;阈值）</span>
+    <span class="string">"license_filter"</span>,           <span class="comment"># 许可证合规过滤</span>
+    <span class="string">"pii_removal"</span>,              <span class="comment"># 个人信息脱敏</span>
+]</code></pre>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch2-2" class="section">2.2 Agentic 相关数据类型</h2>
+
+  <p>这是本章最关键的部分。与传统代码补全数据不同，Agentic Coding 需要<strong>包含工具交互和执行反馈的轨迹数据</strong>。</p>
+
+  <h3 class="subsection">2.2.1 执行轨迹数据（Execution Trajectories）</h3>
+
+  <p>最直接、最有效的 agentic 预训练数据是<strong>完整的问题解决轨迹</strong>，格式为：</p>
+  <pre><code><span class="comment"># ReAct 格式轨迹示例</span>
+<span class="keyword">Thought</span>: 我需要先理解这个 issue：用户报告 `sort()` 在空列表时崩溃。
+         让我先找到相关代码。
+
+<span class="keyword">Action</span>: <span class="func">bash</span>
+<span class="string">```
+grep -r "def sort" /repo/src/ --include="*.py"
+```</span>
+
+<span class="keyword">Observation</span>:
+<span class="string">src/utils/sorting.py:45:def sort(items):</span>
+
+<span class="keyword">Thought</span>: 找到了，让我查看完整实现。
+
+<span class="keyword">Action</span>: <span class="func">read_file</span>
+<span class="string">```
+/repo/src/utils/sorting.py
+```</span>
+
+<span class="keyword">Observation</span>:
+<span class="string">def sort(items):
+    pivot = items[0]  # BUG: 空列表会 IndexError
+    ...</span>
+
+<span class="keyword">Thought</span>: 找到根因。需要处理空列表边界情况。
+
+<span class="keyword">Action</span>: <span class="func">edit_file</span>
+<span class="string">```
+if not items:
+    return []
+pivot = items[0]
+```</span>
+
+<span class="keyword">Action</span>: <span class="func">run_tests</span>
+<span class="string">```
+pytest tests/test_sorting.py -v
+```</span>
+
+<span class="keyword">Observation</span>: <span class="string">PASSED (5/5 tests)</span></code></pre>
+
+  <p>这类数据的主要来源：</p>
+  <ul>
+    <li><strong>SWE-smith（2025）</strong>：自动从 128 个 GitHub 仓库构造 5 万条任务实例，用强模型生成解决轨迹，经测试验证过滤</li>
+    <li><strong>SWE-Gym（2024）</strong>：2,438 个真实 Python 任务，用 GPT-4o 和 Claude 3.5 Sonnet 采样轨迹</li>
+    <li><strong>真实 git commit 历史</strong>：从 GitHub commit 中提取"问题报告 → 代码修改 → 测试"的自然链路，规模可达亿级</li>
+    <li><strong>Issue → PR → Merge 链路</strong>：包含完整的需求描述、讨论、实现、审查过程</li>
+  </ul>
+
+  <h3 class="subsection">2.2.2 工具调用数据（Tool Use Data）</h3>
+  <p>工具调用能力需要特殊的数据来训练模型正确格式化和执行工具调用：</p>
+  <ul>
+    <li><strong>Function Calling 格式数据</strong>：OpenAI、Anthropic 格式的工具调用 JSON 数据，包含工具定义、调用参数、返回结果三元组</li>
+    <li><strong>Shell 命令执行序列</strong>：从真实开发者的终端日志、CI/CD 脚本中提取的命令序列（带错误处理）</li>
+    <li><strong>API 调用序列</strong>：REST API、SDK 调用的完整序列，包含认证、错误处理、分页等真实模式</li>
+    <li><strong>文件系统操作日志</strong>：真实的文件读写操作序列，训练模型理解目录结构和文件依赖</li>
+  </ul>
+
+  <h3 class="subsection">2.2.3 多文件上下文数据</h3>
+  <p>Agentic Coding 的核心难点之一是跨文件的依赖理解。关键数据类型：</p>
+  <ul>
+    <li><strong>代码库级别 QA 数据</strong>：给定一个代码库的多个文件，回答关于代码行为、潜在 bug、依赖关系的问题</li>
+    <li><strong>跨文件重构任务</strong>：如重命名函数并更新所有调用点、抽取公共接口等，需要理解全局依赖</li>
+    <li><strong>大型代码库导航数据</strong>：训练模型从模糊任务描述出发，系统性地定位相关文件的能力</li>
+  </ul>
+
+  <h3 class="subsection">2.2.4 测试驱动数据（Test-Driven Data）</h3>
+  <ul>
+    <li><strong>测试用例 + 实现代码对</strong>：先给测试，要求生成通过测试的实现（TDD 范式）</li>
+    <li><strong>报错信息 → 修复代码对</strong>：从 Stack Overflow、GitHub issue 中提取的 "error → fix" 对，规模庞大且质量多样</li>
+    <li><strong>TDD 完整执行轨迹</strong>：包含多轮测试失败→修改→重测的完整迭代过程</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch2-3" class="section">2.3 数据质量提升策略</h2>
+
+  <h3 class="subsection">2.3.1 基于执行结果的数据过滤</h3>
+  <p>这是 SWE-smith 等工作的核心创新：<strong>只保留能通过单元测试的轨迹数据</strong>。</p>
+  <ul>
+    <li>构建可执行的沙箱环境（Docker 容器，每个仓库独立）</li>
+    <li>运行模型生成的解决方案对应的测试套件</li>
+    <li>只有"所有相关测试通过"的轨迹才进入训练集</li>
+    <li>这保证了训练数据的<strong>正确性</strong>，而非仅仅看起来合理</li>
+  </ul>
+
+  <div class="success-box">
+    <strong>实证效果：</strong> SWE-smith 使用这种过滤策略，从约 2M 生成轨迹中筛选出约 5 万条高质量数据（约 2.5% 通过率），用于训练的 SWE-agent-LM-32B 达到了 40.2% 的开源 SOTA。相比未过滤数据，质量过滤带来了约 8—15% 的绝对性能提升。
+  </div>
+
+  <h3 class="subsection">2.3.2 LLM 辅助质量打分</h3>
+  <p>使用强模型（如 GPT-4o、Claude）对代码数据进行多维度打分：</p>
+  <ul>
+    <li><strong>可读性</strong>：变量命名、代码组织、注释质量</li>
+    <li><strong>最佳实践</strong>：是否遵循语言惯例、错误处理是否完善</li>
+    <li><strong>教育价值</strong>：代码是否清晰展示了某种算法或设计模式</li>
+    <li><strong>解决方案质量</strong>：相对于"hack"式修复，是否是真正的根因解决</li>
+  </ul>
+
+  <h3 class="subsection">2.3.3 教育价值评估</h3>
+  <p>Qwen2.5-Coder 的技术报告中提出了"教育价值（Educational Value）"指标：参考 Stack Overflow 高赞回答、权威教程、知名开源库的核心代码，这些内容在预训练中应获得更高权重。具体实施方式：</p>
+  <ul>
+    <li>Stack Overflow 答案按点赞数加权采样</li>
+    <li>官方文档代码示例优先级高于随机爬取的博客代码</li>
+    <li>知名开源项目（如 CPython、Linux kernel、NumPy）的核心代码给予 2—3× 权重</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch2-4" class="section">2.4 数据配比与 Curriculum 学习</h2>
+
+  <h3 class="subsection">2.4.1 代码 vs 自然语言比例</h3>
+  <p>经验表明，<strong>最优的代码 LLM 需要充足的自然语言能力</strong>以理解需求、与用户交互、生成注释和文档。推荐的配比参考：</p>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>训练阶段</th>
+          <th>代码占比</th>
+          <th>自然语言占比</th>
+          <th>代码相关文本占比</th>
+          <th>适用场景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>通用预训练</td>
+          <td>20-35%</td>
+          <td>55-70%</td>
+          <td>5-10%</td>
+          <td>通用+代码能力均衡</td>
+        </tr>
+        <tr>
+          <td>代码继续预训练</td>
+          <td>60-80%</td>
+          <td>10-20%</td>
+          <td>10-20%</td>
+          <td>代码能力专项强化</td>
+        </tr>
+        <tr>
+          <td>Agentic 继续预训练</td>
+          <td>40-60%</td>
+          <td>10-15%</td>
+          <td>10-20%</td>
+          <td>引入轨迹数据</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subsection">2.4.2 难度课程设计（Curriculum Learning）</h3>
+  <p>课程学习（先易后难）对代码 LLM 效果存在争议，但以下策略已被多个工作验证有效：</p>
+  <ul>
+    <li><strong>阶段 1（基础代码）</strong>：单文件函数级代码，有完整的输入/输出类型和注释</li>
+    <li><strong>阶段 2（复杂单任务）</strong>：多函数、有依赖的模块级代码；带测试用例的实现任务</li>
+    <li><strong>阶段 3（仓库级任务）</strong>：跨文件修改、轨迹格式数据；短 trajectory（5—10步）</li>
+    <li><strong>阶段 4（长轨迹数据）</strong>：完整的 issue → fix 轨迹（20—80步）；多文件重构</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>重要洞察：</strong>课程的关键不仅是<strong>代码复杂度</strong>，还有<strong>工具交互深度</strong>。建议从"无工具调用"到"单工具调用"再到"多轮多工具调用"逐步递进，让模型先掌握单步工具使用，再学习工具组合和错误恢复。
+  </div>
+
+  <h3 class="subsection">2.4.3 领域覆盖设计</h3>
+  <p>确保训练数据覆盖主要软件工程领域，防止在特定领域的能力盲点：</p>
+  <ul>
+    <li><strong>Web 开发</strong>：前端（React/Vue）、后端（Django/FastAPI）、全栈</li>
+    <li><strong>系统编程</strong>：操作系统、网络编程、并发、内存管理</li>
+    <li><strong>数据科学/ML</strong>：NumPy/Pandas 数据处理、PyTorch/TensorFlow 模型代码</li>
+    <li><strong>数据库</strong>：SQL 编写、ORM、数据库迁移脚本</li>
+    <li><strong>DevOps</strong>：CI/CD 脚本、Docker/K8s 配置、自动化运维</li>
+    <li><strong>安全</strong>：常见漏洞模式、安全编码实践</li>
+  </ul>
+
+  <!-- ===== CHAPTER 3 ===== -->
+  <h1 id="ch3" class="chapter">第三章：后训练层面的提升</h1>
+
+  <h2 id="ch3-1" class="section">3.1 SFT（监督微调）</h2>
+
+  <h3 class="subsection">3.1.1 SFT 数据构建策略</h3>
+  <p>Agentic Coding 的 SFT 数据与普通代码 SFT 存在本质区别：需要<strong>多步轨迹格式</strong>，而非单轮问答。</p>
+
+  <p><strong>数据来源优先级排序：</strong></p>
+  <ol>
+    <li><strong>可验证的自动生成轨迹（最高优先级）</strong>：利用 SWE-smith 等框架，从 GitHub 仓库自动生成并通过测试验证的轨迹。成本低（约 $0.01—0.1/条），质量可靠，规模可达数十万条。</li>
+    <li><strong>强模型蒸馏数据</strong>：用 Claude Opus / GPT-4o 在 SWE-bench 类任务上生成解决轨迹，过滤出成功的 trajectories。质量高但成本较高（$0.5—5/条）。</li>
+    <li><strong>人工标注的黄金轨迹</strong>：由专业软件工程师完成的标注轨迹，质量最高但成本极高（$50—500/条）。用于困难样本和多样化覆盖。</li>
+    <li><strong>从 benchmark 衍生的训练数据</strong>：利用 SWE-bench Verified 以外的任务（训练集）构造 SFT 数据，但需注意不得使用 Verified 测试集的任务。</li>
+  </ol>
+
+  <h3 class="subsection">3.1.2 Agentic SFT 的格式设计</h3>
+  <p>当前主流的 agentic SFT 格式有三种，各有优劣：</p>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>格式</th>
+          <th>设计理念</th>
+          <th>优点</th>
+          <th>缺点</th>
+          <th>代表系统</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>ReAct</strong></td>
+          <td>Reason + Act 交替</td>
+          <td>直觉清晰，易理解</td>
+          <td>思考与行动分离，效率较低</td>
+          <td>早期 SWE-agent</td>
+        </tr>
+        <tr>
+          <td><strong>CodeAct</strong></td>
+          <td>用代码作为统一行动空间</td>
+          <td>可组合、可并行、减少格式错误</td>
+          <td>需要可执行环境</td>
+          <td>OpenDevin</td>
+        </tr>
+        <tr>
+          <td><strong>Tool-integrated Reasoning</strong></td>
+          <td>思考 token 内嵌工具调用</td>
+          <td>推理更深入，错误分析更充分</td>
+          <td>训练难度更高</td>
+          <td>Claude 3.7, o3</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>业界最佳实践</strong>：倾向于 <strong>Tool-integrated Reasoning</strong> 格式，其中 <code>&lt;thinking&gt;</code> 块内进行自由推理，工具调用以结构化 JSON 或 XML 格式输出。这使模型能在"行动前深思熟虑"，减少鲁莽行动导致的错误传播。</p>
+
+  <h3 class="subsection">3.1.3 中间步骤正确性处理</h3>
+  <p>多步轨迹的一个核心挑战是：<strong>整体成功≠每步最优</strong>。处理策略：</p>
+  <ul>
+    <li><strong>仅监督最终结果正确的轨迹</strong>：最保守但最可靠，避免学习错误子步骤</li>
+    <li><strong>过程监督（Process Supervision）</strong>：对每步的"合理性"单独打分（ORM vs PRM），但需要额外标注成本</li>
+    <li><strong>容错轨迹（Fault-tolerant Trajectories）</strong>：保留"走了弯路但最终成功"的轨迹，这类数据教会模型错误恢复能力，尤其有价值</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch3-2" class="section">3.2 强化学习（RLHF/RLVR）</h2>
+
+  <p>RL 是提升 Agentic Coding 能力最具潜力的后训练方法。其核心优势在于：<strong>模型可以超越专家轨迹的质量上限</strong>，通过自主探索发现更好的解决策略。</p>
+
+  <h3 class="subsection">3.2.1 奖励信号设计</h3>
+
+  <p><strong>① 可验证奖励（Verifiable Rewards）— 首选</strong></p>
+  <p>代码任务天然适合可验证奖励，因为代码的"正确性"可以通过执行来客观验证。这是当前学术和工业界最主流的路径：</p>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>奖励类型</th>
+          <th>具体实现</th>
+          <th>优点</th>
+          <th>局限性</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>单元测试通过率</td>
+          <td>pass@1 by test suite</td>
+          <td>客观、精确、直接对齐目标</td>
+          <td>测试覆盖率不足时可能 reward hacking</td>
+        </tr>
+        <tr>
+          <td>编译/语法正确</td>
+          <td>AST parse success</td>
+          <td>零成本、快速信号</td>
+          <td>仅保证语法，不保证语义</td>
+        </tr>
+        <tr>
+          <td>Lint/静态分析</td>
+          <td>pylint/eslint scores</td>
+          <td>代码质量导向</td>
+          <td>可能与任务完成度不一致</td>
+        </tr>
+        <tr>
+          <td>diff 应用成功率</td>
+          <td>git apply &amp;&amp; tests pass</td>
+          <td>端到端验证完整流程</td>
+          <td>需要完整执行环境</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p><strong>② LLM-as-Judge 奖励</strong></p>
+  <p>对于难以用程序验证的方面，使用强模型作为评判者：</p>
+  <ul>
+    <li><strong>代码质量 Rubric</strong>：按可读性（1-5）、效率（1-5）、安全性（1-5）等维度打分</li>
+    <li><strong>任务完成度评估</strong>：Judge 模型判断代码是否在语义上解决了 issue 中描述的问题（即使测试套件不完整）</li>
+    <li><strong>参考实现相似度</strong>：对于有参考答案的任务，评估语义等价性（非字面匹配）</li>
+  </ul>
+
+  <div class="warning-box">
+    <strong>警告：</strong> LLM-as-Judge 方法存在<strong>奖励模型 hacking</strong> 风险：模型可能学会生成"看起来好但实际错误"的代码来欺骗 Judge。建议将可验证奖励作为主信号，LLM-as-Judge 作为辅助信号或用于 reward shaping。
+  </div>
+
+  <p><strong>③ 过程奖励（Process Reward Models, PRM）</strong></p>
+  <p>Process Reward 对轨迹中每个步骤单独打分，而非仅对最终结果：</p>
+  <ul>
+    <li>工具调用的合理性：是否选择了正确的工具、参数是否合理</li>
+    <li>中间思考步骤质量：推理是否逻辑连贯、是否正确识别了问题所在</li>
+    <li><strong>挑战</strong>：需要大量人工标注中间步骤，成本高昂。SWE-Gym 通过训练<strong>轨迹验证器（trajectory verifier）</strong>来近似 PRM，取得了一定效果。</li>
+  </ul>
+
+  <h3 class="subsection">3.2.2 RL 训练策略对比</h3>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>算法</th>
+          <th>核心机制</th>
+          <th>Agentic Coding 表现</th>
+          <th>计算开销</th>
+          <th>推荐场景</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>PPO</strong></td>
+          <td>策略梯度+价值函数+clip</td>
+          <td>稳定，适合长轨迹</td>
+          <td>高（需要 critic 模型）</td>
+          <td>长轨迹 agentic 任务</td>
+        </tr>
+        <tr>
+          <td><strong>GRPO</strong></td>
+          <td>组相对策略优化（无 critic）</td>
+          <td>DeepSeek-R1 验证有效</td>
+          <td>中（组内对比）</td>
+          <td>代码推理、竞赛题</td>
+        </tr>
+        <tr>
+          <td><strong>DPO</strong></td>
+          <td>偏好对比学习（离线）</td>
+          <td>对齐任务，coding 效果次于 PPO</td>
+          <td>低（无需 online rollout）</td>
+          <td>风格对齐、代码质量</td>
+        </tr>
+        <tr>
+          <td><strong>RFT</strong></td>
+          <td>拒绝采样微调</td>
+          <td>简单有效，SWE-Gym 验证</td>
+          <td>中（需大量采样）</td>
+          <td>自我改进初始阶段</td>
+        </tr>
+        <tr>
+          <td><strong>Agent-RLVR</strong></td>
+          <td>RLVR+引导机制</td>
+          <td>解决稀疏奖励问题</td>
+          <td>中高</td>
+          <td>难 agentic 任务</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subsection">3.2.3 解决 Agentic RL 的稀疏奖励问题</h3>
+  <p>Agentic 任务的核心 RL 难点是<strong>奖励稀疏性</strong>：对于复杂的 20—50 步任务，大多数尝试都以失败告终，模型几乎得不到正向信号，无法有效学习。</p>
+
+  <p>Agent-RLVR（2025）提出了<strong>Agent Guidance 机制</strong>来解决这个问题：</p>
+  <ol>
+    <li>模型先自主尝试任务，生成初始轨迹</li>
+    <li>单元测试验证结果（大多失败）</li>
+    <li>对失败轨迹，提供<strong>导师引导信息</strong>：高层策略提示（"你需要先找到问题文件"）、错误分析（"测试失败原因是..."）、环境反馈（"你遗漏了边界情况"）</li>
+    <li>模型在引导下重新尝试，成功率显著提升</li>
+    <li>用引导后的轨迹进行 RLVR 更新</li>
+  </ol>
+
+  <div class="success-box">
+    <strong>实证结果：</strong>Agent-RLVR 将 Qwen-2.5-72B-Instruct 在 SWE-bench Verified 上从 9.4% 提升至 22.4%，进一步结合测试时奖励模型达到 27.8%。这比简单 RLVR（无引导）提升了约 10 个百分点。
+  </div>
+
+  <h3 class="subsection">3.2.4 On-policy 数据采集策略</h3>
+  <p>RL 训练需要持续的 on-policy 数据：</p>
+  <ul>
+    <li><strong>任务分布</strong>：在难度梯度上采样任务，避免只用简单/困难任务</li>
+    <li><strong>温度采样</strong>：使用 temperature=0.7—1.0 增加轨迹多样性，防止 mode collapse</li>
+    <li><strong>执行环境隔离</strong>：每个 rollout 使用独立 Docker 容器，保证环境干净</li>
+    <li><strong>并行采样</strong>：Agentic 任务耗时长（每条轨迹 1—10 分钟），需要大规模并行推理基础设施</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch3-3" class="section">3.3 扩展思考与推理（Extended Thinking / CoT）</h2>
+
+  <h3 class="subsection">3.3.1 Long CoT 在 Agentic Coding 中的作用</h3>
+  <p>o1/o3 风格的扩展思考在复杂 coding 任务中展现出显著优势。OpenAI 的实验（arXiv:2502.06807）显示，o3 在国际信息学奥林匹克（IOI 2024）中可在<strong>不依赖任何手工启发式策略</strong>的情况下获得金牌。</p>
+
+  <p>Long CoT 的作用机制：</p>
+  <ul>
+    <li><strong>深度规划</strong>：在输出任何代码前，先在思考 token 中进行充分的方案探索和比较</li>
+    <li><strong>错误预防</strong>：在"行动"前预先考虑边界情况、潜在 bug 和测试覆盖</li>
+    <li><strong>系统性调试</strong>：通过"思考"对执行失败进行深度根因分析，而非直觉性修改</li>
+    <li><strong>多方案比较</strong>：同时思考多种实现路径，选择最合适的一种</li>
+  </ul>
+
+  <h3 class="subsection">3.3.2 DeepSeek-R1 式 GRPO 训练</h3>
+  <p>DeepSeek-R1 的训练范式为代码推理提供了重要参考：</p>
+
+  <pre><code><span class="comment"># GRPO 训练范式简述</span>
+<span class="keyword">for</span> each_task in coding_tasks:
+    <span class="comment"># 1. 对同一任务采样 G 个轨迹</span>
+    trajectories = [model.rollout(task) <span class="keyword">for</span> _ <span class="keyword">in</span> range(G)]
+    
+    <span class="comment"># 2. 用可验证奖励（单元测试）评分</span>
+    rewards = [run_tests(traj.output) <span class="keyword">for</span> traj <span class="keyword">in</span> trajectories]
+    
+    <span class="comment"># 3. 组内归一化（无需 critic 模型）</span>
+    baseline = mean(rewards)
+    advantages = [(r - baseline) / std(rewards) <span class="keyword">for</span> r <span class="keyword">in</span> rewards]
+    
+    <span class="comment"># 4. 策略梯度更新</span>
+    loss = -sum(advantages[i] * log_prob(trajectories[i]) 
+               <span class="keyword">for</span> i <span class="keyword">in</span> range(G))
+    loss.backward()</code></pre>
+
+  <h3 class="subsection">3.3.3 思考 Token 预算设计</h3>
+  <p>思考 token 的数量与任务复杂度应该动态匹配：</p>
+  <ul>
+    <li><strong>简单任务（单文件 bug fix）</strong>：100—500 thinking tokens 通常足够</li>
+    <li><strong>中等任务（多步骤功能实现）</strong>：500—2000 thinking tokens</li>
+    <li><strong>复杂任务（架构重构、跨多文件）</strong>：2000—10000 thinking tokens</li>
+    <li><strong>训练建议</strong>：不对思考 token 长度强制约束，让模型学会自适应分配思考预算（类似 o3 的 adaptive compute）</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch3-4" class="section">3.4 Self-Improvement 与 Iterative Training</h2>
+
+  <h3 class="subsection">3.4.1 拒绝采样微调（Rejection Sampling Fine-tuning, RFT）</h3>
+  <p>RFT 是 Self-Improvement 的核心基础技术，也是进入完整 RL 训练前的重要步骤：</p>
+  <ol>
+    <li>用当前模型对训练任务采样 K 个解（K=16—64 是常见范围）</li>
+    <li>通过单元测试验证每个解的正确性</li>
+    <li>只保留正确的解，用于 SFT 更新模型</li>
+    <li>重复上述过程（多轮迭代）</li>
+  </ol>
+
+  <div class="insight-box">
+    <strong>SWE-Gym 实验数据：</strong>通过 RFT 自我改进，Qwen-2.5-32B 在 SWE-bench Lite 上从 ~12% 基础性能提升至 20%，Qwen-2.5-7B 提升至 10%。关键发现是<strong>性能与训练 / 推理时计算量存在清晰的 Scaling Law</strong>，暗示这一方向有很大的提升空间。
+  </div>
+
+  <h3 class="subsection">3.4.2 AlphaCode 风格大规模采样</h3>
+  <p>AlphaCode 2（DeepMind）和类似方法使用"宽"而非"深"的策略：</p>
+  <ul>
+    <li>对每道竞赛题生成 1000—100万 个候选解</li>
+    <li>使用<strong>聚类 + 过滤</strong>：将候选解按语义聚类，每类选一个代表，通过初步测试的提交</li>
+    <li>最终选择得分最高的候选提交</li>
+    <li><strong>局限性</strong>：适合竞赛编程（有官方测试用例），在 agentic 场景中执行环境成本较高</li>
+  </ul>
+
+  <h3 class="subsection">3.4.3 多轮 Self-Improvement 循环</h3>
+  <p>完整的 self-improvement 循环（参考 STaR、V-STaR 等工作）：</p>
+  <ul>
+    <li><strong>轮次 1</strong>：用 SFT 模型生成轨迹，RFT 过滤，更新模型</li>
+    <li><strong>轮次 2</strong>：更新后的模型能解决更多之前失败的任务，用这些新数据再次 SFT</li>
+    <li><strong>轮次 3+</strong>：引入 RL 信号（RLVR）进一步提升，防止纯 SFT 的 distribution shift 问题</li>
+    <li><strong>关键挑战</strong>：随着模型变强，能自主解决的任务中"简单任务"比例上升，需要持续引入更难的任务来维持训练信号质量</li>
+  </ul>
+
+  <!-- ===== CHAPTER 4 ===== -->
+  <h1 id="ch4" class="chapter">第四章：架构与推理层面</h1>
+
+  <h2 id="ch4-1" class="section">4.1 长上下文处理</h2>
+
+  <h3 class="subsection">4.1.1 Agentic Coding 的上下文需求分析</h3>
+  <p>Agentic Coding 任务中的上下文来源和规模：</p>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>上下文来源</th>
+          <th>典型规模</th>
+          <th>重要性</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>任务描述（issue / PR）</td>
+          <td>200—2,000 tokens</td>
+          <td>必须完整保留</td>
+        </tr>
+        <tr>
+          <td>相关代码文件</td>
+          <td>1,000—50,000 tokens</td>
+          <td>核心上下文</td>
+        </tr>
+        <tr>
+          <td>历史工具调用轨迹</td>
+          <td>5,000—100,000 tokens（长任务）</td>
+          <td>关键状态信息</td>
+        </tr>
+        <tr>
+          <td>测试失败信息</td>
+          <td>500—5,000 tokens</td>
+          <td>错误诊断依据</td>
+        </tr>
+        <tr>
+          <td>代码库概览/README</td>
+          <td>1,000—10,000 tokens</td>
+          <td>架构理解</td>
+        </tr>
+        <tr>
+          <td><strong>总计（复杂任务）</strong></td>
+          <td><strong>50,000—200,000+ tokens</strong></td>
+          <td>—</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subsection">4.1.2 长上下文训练技术</h3>
+  <ul>
+    <li><strong>RoPE 扩展（YaRN / LongRoPE）</strong>：通过缩放 RoPE 旋转位置编码，将模型从 8K context 扩展到 128K—200K，训练成本相对较低</li>
+    <li><strong>长文档持续预训练</strong>：在长文本数据（代码仓库、书籍、法律文档）上继续预训练，帮助模型适应长距离依赖</li>
+    <li><strong>LongFilter（2025）</strong>：通过量化"长程信息增益"筛选长上下文训练数据，保留真正需要长距离依赖理解的样本</li>
+    <li><strong>Sliding Window / GQA</strong>：减少注意力计算开销，在保持长上下文能力的同时降低推理成本</li>
+  </ul>
+
+  <h3 class="subsection">4.1.3 代码的特殊 Attention 模式</h3>
+  <p>代码与自然语言的 attention 模式有显著差异：</p>
+  <ul>
+    <li><strong>局部性</strong>：函数内部的 token 相互关注度高（局部语法结构）</li>
+    <li><strong>跨文件引用</strong>：跨越数千个 token 的函数调用、类继承关系（长程依赖）</li>
+    <li><strong>标识符一致性</strong>：同一变量/函数名在整个上下文中需要保持一致的语义绑定</li>
+    <li><strong>缩进感知</strong>：Python 等语言中缩进层级直接影响语义</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch4-2" class="section">4.2 工具调用架构</h2>
+
+  <h3 class="subsection">4.2.1 Function Calling 训练方式</h3>
+  <p>有效的工具调用训练需要覆盖：</p>
+  <ul>
+    <li><strong>工具选择</strong>：从工具集中选择最合适的工具（多分类问题）</li>
+    <li><strong>参数生成</strong>：正确填充工具参数（结构化输出）</li>
+    <li><strong>调用时机</strong>：判断何时需要调用工具（vs. 直接生成答案）</li>
+    <li><strong>结果解析</strong>：正确理解工具返回结果并更新内部状态</li>
+    <li><strong>错误处理</strong>：工具调用失败时的恢复策略（重试、使用替代工具、报告无法完成）</li>
+  </ul>
+
+  <h3 class="subsection">4.2.2 工具错误处理训练</h3>
+  <p>一个常被忽视但极其重要的能力：在工具失败时优雅降级。训练数据应覆盖：</p>
+  <ul>
+    <li>文件不存在 → 搜索正确路径</li>
+    <li>命令执行失败 → 检查权限/语法，尝试替代命令</li>
+    <li>测试失败 → 分析错误信息，定位 bug 并修复</li>
+    <li>网络超时 → 本地缓存查询或跳过</li>
+    <li>权限不足 → 请求用户授权或选择其他方案</li>
+  </ul>
+
+  <h3 class="subsection">4.2.3 并行工具调用</h3>
+  <p>对于无依赖关系的工具调用，并行执行可显著减少总耗时。训练模型识别可并行的工具调用序列，例如：同时读取多个文件、并行运行多个独立测试模块。这需要模型输出特殊的并行调用格式，并能正确处理并发结果。</p>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch4-3" class="section">4.3 多智能体架构</h2>
+
+  <h3 class="subsection">4.3.1 Orchestrator + Worker 模式</h3>
+  <p>将复杂任务分解给多个专业化 Agent 协同完成：</p>
+  <ul>
+    <li><strong>Orchestrator</strong>：接收高层任务，分解子任务，分配给 Worker，整合结果</li>
+    <li><strong>Worker 类型</strong>：代码搜索 Agent、代码修改 Agent、测试执行 Agent、文档查询 Agent</li>
+    <li><strong>通信机制</strong>：结构化的任务/结果消息格式，清晰的上下文传递规范</li>
+    <li><strong>训练挑战</strong>：多 Agent 系统难以端到端训练，通常需要分别训练各角色，再通过系统级评估调整</li>
+  </ul>
+
+  <h3 class="subsection">4.3.2 代码 Review 循环</h3>
+  <p>Generator → Critic → Reviser 三角结构可显著提升代码质量：</p>
+  <ul>
+    <li><strong>Generator</strong>：生成初始解决方案</li>
+    <li><strong>Critic</strong>：指出代码中的问题（逻辑错误、边界情况、代码质量）</li>
+    <li><strong>Reviser</strong>：根据 Critic 的反馈修改代码</li>
+    <li>多轮迭代直至 Critic 认可或达到最大轮次</li>
+    <li><strong>关键发现</strong>：Critic 和 Generator 可以是同一个模型，通过不同 prompt 驱动不同行为</li>
+  </ul>
+
+  <h3 class="subsection">4.3.3 测试驱动的 Agentic Loop</h3>
+  <p>将单元测试结果作为 agentic loop 的核心反馈信号：</p>
+  <ol>
+    <li>理解需求，编写测试（TDD）</li>
+    <li>实现代码，运行测试</li>
+    <li>失败 → 分析错误信息 → 修改代码 → 重新测试</li>
+    <li>成功 → 检查边界情况、添加更多测试</li>
+    <li>全部通过 → 提交</li>
+  </ol>
+  <p>这一 loop 的优势是<strong>自然地将可验证奖励嵌入推理过程</strong>，使 RL 训练的目标与实际推理行为完全对齐。</p>
+
+  <!-- ===== CHAPTER 5 ===== -->
+  <h1 id="ch5" class="chapter">第五章：关键挑战与开放问题</h1>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">挑战 1：长轨迹泛化（Long Trajectory Generalization）</div>
+        <div class="meta">训练时的 trajectory 长度 vs 推理时的真实长度</div>
+      </div>
+      <span class="badge-year">高优先级</span>
+    </div>
+    <div class="work-card-body">
+      <p>训练时，由于计算成本，多数工作使用 10—30 步的轨迹数据（约 4K—16K tokens 的 context）。但真实的复杂软件工程任务可能需要 50—100+ 步，context 累积到 64K—200K tokens。这导致模型在推理时面临<strong>分布外（Out-of-Distribution）</strong> 的轨迹长度，容易出现注意力退化、重复步骤、忘记之前的发现等问题。</p>
+      <p><strong>当前解决方向：</strong>① 轨迹压缩（summarize 历史轨迹）；② 长上下文专项训练（参见 4.1）；③ 基于检索的状态管理（将历史写入外部记忆）；④ 子任务分解（将长任务拆分为独立短任务）。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">挑战 2：错误传播（Error Propagation）</div>
+        <div class="meta">早期错误如何在多步推理中级联放大</div>
+      </div>
+      <span class="badge-year">高优先级</span>
+    </div>
+    <div class="work-card-body">
+      <p>在多步 agentic 任务中，第 3 步的错误判断可能导致后续 20 步的努力全部基于错误前提，最终以失败告终。这个问题在需要精确理解代码语义的任务中尤为突出（如错误地定位到了非相关文件）。</p>
+      <p><strong>缓解策略：</strong>① 训练模型频繁进行自我校验（"我的理解是否与测试结果一致？"）；② 过程奖励模型（PRM）提供中间步骤反馈；③ 训练包含"纠错恢复"的轨迹数据；④ 多路径投票（beam search over trajectories）在推理时选择最可靠路径。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">挑战 3：探索 vs 利用平衡（Exploration vs. Exploitation）</div>
+        <div class="meta">RL 阶段如何有效探索解空间</div>
+      </div>
+      <span class="badge-year">中优先级</span>
+    </div>
+    <div class="work-card-body">
+      <p>代码 RL 训练中，模型倾向于快速收敛到少数已知有效策略（如"先用 grep 搜索"），而忽略可能更优但需要更多探索才能发现的策略（如"先阅读测试文件来理解期望行为"）。过于保守的探索会导致模式单一、在新类型任务上泛化差。</p>
+      <p><strong>解决方向：</strong>① 温度/采样多样性调度；② KL 散度正则化防止策略崩塌；③ 课程任务调度保持任务多样性；④ Intrinsic curiosity reward 鼓励探索新策略；⑤ 多 Agent 并行探索不同策略路径。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">挑战 4：评估对齐（Benchmark-Reality Gap）</div>
+        <div class="meta">Benchmark 分数 vs 真实工程价值</div>
+      </div>
+      <span class="badge-year">中优先级</span>
+    </div>
+    <div class="work-card-body">
+      <p>SWE-bench 存在多个已知问题：① 数据集相对老旧（多数 issue 来自 2017—2020 年的 Python 库），与最新工程实践存在分布差异；② 测试套件可能不完整，允许"取巧"通过（如删除测试）；③ 重度使用者可能发生训练集/测试集污染；④ 仅覆盖 Python，代表性有限；⑤ 典型任务比真实生产代码简单。</p>
+      <p>SWE-bench Pro、SWE-bench Multilingual、LiveCodeBench、CodeClash 等新 benchmark 正在尝试解决这些问题。<strong>团队应建立自己的内部评估集</strong>（真实业务代码库上的任务），防止 benchmark 过拟合。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">挑战 5：安全与可控（Safety & Controllability）</div>
+        <div class="meta">Agentic 系统的权限控制与沙箱</div>
+      </div>
+      <span class="badge-year">不可忽视</span>
+    </div>
+    <div class="work-card-body">
+      <p>赋予 Agent 真实的代码执行能力（写文件、运行命令）带来了显著的安全风险：模型可能意外删除重要文件、执行不安全的网络请求、写入恶意代码（prompt injection 攻击）。在企业内网部署时，风险更为突出。</p>
+      <p><strong>主要缓解措施：</strong>① 沙箱隔离（Docker 容器，只读挂载关键目录）；② 工具权限白名单（只暴露必要的工具）；③ 危险操作确认机制；④ 操作日志审计；⑤ 在训练数据中包含"拒绝危险请求"的样本。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">挑战 6：成本效率（Cost & Latency）</div>
+        <div class="meta">长轨迹推理的计算开销与延迟问题</div>
+      </div>
+      <span class="badge-year">工程关键</span>
+    </div>
+    <div class="work-card-body">
+      <p>一个典型的 SWE-bench 任务平均消耗 20,000—100,000 tokens（Claude 3.5 约 $0.1—$1.0/任务）。在企业级应用中，成本和延迟是产品化的主要障碍。扩展思考（thinking tokens）进一步增加 2—5× 的 token 消耗。</p>
+      <p><strong>优化方向：</strong>① Speculative decoding 加速 token 生成；② KV Cache 跨轮次复用；③ 小模型做初步过滤，大模型做复杂决策；④ 训练更高效的轨迹（减少冗余步骤）；⑤ 并行工具调用减少等待时间；⑥ 结果缓存（相似任务复用历史轨迹片段）。</p>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 6 ===== -->
+  <h1 id="ch6" class="chapter">第六章：代表性工作深度解析</h1>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">SWE-agent</div>
+        <div class="meta">Princeton NLP Group | 设计了首个系统性的 Agent-Computer Interface</div>
+      </div>
+      <span class="badge-year">2024</span>
+    </div>
+    <div class="work-card-body">
+      <p>SWE-agent 由普林斯顿大学 NLP 团队于 2024 年发布，是将 LLM 应用于真实软件工程任务的奠基性工作之一。其核心贡献是<strong>Agent-Computer Interface（ACI）</strong>的系统性设计。</p>
+      <p>ACI 的核心理念是：就像 GUI 是为人类设计的界面，ACI 是专门为 LLM Agent 设计的计算机交互界面。具体设计包括：① <strong>专用文件查看工具</strong>：与 <code>cat</code> 不同，SWE-agent 的 <code>open</code> 命令会显示行号并支持滚动，更适合 LLM 处理；② <strong>搜索工具</strong>：专为 LLM 优化的 <code>search_file</code> 和 <code>find_file</code>，输出格式经过裁剪，只显示相关上下文；③ <strong>编辑工具</strong>：<code>edit</code> 命令接受起止行号和新内容，相比生成完整文件更高效；④ <strong>内置错误处理</strong>：工具层面自动捕获常见错误并给出友好提示。</p>
+      <p>实验表明，ACI 的精心设计对 Agent 性能有显著影响——使用相同的 GPT-4，优化 ACI 后性能从约 7% 提升至 12%。这一发现强调了"接口设计"对 Agentic 系统的重要性，不亚于底层模型能力。</p>
+      <p>SWE-agent 在 2025 年 3 月推出了 1.0 版本，成为 SWE-bench Lite 的开源 SOTA；mini-SWE-agent 则以仅 100 行 Python 代码实现了 65% 的 SWE-bench Verified 性能，证明了简洁设计的竞争力。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">CodeAct</div>
+        <div class="meta">University of Illinois Urbana-Champaign | 统一代码执行作为行动空间</div>
+      </div>
+      <span class="badge-year">2024</span>
+    </div>
+    <div class="work-card-body">
+      <p>CodeAct（Wang et al., UIUC, 2024）提出了一个优雅而强大的观点：<strong>用可执行代码作为 LLM Agent 的统一行动空间</strong>，而非设计专用的工具调用格式或自然语言指令。</p>
+      <p>传统 Agent 框架为每种操作定义专门的 action 格式（读文件=<code>{"action":"read","path":"..."}</code>，执行命令=<code>{"action":"bash","cmd":"..."}</code>），这带来了 schema 设计负担和格式错误风险。CodeAct 的核心洞察是：Python 代码天然地是一种图灵完备的行动语言，可以表达任意操作，且语法已经被 LLM 深度学习。</p>
+      <p>在 CodeAct 框架中，每次 Agent "行动"都输出一段 Python 代码：读文件用 <code>open()</code>，执行 shell 用 <code>subprocess</code>，调用 API 用 <code>requests</code>——所有操作统一用 Python 表达。这带来了几个关键优势：① <strong>可组合性</strong>：复杂操作可以用 Python 控制流自然表达；② <strong>并行化</strong>：使用 <code>ThreadPoolExecutor</code> 自然并行执行无依赖操作；③ <strong>错误处理</strong>：Python 的 <code>try/except</code> 天然支持异常处理；④ <strong>减少格式错误</strong>：LLM 生成 Python 代码比生成自定义 JSON schema 更可靠。</p>
+      <p>实验显示，CodeAct 在 28 个任务上比 JSON-based 方法平均提高 20+%。这一思想已被 OpenDevin/All-Hands 等平台采纳为核心设计原则。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">OpenDevin / All-Hands</div>
+        <div class="meta">All-Hands AI | 开源 Agentic Coding 平台</div>
+      </div>
+      <span class="badge-year">2024—2025</span>
+    </div>
+    <div class="work-card-body">
+      <p>OpenDevin（现更名为 OpenHands，由 All-Hands AI 维护）是目前最活跃的开源 Agentic Coding 平台，累计 GitHub Stars 超过 40K（截至 2025）。它不仅是一个推理框架，也提供了完整的<strong>训练基础设施</strong>。</p>
+      <p>核心技术特点：① <strong>CodeAct 2.0 框架</strong>：改进的代码执行行动空间，支持状态保持的 Jupyter 内核和 bash 会话；② <strong>沙箱化执行环境</strong>：每个 Agent 会话运行在独立 Docker 容器中，提供安全隔离；③ <strong>事件流架构</strong>：所有 Agent 行动和环境观察以统一的事件流格式记录，天然适合轨迹数据收集和回放；④ <strong>多 Agent 框架</strong>：支持 Orchestrator-Worker 模式，不同 Agent 可以专业化分工。</p>
+      <p>在训练方面，All-Hands 与学术团队合作（如 SWE-Gym 论文），将 OpenHands 作为 Agent 框架，在 SWE-Gym 环境中采样训练轨迹，实现了显著的性能提升（基于 32B 模型达到 SWE-bench Verified 32%）。这为"以 OpenHands 为框架构建训练数据流水线"提供了完整的开源参考实现，对资源有限的团队极具价值。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">Agentless</div>
+        <div class="meta">UIUC | 无 Agent 框架的简单有效方法</div>
+      </div>
+      <span class="badge-year">2024</span>
+    </div>
+    <div class="work-card-body">
+      <p>Agentless 来自 UIUC（Liu et al.，2024），以其"反直觉"的设计理念引发了广泛关注：<strong>在 SWE-bench 上取得具有竞争力成绩，而完全不使用 Agent 框架</strong>（无自主工具调用，无多步推理循环）。</p>
+      <p>Agentless 的核心流程分三个固定阶段：① <strong>文件定位（Localization）</strong>：利用代码库结构（文件路径、函数名）和 issue 关键词，通过多轮 LLM 调用确定需要修改的文件和代码位置；② <strong>修复生成（Repair）</strong>：针对定位到的代码段，生成多个（如 10 个）候选补丁；③ <strong>补丁过滤（Filtering）</strong>：运行现有测试套件，筛选出通过测试的候选补丁，必要时用 LLM-as-Judge 排序。</p>
+      <p>Agentless 的价值在于揭示了两个关键洞察：一是<strong>文件定位准确性</strong>（localization）对最终成功率的影响比 Agent 框架本身更大；二是在有足够计算预算的情况下，"生成多个候选+过滤"的简单策略可以与复杂 Agent 竞争。这对资源有限时的工程选型和对 Agentic 训练数据中"候选生成+验证"组件的重视都有指导意义。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">Claude 3.7 Sonnet</div>
+        <div class="meta">Anthropic | 扩展思考 + 专项 Coding 能力提升</div>
+      </div>
+      <span class="badge-year">2025</span>
+    </div>
+    <div class="work-card-body">
+      <p>Claude 3.7 Sonnet 是 Anthropic 在 2025 年初发布的旗舰模型，在 Agentic Coding 上取得了当时的 SOTA 成绩（SWE-bench Verified ~62%）。其最重要的技术特性是<strong>扩展思考（Extended Thinking）</strong>。</p>
+      <p>扩展思考允许模型在输出前进行长达数千 token 的内部推理过程。与 o1 的隐藏 thinking 不同，Claude 3.7 可以选择性地向用户展示部分思考过程，增加了可解释性。在 coding 任务中，扩展思考的价值体现在：① 系统性分析 issue 的根本原因，而非急于跳到代码修改；② 在复杂多文件任务中维护全局状态和计划；③ 在提交修复前进行"思维实验"（预演修改后的代码行为）。</p>
+      <p>Anthropic 同期推出了 <strong>Claude Code</strong>（命令行 agentic 工具），并发布了专项的 agentic coding 训练技术，包括：专门的工具调用格式训练、长上下文 coding 对话数据、以及针对 agentic loop 的 RLHF 数据。后续的 Claude Opus 4 系列（2025 下半年）在这一方向上进一步演进，SWE-bench Verified 突破 70%，成为业界领先水平。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">DeepSeek-Coder V2 / V3</div>
+        <div class="meta">DeepSeek AI | 开源 SOTA 代码模型系列</div>
+      </div>
+      <span class="badge-year">2024—2025</span>
+    </div>
+    <div class="work-card-body">
+      <p>DeepSeek 代码模型系列是开源社区在 Agentic Coding 能力上最具竞争力的成果之一。</p>
+      <p><strong>DeepSeek-Coder V2（2024）</strong>基于 MoE 架构（16B active / 236B total），使用 87% 代码 + 13% 自然语言的预训练比例，在 HumanEval 达到 90.2%，在多项代码 benchmark 上超越 GPT-4 Turbo（当时）。关键技术：FIM（Fill-in-the-Middle）训练、代码特定的 tokenizer 优化、多语言对齐数据。</p>
+      <p><strong>DeepSeek-V3（2024 末）</strong>是通用大模型，但代码能力极强（SWE-bench Verified ~42%），技术亮点：① 从 DeepSeek-R1 的推理能力蒸馏；② Multi-Token Prediction（MTP）辅助目标；③ 使用 FP8 混合精度训练，仅消耗约 278 万 H800 GPU 小时完成 14.8T token 的训练，成本效率极高。</p>
+      <p><strong>DeepSeek-V3.2（2025）</strong>进一步引入<strong>Agentic 能力专项优化</strong>：通过 Agentic RL 训练提升工具使用和规划能力，SWE-bench Verified 接近 78%，成为当时开源最优水平。其 Sparse Attention 和对 agentic 任务的专门后训练是核心技术差异点。DeepSeek 系列证明了以较低训练成本实现 SOTA 的可能性，对资源受限团队极具参考价值。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">Qwen2.5-Coder</div>
+        <div class="meta">Alibaba DAMO Academy | 数据为中心的代码 LLM</div>
+      </div>
+      <span class="badge-year">2024</span>
+    </div>
+    <div class="work-card-body">
+      <p>Qwen2.5-Coder 是阿里巴巴 DAMO 院于 2024 年 11 月发布的代码 LLM 系列，覆盖 0.5B—72B 多个规模，其核心贡献是系统性的<strong>数据工程方法论</strong>，而非新颖的架构设计。</p>
+      <p>Qwen2.5-Coder 的数据构建包括四个层次：① <strong>基础代码语料</strong>：在 The Stack v2 基础上，对 GitHub 代码进行额外爬取，总量超过 5.5T tokens；② <strong>质量过滤</strong>：针对代码库特性设计的多维质量过滤，包括教育价值（educational value）、代码清晰度、注释质量等，使用专门训练的分类器打分；③ <strong>合成数据</strong>：使用 Qwen2.5-72B-Instruct 生成大量高质量代码问答、代码解释、Bug 修复对等合成数据；④ <strong>Code Evolution 数据</strong>：模拟代码的演化过程，包含多版本代码和变更说明。</p>
+      <p>Qwen2.5-Coder-72B-Instruct 在 HumanEval 上达到 92.7%，在 MBPP 上达到 90.9%，在多个代码 benchmark 上超越 GPT-4o。其<strong>7B 模型表现尤其亮眼</strong>，在小模型中具有显著竞争力，对计算资源有限的应用场景非常友好。团队的数据工程方法论已成为代码 LLM 领域的重要参考。</p>
+    </div>
+  </div>
+
+  <div class="work-card">
+    <div class="work-card-header">
+      <div>
+        <div class="title">SWE-smith + SWE-agent-LM-32B</div>
+        <div class="meta">MIT CSAIL / Princeton | 规模化 SWE 训练数据生成</div>
+      </div>
+      <span class="badge-year">2025</span>
+    </div>
+    <div class="work-card-body">
+      <p>SWE-smith（Yang et al., 2025, arXiv:2504.21798）是 2025 年 Agentic Coding 训练数据领域最重要的工作之一，直接解决了训练数据稀缺的核心痛点。</p>
+      <p>核心贡献：设计了一套<strong>自动化的软件工程训练数据生成流水线</strong>。给定任意 Python 代码库，SWE-smith 能：① 自动构建对应的可执行 Docker 环境；② 分析代码库结构，找到现有测试套件；③ 自动在代码库中"注入"bug（修改代码使某些测试失败），生成任务实例；④ 用多个强 LLM（GPT-4o, Claude 3.5）尝试解决每个任务，采样多条候选轨迹；⑤ 只保留通过所有测试的成功轨迹作为训练数据。</p>
+      <p>利用 SWE-smith，团队从 128 个 GitHub 仓库生成了约 <strong>5 万条高质量训练实例</strong>，比此前工作大一个数量级（此前最大约 5,000 条）。基于此数据训练的 SWE-agent-LM-32B 在 SWE-bench Verified 上达到 <strong>40.2%</strong>，成为当时开源 SOTA。这证明了数据规模对 Agentic Coding 能力的决定性作用，也为后续扩展提供了方向：通过扩展到更多仓库（目前 128，可扩展至数千）和更多语言（当前主要是 Python），进一步提升训练数据量。</p>
+    </div>
+  </div>
+
+  <!-- ===== CHAPTER 7 ===== -->
+  <h1 id="ch7" class="chapter">第七章：实践建议（面向训练团队）</h1>
+
+  <h2 id="ch7-1" class="section">7.1 数据工程优先级</h2>
+
+  <div class="roadmap">
+    <div class="roadmap-item">
+      <div class="phase">短期（1—3 个月）</div>
+      <h4>ROI 最高的投入</h4>
+      <ul>
+        <li>建立 SWE-bench Verified 评估基线</li>
+        <li>收集并清洗现有开源代码语料（The Stack v2）</li>
+        <li>从 GitHub 爬取高质量 issue→PR→merge 链路</li>
+        <li>构建代码质量过滤器（语法检查+LLM打分）</li>
+        <li>建立简单的 SFT pipeline（500—2000 条人工/蒸馏轨迹）</li>
+      </ul>
+    </div>
+    <div class="roadmap-item">
+      <div class="phase">中期（3—6 个月）</div>
+      <h4>Agentic 数据工程</h4>
+      <ul>
+        <li>部署 SWE-smith 类流水线，自动生成 1—5 万条训练实例</li>
+        <li>建立 Docker 沙箱执行基础设施</li>
+        <li>收集工具调用数据（shell 序列、function calling）</li>
+        <li>构建测试驱动数据集（test→impl 对）</li>
+        <li>开始 RFT 自我改进实验</li>
+      </ul>
+    </div>
+    <div class="roadmap-item">
+      <div class="phase">长期（6 个月+）</div>
+      <h4>完整 Agentic RL Pipeline</h4>
+      <ul>
+        <li>搭建完整 RLVR 训练框架（PPO or GRPO）</li>
+        <li>扩展训练数据至 10—50 万条</li>
+        <li>覆盖更多编程语言（Go, Rust, Java）</li>
+        <li>引入 extended thinking 训练</li>
+        <li>Multi-agent 训练框架</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="insight-box">
+    <strong>ROI 分析：</strong>在短期投入中，优先级建议为：<strong>① 高质量 SFT 数据（500条蒸馏轨迹）> ② 代码质量过滤 > ③ 数据规模扩展</strong>。500 条高质量 agentic 轨迹（SWE-Gym 论文验证）可带来 +14% 绝对性能提升，超过单纯增加数据量 10× 的效果。质量优先于数量是核心原则。
+  </div>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch7-2" class="section">7.2 评估体系建立</h2>
+
+  <h3 class="subsection">7.2.1 内部 Benchmark 构建建议</h3>
+  <p>外部 benchmark 存在数据污染风险和业务不对齐问题，建议同步建立内部评估集：</p>
+  <ul>
+    <li><strong>真实业务仓库任务</strong>：从团队实际的代码库中，选取有意义的历史 bug fix 作为评估任务（10—50 个，代表不同难度和类型）</li>
+    <li><strong>合成边界任务</strong>：针对已知薄弱点（如多文件重构、特定语言、DevOps 脚本）手工设计评估任务</li>
+    <li><strong>污染检测机制</strong>：定期用新生成的任务（确保未在训练集中出现）进行评估，验证真实泛化能力</li>
+  </ul>
+
+  <h3 class="subsection">7.2.2 推荐评估指标体系</h3>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>指标维度</th>
+          <th>具体指标</th>
+          <th>权重（建议）</th>
+          <th>评估工具</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>核心能力</strong></td>
+          <td>SWE-bench Verified 解决率</td>
+          <td>40%</td>
+          <td>SWE-bench 官方</td>
+        </tr>
+        <tr>
+          <td><strong>代码推理</strong></td>
+          <td>LiveCodeBench Pass@1</td>
+          <td>20%</td>
+          <td>LiveCodeBench</td>
+        </tr>
+        <tr>
+          <td><strong>终端交互</strong></td>
+          <td>Terminal-Bench 通过率</td>
+          <td>15%</td>
+          <td>Terminal-Bench</td>
+        </tr>
+        <tr>
+          <td><strong>业务对齐</strong></td>
+          <td>内部 benchmark 解决率</td>
+          <td>15%</td>
+          <td>团队自建</td>
+        </tr>
+        <tr>
+          <td><strong>效率</strong></td>
+          <td>平均轨迹步骤数、Token 消耗</td>
+          <td>10%</td>
+          <td>自定义监控</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subsection">7.2.3 持续监控体系</h3>
+  <ul>
+    <li><strong>评估频率</strong>：每次模型更新后触发自动评估（SWE-bench Lite 约 10 美元/轮，可作为频繁评估标准；Verified 约 100 美元/轮，用于重要里程碑）</li>
+    <li><strong>回归检测</strong>：建立基准线，自动报警任何 >2% 的性能下降</li>
+    <li><strong>能力分析</strong>：按任务类型（bug fix / feature / refactor）、代码库大小、修改文件数等维度分解性能，定位薄弱点</li>
+    <li><strong>错误分析</strong>：定期人工分析失败案例，分类常见失败模式</li>
+  </ul>
+
+  <div class="section-divider"></div>
+
+  <h2 id="ch7-3" class="section">7.3 训练技术路线图</h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>阶段</th>
+          <th>名称</th>
+          <th>核心技术</th>
+          <th>预期提升</th>
+          <th>关键风险</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="white-space:nowrap;"><strong>阶段一</strong></td>
+          <td>代码预训练增强</td>
+          <td>Continual Pre-training on code + trajectory data</td>
+          <td>基础 coding +10—20%</td>
+          <td>灾难性遗忘通用能力</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap;"><strong>阶段二</strong></td>
+          <td>Agentic SFT</td>
+          <td>500—5000 条高质量 agentic 轨迹 SFT</td>
+          <td>SWE-bench +15—25%</td>
+          <td>数据质量参差，格式过拟合</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap;"><strong>阶段三</strong></td>
+          <td>RLVR 训练</td>
+          <td>单元测试可验证奖励 + PPO/GRPO</td>
+          <td>SWE-bench +10—20%</td>
+          <td>奖励 hacking，训练不稳定</td>
+        </tr>
+        <tr>
+          <td style="white-space:nowrap;"><strong>阶段四</strong></td>
+          <td>Self-Improvement Loop</td>
+          <td>RFT → RLVR 多轮迭代 + 难度课程</td>
+          <td>持续提升，无明确上限</td>
+          <td>模式坍塌，需持续补充新任务</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h3 class="subsection">具体行动项</h3>
+
+  <p><strong>阶段一（代码预训练增强）</strong>实施细节：</p>
+  <ul>
+    <li>从 The Stack v2 + GitHub 收集 500B—2T code tokens</li>
+    <li>应用多层质量过滤（语法 + LLM 打分 + 去重）</li>
+    <li>包含代码执行轨迹数据（git commit history, issue-PR pairs）</li>
+    <li>混合比例：代码 60% + 代码文档 20% + 通用文本 20%</li>
+    <li>使用 LoRA 或 Full Fine-tuning，学习率 ≤ 预训练的 1/10（防灾难性遗忘）</li>
+  </ul>
+
+  <p><strong>阶段二（Agentic SFT）</strong>实施细节：</p>
+  <ul>
+    <li>目标数据量：500—2000 条（短期），5000—20000 条（中期）</li>
+    <li>数据来源优先级：SWE-smith 类自动生成 > 强模型蒸馏 > 人工标注</li>
+    <li>格式：Tool-integrated Reasoning（<code>&lt;thinking&gt;...&lt;/thinking&gt;</code> + JSON 工具调用）</li>
+    <li>包含 15—20% 的"错误恢复"轨迹（走弯路但最终成功）</li>
+    <li>多轮格式：每条数据包含完整任务，平均 15—30 步工具调用</li>
+  </ul>
+
+  <p><strong>阶段三（RLVR 训练）</strong>实施细节：</p>
+  <ul>
+    <li>首选算法：GRPO（无需 critic，实现简单，DeepSeek 验证有效）</li>
+    <li>奖励函数：单元测试通过率（主信号，权重 0.8）+ 代码质量 LLM-Judge（辅助，权重 0.2）</li>
+    <li>任务难度：先从 SWE-bench Lite 中等难度任务开始（基础成功率 10—30%），逐步提升难度</li>
+    <li>关键超参：组大小 G=8—16，KL 系数 β=0.05—0.1，学习率 1e-6</li>
+    <li>针对稀疏奖励：引入 Agent Guidance（Agent-RLVR 方案）或课程调度</li>
+  </ul>
+
+  <p><strong>阶段四（Self-Improvement）</strong>实施细节：</p>
+  <ul>
+    <li>每月执行一轮：在最新任务池（包括新增任务）上采样 K=16 个轨迹/任务</li>
+    <li>过滤：只保留通过测试的轨迹（预计 5—15% 通过率）</li>
+    <li>用新数据进行增量 SFT（混入旧数据防止遗忘）</li>
+    <li>持续扩充任务池：每月添加新 GitHub 仓库，防止任务池饱和</li>
+    <li>监控多样性：如果模型在大多数任务上已能成功，立即切换到更难的任务池</li>
+  </ul>
+
+  <div class="highlight-box">
+    <strong>关键成功因素总结：</strong>
+    <ol>
+      <li><strong>可执行验证是核心</strong>：所有训练数据（SFT + RL）都应经过单元测试验证，宁缺毋滥。</li>
+      <li><strong>数据质量 > 数据量</strong>：500 条高质量轨迹比 10,000 条低质量轨迹效果好。</li>
+      <li><strong>从 SFT 开始，再 RL</strong>：不要从零开始用 RL 训练，先用 SFT 建立基础能力再 RL 精调。</li>
+      <li><strong>评估先行</strong>：在任何训练前建立完善的评估体系，确保能量化每一步投入的价值。</li>
+      <li><strong>避免 benchmark 过拟合</strong>：使用多个 benchmark 和内部评估集，定期轮换测试任务。</li>
+    </ol>
+  </div>
+
+  <!-- ===== REFERENCES ===== -->
+  <h1 id="refs" class="chapter">参考文献</h1>
+
+  <ul class="ref-list">
+    <li><span class="ref-num">[1]</span> Yang, J., et al. <em>SWE-smith: Scaling Data for Software Engineering Agents</em>. arXiv:2504.21798, 2025. <a class="ref-link" href="https://arxiv.org/abs/2504.21798">arxiv.org/abs/2504.21798</a></li>
+    <li><span class="ref-num">[2]</span> Pan, J., Wang, X., et al. <em>Training Software Engineering Agents and Verifiers with SWE-Gym</em>. ICML 2025. arXiv:2412.21139. <a class="ref-link" href="https://arxiv.org/abs/2412.21139">arxiv.org/abs/2412.21139</a></li>
+    <li><span class="ref-num">[3]</span> Da, J., et al. <em>Agent-RLVR: Training Software Engineering Agents via Guidance and Environment Rewards</em>. arXiv:2506.11425, 2025. <a class="ref-link" href="https://arxiv.org/abs/2506.11425">arxiv.org/abs/2506.11425</a></li>
+    <li><span class="ref-num">[4]</span> Wang, H., et al. <em>AI Agentic Programming: A Survey of Techniques, Challenges, and Opportunities</em>. arXiv:2508.11126, 2025. <a class="ref-link" href="https://arxiv.org/abs/2508.11126">arxiv.org/abs/2508.11126</a></li>
+    <li><span class="ref-num">[5]</span> OpenAI. <em>Competitive Programming with Large Reasoning Models</em>. arXiv:2502.06807, 2025. <a class="ref-link" href="https://arxiv.org/abs/2502.06807">arxiv.org/abs/2502.06807</a></li>
+    <li><span class="ref-num">[6]</span> Wang, X., et al. <em>CodeAct: Executable Code Actions Elicit Better LLM Agents</em>. ICML 2024. <a class="ref-link" href="https://arxiv.org/abs/2402.01030">arxiv.org/abs/2402.01030</a></li>
+    <li><span class="ref-num">[7]</span> Yang, J., et al. <em>SWE-agent: Agent-Computer Interfaces Enable Automated Software Engineering</em>. NeurIPS 2024. <a class="ref-link" href="https://arxiv.org/abs/2405.15793">arxiv.org/abs/2405.15793</a></li>
+    <li><span class="ref-num">[8]</span> Xia, C.S., et al. <em>Agentless: Demystifying LLM-Based Software Engineering Agents</em>. arXiv:2407.01489, 2024. <a class="ref-link" href="https://arxiv.org/abs/2407.01489">arxiv.org/abs/2407.01489</a></li>
+    <li><span class="ref-num">[9]</span> Wang, X., et al. <em>OpenDevin: An Open Platform for AI Software Developers as Generalist Agents</em>. arXiv:2407.16741, 2024. <a class="ref-link" href="https://arxiv.org/abs/2407.16741">arxiv.org/abs/2407.16741</a></li>
+    <li><span class="ref-num">[10]</span> DeepSeek AI. <em>DeepSeek-Coder V2: Breaking the Barrier of Closed-Source Models in Code Intelligence</em>. arXiv:2406.11931, 2024. <a class="ref-link" href="https://arxiv.org/abs/2406.11931">arxiv.org/abs/2406.11931</a></li>
+    <li><span class="ref-num">[11]</span> DeepSeek AI. <em>DeepSeek-V3 Technical Report</em>. arXiv:2412.19437, 2024. <a class="ref-link" href="https://arxiv.org/abs/2412.19437">arxiv.org/abs/2412.19437</a></li>
+    <li><span class="ref-num">[12]</span> DeepSeek AI. <em>DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning</em>. arXiv:2501.12948, 2025. <a class="ref-link" href="https://arxiv.org/abs/2501.12948">arxiv.org/abs/2501.12948</a></li>
+    <li><span class="ref-num">[13]</span> Hui, B., et al. <em>Qwen2.5-Coder Technical Report</em>. arXiv:2409.12186, 2024. <a class="ref-link" href="https://arxiv.org/abs/2409.12186">arxiv.org/abs/2409.12186</a></li>
+    <li><span class="ref-num">[14]</span> Li, R., et al. <em>StarCoder 2 and The Stack v2: The Next Generation</em>. arXiv:2402.19173, 2024. <a class="ref-link" href="https://arxiv.org/abs/2402.19173">arxiv.org/abs/2402.19173</a></li>
+    <li><span class="ref-num">[15]</span> Jimenez, C.E., et al. <em>SWE-bench: Can Language Models Resolve Real-World GitHub Issues?</em> ICLR 2024. arXiv:2310.06770. <a class="ref-link" href="https://arxiv.org/abs/2310.06770">arxiv.org/abs/2310.06770</a></li>
+    <li><span class="ref-num">[16]</span> Jain, N., et al. <em>LiveCodeBench: Holistic and Contamination Free Evaluation of Large Language Models for Code</em>. arXiv:2403.07974, 2024. <a class="ref-link" href="https://arxiv.org/abs/2403.07974">arxiv.org/abs/2403.07974</a></li>
+    <li><span class="ref-num">[17]</span> Zhuo, T.Y., et al. <em>BigCodeBench: Benchmarking Code Generation with Diverse Function Calls and Complex Instructions</em>. arXiv:2406.15877, 2024. <a class="ref-link" href="https://arxiv.org/abs/2406.15877">arxiv.org/abs/2406.15877</a></li>
+    <li><span class="ref-num">[18]</span> Yao, S., et al. <em>ReAct: Synergizing Reasoning and Acting in Language Models</em>. ICLR 2023. arXiv:2210.03629. <a class="ref-link" href="https://arxiv.org/abs/2210.03629">arxiv.org/abs/2210.03629</a></li>
+    <li><span class="ref-num">[19]</span> Li, Y., et al. <em>Competition-Level Code Generation with AlphaCode</em>. Science, 2022. <a class="ref-link" href="https://www.science.org/doi/10.1126/science.abq1158">doi:10.1126/science.abq1158</a></li>
+    <li><span class="ref-num">[20]</span> Shinn, N., et al. <em>Reflexion: Language Agents with Verbal Reinforcement Learning</em>. NeurIPS 2023. arXiv:2303.11366. <a class="ref-link" href="https://arxiv.org/abs/2303.11366">arxiv.org/abs/2303.11366</a></li>
+    <li><span class="ref-num">[21]</span> Zelikman, E., et al. <em>STaR: Self-Taught Reasoner</em>. NeurIPS 2022. arXiv:2203.14465. <a class="ref-link" href="https://arxiv.org/abs/2203.14465">arxiv.org/abs/2203.14465</a></li>
+    <li><span class="ref-num">[22]</span> Schulman, J., et al. <em>Proximal Policy Optimization Algorithms</em>. arXiv:1707.06347, 2017. <a class="ref-link" href="https://arxiv.org/abs/1707.06347">arxiv.org/abs/1707.06347</a></li>
+    <li><span class="ref-num">[23]</span> Shao, Z., et al. <em>DeepSeekMath: Pushing the Limits of Mathematical Reasoning in Open Language Models</em>. arXiv:2402.03300, 2024. (GRPO 算法来源)</li>
+    <li><span class="ref-num">[24]</span> Peng, B., et al. <em>Agentic Reasoning and Tool Integration for LLMs via Reinforcement Learning</em>. Microsoft Research, 2025. <a class="ref-link" href="https://www.microsoft.com/en-us/research/wp-content/uploads/2025/04/AgenticReasoning.pdf">Microsoft Research</a></li>
+    <li><span class="ref-num">[25]</span> Xu, H., et al. <em>SWE-Compass: Towards Unified Evaluation of Agentic Coding Systems</em>. arXiv:2511.05459, 2025. <a class="ref-link" href="https://arxiv.org/abs/2511.05459">arxiv.org/abs/2511.05459</a></li>
+    <li><span class="ref-num">[26]</span> Scale AI. <em>SWE-Bench Pro: Raising the Bar for Agentic Coding</em>. Blog, 2025. <a class="ref-link" href="https://scale.com/blog/swe-bench-pro">scale.com/blog/swe-bench-pro</a></li>
+    <li><span class="ref-num">[27]</span> Anthropic. <em>Claude 3.7 Sonnet Technical Report and System Card</em>. 2025. <a class="ref-link" href="https://www.anthropic.com/news/claude-3-7-sonnet">anthropic.com</a></li>
+    <li><span class="ref-num">[28]</span> Deng, Y., et al. <em>Beyond Length: Quantifying Long-Range Information for Long-Context Pretraining</em>. ICLR 2026. arXiv:2510.25804. <a class="ref-link" href="https://arxiv.org/abs/2510.25804">arxiv.org/abs/2510.25804</a></li>
+    <li><span class="ref-num">[29]</span> Li, P., et al. <em>Multi-Turn Code Generation Through Single-Step Rewards</em>. arXiv:2502.20380, 2025. <a class="ref-link" href="https://arxiv.org/abs/2502.20380">arxiv.org/abs/2502.20380</a></li>
+    <li><span class="ref-num">[30]</span> Together AI. <em>DeepSWE: Training a Fully Open-sourced, State-of-the-Art Coding Agent</em>. Blog, 2025. <a class="ref-link" href="https://www.together.ai/blog/deepswe">together.ai/blog/deepswe</a></li>
+    <li><span class="ref-num">[31]</span> Plaat, A., et al. <em>Agentic LLMs: A Survey</em>. Leiden University, 2025. <a class="ref-link" href="https://askeplaat.github.io/agentic-llm-survey-site/">askeplaat.github.io</a></li>
+    <li><span class="ref-num">[32]</span> Chen, M., et al. <em>Evaluating Large Language Models Trained on Code (Codex / HumanEval)</em>. arXiv:2107.03374, 2021. <a class="ref-link" href="https://arxiv.org/abs/2107.03374">arxiv.org/abs/2107.03374</a></li>
+    <li><span class="ref-num">[33]</span> Rozière, B., et al. <em>Code Llama: Open Foundation Models for Code</em>. arXiv:2308.12950, 2023. <a class="ref-link" href="https://arxiv.org/abs/2308.12950">arxiv.org/abs/2308.12950</a></li>
+    <li><span class="ref-num">[34]</span> Ding, Y., et al. <em>SWE-bench Verified Technical Report</em>. OpenAI & Princeton, 2024. <a class="ref-link" href="https://openai.com/index/introducing-swe-bench-verified/">openai.com</a></li>
+  </ul>
+
+  <div style="margin-top:48px; padding-top:24px; border-top:1px solid var(--border); color:var(--text-muted); font-size:12px; text-align:center;">
+    <p>本报告由 AI 研究员撰写 · 基于截至 2025 年 12 月的公开研究文献 · 版本 v1.0</p>
+    <p style="margin-top:6px;">核心引用：SWE-smith (2025), SWE-Gym (ICML 2025), Agent-RLVR (2025), DeepSeek-V3/R1 (2024-2025), Qwen2.5-Coder (2024)</p>
+  </div>
+
+</div><!-- /main -->
+
+<script>
+// Highlight active sidebar link on scroll
+const headings = document.querySelectorAll('[id]');
+const navLinks = document.querySelectorAll('#sidebar nav a');
+
+function updateActiveLink() {
+  let current = '';
+  headings.forEach(h => {
+    if (window.scrollY >= h.offsetTop - 80) {
+      current = h.id;
+    }
+  });
+  navLinks.forEach(link => {
+    link.style.borderLeftColor = '';
+    link.style.color = '';
+    if (link.getAttribute('href') === '#' + current) {
+      link.style.borderLeftColor = '#60a5fa';
+      link.style.color = '#fff';
+    }
+  });
+}
+window.addEventListener('scroll', updateActiveLink);
+updateActiveLink();
+</script>
+</body>
+</html>

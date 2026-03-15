@@ -1,0 +1,1798 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>预训练与中训练阶段知识改写合成 — 系统综述</title>
+<style>
+:root {
+  --bg: #0e1117;
+  --card: #161b22;
+  --border: #30363d;
+  --text: #e6edf3;
+  --text-muted: #8b949e;
+  --text-dim: #6e7681;
+
+  /* Category colors */
+  --ca: #0ea5e9;    /* 3A Style/Format */
+  --ca-light: #38bdf8;
+  --cb: #f59e0b;    /* 3B Content Refinement */
+  --cb-light: #fbbf24;
+  --cc: #a855f7;    /* 3C Entity Graph */
+  --cc-light: #c084fc;
+  --cd: #22c55e;    /* 3D Domain Specific */
+  --cd-light: #4ade80;
+  --ce: #ef4444;    /* 3E Industry */
+  --ce-light: #f87171;
+
+  --warn: #f97316;
+  --danger: #ef4444;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+a { color: var(--ca-light); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+code, pre {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+  background: #010409;
+  border-radius: 4px;
+}
+code { padding: 2px 6px; font-size: 0.875em; color: var(--cd-light); }
+pre { padding: 16px; overflow-x: auto; border: 1px solid var(--border); font-size: 0.875em; line-height: 1.6; }
+
+/* ── Layout ── */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+
+/* ── Nav ── */
+.nav {
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  padding: 12px 0;
+  position: sticky; top: 0; z-index: 100;
+}
+.nav-inner {
+  display: flex; align-items: center; gap: 16px;
+  max-width: 1200px; margin: 0 auto; padding: 0 24px;
+}
+.nav-home {
+  font-size: 0.85em;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  padding: 4px 12px;
+  border-radius: 6px;
+  transition: border-color .2s, color .2s;
+}
+.nav-home:hover { color: var(--text); border-color: var(--ca); text-decoration: none; }
+.nav-title { font-size: 0.9em; color: var(--text-muted); }
+
+/* ── Hero ── */
+.hero {
+  background: linear-gradient(135deg, #0e1117 0%, #0f1823 40%, #111820 100%);
+  border-bottom: 1px solid var(--border);
+  padding: 72px 0 56px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(14,165,233,.08) 0%, transparent 60%);
+}
+.hero-badge {
+  display: inline-block;
+  background: rgba(14,165,233,.15);
+  border: 1px solid rgba(14,165,233,.35);
+  color: var(--ca-light);
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  margin-bottom: 20px;
+}
+.hero h1 {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, #e6edf3 30%, var(--ca-light) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.hero-sub {
+  font-size: 1.05em;
+  color: var(--text-muted);
+  max-width: 780px;
+  margin: 0 auto 28px;
+  line-height: 1.75;
+}
+.hero-pills {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  justify-content: center; margin-top: 8px;
+}
+.pill {
+  font-size: 0.8em; padding: 4px 12px; border-radius: 20px;
+  border: 1px solid; font-weight: 500;
+}
+.pill-a { border-color: rgba(14,165,233,.4); color: var(--ca-light); background: rgba(14,165,233,.08); }
+.pill-b { border-color: rgba(245,158,11,.4); color: var(--cb-light); background: rgba(245,158,11,.08); }
+.pill-c { border-color: rgba(168,85,247,.4); color: var(--cc-light); background: rgba(168,85,247,.08); }
+.pill-d { border-color: rgba(34,197,94,.4); color: var(--cd-light); background: rgba(34,197,94,.08); }
+.pill-e { border-color: rgba(239,68,68,.4); color: var(--ce-light); background: rgba(239,68,68,.08); }
+
+/* ── Section ── */
+section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+section:last-child { border-bottom: none; }
+
+.section-header { margin-bottom: 36px; }
+.section-tag {
+  display: inline-block;
+  font-size: 0.75em; font-weight: 700;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text-dim); margin-bottom: 8px;
+}
+.section-header h2 {
+  font-size: 1.7rem; font-weight: 700;
+  color: var(--text); line-height: 1.3;
+}
+.section-header p {
+  margin-top: 10px; color: var(--text-muted); max-width: 700px;
+}
+
+/* ── Pain Point Cards (§1.1) ── */
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px; margin-bottom: 48px;
+}
+.pain-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  border-left: 3px solid;
+  transition: transform .2s;
+}
+.pain-card:hover { transform: translateY(-2px); }
+.pain-card:nth-child(1) { border-left-color: #ef4444; }
+.pain-card:nth-child(2) { border-left-color: #f97316; }
+.pain-card:nth-child(3) { border-left-color: #eab308; }
+.pain-card:nth-child(4) { border-left-color: #22c55e; }
+.pain-card:nth-child(5) { border-left-color: #0ea5e9; }
+.pain-card:nth-child(6) { border-left-color: #a855f7; }
+.pain-card h3 { font-size: 0.95em; font-weight: 600; margin-bottom: 8px; }
+.pain-card p { font-size: 0.875em; color: var(--text-muted); }
+
+/* ── Before/After Compare (§1.2) ── */
+.compare-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(520px, 1fr));
+  gap: 20px;
+}
+.compare-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.compare-header {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  font-weight: 600; font-size: 0.9em;
+  display: flex; align-items: center; gap: 8px;
+}
+.compare-tag {
+  font-size: 0.72em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  padding: 2px 8px; border-radius: 4px;
+}
+.tag-a { background: rgba(14,165,233,.2); color: var(--ca-light); }
+.tag-b { background: rgba(245,158,11,.2); color: var(--cb-light); }
+.tag-c { background: rgba(168,85,247,.2); color: var(--cc-light); }
+.tag-d { background: rgba(34,197,94,.2); color: var(--cd-light); }
+.tag-e { background: rgba(239,68,68,.2); color: var(--ce-light); }
+
+.compare-body { display: grid; grid-template-columns: 1fr 1fr; }
+.compare-col {
+  padding: 16px 18px;
+}
+.compare-col:first-child {
+  border-right: 1px solid var(--border);
+  background: rgba(239,68,68,.04);
+}
+.compare-col:last-child { background: rgba(34,197,94,.04); }
+.compare-col-label {
+  font-size: 0.72em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  margin-bottom: 10px;
+}
+.col-before { color: #f87171; }
+.col-after { color: var(--cd-light); }
+.compare-col p { font-size: 0.85em; color: var(--text-muted); font-style: italic; }
+.compare-result {
+  padding: 10px 18px;
+  border-top: 1px solid var(--border);
+  background: rgba(14,165,233,.05);
+  font-size: 0.83em; color: var(--ca-light);
+}
+.compare-result strong { color: var(--text); }
+
+/* ── Tree Diagram (§2.1) ── */
+.tree-container {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 32px;
+  margin-bottom: 40px;
+}
+.tree-root {
+  display: flex; flex-direction: column; align-items: center;
+}
+.tree-root-node {
+  background: linear-gradient(135deg, #0ea5e9, #6366f1);
+  color: #fff;
+  font-weight: 700; font-size: 0.95em;
+  padding: 10px 28px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 0;
+}
+.tree-connector-v {
+  width: 2px; height: 24px;
+  background: var(--border);
+  margin: 0 auto;
+}
+.tree-connector-h {
+  display: flex; align-items: flex-start;
+  gap: 0;
+}
+.tree-branches {
+  display: flex; gap: 12px;
+}
+.tree-branch {
+  display: flex; flex-direction: column; align-items: center;
+  min-width: 150px;
+}
+.tree-branch-line {
+  width: 2px; height: 20px;
+  background: var(--border);
+}
+.tree-node {
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.82em;
+  font-weight: 600;
+  text-align: center;
+  border: 1px solid;
+  line-height: 1.4;
+}
+.tree-node-a { background: rgba(14,165,233,.12); border-color: rgba(14,165,233,.4); color: var(--ca-light); }
+.tree-node-b { background: rgba(245,158,11,.12); border-color: rgba(245,158,11,.4); color: var(--cb-light); }
+.tree-node-c { background: rgba(168,85,247,.12); border-color: rgba(168,85,247,.4); color: var(--cc-light); }
+.tree-node-d { background: rgba(34,197,94,.12); border-color: rgba(34,197,94,.4); color: var(--cd-light); }
+.tree-node-e { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.4); color: var(--ce-light); }
+.tree-node-sub {
+  background: rgba(255,255,255,.04);
+  border-color: var(--border);
+  color: var(--text-muted);
+  font-size: 0.75em; font-weight: 400;
+}
+.tree-sub-items {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  margin-top: 6px;
+}
+
+/* ── Comparison Table (§2.2) ── */
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+table { width: 100%; border-collapse: collapse; font-size: 0.84em; }
+thead th {
+  background: #0d1117;
+  padding: 12px 14px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+tbody tr:nth-child(even) { background: rgba(255,255,255,.02); }
+tbody tr:hover { background: rgba(14,165,233,.06); }
+tbody td {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(48,54,61,.5);
+  vertical-align: top;
+  line-height: 1.5;
+}
+tbody tr:last-child td { border-bottom: none; }
+.method-name {
+  font-weight: 600; white-space: nowrap;
+}
+.cat-badge {
+  display: inline-block;
+  font-size: 0.7em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .06em;
+  padding: 1px 6px; border-radius: 4px;
+  margin-left: 6px; vertical-align: middle;
+}
+.metric-up { color: var(--cd-light); font-weight: 600; }
+.text-muted-td { color: var(--text-muted); }
+
+/* ── Method Cards (§3) ── */
+.method-grid { display: flex; flex-direction: column; gap: 20px; }
+.method-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color .2s, box-shadow .2s;
+}
+.method-card:hover {
+  border-color: var(--accent, #30363d);
+  box-shadow: 0 0 0 1px var(--accent, #30363d), 0 8px 24px rgba(0,0,0,.3);
+}
+.method-card-a { --accent: rgba(14,165,233,.4); }
+.method-card-b { --accent: rgba(245,158,11,.4); }
+.method-card-c { --accent: rgba(168,85,247,.4); }
+.method-card-d { --accent: rgba(34,197,94,.4); }
+.method-card-e { --accent: rgba(239,68,68,.4); }
+
+.method-header {
+  padding: 18px 22px 14px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.method-badge {
+  display: inline-flex; align-items: center;
+  font-size: 1.05em; font-weight: 700;
+  padding: 4px 14px; border-radius: 6px;
+  white-space: nowrap;
+}
+.badge-a { background: rgba(14,165,233,.15); color: var(--ca-light); border: 1px solid rgba(14,165,233,.3); }
+.badge-b { background: rgba(245,158,11,.15); color: var(--cb-light); border: 1px solid rgba(245,158,11,.3); }
+.badge-c { background: rgba(168,85,247,.15); color: var(--cc-light); border: 1px solid rgba(168,85,247,.3); }
+.badge-d { background: rgba(34,197,94,.15); color: var(--cd-light); border: 1px solid rgba(34,197,94,.3); }
+.badge-e { background: rgba(239,68,68,.15); color: var(--ce-light); border: 1px solid rgba(239,68,68,.3); }
+
+.method-meta { flex: 1; }
+.method-meta-line {
+  font-size: 0.82em; color: var(--text-muted);
+  display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px;
+}
+.method-meta-line span { display: flex; align-items: center; gap: 4px; }
+
+.method-body { padding: 18px 22px; }
+.method-section { margin-bottom: 16px; }
+.method-section:last-child { margin-bottom: 0; }
+.method-section-title {
+  font-size: 0.78em; font-weight: 700;
+  text-transform: uppercase; letter-spacing: .08em;
+  color: var(--text-dim); margin-bottom: 8px;
+}
+.method-section p, .method-section li {
+  font-size: 0.875em; color: var(--text-muted); line-height: 1.65;
+}
+.method-section ul { padding-left: 18px; }
+.method-section li { margin-bottom: 4px; }
+
+.metrics-row {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;
+}
+.metric-chip {
+  background: rgba(34,197,94,.1);
+  border: 1px solid rgba(34,197,94,.25);
+  color: var(--cd-light);
+  font-size: 0.8em; font-weight: 600;
+  padding: 4px 12px; border-radius: 20px;
+}
+
+.pro-con-row {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px;
+}
+.pro-box, .con-box {
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-size: 0.82em;
+}
+.pro-box {
+  background: rgba(34,197,94,.06);
+  border: 1px solid rgba(34,197,94,.2);
+}
+.con-box {
+  background: rgba(239,68,68,.06);
+  border: 1px solid rgba(239,68,68,.2);
+}
+.pro-box .label { color: var(--cd-light); font-weight: 700; margin-bottom: 4px; font-size: 0.85em; }
+.con-box .label { color: var(--ce-light); font-weight: 700; margin-bottom: 4px; font-size: 0.85em; }
+.pro-box p, .con-box p { color: var(--text-muted); }
+
+/* ── Pipeline Steps ── */
+.pipeline {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 8px;
+}
+.pipeline-step {
+  display: flex; align-items: flex-start; gap: 12px;
+}
+.step-num {
+  min-width: 24px; height: 24px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.75em; font-weight: 700;
+  flex-shrink: 0; margin-top: 1px;
+}
+.step-num-b { background: rgba(245,158,11,.2); color: var(--cb-light); border: 1px solid rgba(245,158,11,.3); }
+.step-num-a { background: rgba(14,165,233,.2); color: var(--ca-light); border: 1px solid rgba(14,165,233,.3); }
+.step-num-c { background: rgba(168,85,247,.2); color: var(--cc-light); border: 1px solid rgba(168,85,247,.3); }
+.pipeline-step p { font-size: 0.875em; color: var(--text-muted); }
+
+/* ── Sub-section heading within §3 ── */
+.sub-section-header {
+  padding: 20px 0 16px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid var(--border);
+}
+.sub-section-header h3 {
+  font-size: 1.25rem; font-weight: 700;
+  display: flex; align-items: center; gap: 10px;
+}
+.sub-section-dot {
+  width: 12px; height: 12px;
+  border-radius: 50%; flex-shrink: 0;
+}
+
+/* ── Challenge Cards (§4) ── */
+.challenge-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+}
+.challenge-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 20px;
+  border-left: 3px solid #ef4444;
+  position: relative; overflow: hidden;
+}
+.challenge-card::before {
+  content: '';
+  position: absolute; top: 0; right: 0;
+  width: 80px; height: 80px;
+  background: radial-gradient(circle at top right, rgba(239,68,68,.06), transparent);
+}
+.challenge-num {
+  font-size: 2em; font-weight: 900;
+  color: rgba(239,68,68,.2);
+  line-height: 1; margin-bottom: 8px;
+}
+.challenge-card h3 {
+  font-size: 0.95em; font-weight: 600;
+  color: #f87171; margin-bottom: 8px;
+}
+.challenge-card p { font-size: 0.875em; color: var(--text-muted); }
+
+/* ── Outlook Cards (§5) ── */
+.outlook-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 16px;
+}
+.outlook-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 22px;
+  transition: transform .2s, border-color .2s;
+  position: relative; overflow: hidden;
+}
+.outlook-card:hover { transform: translateY(-3px); }
+.outlook-card:nth-child(1) { border-top: 2px solid var(--ca); }
+.outlook-card:nth-child(2) { border-top: 2px solid var(--cb); }
+.outlook-card:nth-child(3) { border-top: 2px solid var(--cc); }
+.outlook-card:nth-child(4) { border-top: 2px solid var(--cd); }
+.outlook-card:nth-child(5) { border-top: 2px solid #ec4899; }
+.outlook-card:nth-child(6) { border-top: 2px solid var(--ce); }
+.outlook-icon {
+  font-size: 1.8em; margin-bottom: 12px;
+}
+.outlook-card h3 { font-size: 0.95em; font-weight: 600; margin-bottom: 8px; }
+.outlook-card p { font-size: 0.875em; color: var(--text-muted); }
+
+/* ── Footer ── */
+footer {
+  background: var(--card);
+  border-top: 1px solid var(--border);
+  padding: 28px 0;
+  text-align: center;
+  font-size: 0.82em; color: var(--text-dim);
+}
+footer a { color: var(--text-muted); }
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .compare-body { grid-template-columns: 1fr; }
+  .compare-col:first-child { border-right: none; border-bottom: 1px solid var(--border); }
+  .compare-grid { grid-template-columns: 1fr; }
+  .tree-branches { flex-wrap: wrap; justify-content: center; }
+  .pro-con-row { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- Navigation -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-home">← 返回首页</a>
+    <span class="nav-title">预训练 & 中训练阶段知识改写合成 · 系统综述</span>
+  </div>
+</nav>
+
+<!-- § 0 Hero -->
+<section class="hero" id="hero">
+  <div class="container">
+    <div class="hero-badge">系统综述 · 2024–2025</div>
+    <h1>预训练与中训练阶段<br>知识改写与数据合成</h1>
+    <p class="hero-sub">
+      本综述聚焦<strong>预训练（Pretraining）</strong>与<strong>中训练（Mid-training / Continued Pretraining）</strong>阶段——通过对原始数据进行改写、重组与合成，提升训练数据的质量与多样性，从而从根本上提升大型语言模型（LLM）的知识密度、推理能力与领域适配性。本文不涉及 SFT/指令微调数据改写、知识编辑（ROME/MEMIT）及 RAG 检索增强等后训练阶段技术。
+    </p>
+    <div class="hero-pills">
+      <span class="pill pill-a">§3A 风格/格式改写</span>
+      <span class="pill pill-b">§3B 内容精化与程序化重写</span>
+      <span class="pill pill-c">§3C 实体图谱扩写</span>
+      <span class="pill pill-d">§3D 数学/代码专项</span>
+      <span class="pill pill-e">§3E 业界大模型实践</span>
+    </div>
+  </div>
+</section>
+
+<!-- § 1 Why -->
+<section id="why">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">§ 1</div>
+      <h2>为什么需要预训练数据改写合成</h2>
+      <p>原始网络语料存在大量根本性缺陷，单靠过滤无法解决质量问题——改写合成是提升数据效率的关键突破口。</p>
+    </div>
+
+    <!-- 1.1 Pain Points -->
+    <h3 style="font-size:1.05rem; color:var(--text-muted); margin-bottom:16px; font-weight:600;">1.1 数据质量痛点</h3>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <h3>🗑️ 噪声与格式混乱</h3>
+        <p>CommonCrawl 原始数据中 HTML 残留、乱码、广告片段与低信噪比文本占绝大多数；语言模型在大量噪声上学习收益极低。</p>
+      </div>
+      <div class="pain-card">
+        <h3>📉 知识密度不均</h3>
+        <p>同一知识点在网页中反复出现，但以"对话记录"或"垃圾 SEO 文章"等低效形式存在，模型需要消耗大量 token 才能习得有限知识。</p>
+      </div>
+      <div class="pain-card">
+        <h3>🧩 推理路径缺失</h3>
+        <p>人类写作往往直接给出结论，省略推理过程。LLM 训练需要显式的、逐步展开的推理链才能学会系统性思维。</p>
+      </div>
+      <div class="pain-card">
+        <h3>⚡ 格式与推理对齐</h3>
+        <p>网页文本的表达习惯与模型推理时面对的 QA/指令格式差异巨大，导致预训练数据分布与下游任务分布存在根本性鸿沟。</p>
+      </div>
+      <div class="pain-card">
+        <h3>🧱 数据饥荒（Data Wall）</h3>
+        <p>高质量数据存量有限；激进过滤虽提升数据质量，却会丢弃数量级的原始数据，在数据受限场景下造成严重损失。</p>
+      </div>
+      <div class="pain-card">
+        <h3>🔬 领域稀缺</h3>
+        <p>数学、代码、科学等专业领域的高质量数据天然稀少；仅依赖收集的方式无法满足专业能力训练所需的数量级。</p>
+      </div>
+    </div>
+
+    <!-- 1.2 Before/After Cases -->
+    <h3 style="font-size:1.05rem; color:var(--text-muted); margin-bottom:16px; font-weight:600;">1.2 改写效果对比案例</h3>
+    <div class="compare-grid">
+
+      <!-- Case A: WRAP -->
+      <div class="compare-card">
+        <div class="compare-header">
+          <span class="compare-tag tag-a">案例 A</span>
+          CommonCrawl 噪声文本 → WRAP Wikipedia 风格改写
+        </div>
+        <div class="compare-body">
+          <div class="compare-col">
+            <div class="compare-col-label col-before">✗ 改写前（原始网页）</div>
+            <p>"Home | Products | Contact Us... Lorem ipsum dolor sit amet... 【广告】限时优惠！... [Page 1 of 3]... 评论 (247)... Filed under: misc tags..."</p>
+          </div>
+          <div class="compare-col">
+            <div class="compare-col-label col-after">✓ 改写后（Wikipedia 风格）</div>
+            <p>"光合作用是植物、藻类和部分细菌将光能转化为化学能的过程。该过程分为光反应与暗反应两阶段，前者在叶绿体类囊体膜上进行……"</p>
+          </div>
+        </div>
+        <div class="compare-result">
+          <strong>效果：</strong>C4 预训练加速 ~3×；Pile perplexity 降低 10%+；13 任务 zero-shot +2%
+          <span style="color:var(--text-dim); margin-left:8px;">WRAP · arXiv:2401.16380 · 2024</span>
+        </div>
+      </div>
+
+      <!-- Case B: SwallowCode -->
+      <div class="compare-card">
+        <div class="compare-header">
+          <span class="compare-tag tag-b">案例 B</span>
+          Stack Overflow 碎片代码 → SwallowCode 精化改写
+        </div>
+        <div class="compare-body">
+          <div class="compare-col">
+            <div class="compare-col-label col-before">✗ 改写前（碎片代码）</div>
+            <p><code style="font-size:.8em;">def sort(arr):
+  for i in range(len(arr)):
+    # TODO fix this
+    pass  # syntax error here
+# thx stackoverflow</code></p>
+          </div>
+          <div class="compare-col">
+            <div class="compare-col-label col-after">✓ 改写后（完整可运行）</div>
+            <p><code style="font-size:.8em;">def quicksort(arr: list) -&gt; list:
+    """O(n log n) 原地快速排序"""
+    if len(arr) &lt;= 1:
+        return arr
+    pivot = arr[len(arr)//2]
+    ...</code></p>
+          </div>
+        </div>
+        <div class="compare-result">
+          <strong>效果（50B token 预算）：</strong>HumanEval pass@1 <span class="metric-up">+17.0</span>，HumanEval+ <span class="metric-up">+16.1</span>
+          <span style="color:var(--text-dim); margin-left:8px;">SwallowCode · arXiv:2505.02881 · 2025</span>
+        </div>
+      </div>
+
+      <!-- Case C: SwallowMath -->
+      <div class="compare-card">
+        <div class="compare-header">
+          <span class="compare-tag tag-b">案例 C</span>
+          网页数学文章 → SwallowMath 分步改写
+        </div>
+        <div class="compare-body">
+          <div class="compare-col">
+            <div class="compare-col-label col-before">✗ 改写前（套话堆砌）</div>
+            <p>"数学是一门很重要的学科……下面我们来看这道题……答案是 42。希望同学们好好学习，天天向上！记得关注我们的公众号……"</p>
+          </div>
+          <div class="compare-col">
+            <div class="compare-col-label col-after">✓ 改写后（分步解题）</div>
+            <p>"设方程 ax²+bx+c=0，已知 a=2, b=5, c=3。<br>步骤1：计算判别式 Δ=b²-4ac=25-24=1&gt;0<br>步骤2：x=(-5±1)/4，得 x₁=-1, x₂=-3/2"</p>
+          </div>
+        </div>
+        <div class="compare-result">
+          <strong>效果（50B token 预算）：</strong>GSM8K <span class="metric-up">+12.4</span>，MATH <span class="metric-up">+7.6</span>
+          <span style="color:var(--text-dim); margin-left:8px;">SwallowMath · arXiv:2505.02881 · 2025</span>
+        </div>
+      </div>
+
+      <!-- Case D: Phi-4 -->
+      <div class="compare-card">
+        <div class="compare-header">
+          <span class="compare-tag tag-d">案例 D</span>
+          网页论坛讨论 → Phi-4 合成教科书
+        </div>
+        <div class="compare-body">
+          <div class="compare-col">
+            <div class="compare-col-label col-before">✗ 改写前（论坛帖子）</div>
+            <p>"楼主问的这个问题其实很简单啊，就是 GC 嘛。有人说用引用计数，有人说标记清除，我觉得都差不多，反正能用就行了 lol"</p>
+          </div>
+          <div class="compare-col">
+            <div class="compare-col-label col-after">✓ 改写后（教科书风格）</div>
+            <p>"垃圾回收（GC）是内存管理的核心机制。引用计数法实时回收，但无法处理循环引用；标记-清除法分两阶段：（1）从根对象遍历标记可达对象……"</p>
+          </div>
+        </div>
+        <div class="compare-result">
+          <strong>效果：</strong>14B phi-4 在 GPQA 上超越 GPT-4o；AMC-10/12（赛后新题）亦超 GPT-4o
+          <span style="color:var(--text-dim); margin-left:8px;">phi-4 · arXiv:2412.08905 · 2024</span>
+        </div>
+      </div>
+
+    </div><!-- /compare-grid -->
+  </div>
+</section>
+
+<!-- § 2 Overview -->
+<section id="overview">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">§ 2</div>
+      <h2>方法全景对比</h2>
+      <p>涵盖学术研究到业界实践的 15+ 种预训练数据改写与合成方法的系统梳理。</p>
+    </div>
+
+    <!-- 2.1 Tree Diagram -->
+    <h3 style="font-size:1.05rem; color:var(--text-muted); margin-bottom:16px; font-weight:600;">2.1 方法分类关系图</h3>
+    <div class="tree-container">
+      <div class="tree-root">
+        <div class="tree-root-node">🔄 预训练 / 中训练阶段数据改写合成</div>
+        <div class="tree-connector-v"></div>
+        <div class="tree-branches">
+
+          <div class="tree-branch">
+            <div class="tree-branch-line"></div>
+            <div class="tree-node tree-node-a">§ 3A<br>风格/格式改写</div>
+            <div class="tree-sub-items">
+              <div class="tree-branch-line"></div>
+              <div class="tree-node tree-node-sub">WRAP</div>
+              <div class="tree-node tree-node-sub">Cosmopedia</div>
+              <div class="tree-node tree-node-sub">MAGA/MGA</div>
+            </div>
+          </div>
+
+          <div class="tree-branch">
+            <div class="tree-branch-line"></div>
+            <div class="tree-node tree-node-b">§ 3B<br>内容精化重写</div>
+            <div class="tree-sub-items">
+              <div class="tree-branch-line"></div>
+              <div class="tree-node tree-node-sub">ProX</div>
+              <div class="tree-node tree-node-sub">SwallowCode/Math</div>
+              <div class="tree-node tree-node-sub">REWIRE</div>
+              <div class="tree-node tree-node-sub">FineWeb-Edu</div>
+            </div>
+          </div>
+
+          <div class="tree-branch">
+            <div class="tree-branch-line"></div>
+            <div class="tree-node tree-node-c">§ 3C<br>实体图谱扩写</div>
+            <div class="tree-sub-items">
+              <div class="tree-branch-line"></div>
+              <div class="tree-node tree-node-sub">EntiGraph</div>
+              <div class="tree-node tree-node-sub">Knowledge-Instruct</div>
+            </div>
+          </div>
+
+          <div class="tree-branch">
+            <div class="tree-branch-line"></div>
+            <div class="tree-node tree-node-d">§ 3D<br>数学/代码专项</div>
+            <div class="tree-sub-items">
+              <div class="tree-branch-line"></div>
+              <div class="tree-node tree-node-sub">phi-1 / phi-1.5</div>
+              <div class="tree-node tree-node-sub">OpenWebMath</div>
+              <div class="tree-node tree-node-sub">NuminaMath</div>
+            </div>
+          </div>
+
+          <div class="tree-branch">
+            <div class="tree-branch-line"></div>
+            <div class="tree-node tree-node-e">§ 3E<br>业界实践</div>
+            <div class="tree-sub-items">
+              <div class="tree-branch-line"></div>
+              <div class="tree-node tree-node-sub">phi-4</div>
+              <div class="tree-node tree-node-sub">Qwen2.5</div>
+              <div class="tree-node tree-node-sub">Llama 3</div>
+              <div class="tree-node tree-node-sub">DeepSeek-V3</div>
+            </div>
+          </div>
+
+        </div><!-- /tree-branches -->
+      </div>
+    </div>
+
+    <!-- 2.2 Table -->
+    <h3 style="font-size:1.05rem; color:var(--text-muted); margin-bottom:16px; font-weight:600;">2.2 横向对比大表</h3>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>方法名</th>
+            <th>来源</th>
+            <th>年份</th>
+            <th>改写粒度</th>
+            <th>改写目标</th>
+            <th>数据规模</th>
+            <th>核心指标提升</th>
+            <th>特点/局限</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="method-name">WRAP</span><span class="cat-badge tag-a">3A</span></td>
+            <td class="text-muted-td">Apple &amp; CMU<br>arXiv:2401.16380</td>
+            <td>2024</td>
+            <td>文档级</td>
+            <td>多风格改写（Wiki/QA/易懂/专业）</td>
+            <td>C4 数据集</td>
+            <td class="metric-up">预训练加速 3×; zero-shot +2%</td>
+            <td>风格多样性强；但高成本</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">Cosmopedia</span><span class="cat-badge tag-a">3A</span></td>
+            <td class="text-muted-td">HuggingFace</td>
+            <td>2024</td>
+            <td>文档级</td>
+            <td>教科书/博客/故事/WikiHow</td>
+            <td>30B tokens</td>
+            <td class="metric-up">多任务知识密度↑</td>
+            <td>seed×受众双维度控制；开源</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">MAGA/MGA</span><span class="cat-badge tag-a">3A</span></td>
+            <td class="text-muted-td">字节 Seed<br>arXiv:2502.04235</td>
+            <td>2025</td>
+            <td>文档级</td>
+            <td>体裁×受众多维改写</td>
+            <td>770B tokens</td>
+            <td class="metric-up">数据受限场景超越 WRAP</td>
+            <td>成本低 10-100×；语义一致</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">ProX</span><span class="cat-badge tag-b">3B</span></td>
+            <td class="text-muted-td">SJTU/MIT<br>arXiv:2409.17115</td>
+            <td>2024</td>
+            <td>样本级</td>
+            <td>程序化精化（格式/提取/清模板）</td>
+            <td>数学/代码语料</td>
+            <td class="metric-up">超纯规则清洗多项指标</td>
+            <td>0.3B 精化器即有效；可解释</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">SwallowCode</span><span class="cat-badge tag-b">3B</span></td>
+            <td class="text-muted-td">东工大/早稻田<br>arXiv:2505.02881</td>
+            <td>2025</td>
+            <td>函数/文件级</td>
+            <td>代码风格统一+算法优化</td>
+            <td>16.1B tokens</td>
+            <td class="metric-up">HumanEval +17.0</td>
+            <td>4阶段流水线；ICLR 2026</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">SwallowMath</span><span class="cat-badge tag-b">3B</span></td>
+            <td class="text-muted-td">东工大/早稻田<br>arXiv:2505.02881</td>
+            <td>2025</td>
+            <td>题目级</td>
+            <td>分步解题格式化</td>
+            <td>2.3B tokens</td>
+            <td class="metric-up">GSM8K +12.4; MATH +7.6</td>
+            <td>transform-and-retain 方法论</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">REWIRE</span><span class="cat-badge tag-b">3B</span></td>
+            <td class="text-muted-td">Meta<br>arXiv:2506.04689</td>
+            <td>2025</td>
+            <td>文档级</td>
+            <td>中等质量文档回收改写</td>
+            <td>CommonCrawl</td>
+            <td class="metric-up">多任务超不加改写基线</td>
+            <td>回收被过滤数据；COLM 2025</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">FineWeb-Edu</span><span class="cat-badge tag-b">3B</span></td>
+            <td class="text-muted-td">HuggingFace</td>
+            <td>2024</td>
+            <td>文档级（过滤）</td>
+            <td>LLM 教育价值评分过滤</td>
+            <td>1.3T tokens</td>
+            <td class="metric-up">等效 C4/Dolma 效率 10×+</td>
+            <td>过滤非改写；重要基线</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">EntiGraph</span><span class="cat-badge tag-c">3C</span></td>
+            <td class="text-muted-td">Stanford<br>arXiv:2409.07431</td>
+            <td>2024</td>
+            <td>实体对级</td>
+            <td>实体关系图多角度扩写</td>
+            <td>小语料扩增</td>
+            <td class="metric-up">领域 QA 显著↑；ICLR 2025</td>
+            <td>适合小语料 CPT；有理论模型</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">Knowledge-Instruct</span><span class="cat-badge tag-c">3C</span></td>
+            <td class="text-muted-td">arXiv:2504.05571</td>
+            <td>2025</td>
+            <td>文档级</td>
+            <td>QA对/摘要/填空信息密集生成</td>
+            <td>数百文档</td>
+            <td class="metric-up">超直接 CPT 原始文档</td>
+            <td>低资源 CPT；减少遗忘</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">phi-1/phi-1.5</span><span class="cat-badge tag-d">3D</span></td>
+            <td class="text-muted-td">Microsoft · 2023</td>
+            <td>2023</td>
+            <td>合成生成</td>
+            <td>教科书质量代码/推理合成</td>
+            <td>7B tokens (1.5)</td>
+            <td class="metric-up">1.3B 超 6B 模型代码能力</td>
+            <td>"Textbooks Are All You Need"先驱</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">phi-4</span><span class="cat-badge tag-e">3E</span></td>
+            <td class="text-muted-td">Microsoft<br>arXiv:2412.08905</td>
+            <td>2024</td>
+            <td>合成生成+改写</td>
+            <td>多智能体/自修订/指令反转</td>
+            <td>主体为合成数据</td>
+            <td class="metric-up">14B 超 GPT-4o (GPQA/MATH)</td>
+            <td>合成为主；AMC 新题超 GPT-4o</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">Qwen2.5</span><span class="cat-badge tag-e">3E</span></td>
+            <td class="text-muted-td">阿里云<br>arXiv:2412.15115</td>
+            <td>2024</td>
+            <td>文档级+合成</td>
+            <td>LLM 质量过滤+数学/代码合成</td>
+            <td>18T tokens</td>
+            <td class="metric-up">72B 接近/超 GPT-4o</td>
+            <td>规模+质量双提升</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">Llama 3</span><span class="cat-badge tag-e">3E</span></td>
+            <td class="text-muted-td">Meta<br>arXiv:2407.21783</td>
+            <td>2024</td>
+            <td>文档级+退火</td>
+            <td>多级过滤+末期高质量注入</td>
+            <td>15T tokens</td>
+            <td class="metric-up">Annealing GSM8K +24%</td>
+            <td>退火阶段是关键；30+语言</td>
+          </tr>
+          <tr>
+            <td><span class="method-name">DeepSeek-V3</span><span class="cat-badge tag-e">3E</span></td>
+            <td class="text-muted-td">深度求索<br>arXiv:2412.19437</td>
+            <td>2024</td>
+            <td>文档级+合成</td>
+            <td>去重/质量过滤/数学合成</td>
+            <td>14.8T tokens</td>
+            <td class="metric-up">MTP 目标提升效率</td>
+            <td>中文数学合成核心；MTP 创新</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- § 3 Deep Dive -->
+<section id="methods">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">§ 3</div>
+      <h2>五大类别深度介绍</h2>
+    </div>
+
+    <!-- § 3A -->
+    <div class="sub-section-header">
+      <h3>
+        <span class="sub-section-dot" style="background:var(--ca);"></span>
+        § 3A &nbsp;风格/格式改写
+        <span style="font-size:.75em; font-weight:400; color:var(--text-dim); margin-left:8px;">Style / Format Rewriting</span>
+      </h3>
+    </div>
+    <div class="method-grid">
+
+      <!-- WRAP -->
+      <div class="method-card method-card-a">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-a">WRAP</span>
+            <div class="method-meta-line">
+              <span>🏛 Apple &amp; CMU</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2401.16380">arXiv:2401.16380</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p>Web Rephrase Augmented Pre-training：用指令调优模型将噪声网页文档改写为 <strong>4 种风格</strong>——Wikipedia 百科风格、QA 问答格式、易懂解释风格、专业学术文章风格。真实数据与合成改写数据进行混合训练（mixed training）。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">关键机制</div>
+            <ul>
+              <li>改写模型：7B 指令调优 LLM（Mistral Instruct 系列）</li>
+              <li>每个文档生成 4 个改写版本，4× 数据量</li>
+              <li>混合比例：原始数据 50% + 改写数据 50%</li>
+              <li>改写后数据与下游任务格式分布更对齐</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">核心指标</div>
+            <div class="metrics-row">
+              <span class="metric-chip">预训练加速 ~3×</span>
+              <span class="metric-chip">Pile PPL 降低 10%+</span>
+              <span class="metric-chip">13任务 zero-shot +2%</span>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>风格多样性直接对齐下游任务；改写质量显著高于原始网页；框架简洁易复现</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>改写成本高（每文档调用 LLM 4次）；改写模型能力上限制约输出质量</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cosmopedia -->
+      <div class="method-card method-card-a">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-a">Cosmopedia</span>
+            <div class="method-meta-line">
+              <span>🏛 HuggingFace</span>
+              <span>📅 2024</span>
+              <span>🗂 开源数据集</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p>使用 <strong>Mixtral-8x7B-Instruct</strong> 将来自 Web 的种子文档改写/生成为教科书、博客文章、故事、WikiHow 指南、推特帖子等多种格式，覆盖数十个主题领域。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">创新点：双维度生成控制</div>
+            <ul>
+              <li><strong>来源种子（Seeds）：</strong>Web 文档、教科书片段、Stanford ROOTS 数据集</li>
+              <li><strong>受众（Audience）：</strong>小学生 / 大学生 / 专业人士</li>
+              <li>两个维度交叉，显著提升输出多样性</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">规模 &amp; 迭代</div>
+            <div class="metrics-row">
+              <span class="metric-chip">30B tokens</span>
+              <span class="metric-chip">Cosmopedia v2（质量更高）</span>
+              <span class="metric-chip">数十个主题领域</span>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>完全开源；双维度控制灵活；格式多样性极强；可作为下游任务预训练基础</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>依赖 Mixtral 的生成质量；部分格式（如故事）知识密度低；v1 质量参差</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MAGA/MGA -->
+      <div class="method-card method-card-a">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-a">MAGA / MGA</span>
+            <div class="method-meta-line">
+              <span>🏛 字节跳动 Seed</span>
+              <span>📅 2025</span>
+              <span>📄 <a href="https://arxiv.org/abs/2502.04235">arXiv:2502.04235</a></span>
+              <span>🎓 ICLR 2026</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p><strong>MAssive Genre-Audience Reformulation</strong>：定义「体裁」（Genre：说明文/对话/百科/新闻/学术）×「受众」（Audience：初学者/学生/专家/职业人士）多维度坐标系，对原始文档进行<strong>轻量结构化改写</strong>，而非从头生成。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">关键差异（vs WRAP）</div>
+            <ul>
+              <li>WRAP 每文档生成 4 个版本；MAGA 按体裁×受众矩阵生成多版本</li>
+              <li>改写比纯生成成本低 <strong>10-100×</strong>，语义一致性更好</li>
+              <li>构建了 <strong>MAGACorpus（770B tokens）</strong>大规模语料库</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">核心指标</div>
+            <div class="metrics-row">
+              <span class="metric-chip">770B MAGACorpus</span>
+              <span class="metric-chip">数据受限场景超 WRAP</span>
+              <span class="metric-chip">通用任务显著提升</span>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>成本效率极高；语义保真度强；MAGACorpus 规模庞大；ICLR 2026 接收认可</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>改写仍需较强 LLM；体裁/受众分类的完备性存在讨论空间</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /3A grid -->
+
+    <!-- § 3B -->
+    <div class="sub-section-header" style="margin-top:48px;">
+      <h3>
+        <span class="sub-section-dot" style="background:var(--cb);"></span>
+        § 3B &nbsp;内容精化与程序化重写
+        <span style="font-size:.75em; font-weight:400; color:var(--text-dim); margin-left:8px;">Content Refinement &amp; Programmatic Rewriting</span>
+      </h3>
+    </div>
+    <div class="method-grid">
+
+      <!-- ProX -->
+      <div class="method-card method-card-b">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-b">ProX</span>
+            <div class="method-meta-line">
+              <span>🏛 上海交大 / MIT</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2409.17115">arXiv:2409.17115</a></span>
+              <span>🎓 ICML 2025</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p><strong>Programming Every Example</strong>：将数据精化视为「编程任务」——用 <strong>0.3B 小型 LLM</strong> 为每条原始数据生成一段 Python 程序，通过<strong>执行该程序</strong>完成格式修正、关键内容提取、模板清除、噪声去除等精化操作。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">精化程序示例</div>
+            <pre>def refine(text: str) -&gt; str:
+    # 提取标题和正文，去除页脚广告
+    lines = text.split('\n')
+    lines = [l for l in lines if len(l) &gt; 30]
+    # 统一标题格式
+    return '\n'.join(lines)</pre>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">核心优势</div>
+            <ul>
+              <li>✅ <strong>可解释</strong>：精化逻辑完全透明，可审查</li>
+              <li>✅ <strong>可控制</strong>：每个操作精确定义，可调试</li>
+              <li>✅ <strong>可并行</strong>：程序执行可大规模并行，效率高</li>
+              <li>✅ <strong>轻量</strong>：0.3B 精化器即可有效工作，无需大模型</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>可解释性强；轻量高效；程序执行比 LLM 直接改写更稳定；数学/代码双领域有效</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>需要 0.3B 模型的专门训练；程序生成可能出现执行错误；复杂语义重组能力有限</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SwallowCode & SwallowMath -->
+      <div class="method-card method-card-b">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-b">SwallowCode / SwallowMath</span>
+            <div class="method-meta-line">
+              <span>🏛 东工大 / 早稻田</span>
+              <span>📅 2025</span>
+              <span>📄 <a href="https://arxiv.org/abs/2505.02881">arXiv:2505.02881</a></span>
+              <span>🎓 ICLR 2026</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">方法论：Transform-and-Retain</div>
+            <p>核心理念：<strong>改写而非丢弃低质数据</strong>。通过多阶段流水线将低质数据转化为高质数据，保留更多训练信号。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">SwallowCode — 四阶段流水线（来源 Stack-v2, ~16.1B tokens）</div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">1</div>
+                <p><strong>语法验证：</strong>剔除无法解析/执行的代码片段，保证基础可运行性</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">2</div>
+                <p><strong>Pylint 风格过滤：</strong>PEP8 合规性检查，过滤严重不规范代码</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">3</div>
+                <p><strong>LLM 风格改写：</strong>统一代码风格，补充缺失注释和文档字符串</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">4</div>
+                <p><strong>算法优化改写：</strong>去除冗余逻辑，提升算法效率，用更优实现替换低效代码</p>
+              </div>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">SwallowMath — 三步流水线（来源 Finemath-4+, ~2.3B tokens）</div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">1</div>
+                <p><strong>去除样板（Boilerplate Removal）：</strong>删除大量"希望同学们……""接下来我们……"等套话模板</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">2</div>
+                <p><strong>补全上下文（Context Restoration）：</strong>恢复跳步导致的逻辑断层，补充必要的中间推导步骤</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-b">3</div>
+                <p><strong>格式化分步解题（Step-by-step Reformatting）：</strong>统一转化为清晰的逐步解题格式</p>
+              </div>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">核心数字（50B token 训练预算）</div>
+            <div class="metrics-row">
+              <span class="metric-chip">HumanEval +17.0</span>
+              <span class="metric-chip">HumanEval+ +16.1</span>
+              <span class="metric-chip">GSM8K +12.4</span>
+              <span class="metric-chip">MATH +7.6</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- REWIRE -->
+      <div class="method-card method-card-b">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-b">REWIRE</span>
+            <div class="method-meta-line">
+              <span>🏛 Meta / Facebook</span>
+              <span>📅 2025</span>
+              <span>📄 <a href="https://arxiv.org/abs/2506.04689">arXiv:2506.04689</a></span>
+              <span>🎓 COLM 2025</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心动机</div>
+            <p>传统数据过滤会丢弃高达 <strong>99%</strong> 的原始 CommonCrawl 数据。这些被丢弃的数据中，存在大量<strong>"中等质量"</strong>文档——它们虽不满足严格质量标准，但包含有价值的知识信号。REWIRE 旨在"回收"这些数据。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p>针对数据处理流水线中<strong>被过滤丢弃</strong>的中等质量文档，使用 LLM 进行引导式改写（guided rewriting），将其提升到可用的质量阈值以上，重新纳入训练集。</p>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>大幅提升数据利用率；在相同训练预算下明显优于不加改写的 baseline；减少数据浪费</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>改写成本需权衡；中等质量文档的判定标准影响效果；改写模型的幻觉风险</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FineWeb-Edu -->
+      <div class="method-card method-card-b">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-b">FineWeb-Edu</span>
+            <div class="method-meta-line">
+              <span>🏛 HuggingFace</span>
+              <span>📅 2024</span>
+              <span>🗂 开源数据集 · 重要基线</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p>训练 LLM 质量评分器对每条网页文本打<strong>教育价值分（0-5）</strong>：5分代表教科书级别；0分代表无意义内容。保留高分数据（≥3分），过滤低分数据。严格说这是「智能过滤」而非「改写」，但作为质量控制的重要对比基线。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">规模 &amp; 效果</div>
+            <div class="metrics-row">
+              <span class="metric-chip">1.3T tokens</span>
+              <span class="metric-chip">等效 C4/Dolma 效率 10×+</span>
+              <span class="metric-chip">MMLU/ARC/HellaSwag 多任务↑</span>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>完全开源；质量卓越；提供了"高质量=教育价值"的清晰定义；广泛用作基线</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>过滤而非改写，丢弃了大量数据；评分器偏向英语/学术文体；存在文化偏见</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /3B grid -->
+
+    <!-- § 3C -->
+    <div class="sub-section-header" style="margin-top:48px;">
+      <h3>
+        <span class="sub-section-dot" style="background:var(--cc);"></span>
+        § 3C &nbsp;知识图谱驱动的实体扩写
+        <span style="font-size:.75em; font-weight:400; color:var(--text-dim); margin-left:8px;">Entity-Driven Knowledge Expansion</span>
+      </h3>
+    </div>
+    <div class="method-grid">
+
+      <!-- EntiGraph -->
+      <div class="method-card method-card-c">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-c">EntiGraph</span>
+            <div class="method-meta-line">
+              <span>🏛 Stanford / Hashimoto 组</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2409.07431">arXiv:2409.07431</a></span>
+              <span>🎓 ICLR 2025</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p>针对<strong>小语料库领域自适应继续预训练</strong>场景（如仅有几十本专业书籍）：</p>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num step-num-c">1</div>
+                <p><strong>实体提取：</strong>从源文档中识别所有显著实体（概念、方法、人物等）</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-c">2</div>
+                <p><strong>关系图构建：</strong>建立实体间的语义关系图（Entity Relation Graph）</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-c">3</div>
+                <p><strong>多角度生成：</strong>围绕不同实体对之间的关系，生成多种视角的解释性文本</p>
+              </div>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">目标 &amp; 关键发现</div>
+            <ul>
+              <li>让模型「记住」特定领域知识，不依赖 RAG 即可回答相关问题</li>
+              <li>核心发现：<strong>合成 CPT 与 RAG 互补</strong>，两者结合效果最优</li>
+              <li>理论贡献：建立了合成数据如何「重排列知识接触」的数学模型</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>非常适合小语料 CPT；有严格理论分析；ICLR 2025 顶会认可；与 RAG 形成互补</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>主要针对特定领域小语料；大规模通用预训练的可扩展性待验证；实体提取质量依赖源文档</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Knowledge-Instruct -->
+      <div class="method-card method-card-c">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-c">Knowledge-Instruct</span>
+            <div class="method-meta-line">
+              <span>📅 2025</span>
+              <span>📄 <a href="https://arxiv.org/abs/2504.05571">arXiv:2504.05571</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心做法</div>
+            <p>从<strong>极少量语料</strong>（少则数百文档）生成信息密集的多格式数据，用于继续预训练。生成格式包括：QA 问答对、内容摘要、填空题（Cloze）、推理链等。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">解决的核心问题</div>
+            <ul>
+              <li><strong>小语料低效问题：</strong>直接在少量文档上 CPT，模型难以充分吸收知识</li>
+              <li><strong>灾难性遗忘：</strong>小数据 CPT 容易导致预训练通用能力退化</li>
+              <li>通过生成多样化格式，让模型从多角度接触同一知识，提升记忆效率</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>极低数据需求即可有效；减少灾难性遗忘；在多个领域明显优于直接 CPT</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>生成的指令格式数据与纯预训练范式有区别；大规模扩展的效果待评估</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /3C grid -->
+
+    <!-- § 3D -->
+    <div class="sub-section-header" style="margin-top:48px;">
+      <h3>
+        <span class="sub-section-dot" style="background:var(--cd);"></span>
+        § 3D &nbsp;面向数学/代码的专项改写
+        <span style="font-size:.75em; font-weight:400; color:var(--text-dim); margin-left:8px;">Domain-Specific Synthetic CPT</span>
+      </h3>
+    </div>
+    <div class="method-grid">
+
+      <!-- phi-1 / phi-1.5 -->
+      <div class="method-card method-card-d">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-d">phi-1 / phi-1.5</span>
+            <div class="method-meta-line">
+              <span>🏛 Microsoft Research</span>
+              <span>📅 2023</span>
+              <span>🏆 合成预训练数据先驱</span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">核心理念："Textbooks Are All You Need"</div>
+            <p>革命性地提出：<strong>数据质量 &gt; 数据数量</strong>。小模型用高质量合成数据训练，可以超越用海量低质数据训练的大模型。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">两个版本</div>
+            <ul>
+              <li><strong>phi-1（1.3B）：</strong>用 GPT-4 生成教科书质量的 Python 代码教学数据；在 HumanEval 上超越所有当时同尺寸乃至更大的开源模型</li>
+              <li><strong>phi-1.5（3.8B）：</strong>扩展到通用推理，7B「教科书式」合成数据，在常识推理和数学上实现超越其体量的能力</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">历史意义</div>
+            <div class="metrics-row">
+              <span class="metric-chip">1.3B 超越 6B+ 模型代码能力</span>
+              <span class="metric-chip">开创合成预训练路线</span>
+              <span class="metric-chip">WRAP / phi-4 / Cosmopedia 的先驱</span>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="pro-con-row">
+              <div class="pro-box">
+                <div class="label">✓ 优势</div>
+                <p>证明了合成数据路线的可行性；以极小模型展示巨大效果；开创性理念影响深远</p>
+              </div>
+              <div class="con-box">
+                <div class="label">✗ 局限</div>
+                <p>依赖昂贵的 GPT-4 生成；专注代码/数学，通用性有限；领域外任务表现较弱</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- OpenWebMath / NuminaMath -->
+      <div class="method-card method-card-d">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-d">OpenWebMath / NuminaMath</span>
+            <div class="method-meta-line">
+              <span>📅 2023–2024</span>
+              <span>📄 OpenWebMath: <a href="https://arxiv.org/abs/2310.06786">arXiv:2310.06786</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">OpenWebMath（2023）</div>
+            <p>从 CommonCrawl 专门<strong>提取与过滤数学内容</strong>：重点保留含 LaTeX 数学表达式的页面，经过多级清洗和去重，将 200B 原始爬取数据精炼为 <strong>14.7B 高质量数学文本</strong>。覆盖数学各分支：代数、分析、数论、组合等。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">NuminaMath（2024）</div>
+            <p>开源 AI4Math 数学题库，包含竞赛数学题（AMC、AIME、国际数学奥林匹克）和解题过程，专为数学推理能力训练设计。</p>
+          </div>
+          <div class="method-section">
+            <div class="metrics-row">
+              <span class="metric-chip">200B → 14.7B（OpenWebMath）</span>
+              <span class="metric-chip">LaTeX 数学内容专项</span>
+              <span class="metric-chip">竞赛题库（NuminaMath）</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /3D grid -->
+
+    <!-- § 3E -->
+    <div class="sub-section-header" style="margin-top:48px;">
+      <h3>
+        <span class="sub-section-dot" style="background:var(--ce);"></span>
+        § 3E &nbsp;业界大模型技术报告中的改写实践
+        <span style="font-size:.75em; font-weight:400; color:var(--text-dim); margin-left:8px;">Industry Practice</span>
+      </h3>
+    </div>
+    <div class="method-grid">
+
+      <!-- phi-4 -->
+      <div class="method-card method-card-e">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-e">phi-4</span>
+            <div class="method-meta-line">
+              <span>🏛 Microsoft</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2412.08905">arXiv:2412.08905</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">合成数据主导的预训练</div>
+            <p>phi-4（14B）以<strong>合成数据为训练主体</strong>，在 GPQA、MATH、AMC-10/12 等基准上超越 GPT-4o，验证了合成数据在大规模预训练中的有效性。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">三类合成数据技术</div>
+            <div class="pipeline">
+              <div class="pipeline-step">
+                <div class="step-num step-num-a">1</div>
+                <p><strong>多智能体提示（Multi-agent Prompting）：</strong>多个 LLM 角色（提问者/解答者/批评者）协作生成推理数据，捕捉多视角思维过程</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-a">2</div>
+                <p><strong>自修订工作流（Self-revision Workflow）：</strong>生成→评估→修改的迭代循环，持续提升数据质量</p>
+              </div>
+              <div class="pipeline-step">
+                <div class="step-num step-num-a">3</div>
+                <p><strong>指令反转（Instruction Reversal）：</strong>从已有答案反推对应问题，大幅增加训练样本多样性</p>
+              </div>
+            </div>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">核心数字</div>
+            <div class="metrics-row">
+              <span class="metric-chip">14B 超 GPT-4o (GPQA)</span>
+              <span class="metric-chip">AMC-10/12 赛后新题超 GPT-4o</span>
+              <span class="metric-chip">Web Rewrite + 纯合成混合</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Qwen2.5 -->
+      <div class="method-card method-card-e">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-e">Qwen2.5</span>
+            <div class="method-meta-line">
+              <span>🏛 阿里云</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2412.15115">arXiv:2412.15115</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">规模扩张 + 质量工程</div>
+            <p>预训练数据从 Qwen2 的 <strong>7T tokens</strong> 大幅扩展至 <strong>18T tokens</strong>，数据规模接近翻倍，但同时实施严格的质量提升工程。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">数据质量提升方法</div>
+            <ul>
+              <li><strong>LLM 判别过滤（Quality Scoring）：</strong>训练专用模型对网页数据进行质量评分，过滤低质内容</li>
+              <li><strong>数学合成数据：</strong>专门构建合成数学题目+完整解题过程，大量使用改写技术丰富题型</li>
+              <li><strong>代码合成数据：</strong>生成有注释、算法清晰的代码样例，覆盖多种编程语言</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="metrics-row">
+              <span class="metric-chip">18T tokens 预训练</span>
+              <span class="metric-chip">72B 接近/超 GPT-4o</span>
+              <span class="metric-chip">数学/代码专项合成</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Llama 3 -->
+      <div class="method-card method-card-e">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-e">Llama 3</span>
+            <div class="method-meta-line">
+              <span>🏛 Meta</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2407.21783">arXiv:2407.21783</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">多级数据质量流水线</div>
+            <ul>
+              <li><strong>启发式过滤：</strong>基于规则的噪声和低质内容过滤</li>
+              <li><strong>基于模型的质量分类：</strong>训练专用质量分类器，区分高/中/低质量内容</li>
+              <li><strong>去重：</strong>文档级别和段落级别的多轮去重</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">关键技术：Annealing（退火阶段）</div>
+            <p>在预训练末期（最后 ~4000B tokens），注入少量<strong>高质量数学和代码数据</strong>，学习率同步退火。这一技术：</p>
+            <ul>
+              <li>GSM8K（数学推理）提升 <strong>24%</strong></li>
+              <li>以极低的数据成本获得数学/代码能力的最后"冲刺"</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="metrics-row">
+              <span class="metric-chip">15T tokens · 30+ 语言</span>
+              <span class="metric-chip">Annealing GSM8K +24%</span>
+              <span class="metric-chip">多级质量过滤体系</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- DeepSeek-V3 -->
+      <div class="method-card method-card-e">
+        <div class="method-header">
+          <div>
+            <span class="method-badge badge-e">DeepSeek-V3</span>
+            <div class="method-meta-line">
+              <span>🏛 深度求索</span>
+              <span>📅 2024</span>
+              <span>📄 <a href="https://arxiv.org/abs/2412.19437">arXiv:2412.19437</a></span>
+            </div>
+          </div>
+        </div>
+        <div class="method-body">
+          <div class="method-section">
+            <div class="method-section-title">数据工程</div>
+            <p>预训练数据约 <strong>14.8T tokens</strong>，以中英文为主。数据处理包含去重、质量过滤和比例混合优化三个核心环节。</p>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">数学/代码合成</div>
+            <ul>
+              <li><strong>中文数学题合成：</strong>改写与合成是核心数据工程，大量生成中文数学题目+详细解题过程</li>
+              <li><strong>代码合成：</strong>生成代码练习、算法实现、代码审查等多种格式</li>
+              <li><strong>比例优化：</strong>精细调整各领域/语言数据的混合比例</li>
+            </ul>
+          </div>
+          <div class="method-section">
+            <div class="method-section-title">技术创新</div>
+            <p><strong>Multi-Token Prediction（MTP）训练目标：</strong>同时预测多个 token，与改写后的高密度数据配合，进一步提升训练效率和数据利用率。</p>
+          </div>
+          <div class="method-section">
+            <div class="metrics-row">
+              <span class="metric-chip">14.8T tokens</span>
+              <span class="metric-chip">中文数学合成核心</span>
+              <span class="metric-chip">MTP 训练目标创新</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /3E grid -->
+  </div>
+</section>
+
+<!-- § 4 Challenges -->
+<section id="challenges">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">§ 4</div>
+      <h2>挑战与局限</h2>
+      <p>尽管预训练数据改写合成已取得显著成效，但仍面临若干根本性挑战。</p>
+    </div>
+    <div class="challenge-grid">
+      <div class="challenge-card">
+        <div class="challenge-num">01</div>
+        <h3>🔴 幻觉传播（Hallucination Amplification）</h3>
+        <p>改写模型在改写过程中可能引入错误事实、混淆概念，导致虚假信息进入训练集。训练集质量的上限受到改写模型本身能力的制约——弱模型改出的数据可能比原始数据还差。</p>
+      </div>
+      <div class="challenge-card">
+        <div class="challenge-num">02</div>
+        <h3>🔴 风格偏差（Style Bias）</h3>
+        <p>过度使用单一改写风格（如大量 Wikipedia 百科风格）可能导致模型输出格式趋于单一，降低生成多样性。模型可能对训练中未见过的输出格式泛化能力减弱。</p>
+      </div>
+      <div class="challenge-card">
+        <div class="challenge-num">03</div>
+        <h3>🔴 规模-质量权衡</h3>
+        <p>大规模改写的计算成本极高：调用 GPT-4 或大型开源模型改写数十亿 token 的费用可能高达数百万美元。Meta REWIRE、ProX 等工作尝试用中小模型（0.3B-7B）降低成本，但效果与大模型仍有差距。</p>
+      </div>
+      <div class="challenge-card">
+        <div class="challenge-num">04</div>
+        <h3>🔴 评估困难</h3>
+        <p>改写数据的质量难以自动评估：没有客观的「好改写」标准，只能通过下游任务表现间接验证，调试周期长达数周。改写策略的超参数（风格、温度、提示词）调试成本极高。</p>
+      </div>
+      <div class="challenge-card">
+        <div class="challenge-num">05</div>
+        <h3>🔴 数据污染风险</h3>
+        <p>改写后的数据可能包含测试集内容的语义变体——即改写后的训练数据在语义上与测试集高度重叠，导致基准评估结果虚高，模型实际泛化能力被高估。这在数学和代码领域尤为严峻。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- § 5 Outlook -->
+<section id="outlook">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">§ 5</div>
+      <h2>总结与展望</h2>
+      <p>预训练数据改写合成正在成为 LLM 能力提升的核心工程路线，以下六个方向值得重点关注。</p>
+    </div>
+    <div class="outlook-grid">
+      <div class="outlook-card">
+        <div class="outlook-icon">🖼️</div>
+        <h3>多模态数据改写</h3>
+        <p>将文本改写技术扩展到图文对、视频字幕等多模态场景：为图像生成结构化描述，为视频生成时序叙事文本，提升多模态预训练数据质量。</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">🔄</div>
+        <h3>自动化改写流水线</h3>
+        <p>构建改写模型 self-play 系统，不依赖 GPT-4 级别的 oracle 模型：通过自我博弈、对抗生成和强化学习，让改写模型自主提升，实现低成本高质量的全自动数据工厂。</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">🎯</div>
+        <h3>目标感知改写</h3>
+        <p>根据下游任务需求定向改写训练数据：已知目标任务的情况下，改写时有意识地提升对目标任务最有价值的内容维度，而非通用式改写。</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">⚖️</div>
+        <h3>数据配比与改写协同优化</h3>
+        <p>系统研究原始数据与改写数据的最优混合比例：不同任务、不同训练阶段、不同模型规模下，改写数据的理想占比如何动态调整。</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">💡</div>
+        <h3>小模型改写器</h3>
+        <p>推广 ProX 0.3B 思路：训练专门的小型改写模型，实现低成本高效改写。探索改写模型与被训练模型协同进化，以及「改写知识蒸馏」等新范式。</p>
+      </div>
+      <div class="outlook-card">
+        <div class="outlook-icon">✅</div>
+        <h3>可验证改写</h3>
+        <p>在数学和代码领域，改写结果可通过<strong>执行验证</strong>正确性（运行代码看是否通过测试、用求解器验证数学步骤），构建「可自动验证的改写数据生产线」，从根本上消除幻觉传播问题。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p style="margin-bottom:8px;">
+      预训练与中训练阶段知识改写合成 · 系统综述 &nbsp;|&nbsp;
+      涵盖 arXiv:2401.16380 · 2502.04235 · 2409.17115 · 2505.02881 · 2506.04689 · 2409.07431 · 2504.05571 · 2412.08905 · 2412.15115 · 2407.21783 · 2412.19437
+    </p>
+    <p>
+      <a href="index.html">← 返回首页</a>
+      &nbsp;·&nbsp;
+      本文聚焦预训练/中训练阶段，不涵盖 SFT 数据改写、知识编辑（ROME/MEMIT）及 RAG 技术
+    </p>
+  </div>
+</footer>
+
+</body>
+</html>

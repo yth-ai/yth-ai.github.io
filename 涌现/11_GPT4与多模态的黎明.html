@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第十一章：GPT-4与多模态的黎明 — 涌现</title>
+<style>
+:root {
+  --primary: #1a1a2e; --secondary: #16213e; --accent: #e94560; --accent2: #0f3460;
+  --text: #e0e0e0; --text-muted: #9a9a9a; --light-bg: #1e1e2e; --card-bg: #252535;
+  --border: #333355; --highlight: #2a2a4a; --quote-color: #e94560;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--primary); color: var(--text); font-family: 'Georgia','Noto Serif SC',serif; line-height: 1.9; font-size: 17px; }
+a { color: var(--accent); text-decoration: none; } a:hover { text-decoration: underline; }
+.book-header { background: linear-gradient(135deg,var(--secondary) 0%,var(--accent2) 100%); border-bottom: 3px solid var(--accent); padding: 2rem 0 1.5rem; text-align: center; }
+.book-title { font-size: 2.8rem; font-weight: bold; letter-spacing: 0.2em; color: #fff; }
+.book-subtitle { font-size: 1.1rem; color: var(--text-muted); margin-top: 0.5rem; }
+.part-tag { display: inline-block; margin-top: 1rem; padding: 0.3rem 1rem; background: var(--accent); color: #fff; font-size: 0.85rem; border-radius: 20px; letter-spacing: 0.1em; }
+.chapter-header { background: var(--secondary); padding: 3rem 2rem 2rem; text-align: center; border-bottom: 1px solid var(--border); }
+.chapter-number { font-size: 0.9rem; color: var(--accent); letter-spacing: 0.3em; text-transform: uppercase; margin-bottom: 0.8rem; }
+.chapter-title { font-size: 2.2rem; color: #fff; margin-bottom: 1.5rem; }
+.chapter-epigraph { max-width: 600px; margin: 0 auto; font-style: italic; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 1.2rem; text-align: left; font-size: 1rem; }
+.chapter-epigraph cite { display: block; margin-top: 0.5rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.container { max-width: 800px; margin: 0 auto; padding: 2rem 1.5rem; }
+.toc { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.5rem; margin: 2rem 0; }
+.toc h3 { font-size: 0.85rem; letter-spacing: 0.2em; color: var(--accent); margin-bottom: 1rem; text-transform: uppercase; }
+.toc ol { padding-left: 1.5rem; } .toc li { margin: 0.4rem 0; }
+.toc a { color: var(--text-muted); font-size: 0.95rem; } .toc a:hover { color: var(--accent); }
+h2 { font-size: 1.5rem; color: #fff; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+p { margin-bottom: 1.2rem; }
+blockquote { background: var(--highlight); border-left: 4px solid var(--accent); margin: 2rem 0; padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-style: italic; color: var(--text); }
+blockquote cite { display: block; margin-top: 0.6rem; font-style: normal; font-size: 0.85rem; color: var(--accent); }
+.timeline-card { background: var(--card-bg); border: 1px solid var(--border); border-left: 4px solid var(--accent); border-radius: 0 8px 8px 0; padding: 1.2rem 1.5rem; margin: 1.5rem 0; }
+.timeline-card .date { font-size: 0.8rem; color: var(--accent); letter-spacing: 0.15em; margin-bottom: 0.4rem; text-transform: uppercase; }
+.timeline-card .event { font-weight: bold; color: #fff; margin-bottom: 0.4rem; }
+.timeline-card .desc { font-size: 0.95rem; color: var(--text-muted); }
+.chapter-nav { display: flex; justify-content: space-between; align-items: center; padding: 2rem 1.5rem; border-top: 1px solid var(--border); max-width: 800px; margin: 0 auto; }
+.nav-btn { padding: 0.6rem 1.2rem; background: var(--card-bg); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-size: 0.9rem; transition: all 0.2s; }
+.nav-btn:hover { background: var(--accent); color: #fff; border-color: var(--accent); text-decoration: none; }
+.highlight-box { background: var(--highlight); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1.5rem 0; font-size: 1.05rem; line-height: 1.8; }
+</style>
+</head>
+<body>
+
+<header class="book-header">
+  <div class="book-title">涌现</div>
+  <div class="book-subtitle">大语言模型如何重写人类与智能的关系</div>
+  <span class="part-tag">第三部分：引爆（2022-2023）</span>
+</header>
+
+<div class="chapter-header">
+  <div class="chapter-number">第十一章</div>
+  <h1 class="chapter-title">GPT-4与多模态的黎明</h1>
+  <div class="chapter-epigraph">
+    "GPT-4让我第一次认真地想：也许这东西真的能发展出某种类似推理的能力。"
+    <cite>—— Geoffrey Hinton，"深度学习之父"，2023年，在宣布离开谷歌前</cite>
+  </div>
+</div>
+
+<div class="container">
+  <nav class="toc">
+    <h3>本章内容</h3>
+    <ol>
+      <li><a href="#gpt4-launch">GPT-4发布：又一次震惊</a></li>
+      <li><a href="#benchmarks">考试成绩单：从垫底到顶尖</a></li>
+      <li><a href="#multimodal">看图说话：多模态的第一步</a></li>
+      <li><a href="#hinton">Hinton的出走与警告</a></li>
+      <li><a href="#sparks">《AGI的火花》：一篇引发争议的论文</a></li>
+      <li><a href="#new-era">一个新时代的开始</a></li>
+    </ol>
+  </nav>
+
+  <h2 id="gpt4-launch">GPT-4发布：又一次震惊</h2>
+  <p>
+    2023年3月14日，OpenAI发布了GPT-4。
+  </p>
+  <p>
+    和ChatGPT一样，GPT-4的发布也没有夸张的仪式感——但它带来的震惊，对于那些真正测试过它的人来说，不亚于第一次用ChatGPT的感觉。
+  </p>
+  <p>
+    GPT-4比GPT-3.5（ChatGPT使用的版本）在几乎所有维度上都有显著提升：更准确，更少幻觉，更长的上下文窗口（从4K到8K再到后来的32K token），更强的推理能力，更细腻的语言表达，更强的代码生成能力。
+  </p>
+  <p>
+    OpenAI为GPT-4保密做得极好——发布前没有泄露任何关键信息。甚至连参数量，OpenAI都没有公开（后来的各种分析估计约为1万亿参数的混合专家模型，但OpenAI从未正式确认）。这种保密，本身就是竞争策略的一部分。
+  </p>
+
+  <div class="timeline-card">
+    <div class="date">2023 年 3 月 14 日</div>
+    <div class="event">GPT-4 发布</div>
+    <div class="desc">OpenAI发布GPT-4，首次支持图像输入（多模态），在多项专业考试中达到人类专家水平。被认为是迄今能力最强的大语言模型。</div>
+  </div>
+
+  <h2 id="benchmarks">考试成绩单：从垫底到顶尖</h2>
+  <p>
+    OpenAI发布的GPT-4技术报告，里面有一张令人瞠目的成绩单。
+  </p>
+  <p>
+    在律师资格考试（Uniform Bar Exam）中，GPT-4的得分位于通过考试者的前10%；GPT-3.5则只在后10%。在美国医学执照考试（USMLE）中，GPT-4达到了通过线以上的水平。在SAT数学、GRE、AMC数学竞赛等各类标准测试上，GPT-4都展现出了接近甚至超过平均人类水平的表现。
+  </p>
+  <p>
+    当然，有人指出，"通过考试"不等于"有能力执业"——医生不只是做选择题，律师不只是背法条。但这些基准测试的结果，仍然传递了一个明确信号：这些模型在知识获取和运用方面，正在接近高受教育水平的人类。
+  </p>
+
+  <blockquote>
+    "当我们第一次看到GPT-4在律师考试上的得分，整个团队安静了一会儿。没有人说话。然后有人说：好，这下真的不一样了。"
+    <cite>—— 一位OpenAI产品团队成员，内部分享（转述）</cite>
+  </blockquote>
+
+  <h2 id="multimodal">看图说话：多模态的第一步</h2>
+  <p>
+    GPT-4的另一个重要突破，是支持图像输入——即所谓的多模态（Multimodal）能力。
+  </p>
+  <p>
+    你可以给GPT-4发一张图，然后问它关于图中内容的问题；你可以给它一张手写的数学题，让它求解；你可以给它一张网页截图，让它描述布局；甚至你可以给它一个"冰箱里有这些食材"的照片，让它建议食谱。
+  </p>
+  <p>
+    在GPT-4技术报告的发布会演示中，一个最令人印象深刻的片段，是给GPT-4看了一张网站的草图（用笔手画的粗略线框图），然后说"把它写成HTML代码"——GPT-4生成了一个基本可运行的网页。
+  </p>
+  <p>
+    这展示了多模态融合的潜力：不只是"理解文字"，而是"理解任何符号化的信息"——图像、表格、图表、代码、数学公式……这些都可以成为模型的输入，语言则是它的输出接口。
+  </p>
+
+  <h2 id="hinton">Hinton的出走与警告</h2>
+  <p>
+    2023年5月，AI领域发生了一件震惊业界的事：Geoffrey Hinton宣布从谷歌辞职。
+  </p>
+  <p>
+    Hinton是深度学习的奠基人之一。他在多伦多大学的工作，以及后来在谷歌的研究，是现代AI技术的基础。他的离职声明，不是普通的职业转型——他明确说，他离职，是因为他对AI的发展感到担忧，想要自由地公开谈论这些担忧，而不受公司立场的约束。
+  </p>
+  <p>
+    他说，他担心AI会产生错误的信念，会被人类的坏演员用于作恶，最终可能超出人类控制。他甚至承认，他此前对深度学习路线的某些信念，现在看来可能是错的。
+  </p>
+  <p>
+    这是一个行业的领路人，对自己一手推动的技术，发出了"我担心我们做了什么"的信号。这在AI圈内外，都留下了深刻印象。
+  </p>
+
+  <blockquote>
+    "如果我意识到AGI比我预想的更近，那我会后悔那些训练数据吗？会的，也许会。"
+    <cite>—— Geoffrey Hinton，2023年5月，接受《纽约时报》采访</cite>
+  </blockquote>
+
+  <h2 id="sparks">《AGI的火花》：一篇引发争议的论文</h2>
+  <p>
+    2023年3月，微软研究院发表了一篇措辞大胆的论文，标题是《Sparks of Artificial General Intelligence: Early experiments with GPT-4》（AGI的火花：GPT-4的早期实验）。
+  </p>
+  <p>
+    这篇论文声称，GPT-4展示出了"通用人工智能的早期形态"——它能够在新领域进行类比推理，在没有专项训练的情况下解决新问题，其能力已经接近或超过人类在某些任务上的水平。
+  </p>
+  <p>
+    这篇论文在AI圈里引发了激烈争论。支持者认为，微软研究院的研究者们看到了真实的能力；批评者认为，这是微软投资OpenAI后的利益驱动的过度解读，"AGI火花"不过是对语言模型统计特性的误读。
+  </p>
+  <p>
+    这场争论，本质上是关于"智能"定义的争论，至今没有结论。但它标志着一个重要时刻：AI领域的讨论，开始从"这个模型能做X吗"变成"这个模型是否具有某种通用智能"。
+  </p>
+
+  <h2 id="new-era">一个新时代的开始</h2>
+  <p>
+    GPT-4发布后，AI产业进入了一个新的阶段。
+  </p>
+  <p>
+    OpenAI开放了插件系统（Plugins），允许ChatGPT连接外部工具和数据源——这是迈向Agent的第一步。微软开始在Office 365中推出Copilot功能，将GPT-4的能力嵌入Word、Excel、PowerPoint……谷歌也加快了Bard的迭代，开始引入Gemini模型。
+  </p>
+  <p>
+    全球的大型科技公司、金融机构、咨询公司、律所、医院……都开始认真讨论"AI战略"。这不再是"要不要关注AI"的问题，而是"如何以最快速度在组织内部整合AI"的问题。
+  </p>
+  <p>
+    这种从"观望"到"行动"的全球性转变，将在接下来的章节里，演变成一场前所未有的产业风暴。
+  </p>
+
+  <div class="highlight-box">
+    🎯 <strong>GPT-4 关键数据</strong>：律师资格考试前10%；医学执照考试通过线以上；GRE语文88th百分位；SAT数学89th百分位。相比之下，GPT-3.5在同样测试中仅在第10-40百分位。这两个版本之间，只隔了不到18个月的开发时间。
+  </div>
+</div>
+
+<nav class="chapter-nav">
+  <a href="10_所有人都慌了.html" class="nav-btn">← 第十章</a>
+  <a href="12_应用的寒武纪大爆发.html" class="nav-btn">第十二章：应用的寒武纪大爆发 →</a>
+</nav>
+
+</body>
+</html>

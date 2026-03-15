@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第9章 知识更新与时效性 · 数据珠玑</title>
+<style>
+  :root { --primary:#1a3a5c; --accent:#2e7dbe; --light-bg:#f5f8fc; --text:#2c3e50; --muted:#7f8c9a; --border:#d0dce8; --highlight:#fff8e1; --green-bg:#f0faf4; --green-border:#68c98a; --red-bg:#fff5f5; --red-border:#e88; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body { font-family:'Georgia','Noto Serif SC',serif; background:#fff; color:var(--text); line-height:1.9; font-size:17px; }
+  .book-header { background:linear-gradient(135deg,#0d2137 0%,#1a3a5c 60%,#2e5f8a 100%); color:#fff; padding:40px 5%; text-align:center; }
+  .book-title { font-size:1.8em; letter-spacing:0.1em; }
+  .book-subtitle { font-size:0.95em; color:#a8c4dc; margin-top:6px; }
+  .chapter-header { padding:48px 5% 32px; border-bottom:2px solid var(--border); background:var(--light-bg); }
+  .chapter-label { color:var(--accent); font-size:0.85em; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:10px; font-family:sans-serif; }
+  .chapter-title { font-size:2.2em; color:var(--primary); line-height:1.3; }
+  .chapter-intro { font-size:1.05em; color:#445; margin-top:16px; max-width:680px; font-style:italic; }
+  .main-content { max-width:860px; margin:0 auto; padding:40px 5%; }
+  h2 { font-size:1.5em; color:var(--primary); margin:52px 0 16px; padding-bottom:8px; border-bottom:2px solid var(--accent); }
+  h3 { font-size:1.15em; color:#1a5080; margin:32px 0 12px; }
+  p { margin-bottom:1.2em; }
+  ul,ol { margin:12px 0 16px 24px; line-height:2; }
+  blockquote { border-left:4px solid var(--accent); background:var(--light-bg); padding:16px 24px; margin:24px 0; font-style:italic; color:#445566; border-radius:0 6px 6px 0; }
+  .highlight-box { background:var(--highlight); border:1px solid #f0d060; border-radius:6px; padding:20px 24px; margin:24px 0; }
+  .highlight-box strong { color:#8b6914; }
+  .info-box { background:var(--light-bg); border:1px solid var(--border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .info-box h4 { color:var(--accent); margin-bottom:8px; font-family:sans-serif; }
+  .success-box { background:var(--green-bg); border:1px solid var(--green-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  .warning-box { background:var(--red-bg); border:1px solid var(--red-border); border-radius:8px; padding:20px 24px; margin:24px 0; }
+  table { width:100%; border-collapse:collapse; margin:24px 0; font-family:sans-serif; font-size:0.88em; }
+  th { background:var(--primary); color:#fff; padding:10px 14px; text-align:left; }
+  td { padding:9px 14px; border-bottom:1px solid var(--border); }
+  tr:nth-child(even) td { background:var(--light-bg); }
+  .compare-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin:24px 0; }
+  .compare-card { border:1px solid var(--border); border-radius:8px; padding:20px; }
+  .compare-card h4 { font-family:sans-serif; color:var(--primary); margin-bottom:10px; }
+  .compare-card.pro { border-color:var(--green-border); }
+  .compare-card.con { border-color:var(--red-border); }
+  .tag-pro { color:#27ae60; font-weight:bold; }
+  .tag-con { color:#c0392b; font-weight:bold; }
+  .footnote { font-size:0.82em; color:var(--muted); font-family:sans-serif; border-top:1px solid var(--border); margin-top:40px; padding-top:16px; }
+  .nav-bar { border-top:1px solid var(--border); padding:24px 5%; display:flex; justify-content:space-between; font-family:sans-serif; font-size:0.9em; }
+  .nav-bar a { color:var(--accent); text-decoration:none; }
+  .part-banner { background:linear-gradient(90deg,#2d1b4e,#5b2d8a); color:#fff; padding:20px 5%; font-family:sans-serif; }
+  .part-banner .part-num { font-size:0.82em; opacity:0.8; letter-spacing:0.15em; text-transform:uppercase; }
+  .part-banner .part-title { font-size:1.4em; margin-top:4px; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第二部分：中训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 9 · Knowledge Update and Temporal Freshness</div>
+  <div class="chapter-title">第9章 知识更新与时效性</div>
+  <div class="chapter-intro">知识截止的本质困境、持续预训练的数据策略，以及检索增强与参数更新之间的根本权衡。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>9.1 知识截止问题（Knowledge Cutoff）的本质</h2>
+
+  <p>知识截止（Knowledge Cutoff）是指语言模型的训练数据存在时间边界，对截止日期之后发生的事件、涌现的新概念或更新的知识一无所知。这不仅是一个技术局限，更是 LLM 在实际应用中最常被用户感知到的"缺陷"之一。</p>
+
+  <blockquote>
+    "2024 年美国总统大选的结果是什么？"——这个问题对于知识截止在 2024 年初的模型来说，是一个无法回答的问题。但对于 2024 年末完成训练的模型，它是常识。同一个问题，在不同时间训练的模型面前，性质完全不同。
+  </blockquote>
+
+  <h3>知识截止的三个层次</h3>
+
+  <p><strong>硬截止（Hard Cutoff）</strong>：训练数据的时间戳截止点。在此时间点之后的事件，模型完全无法回答。</p>
+
+  <p><strong>软截止（Soft Cutoff）</strong>：比硬截止更早的时间点。由于互联网内容的传播具有时滞性——某件事发生后，需要数天乃至数月才能积累足够多的高质量讨论、分析和总结——模型对接近硬截止时间的事件的理解往往比对更早事件的理解更浅薄。</p>
+
+  <p><strong>知识衰减（Knowledge Decay）</strong>：即使在截止时间之前的事件，如果该事件在网络上的讨论在截止时间后大量出现（如历史性评价、回顾性分析），模型对该事件的理解也会因缺乏这些后续讨论而不完整。</p>
+
+  <div class="warning-box">
+    <h4>⚠️ 知识截止的实际影响比想象中更大</h4>
+    <p>Lazaridou et al.（2021）的研究发现，即使是在截止时间前数月内发生的事件，LLM 的回答正确率也明显低于更早期的事件——因为互联网上关于这些最新事件的高质量内容尚未积累。这意味着模型的"实际有效知识截止"可能比其官方声称的时间截止早 3-6 个月。</p>
+  </div>
+
+  <h2>9.2 持续预训练（Continual Pre-training）的数据策略</h2>
+
+  <p>解决知识截止问题最直接的方法是持续预训练（Continual Pre-training）——定期用新数据对模型进行持续训练，将知识截止时间向前滚动。这本质上是一种特殊的中训练。</p>
+
+  <h3>新数据的采集与处理</h3>
+
+  <p>持续预训练的新数据来源通常包括：</p>
+  <ul>
+    <li><strong>最新 Common Crawl 快照</strong>：CC 每月发布新的爬取快照，可提取上月发布的新内容</li>
+    <li><strong>新闻订阅数据</strong>：通过 RSS/API 持续订阅主流新闻源</li>
+    <li><strong>学术预印本</strong>：arXiv、bioRxiv 等每日发布的最新论文</li>
+    <li><strong>社交媒体和论坛</strong>：Reddit、Twitter 等平台的近期内容（质量参差需过滤）</li>
+  </ul>
+
+  <h3>持续预训练的数据配比特殊性</h3>
+
+  <p>与领域适配中训练不同，知识更新型持续预训练需要特别注意<strong>时间分布</strong>对知识冲突的影响。如果新数据中存在与旧训练数据矛盾的内容（如"公司 A 的 CEO 由 X 更换为 Y"），模型需要以新知识覆盖旧知识。</p>
+
+  <p>研究表明，<strong>在新数据中适当混入旧数据的重播（Replay）</strong>，不仅能缓解遗忘，还能帮助模型建立时间概念——理解"哪些知识是新的，哪些是旧的"。一种有效策略是为每个文档附加时间标记（如"[2024年3月]"），在预训练文本中注入时间感知信号。</p>
+
+  <table>
+    <thead><tr><th>配比策略</th><th>新数据比例</th><th>旧数据重播比例</th><th>适用场景</th></tr></thead>
+    <tbody>
+      <tr><td>快速更新</td><td>80-90%</td><td>10-20%</td><td>需要快速注入最新知识，可接受少量遗忘</td></tr>
+      <tr><td>平衡更新</td><td>50-60%</td><td>40-50%</td><td>平衡新知识注入与历史知识保留</td></tr>
+      <tr><td>保守更新</td><td>20-30%</td><td>70-80%</td><td>优先保留历史能力，仅小幅更新知识</td></tr>
+    </tbody>
+  </table>
+
+  <h2>9.3 检索增强与参数更新的权衡</h2>
+
+  <p>面对知识时效性问题，业界形成了两大技术路线：<strong>检索增强生成（RAG）</strong>和<strong>持续参数更新</strong>。两者并非互斥，而是各有其适用范围和局限。</p>
+
+  <div class="compare-grid">
+    <div class="compare-card pro">
+      <h4>🔍 检索增强生成（RAG）</h4>
+      <p class="tag-pro">优势：</p>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>无需重新训练，即时可用</li>
+        <li>知识可精确溯源（减少幻觉）</li>
+        <li>知识库可随时更新</li>
+        <li>适合企业私有知识库场景</li>
+      </ul>
+      <p class="tag-con" style="margin-top:12px;">局限：</p>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>需要外部向量数据库基础设施</li>
+        <li>检索质量直接影响生成质量</li>
+        <li>对"深度推理"场景效果有限</li>
+        <li>增加推理延迟</li>
+      </ul>
+    </div>
+    <div class="compare-card con">
+      <h4>🧠 持续参数更新（Continual PT）</h4>
+      <p class="tag-pro">优势：</p>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>知识内化为参数，推理无需外部检索</li>
+        <li>跨知识整合能力强（多文档推理）</li>
+        <li>推理速度不受影响</li>
+        <li>适合通用性更强的知识更新</li>
+      </ul>
+      <p class="tag-con" style="margin-top:12px;">局限：</p>
+      <ul style="font-size:0.9em;line-height:1.8;margin-left:16px;">
+        <li>训练成本高</li>
+        <li>存在灾难性遗忘风险</li>
+        <li>知识无法精确溯源</li>
+        <li>更新频率受训练周期限制</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="highlight-box">
+    <strong>实践决策框架：</strong>
+    <ul style="margin:8px 0 0 20px;line-height:2;">
+      <li>需要<strong>精确、可溯源的企业知识</strong>（产品文档、内部规范）→ 优先 RAG</li>
+      <li>需要<strong>深度跨文档推理</strong>（复杂分析、综合判断）→ 参数更新更优</li>
+      <li>需要<strong>通用世界知识更新</strong>（新闻、新技术）→ 持续预训练</li>
+      <li>追求<strong>最优实际部署效果</strong> → RAG + 定期参数更新的混合架构</li>
+    </ul>
+  </div>
+
+  <h2>9.4 新知识注入时的冲突解决</h2>
+
+  <p>当新数据与旧参数中的知识发生冲突时，模型应该如何处理？这是持续预训练中最微妙也最难解决的问题之一。</p>
+
+  <h3>知识冲突的类型</h3>
+
+  <p><strong>事实更新冲突</strong>：世界状态发生了真实变化（如人事变动、政策调整）。这类冲突应优先以新数据为准，需要通过足够多的新数据重复出现来"覆盖"旧参数记忆。</p>
+
+  <p><strong>来源可靠性冲突</strong>：新数据中的信息来源质量低于原始训练数据。这类冲突需要在数据质量过滤阶段解决，避免低质量新数据污染高质量旧知识。</p>
+
+  <p><strong>观点演变冲突</strong>：科学共识或社会观点随时间演变（如某个医学建议被修订）。这类冲突最难处理，因为"旧"信息并非错误，只是被更新的理解所取代。</p>
+
+  <h3>缓解知识冲突的数据策略</h3>
+
+  <ul>
+    <li><strong>显式时间戳注入</strong>：在训练文本前附加时间上下文（"截至2024年6月..."），帮助模型学习知识的时效性边界</li>
+    <li><strong>反事实训练数据</strong>：构造包含"X 曾经是 Y，但现在是 Z"这类表述的训练数据，使模型学习知识的更新范式</li>
+    <li><strong>知识冲突检测</strong>：在新数据纳入之前，与已有参数知识进行一致性检测，标记高冲突样本并进行人工审核</li>
+  </ul>
+
+  <div class="success-box">
+    <p><strong>TOFU 基准与知识更新研究（2024）：</strong>Allen AI 构建的 TOFU（Task Of Fictitious Unlearning）等基准开始系统性地评估模型对新知识的吸收能力和对旧错误知识的"遗忘"能力。这一方向的研究揭示：当前 LLM 对新知识的吸收效率仍然较低——即使新知识在训练数据中出现数百次，模型仍可能优先依赖旧的参数记忆。这促使研究者探索更高效的知识注入机制（如知识感知微调、记忆编辑等方法）。</p>
+  </div>
+
+  <div class="info-box">
+    <h4>第二部分小结</h4>
+    <p>第6-9章完整覆盖了中训练数据的各个维度：从中训练的定位与价值（第6章），到领域适配的数据构建与遗忘缓解（第7章），到能力增强的专项策略（第8章），再到知识时效性的核心挑战（第9章）。中训练是预训练能力向应用价值转化的关键桥梁，其数据策略的精细程度直接决定了垂直领域产品的竞争力。第三部分将进入后训练数据领域，探讨如何将一个"知识丰富但行为粗糙"的基座模型，训练成"有用、无害、可信赖"的助手。</p>
+  </div>
+
+  <div class="footnote">
+    <p><strong>参考文献：</strong>Lazaridou et al. (2021) "Mind the Gap: Assessing Temporal Generalization in Neural Language Models"；Jang et al. (2022) "Towards Continual Knowledge Learning of Language Models"；Lewis et al. (2020) "Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks"；Shi et al. (2024) "TOFU: A Task of Fictitious Unlearning for LLMs"；Dhingra et al. (2022) "Time-Aware Language Models as Temporal Knowledge Bases"；Kasner & Dusek (2022) "Neural Pipeline for Zero-Shot Data-to-Text Generation"。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="08_第八章_能力增强数据.html">← 第8章</a>
+  <a href="10_第十章_后训练数据总论.html">第10章 后训练数据总论 →</a>
+</div>
+
+</body>
+</html>

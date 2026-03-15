@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第2章 原始数据来源 · 数据珠玑</title>
+<style>
+  :root { --primary: #1a3a5c; --accent: #2e7dbe; --light-bg: #f5f8fc; --text: #2c3e50; --muted: #7f8c9a; --border: #d0dce8; --highlight: #fff8e1; --red-bg: #fff5f5; --red-border: #e88; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Georgia', 'Noto Serif SC', serif; background: #fff; color: var(--text); line-height: 1.9; font-size: 17px; }
+  .book-header { background: linear-gradient(135deg, #0d2137 0%, #1a3a5c 60%, #2e5f8a 100%); color: #fff; padding: 40px 5%; text-align: center; }
+  .book-title { font-size: 1.8em; letter-spacing: 0.1em; }
+  .book-subtitle { font-size: 0.95em; color: #a8c4dc; margin-top: 6px; }
+  .chapter-header { padding: 48px 5% 32px; border-bottom: 2px solid var(--border); background: var(--light-bg); }
+  .chapter-label { color: var(--accent); font-size: 0.85em; letter-spacing: 0.15em; text-transform: uppercase; margin-bottom: 10px; font-family: sans-serif; }
+  .chapter-title { font-size: 2.2em; color: var(--primary); line-height: 1.3; }
+  .chapter-intro { font-size: 1.05em; color: #445; margin-top: 16px; max-width: 680px; font-style: italic; }
+  .main-content { max-width: 860px; margin: 0 auto; padding: 40px 5%; }
+  h2 { font-size: 1.5em; color: var(--primary); margin: 52px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--accent); }
+  h3 { font-size: 1.15em; color: #1a5080; margin: 32px 0 12px; }
+  h4 { font-size: 1em; color: var(--primary); margin: 20px 0 8px; }
+  p { margin-bottom: 1.2em; }
+  ul, ol { margin: 12px 0 16px 24px; line-height: 2; }
+  blockquote { border-left: 4px solid var(--accent); background: var(--light-bg); padding: 16px 24px; margin: 24px 0; font-style: italic; color: #445566; border-radius: 0 6px 6px 0; }
+  .highlight-box { background: var(--highlight); border: 1px solid #f0d060; border-radius: 6px; padding: 20px 24px; margin: 24px 0; }
+  .highlight-box strong { color: #8b6914; }
+  .info-box { background: var(--light-bg); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 24px 0; }
+  .info-box h4 { color: var(--accent); margin-bottom: 8px; font-family: sans-serif; }
+  .warning-box { background: var(--red-bg); border: 1px solid var(--red-border); border-radius: 8px; padding: 20px 24px; margin: 24px 0; }
+  .warning-box h4 { color: #c0392b; margin-bottom: 8px; font-family: sans-serif; }
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; font-family: sans-serif; font-size: 0.88em; }
+  th { background: var(--primary); color: #fff; padding: 10px 14px; text-align: left; }
+  td { padding: 9px 14px; border-bottom: 1px solid var(--border); }
+  tr:nth-child(even) td { background: var(--light-bg); }
+  .dataset-card { border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin: 20px 0; }
+  .dataset-card .name { font-size: 1.1em; font-weight: bold; color: var(--primary); font-family: sans-serif; }
+  .dataset-card .meta { font-size: 0.82em; color: var(--muted); font-family: sans-serif; margin: 4px 0 10px; }
+  .dataset-card .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+  .tag { background: var(--light-bg); border: 1px solid var(--border); border-radius: 3px; padding: 2px 8px; font-size: 0.78em; font-family: sans-serif; color: #445; }
+  .tag.green { background: #e8f8ed; border-color: #68c98a; color: #2a7a4a; }
+  .tag.red { background: #fef0f0; border-color: #e88; color: #c0392b; }
+  .tag.blue { background: #e8f0fe; border-color: #7aabde; color: #1a4a8a; }
+  .footnote { font-size: 0.82em; color: var(--muted); font-family: sans-serif; border-top: 1px solid var(--border); margin-top: 40px; padding-top: 16px; }
+  .nav-bar { border-top: 1px solid var(--border); padding: 24px 5%; display: flex; justify-content: space-between; font-family: sans-serif; font-size: 0.9em; }
+  .nav-bar a { color: var(--accent); text-decoration: none; }
+  .nav-bar a:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="book-header">
+  <div class="book-title">数据珠玑</div>
+  <div class="book-subtitle">大语言模型训练数据全景 · 第一部分：预训练数据</div>
+</div>
+
+<div class="chapter-header">
+  <div class="chapter-label">Chapter 2 · Raw Data Sources</div>
+  <div class="chapter-title">第2章 原始数据来源</div>
+  <div class="chapter-intro">从互联网爬取到书籍与代码，逐一解析主流预训练数据来源的特征、使用方式与潜在风险。</div>
+</div>
+
+<div class="main-content">
+
+  <h2>2.1 网络爬虫数据：Common Crawl 的使用与局限</h2>
+
+  <p>Common Crawl（CC）是全球最大的公开网络爬取数据集，由同名非营利组织自 2008 年开始维护，每月爬取约 30 亿页面，累计存档超过 250 亿页面，原始数据量超过 3PB。几乎所有已知的大型预训练语料库——GPT-3、LLaMA、Gopher、PaLM、Falcon——都以 Common Crawl 为主要数据来源。</p>
+
+  <h3>CC 的技术结构</h3>
+
+  <p>Common Crawl 以三种格式分发：<strong>WARC</strong>（原始 HTTP 响应）、<strong>WET</strong>（纯文本抽取结果）和 <strong>WAT</strong>（元数据）。大多数 LLM 训练使用 WET 格式作为起点，但一些高质量数据集（如 FineWeb）会从 WARC 重新提取文本，以获得更好的 HTML 解析质量。</p>
+
+  <h3>CC 的使用流程</h3>
+
+  <p>原始 CC 数据质量参差不齐，直接使用几乎不可能产生高质量模型。标准的 CC 处理流程包括：</p>
+
+  <ol>
+    <li><strong>语言识别</strong>：使用 fastText 或 CLD3 等工具过滤非目标语言内容</li>
+    <li><strong>URL 黑名单过滤</strong>：去除已知的成人内容、垃圾邮件网站等</li>
+    <li><strong>质量评分</strong>：基于困惑度（Perplexity）或分类器为每个文档打分</li>
+    <li><strong>文档级去重</strong>：MinHash LSH 等方法去除高度相似的文档</li>
+    <li><strong>行级去重</strong>：去除大量重复的模板文本（导航栏、版权声明等）</li>
+  </ol>
+
+  <div class="highlight-box">
+    <strong>规模参考：</strong>2024 年的 FineWeb 数据集从约 96 个 CC 快照（2013—2024）中，处理原始 WET 约 350TB，经过去重与过滤后得到约 15 万亿 Token 的最终数据集——压缩率约为 10:1。这意味着原始 CC 中约 90% 的内容在质量过滤中被丢弃。
+  </div>
+
+  <h3>CC 的结构性局限</h3>
+
+  <div class="warning-box">
+    <h4>⚠️ Common Crawl 的四大结构性问题</h4>
+    <p><strong>1. 英语偏差极为严重：</strong>CC 中英语内容占比约 50%，而部分低资源语言（如非洲诸语言、南亚语言）合计不足 1%，远低于其实际使用人口比例。</p>
+    <p><strong>2. 时间偏差：</strong>CC 的爬取深度随网站流量变化，主流媒体和高访问量网站被大量重复爬取，而专业性、学术性网站的覆盖相对不足。</p>
+    <p><strong>3. 版权与个人隐私：</strong>CC 包含大量受版权保护的内容，以及用户个人信息（电话、地址、邮箱）。这是多起 LLM 版权诉讼的核心争议点。</p>
+    <p><strong>4. 噪声与毒性内容：</strong>网络内容天然包含仇恨言论、错误信息、色情内容等，简单的规则过滤无法完全清除，需要分类器辅助。</p>
+  </div>
+
+  <h3>基于 CC 的主流处理数据集</h3>
+
+  <div class="dataset-card">
+    <div class="name">C4（Colossal Clean Crawled Corpus）</div>
+    <div class="meta">Google，2020 · 约 750GB / 180B Token</div>
+    <p>T5 论文提出的 CC 处理版本。过滤规则简单但有效：删除包含"坏词"的行、删除非完整句子（不以标点结尾）、删除代码行等。</p>
+    <div class="tags"><span class="tag green">开源</span><span class="tag blue">英语为主</span><span class="tag">启发式过滤</span></div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="name">RefinedWeb</div>
+    <div class="meta">Technology Innovation Institute，2023 · 约 5T Token（部分公开）</div>
+    <p>Falcon 模型的训练数据集。引入了 Trafilatura 进行高质量 HTML 文本抽取，配合严格的去重策略（URL 去重 + MinHash LSH）。论文声称仅凭 CC 数据（无书籍、代码）即可训练出接近 SOTA 的模型。</p>
+    <div class="tags"><span class="tag green">部分开源</span><span class="tag blue">多语言</span><span class="tag">高质量提取</span></div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="name">FineWeb / FineWeb-Edu</div>
+    <div class="meta">Hugging Face，2024 · 15T Token（FineWeb）/ 1.3T Token（Edu版）</div>
+    <p>目前质量最高的公开 CC 衍生数据集。FineWeb-Edu 进一步使用 LLM 打分器筛选教育价值高的文档，在 MMLU 等知识类基准上表现极佳。完整的处理流水线已开源。</p>
+    <div class="tags"><span class="tag green">完全开源</span><span class="tag">LLM 质量评分</span><span class="tag blue">多语言</span></div>
+  </div>
+
+  <!-- 2.2 -->
+  <h2>2.2 书籍与学术论文：Books3、S2ORC、ArXiv</h2>
+
+  <p>书籍和学术论文被视为预训练数据中质量最高、信息密度最大的来源。GPT-3 原始论文明确指出，Books 数据源（Books1+Books2）对模型的长文本理解和连贯推理能力贡献显著，尽管它们在训练数据中只占约 16%。</p>
+
+  <h3>书籍数据的价值与来源</h3>
+
+  <p>书籍数据的独特价值在于：</p>
+  <ul>
+    <li><strong>长文本连贯性</strong>：书籍是天然的长上下文训练材料，帮助模型学习跨段落的逻辑关系</li>
+    <li><strong>高信息密度</strong>：经过编辑出版流程的书籍，语言质量和事实准确性通常远高于网页内容</li>
+    <li><strong>多样化文体</strong>：小说、非虚构、教材、传记等多种文体，丰富了模型的语言风格库</li>
+  </ul>
+
+  <div class="dataset-card">
+    <div class="name">Books3（ThePile 中的书籍子集）</div>
+    <div class="meta">EleutherAI，2021 · 约 100B Token</div>
+    <p>来自 Bibliotik 私人电子书库的 19.6 万本书籍，是 GPT-NeoX 等开源模型的重要训练数据。因版权问题于 2023 年从公开访问中撤除（Hachette Book Group 等出版商诉讼 Meta 案件中的核心数据集之一）。</p>
+    <div class="tags"><span class="tag red">版权争议</span><span class="tag">高质量</span><span class="tag blue">英语</span></div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="name">Pile of Law / FreeLaw</div>
+    <div class="meta">来自 Harvard Caselaw Access Project 等 · 数百 GB</div>
+    <p>包含法律判决、法规文本等，是法律领域 LLM 的重要数据来源。语言正式、逻辑严密，有助于提升模型的条件推理能力。</p>
+    <div class="tags"><span class="tag green">开源</span><span class="tag blue">法律领域</span></div>
+  </div>
+
+  <h3>学术论文数据</h3>
+
+  <div class="dataset-card">
+    <div class="name">S2ORC（Semantic Scholar Open Research Corpus）</div>
+    <div class="meta">Allen Institute for AI · 约 810 万篇论文全文</div>
+    <p>覆盖多学科的学术论文全文数据集，包含结构化元数据（引用关系、摘要、章节划分）。其 LaTeX 格式版本（S2ORC-LaTeX）保留了公式和表格的原始结构，对数学/科学能力训练尤为有价值。</p>
+    <div class="tags"><span class="tag green">开源</span><span class="tag blue">多学科</span><span class="tag">结构化</span></div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="name">ArXiv（数学/物理/CS 预印本）</div>
+    <div class="meta">Cornell University · 超过 220 万篇论文（截至 2024）</div>
+    <p>ArXiv 是数学、物理、计算机科学领域预印本的主要存储库。其 LaTeX 源文件（通过 arXiv API 获取）对模型的数学推理、公式理解和科学写作能力训练极为重要。LLaMA、Gopher 等几乎所有前沿模型都包含 ArXiv 数据。</p>
+    <div class="tags"><strong style="font-family:sans-serif;font-size:0.8em;">核心来源</strong><span class="tag green">公开访问</span><span class="tag blue">STEM 领域</span><span class="tag">LaTeX 格式</span></div>
+  </div>
+
+  <h3>书籍与论文数据的处理要点</h3>
+  <p>学术论文的 LaTeX 格式处理是一个技术难点：原始 LaTeX 包含大量宏定义、图表引用、参考文献等，需要专门的解析工具（如 LaTeXML）进行清理，否则公式可能变成乱码，影响训练效果。此外，论文中的引用部分往往被完整保留，这对模型学习引用规范有帮助，但也引入了大量"参考文献格式"文本，需要合理处理。</p>
+
+  <!-- 2.3 -->
+  <h2>2.3 代码数据：GitHub、The Stack、StarCoder</h2>
+
+  <p>代码数据在现代 LLM 预训练中扮演着超出预期的重要角色。早期研究者将代码视为一个专项能力来源，但后续大量实验表明，代码数据对<strong>通用推理能力</strong>也有显著的正向迁移效果——即使是面向自然语言任务的模型，在预训练阶段加入代码数据后，在数学推理、结构化输出、工具调用等任务上的表现均有提升。</p>
+
+  <h3>为什么代码能增强推理能力</h3>
+
+  <p>代码具有几个独特的语言学特性，使其成为推理能力训练的天然素材：</p>
+  <ul>
+    <li><strong>逻辑严密性</strong>：代码不允许歧义，每一行都有明确的语义，强迫模型学习精确的条件推理</li>
+    <li><strong>过程可见性</strong>：函数调用、循环、递归等结构显式展示了"分步解决问题"的过程——这与 Chain-of-Thought 推理高度吻合</li>
+    <li><strong>注释-代码对</strong>：代码注释是天然的"意图-实现"对齐数据，帮助模型理解指令跟随</li>
+  </ul>
+
+  <div class="dataset-card">
+    <div class="name">GitHub（原始爬取）</div>
+    <div class="meta">通过 GitHub Archive / GH Torrent / BigQuery 获取 · 规模数 TB</div>
+    <p>大多数代码数据集的原始来源。原始 GitHub 数据需要处理许可证过滤（仅保留允许商业使用的开源许可证）、去除自动生成代码、去除无效仓库（star 数过少、README 缺失等）。</p>
+    <div class="tags"><span class="tag red">许可证复杂</span><span class="tag blue">多语言代码</span></div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="name">The Stack（v1 / v2）</div>
+    <div class="meta">BigCode Project，2022/2024 · v1: 6.4TB；v2: 约 900B Token（去重后）</div>
+    <p>目前最大的公开代码数据集，覆盖 300+ 编程语言。The Stack v2 改进了许可证过滤流程，支持"退出机制"（开发者可申请移除自己的代码），并引入了基于 GitHub star 的质量过滤。</p>
+    <div class="tags"><span class="tag green">完全开源</span><span class="tag">300+ 语言</span><span class="tag blue">可商用</span></div>
+  </div>
+
+  <div class="dataset-card">
+    <div class="name">StarCoder 训练数据</div>
+    <div class="meta">BigCode Project，2023 · 约 250B Token（6.4TB 原始数据过滤后）</div>
+    <p>StarCoder 模型的训练数据，在 The Stack 基础上增加了 GitHub Issues、Pull Requests 和 Jupyter Notebooks，使模型获得更丰富的代码上下文理解（包括调试过程、代码评审等）。</p>
+    <div class="tags"><span class="tag green">开源</span><span class="tag">含 Issues/PRs</span><span class="tag blue">Notebook</span></div>
+  </div>
+
+  <h3>代码数据的质量指标</h3>
+  <table>
+    <thead><tr><th>过滤维度</th><th>说明</th><th>常用方法</th></tr></thead>
+    <tbody>
+      <tr><td>许可证合规</td><td>过滤不允许商业使用的 License</td><td>SPDX 解析 + 人工维护黑白名单</td></tr>
+      <tr><td>自动生成代码</td><td>Minified JS、机器生成等</td><td>行长度启发式 + 特征词过滤</td></tr>
+      <tr><td>重复文件</td><td>相同或近似代码的多次出现</td><td>精确哈希 + near-dedup</td></tr>
+      <tr><td>质量排序</td><td>优先保留高 star 仓库代码</td><td>GitHub star 数排序采样</td></tr>
+      <tr><td>测试代码</td><td>是否包含/排除单元测试</td><td>文件名模式匹配（test_*.py 等）</td></tr>
+    </tbody>
+  </table>
+
+  <!-- 2.4 -->
+  <h2>2.4 多语言数据的构建策略</h2>
+
+  <p>绝大多数互联网数据以英语为主。然而，真正有价值的 LLM 应当具备多语言能力——不仅为了服务全球用户，也因为多语言训练被证明可以提升跨语言推理和翻译能力。</p>
+
+  <h3>多语言数据的核心挑战</h3>
+
+  <p><strong>长尾语言的数据稀缺</strong>：全球有约 7000 种活语言，但在互联网上有显著存在的语言不超过 100 种。许多南亚、非洲、东南亚语言的数字化文本极为有限，导致模型在这些语言上的能力严重不足。</p>
+
+  <p><strong>质量与数量的矛盾</strong>：为了增加低资源语言数据量，一些数据集采用机器翻译策略，但翻译质量参差不齐，可能引入翻译腔和错误。</p>
+
+  <h3>主流多语言数据集</h3>
+
+  <table>
+    <thead><tr><th>数据集</th><th>语言数</th><th>规模</th><th>主要来源</th></tr></thead>
+    <tbody>
+      <tr><td>mC4</td><td>101</td><td>~9.7TB</td><td>Common Crawl</td></tr>
+      <tr><td>CulturaX</td><td>167</td><td>~6.3T Token</td><td>mC4 + OSCAR</td></tr>
+      <tr><td>OPUS-100</td><td>100</td><td>~55GB</td><td>多源平行语料</td></tr>
+      <tr><td>CC-100</td><td>100</td><td>~2.5TB</td><td>Common Crawl（专项多语言版）</td></tr>
+      <tr><td>Glot500</td><td>500+</td><td>小规模</td><td>多种低资源语言来源</td></tr>
+    </tbody>
+  </table>
+
+  <h3>语言平衡策略</h3>
+  <p>在多语言训练中，直接按数据量比例训练会导致英语的强势主导，压制低资源语言的学习。主流策略是采用<strong>上采样（Upsampling）</strong>低资源语言，常用方法是对语言 l 的采样概率使用指数化平滑：</p>
+
+  <div class="info-box">
+    <h4>多语言采样公式（mBERT / XLM-R 策略）</h4>
+    <p style="font-family:monospace;">P(l) ∝ (n_l)^α，其中 α ∈ (0, 1)</p>
+    <p>α = 1 对应按原始数据量比例采样（不平衡）；α = 0.3~0.7 是常用的折中方案，在减小高资源语言主导的同时，为低资源语言提供更多学习机会。</p>
+  </div>
+
+  <!-- 2.5 -->
+  <h2>2.5 专有数据源与版权风险</h2>
+
+  <p>除公开数据源外，领先 LLM 公司普遍拥有或使用大量专有数据，这些数据往往是其核心竞争优势所在，也是法律风险的高度集中区。</p>
+
+  <h3>典型专有数据类型</h3>
+  <ul>
+    <li><strong>对话与用户交互日志</strong>：OpenAI 的 ChatGPT 用户对话（经脱敏）、搜索引擎的搜索-点击数据</li>
+    <li><strong>专业数据库</strong>：医学文献数据库（PubMed 之外的临床记录）、法律案例数据库、金融新闻数据库</li>
+    <li><strong>新闻内容授权</strong>：部分公司与 AP、路透社、《纽约时报》等签订数据许可协议</li>
+    <li><strong>书籍授权</strong>：与出版商达成版权许可，使用完整书籍内容</li>
+  </ul>
+
+  <h3>版权法律态势（截至 2024 年）</h3>
+
+  <div class="warning-box">
+    <h4>⚠️ 重大版权诉讼概览</h4>
+    <p><strong>《纽约时报》诉 OpenAI & Microsoft（2023）：</strong>指控使用其文章训练 GPT 模型，要求赔偿和删除训练数据中的 NYT 内容。被广泛视为 AI 版权诉讼的标志性案件。</p>
+    <p><strong>Hachette、HarperCollins 等出版商诉 Meta（2023）：</strong>指控 LLaMA 训练数据包含大量未经授权的书籍（来自 Books3/LibGen）。</p>
+    <p><strong>Getty Images 诉 Stability AI（英国 & 美国，2023）：</strong>虽针对图像生成模型，但其版权理论（训练即复制）对文本 LLM 具有参考价值。</p>
+    <p><strong>合理使用（Fair Use）争议核心：</strong>美国法院尚未就"训练 AI 是否构成版权侵权"作出最终裁决。部分法学学者认为训练属于合理使用（transformative use），另一部分则持相反意见。</p>
+  </div>
+
+  <h3>数据合规的工程应对</h3>
+  <p>面对日益严格的版权监管，工业界正在采取几种应对策略：</p>
+  <ol>
+    <li><strong>来源透明化</strong>：完整记录每份训练数据的来源 URL、获取时间、处理步骤，以备法律审查</li>
+    <li><strong>机器可读版权标记遵从</strong>：尊重 robots.txt 和 TDMRep（Text and Data Mining Reservation Protocol）标记</li>
+    <li><strong>退出机制（Opt-out）</strong>：如 The Stack 提供的开发者退出机制，创作者数据集 opt-out</li>
+    <li><strong>转向合成数据</strong>：用模型生成的合成数据替代版权敏感的真实内容，规避法律风险</li>
+    <li><strong>授权数据采购</strong>：与内容提供商签订数据许可协议</li>
+  </ol>
+
+  <div class="highlight-box">
+    <strong>行业趋势：</strong>版权问题正在倒逼整个行业向"数据透明度"和"授权使用"的方向迁移。欧盟《人工智能法案》和《数字单一市场版权指令》要求 AI 公司披露训练数据概要，并建立版权作品使用的授权机制。未来，数据合规性将成为模型发布的强制门槛之一，而非可选项。
+  </div>
+
+  <div class="footnote">
+    <p><strong>参考文献要点：</strong>Gao et al. (2020) "The Pile"；Penedo et al. (2023) "RefinedWeb"；Penedo et al. (2024) "FineWeb"；Kocetkov et al. (2022) "The Stack"；Li et al. (2023) "StarCoder"；Conneau et al. (2020) "Unsupervised Cross-lingual Representation Learning at Scale (XLM-R)"；相关版权诉讼材料：NYT v. OpenAI (SDNY 2023)；Hachette v. Meta (ND Cal. 2023)。</p>
+  </div>
+
+</div>
+
+<div class="nav-bar">
+  <a href="01_第一章_预训练数据总论.html">← 第1章</a>
+  <a href="03_第三章_数据清洗与过滤.html">第3章 数据清洗与过滤 →</a>
+</div>
+
+</body>
+</html>
