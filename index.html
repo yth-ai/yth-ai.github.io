@@ -528,6 +528,55 @@ a { color: inherit; text-decoration: none; }
 }
 .btn-green:hover { background: #059669; border-color: #059669; }
 
+/* ── Hiring ──────────────────────────────────────────────── */
+.hiring-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 28px 32px;
+  display: flex;
+  align-items: flex-start;
+  gap: 24px;
+}
+.hiring-logo {
+  width: 60px;
+  height: 60px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #b45309, #d97706);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
+}
+.hiring-info { flex: 1; }
+.hiring-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--t1);
+  margin-bottom: 4px;
+}
+.hiring-sub { font-size: 13px; color: var(--amber); margin-bottom: 10px; }
+.hiring-desc { font-size: 13px; color: var(--t2); line-height: 1.7; margin-bottom: 16px; }
+.hiring-tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
+.hiring-tag {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 4px;
+  background: rgba(245,158,11,.1);
+  color: var(--amber);
+  border: 1px solid rgba(245,158,11,.2);
+}
+.hiring-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn-amber {
+  background: var(--amber);
+  color: #000;
+  border-color: var(--amber);
+  font-weight: 700;
+}
+.btn-amber:hover { background: #d97706; border-color: #d97706; }
+
 /* ── Surveys ─────────────────────────────────────────────── */
 .survey-grid {
   display: grid;
@@ -650,7 +699,7 @@ a { color: inherit; text-decoration: none; }
   .hero, .section { padding: 28px 24px; }
   .hero h1 { font-size: 36px; }
   .reports-grid { grid-template-columns: 1fr; }
-  .os-card, .scholar-card { flex-direction: column; }
+  .os-card, .scholar-card, .hiring-card { flex-direction: column; }
   .footer { flex-direction: column; gap: 12px; text-align: center; }
 }
 
@@ -796,6 +845,7 @@ a { color: inherit; text-decoration: none; }
       <a class="nav-link" href="#scholar"><span class="ico">&#127979;</span>学术成果</a>
 
       <div class="nav-group-title">互动</div>
+      <a class="nav-link" href="#hiring"><span class="ico">&#128188;</span>实习招聘</a>
       <a class="nav-link" href="#comments"><span class="ico">&#128172;</span>留言板</a>
     </nav>
 
@@ -1203,6 +1253,32 @@ a { color: inherit; text-decoration: none; }
           <div class="scholar-actions">
             <a href="https://scholar.google.com/citations?user=B5sMysAAAAAJ&hl=zh-CN" target="_blank" class="btn btn-green">访问主页</a>
             <a href="https://scholar.google.com/citations?user=B5sMysAAAAAJ&hl=zh-CN&view_op=list_works&sortby=pubdate" target="_blank" class="btn btn-ghost">按时间排序论文 &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Hiring -->
+    <section class="section" id="hiring">
+      <div class="section-header">
+        <div class="section-title">&#128188;&nbsp; 实习招聘</div>
+      </div>
+      <div class="hiring-card">
+        <div class="hiring-logo">&#127919;</div>
+        <div class="hiring-info">
+          <div class="hiring-name">Research Intern — Pre-training Data</div>
+          <div class="hiring-sub">长期开放 · 前沿方向 · 技术氛围浓厚</div>
+          <p class="hiring-desc">
+            我们长期招募对大语言模型预训练数据研究感兴趣的实习生。预训练数据是大模型能力的基石，也是当前业界投入最密集的核心方向之一。研究方向涵盖预训练数据工程、数据合成与质量评估、数据配比策略等，团队注重技术深度与开放讨论，鼓励实习生独立探索和发表工作。欢迎在校本科生及研究生申请，来信请附简历及简要研究兴趣说明。
+          </p>
+          <div class="hiring-tags">
+            <span class="hiring-tag">Pre-training Data</span>
+            <span class="hiring-tag">Data Synthesis</span>
+            <span class="hiring-tag">Data Quality</span>
+            <span class="hiring-tag">Intern</span>
+          </div>
+          <div class="hiring-actions">
+            <a href="javascript:void(0)" onclick="(function(){var a='yu.tinghao';var b='foxmail.com';window.location.href='mailto:'+a+'@'+b+'?subject=实习申请 — 预训练数据研究';})()" class="btn btn-amber">发送邮件</a>
           </div>
         </div>
       </div>
