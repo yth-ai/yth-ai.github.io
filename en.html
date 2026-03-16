@@ -37,7 +37,41 @@
   --t1:        #f1f5f9;
   --t2:        #94a3b8;
   --t3:        #4b6280;
+  --shadow-card: 0 8px 32px rgba(0,0,0,.4);
+  --hover-bg:  rgba(255,255,255,.05);
 }
+[data-theme="light"] {
+  --bg:        #f8fafc;
+  --bg2:       #f1f5f9;
+  --surface:   #ffffff;
+  --surface2:  #f1f5f9;
+  --border:    #e2e8f0;
+  --border2:   #cbd5e1;
+  --blue:      #2563eb;
+  --cyan:      #0891b2;
+  --amber:     #d97706;
+  --green:     #059669;
+  --purple:    #7c3aed;
+  --red:       #dc2626;
+  --t1:        #0f172a;
+  --t2:        #475569;
+  --t3:        #94a3b8;
+  --shadow-card: 0 4px 24px rgba(0,0,0,.08);
+  --hover-bg:  rgba(0,0,0,.04);
+}
+[data-theme="light"] .hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 60% -10%, rgba(37,99,235,.08) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 40% at 90% 90%, rgba(8,145,178,.06) 0%, transparent 60%);
+}
+[data-theme="light"] .avatar-ring {
+  background: conic-gradient(var(--blue), var(--cyan), var(--blue));
+}
+[data-theme="light"] .search-bar-wrap {
+  background: linear-gradient(to bottom, var(--bg) 70%, transparent);
+}
+[data-theme="light"] .btn-solid:hover { background: #1d4ed8; border-color: #1d4ed8; }
+[data-theme="light"] .btn-green:hover { background: #047857; border-color: #047857; }
 *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
 html { scroll-behavior:smooth; }
 body {
@@ -181,11 +215,44 @@ a { color: inherit; text-decoration: none; }
 }
 .lang-switch a:not(.active-lang):hover {
   color: var(--t1);
-  background: rgba(255,255,255,.05);
+  background: var(--hover-bg);
 }
 .lang-switch .lang-sep {
   color: var(--border2);
   font-weight: 300;
+}
+
+/* ── Theme Toggle ── */
+.theme-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 24px 10px;
+  border-bottom: 1px solid var(--border);
+}
+.theme-toggle-btn {
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--t2);
+  font-family: inherit;
+  transition: all .2s;
+}
+.theme-toggle-btn:hover {
+  border-color: var(--blue);
+  color: var(--t1);
+  background: var(--hover-bg);
+}
+.theme-toggle-btn .toggle-icon {
+  font-size: 14px;
+  line-height: 1;
 }
 
 /* ── Main ────────────────────────────────────────────────── */
@@ -340,7 +407,7 @@ a { color: inherit; text-decoration: none; }
 }
 .book-card:hover {
   border-color: var(--border2);
-  box-shadow: 0 8px 32px rgba(0,0,0,.4);
+  box-shadow: var(--shadow-card);
   transform: translateY(-3px);
 }
 .book-stripe {
@@ -403,7 +470,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--t2);
   border-color: var(--border2);
 }
-.btn-ghost:hover { background: rgba(255,255,255,.05); color: var(--t1); border-color: var(--blue); }
+.btn-ghost:hover { background: var(--hover-bg); color: var(--t1); border-color: var(--blue); }
 .btn-link {
   background: transparent;
   color: var(--blue);
@@ -578,7 +645,7 @@ a { color: inherit; text-decoration: none; }
 .survey-card:hover {
   border-color: var(--border2);
   transform: translateY(-2px);
-  box-shadow: 0 8px 32px rgba(0,0,0,.3);
+  box-shadow: var(--shadow-card);
 }
 .survey-accent {
   position: absolute;
@@ -767,6 +834,12 @@ a { color: inherit; text-decoration: none; }
       <a href="index.html">中文</a>
       <span class="lang-sep">|</span>
       <a href="en.html" class="active-lang">EN</a>
+    </div>
+    <div class="theme-toggle">
+      <button class="theme-toggle-btn" id="theme-toggle" title="Toggle theme">
+        <span class="toggle-icon" id="toggle-icon">☀️</span>
+        <span id="toggle-label">Light Mode</span>
+      </button>
     </div>
     <div class="rail-profile">
       <div class="avatar-wrap">
@@ -1330,6 +1403,43 @@ sections.forEach(s => observer.observe(s));
       doSearch('');
       input.blur();
     }
+  });
+})();
+</script>
+
+<!-- Theme Toggle -->
+<script>
+(function() {
+  var html = document.documentElement;
+  var btn = document.getElementById('theme-toggle');
+  var icon = document.getElementById('toggle-icon');
+  var label = document.getElementById('toggle-label');
+  var stored = localStorage.getItem('theme');
+  var initial = stored || 'dark';
+  if (initial === 'light') html.setAttribute('data-theme', 'light');
+
+  function updateUI(theme) {
+    if (theme === 'light') {
+      icon.textContent = '🌙';
+      label.textContent = 'Dark Mode';
+    } else {
+      icon.textContent = '☀️';
+      label.textContent = 'Light Mode';
+    }
+  }
+
+  updateUI(initial);
+
+  btn.addEventListener('click', function() {
+    var current = html.getAttribute('data-theme');
+    var next = current === 'light' ? 'dark' : 'light';
+    if (next === 'light') {
+      html.setAttribute('data-theme', 'light');
+    } else {
+      html.removeAttribute('data-theme');
+    }
+    localStorage.setItem('theme', next);
+    updateUI(next);
   });
 })();
 </script>
