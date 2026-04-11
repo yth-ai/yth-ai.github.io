@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import InternetDisappears from '../../components/lab/InternetDisappears';
+---
+
+<BaseLayout title="如果互联网明天消失" description="一个思想实验——逐步推演互联网突然消失后的世界">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">如果互联网明天消失</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">如果互联网明天消失</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">一个思想实验——当我们习以为常的一切突然断开</p>
+    </div>
+    <InternetDisappears client:load />
+  </div>
+</BaseLayout>

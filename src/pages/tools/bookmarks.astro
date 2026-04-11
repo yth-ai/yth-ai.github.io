@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BookmarkManager from '../../components/tools/BookmarkManager';
+---
+
+<BaseLayout title="收藏夹" description="管理你在 Maxwell 站点的所有收藏内容">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">收藏夹</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">收藏夹</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">管理收藏的文章、研究、专栏等内容，用标签组织你的知识库</p>
+    </div>
+
+    <!-- Manager Component -->
+    <BookmarkManager client:load />
+  </div>
+</BaseLayout>

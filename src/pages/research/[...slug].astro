@@ -1,0 +1,39 @@
+---
+import ResearchLayout from '../../layouts/ResearchLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const research = (await getCollection('research'))
+    .filter((r) => !r.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug));
+
+  return research.map((item, index) => ({
+    params: { slug: item.slug },
+    props: {
+      item,
+      prevPost: index > 0 ? { slug: research[index - 1].slug, title: research[index - 1].data.title } : null,
+      nextPost: index < research.length - 1 ? { slug: research[index + 1].slug, title: research[index + 1].data.title } : null,
+    },
+  }));
+}
+
+const { item, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await item.render();
+---
+
+<ResearchLayout
+  title={item.data.title}
+  description={item.data.description}
+  date={item.data.date}
+  category={item.data.category}
+  tags={item.data.tags}
+  paperTitle={item.data.paperTitle}
+  authors={item.data.authors}
+  arxiv={item.data.arxiv}
+  htmlVersion={item.data.htmlVersion}
+  headings={headings}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</ResearchLayout>

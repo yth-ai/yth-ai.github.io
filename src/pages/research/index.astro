@@ -1,0 +1,353 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allResearch = (await getCollection('research'))
+  .filter((r) => !r.data.draft && !r.data.hidden)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug));
+
+const categories = [...new Set(allResearch.map((r) => r.data.category))];
+const allTags = [...new Set(allResearch.flatMap((r) => r.data.tags))];
+
+const categoryColors: Record<string, string> = {
+  '原创论文': 'bg-rose-500',
+  '研究提案': 'bg-violet-500',
+  '论文精读': 'bg-cyan-500',
+  '综合调研': 'bg-indigo-500',
+  '专题研究': 'bg-teal-500',
+  '行业分析': 'bg-amber-500',
+};
+
+// 研究主线定义
+const researchLines = [
+  {
+    id: 'data-engineering',
+    name: '主线一：Agent 训练数据工程',
+    desc: '预训练/中训练数据 · 数据合成 · 自主进化 · 多模态',
+    color: 'emerald',
+  },
+  {
+    id: 'coding-agent',
+    name: '主线二：Coding Agent & SWE',
+    desc: 'Agent 架构 · 评测基准 · RL 训练 · 模型对比',
+    color: 'indigo',
+  },
+  {
+    id: 'science-industry',
+    name: '主线三：AI for Science & 行业洞察',
+    desc: '自动化科研 · 行业分析 · Agent 工程范式',
+    color: 'amber',
+  },
+];
+
+// 文章 slug → 主线映射
+const slugToLine: Record<string, string> = {
+  // 主线一：Agent 训练数据工程
+  'agent-data-construction-comprehensive-survey': 'data-engineering',
+  'agentic-skill-training-data-research-report': 'data-engineering',
+  'ai-self-evolving-data-project': 'data-engineering',
+  'ai-native-data-team': 'data-engineering',
+  'pretraining-data-frontier': 'data-engineering',
+  'native-multimodal-data-construction': 'data-engineering',
+  'dataevolve-paper-review': 'data-engineering',
+  'scale-dependent-data-duplication-报告': 'data-engineering',
+  'beyond-language-modeling-multimodal-pretraining': 'data-engineering',
+  'skill-graph-data-synthesis': 'data-engineering',
+  'skillgraph-driven-science-data-synthesis-proposal': 'data-engineering',
+  'terminal-bench-data-synthesis-proposal': 'data-engineering',
+  'finescope-报告': 'data-engineering',
+  'agentic-coding-task-design-research': 'data-engineering',
+  'characterflywheel-deep-reading': 'data-engineering',
+  'ai-native-data-team-v2': 'data-engineering',
+  'harness-is-the-dataset': 'data-engineering',
+  'reverse-hypothesis-science-data-proposal': 'data-engineering',
+  'survey-reverse-construction-proposal': 'data-engineering',
+  'paper-code-reproduction-proposal': 'data-engineering',
+  'science-data-three-lines-index': 'data-engineering',
+  'sandbox-as-data-synthesis-asset': 'data-engineering',
+  'data-quality-trajectory-as-training-data': 'data-engineering',
+  'github-reproduction-issues-as-training-data': 'data-engineering',
+  'dataset-context-card-spec': 'data-engineering',
+  'tool-failure-patterns-training-data': 'coding-agent',
+  'agent-metacognition-training-data': 'coding-agent',
+  'multi-agent-coordination-training-data': 'coding-agent',
+  'dynamic-benchmark-everBench-proposal': 'coding-agent',
+  'code-diagram-alignment-multimodal-data': 'data-engineering',
+  'video-tutorial-step-annotation-data': 'data-engineering',
+  'science-figure-qa-distillation-data': 'data-engineering',
+
+  // 主线二：Coding Agent & SWE
+  '2026-agentic-coding-swe-agent': 'coding-agent',
+  '2026-code-llms-comparison': 'coding-agent',
+  '2026-llm-code-new-works': 'coding-agent',
+  'swe-domain-comprehensive-survey': 'coding-agent',
+  'qwen3-coder-next-deep-reading': 'coding-agent',
+  'swe-bench-plus-plus-deep-reading': 'coding-agent',
+  'agentic-rl-reward-hacking-report': 'coding-agent',
+  'terminal-bench-2-full-analysis': 'coding-agent',
+  'terminal-bench-research-survey': 'coding-agent',
+  'terminal-bench-rubric-analysis': 'coding-agent',
+  'the-bitter-lesson-behind-building-agentic-rl-in-terminal-environments': 'coding-agent',
+  'openclaw-rl-train-any-agent-simply-by-talking-deep-reading': 'coding-agent',
+  'agentscaler-environment-scaling-deep-reading': 'coding-agent',
+  'skillsynth-colm2026-paper': 'coding-agent',
+  'skillsynth-colm2026-论文-中文版': 'coding-agent',
+  'pinchbench-介绍': 'coding-agent',
+  'deepseek-technical-report': 'coding-agent',
+  'moe-routing-advances': 'coding-agent',
+  'nemotron3-super-deep-reading': 'coding-agent',
+  'lost-in-stories-deep-reading': 'coding-agent',
+  'onemillion-bench-deep-reading': 'coding-agent',
+  'dont-break-the-cache-deep-reading': 'coding-agent',
+  'deepseek-ocr-series-deep-reading': 'coding-agent',
+  'wildtoolbench-deep-reading': 'coding-agent',
+  'skillnet-technical-report-总结': 'coding-agent',
+  'skillsbench-deep-reading': 'coding-agent',
+
+  // 主线三：AI for Science & 行业洞察
+  'automated-scientific-research': 'science-industry',
+  'frontierscience-expert-level-scientific-evaluation': 'science-industry',
+  'openai-science-overview': 'science-industry',
+  'scienceclaw-evoscientist-deep-dive': 'science-industry',
+  'databricks-ai-native-os': 'science-industry',
+  'research-report-nvidia-260b-open-source': 'science-industry',
+  'nvidia-avo-agentic-variation-operators': 'science-industry',
+  'harness-engineering': 'science-industry',
+  'openspec-sdd-landscape': 'science-industry',
+  'superpowers-agentic-framework': 'science-industry',
+  'agent-skills-ecosystem-landscape': 'science-industry',
+  'tool-search-research-report': 'science-industry',
+  'agent-sandbox-deep-dive': 'science-industry',
+  'jensen-huang-lex-fridman-2026-deep-analysis': 'science-industry',
+};
+
+// 统计每条主线的文章数
+const lineCounts: Record<string, number> = {};
+researchLines.forEach((l) => {
+  lineCounts[l.id] = allResearch.filter((r) => slugToLine[r.slug] === l.id).length;
+});
+
+// 主线配色映射
+const lineColors: Record<string, { bg: string; bgDark: string; border: string; borderDark: string; text: string; textDark: string; textSub: string; textSubDark: string; activeBg: string; activeBgDark: string }> = {
+  emerald: {
+    bg: 'bg-emerald-50', bgDark: 'dark:bg-emerald-950/20',
+    border: 'border-emerald-200', borderDark: 'dark:border-emerald-800/30',
+    text: 'text-emerald-700', textDark: 'dark:text-emerald-300',
+    textSub: 'text-emerald-600/70', textSubDark: 'dark:text-emerald-400/70',
+    activeBg: 'bg-emerald-100', activeBgDark: 'dark:bg-emerald-900/30',
+  },
+  indigo: {
+    bg: 'bg-indigo-50', bgDark: 'dark:bg-indigo-950/20',
+    border: 'border-indigo-200', borderDark: 'dark:border-indigo-800/30',
+    text: 'text-indigo-700', textDark: 'dark:text-indigo-300',
+    textSub: 'text-indigo-600/70', textSubDark: 'dark:text-indigo-400/70',
+    activeBg: 'bg-indigo-100', activeBgDark: 'dark:bg-indigo-900/30',
+  },
+  amber: {
+    bg: 'bg-amber-50', bgDark: 'dark:bg-amber-950/20',
+    border: 'border-amber-200', borderDark: 'dark:border-amber-800/30',
+    text: 'text-amber-700', textDark: 'dark:text-amber-300',
+    textSub: 'text-amber-600/70', textSubDark: 'dark:text-amber-400/70',
+    activeBg: 'bg-amber-100', activeBgDark: 'dark:bg-amber-900/30',
+  },
+};
+---
+
+<BaseLayout title="研究" description="AI 前沿论文精读 · 技术调研 · 研究提案 · 原创论文">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-2">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-500 flex items-center justify-center text-white text-lg font-bold shadow-lg shadow-cyan-500/25">
+          R
+        </div>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">研究</h1>
+      </div>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">
+        AI 前沿论文精读 · 技术调研 · 研究提案 · 原创论文 — 共 {allResearch.length} 篇
+      </p>
+
+      <!-- Research Lines (clickable) -->
+      <div class="mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+        {researchLines.map((line) => {
+          const c = lineColors[line.color];
+          return (
+            <button
+              data-line={line.id}
+              class={`research-line-btn p-4 rounded-xl ${c.bg} ${c.bgDark} border ${c.border} ${c.borderDark} text-left transition-all duration-200 hover:shadow-md hover:scale-[1.01] cursor-pointer`}
+            >
+              <div class="flex items-center justify-between mb-1">
+                <h3 class={`text-sm font-semibold ${c.text} ${c.textDark}`}>{line.name}</h3>
+                <span class={`text-xs font-mono ${c.textSub} ${c.textSubDark}`}>{lineCounts[line.id]} 篇</span>
+              </div>
+              <p class={`text-xs ${c.textSub} ${c.textSubDark}`}>{line.desc}</p>
+            </button>
+          );
+        })}
+      </div>
+
+      <!-- Category Filter -->
+      {categories.length > 1 && (
+        <div class="flex flex-wrap gap-2 mt-6" id="category-filter">
+          <button
+            data-category="all"
+            class="category-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400"
+          >
+            全部 ({allResearch.length})
+          </button>
+          {categories.map((cat) => {
+            const count = allResearch.filter((r) => r.data.category === cat).length;
+            return (
+              <button
+                data-category={cat}
+                class="category-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+              >
+                {cat} ({count})
+              </button>
+            );
+          })}
+        </div>
+      )}
+    </div>
+
+    <!-- Research List -->
+    {allResearch.length > 0 ? (
+      <div class="grid gap-4" id="research-list">
+        {allResearch.map((item) => {
+          const borderColor = categoryColors[item.data.category] || 'bg-cyan-500';
+          const line = slugToLine[item.slug] || '';
+          const formattedDate = item.data.date.toLocaleDateString('zh-CN', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+          });
+          // 主线标签颜色
+          const lineLabel = researchLines.find((l) => l.id === line);
+          const lineBadgeColor = line === 'data-engineering' ? 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400'
+            : line === 'coding-agent' ? 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400'
+            : line === 'science-industry' ? 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400'
+            : '';
+          const lineShortName = line === 'data-engineering' ? '数据工程'
+            : line === 'coding-agent' ? 'Coding Agent'
+            : line === 'science-industry' ? '科学与行业'
+            : '';
+          return (
+            <div data-category={item.data.category} data-line={line} class="research-item">
+              <a href={`/research/${item.slug}`} class="group block card card-hover overflow-hidden">
+                <div class="flex">
+                  <div class={`w-1 shrink-0 ${borderColor}`} />
+                  <div class="flex-1 p-5 sm:p-6">
+                    <div class="flex items-center gap-3 mb-2 text-xs text-slate-500 dark:text-slate-400 flex-wrap">
+                      <time datetime={item.data.date.toISOString()}>{formattedDate}</time>
+                      <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium">
+                        {item.data.category}
+                      </span>
+                      {lineShortName && (
+                        <span class={`px-2 py-0.5 rounded-full font-medium ${lineBadgeColor}`}>
+                          {lineShortName}
+                        </span>
+                      )}
+                      {item.data.arxiv && (
+                        <span class="px-2 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 font-medium">
+                          arXiv
+                        </span>
+                      )}
+                    </div>
+                    <h3 class="text-lg font-semibold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors mb-2">
+                      {item.data.title}
+                    </h3>
+                    {item.data.description && (
+                      <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 mb-3">
+                        {item.data.description}
+                      </p>
+                    )}
+                    {item.data.tags.length > 0 && (
+                      <div class="flex flex-wrap gap-1.5">
+                        {item.data.tags.map((tag) => (
+                          <span class="px-2 py-0.5 text-xs rounded-md bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 font-medium">
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </a>
+            </div>
+          );
+        })}
+      </div>
+    ) : (
+      <div class="text-center py-20">
+        <p class="text-slate-500 dark:text-slate-400">暂无研究内容</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  // 当前筛选状态
+  let activeCategory = 'all';
+  let activeLine = 'all';
+
+  function applyFilters() {
+    document.querySelectorAll('.research-item').forEach((item) => {
+      const el = item as HTMLElement;
+      const matchCategory = activeCategory === 'all' || el.dataset.category === activeCategory;
+      const matchLine = activeLine === 'all' || el.dataset.line === activeLine;
+      el.style.display = matchCategory && matchLine ? '' : 'none';
+    });
+  }
+
+  // 分类筛选
+  document.querySelectorAll('.category-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeCategory = (btn as HTMLElement).dataset.category || 'all';
+
+      document.querySelectorAll('.category-btn').forEach((b) => {
+        b.classList.remove('bg-cyan-50', 'dark:bg-cyan-950/50', 'text-cyan-600', 'dark:text-cyan-400');
+        b.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-400');
+      });
+      btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-400');
+      btn.classList.add('bg-cyan-50', 'dark:bg-cyan-950/50', 'text-cyan-600', 'dark:text-cyan-400');
+
+      applyFilters();
+    });
+  });
+
+  // 主线筛选（点击切换，再次点击取消）
+  document.querySelectorAll('.research-line-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const lineId = (btn as HTMLElement).dataset.line || '';
+
+      if (activeLine === lineId) {
+        // 取消选中
+        activeLine = 'all';
+        btn.classList.remove('ring-2', 'shadow-md', 'scale-[1.01]');
+        (btn as HTMLElement).style.removeProperty('--tw-ring-color');
+        btn.classList.remove('ring-emerald-400', 'ring-indigo-400', 'ring-amber-400');
+      } else {
+        // 选中新主线
+        activeLine = lineId;
+        // 清除所有主线按钮状态
+        document.querySelectorAll('.research-line-btn').forEach((b) => {
+          b.classList.remove('ring-2', 'shadow-md', 'scale-[1.01]', 'ring-emerald-400', 'ring-indigo-400', 'ring-amber-400');
+        });
+        // 添加选中效果
+        btn.classList.add('ring-2', 'shadow-md', 'scale-[1.01]');
+        // 根据主线添加对应颜色的 ring
+        const colorMap: Record<string, string> = {
+          'data-engineering': 'ring-emerald-400',
+          'coding-agent': 'ring-indigo-400',
+          'science-industry': 'ring-amber-400',
+        };
+        if (colorMap[lineId]) {
+          btn.classList.add(colorMap[lineId]);
+        }
+      }
+
+      applyFilters();
+    });
+  });
+</script>

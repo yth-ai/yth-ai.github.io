@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DataQualityScorer from '../../components/tools/DataQualityScorer';
+---
+
+<BaseLayout title="数据质量评分" description="评估文本作为预训练数据的质量，分析词汇多样性、重复度和语言特征">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">数据质量评分</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">数据质量评分</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">多维度评估文本作为预训练数据的质量，包括词汇丰富度、重复检测和语言分析</p>
+    </div>
+    <DataQualityScorer client:load />
+  </div>
+</BaseLayout>

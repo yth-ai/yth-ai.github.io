@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Terminal Bench Rubric 对比分析报告</title>
+<style>
+:root {
+  --bg: #0f1117;
+  --bg2: #181a24;
+  --bg3: #1e2030;
+  --border: #2a2d3e;
+  --text: #c9cdd8;
+  --text2: #8b90a0;
+  --accent-a: #4fa6e8;
+  --accent-a-bg: rgba(79,166,232,.08);
+  --accent-b: #5dd49b;
+  --accent-b-bg: rgba(93,212,155,.08);
+  --accent-m: #c084fc;
+  --accent-m-bg: rgba(192,132,252,.08);
+  --accent-warn: #f59e42;
+  --accent-red: #ef5350;
+  --radius: 8px;
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; line-height: 1.7; padding: 0; }
+.container { max-width: 1100px; margin: 0 auto; padding: 24px 20px 60px; }
+h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; }
+h2 { font-size: 1.5rem; font-weight: 600; margin: 48px 0 16px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+h3 { font-size: 1.15rem; font-weight: 600; margin: 28px 0 12px; color: #e0e0e0; }
+p, li { color: var(--text); }
+a { color: var(--accent-a); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.hero { text-align: center; padding: 48px 20px 32px; border-bottom: 1px solid var(--border); margin-bottom: 32px; }
+.hero h1 { font-size: 2.2rem; background: linear-gradient(135deg, var(--accent-a), var(--accent-b)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { color: var(--text2); margin-top: 8px; font-size: .95rem; }
+.nav-bar { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 24px 0 32px; }
+.nav-bar a { background: var(--bg3); padding: 6px 16px; border-radius: 20px; font-size: .85rem; color: var(--text2); border: 1px solid var(--border); transition: all .2s; }
+.nav-bar a:hover { color: var(--accent-a); border-color: var(--accent-a); text-decoration: none; }
+
+table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: .9rem; }
+th, td { padding: 10px 14px; text-align: left; border: 1px solid var(--border); }
+th { background: var(--bg3); color: #e0e0e0; font-weight: 600; }
+td { background: var(--bg2); }
+
+.badge { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .75rem; font-weight: 600; vertical-align: middle; margin-left: 8px; }
+.badge-a { background: var(--accent-a-bg); color: var(--accent-a); border: 1px solid rgba(79,166,232,.25); }
+.badge-b { background: var(--accent-b-bg); color: var(--accent-b); border: 1px solid rgba(93,212,155,.25); }
+.badge-m { background: var(--accent-m-bg); color: var(--accent-m); border: 1px solid rgba(192,132,252,.25); }
+.badge-p1 { background: rgba(245,158,66,.1); color: var(--accent-warn); border: 1px solid rgba(245,158,66,.25); }
+.badge-overlap { background: rgba(255,255,255,.05); color: var(--text2); border: 1px solid var(--border); }
+.badge-new { background: rgba(239,83,80,.1); color: var(--accent-red); border: 1px solid rgba(239,83,80,.25); }
+
+.rubric-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; transition: border-color .2s; }
+.rubric-card[open] { border-color: rgba(255,255,255,.15); }
+.rubric-card summary { padding: 12px 18px; cursor: pointer; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; list-style: none; }
+.rubric-card summary::-webkit-details-marker { display: none; }
+.rubric-card summary::before { content: '\25B6'; font-size: .7rem; color: var(--text2); margin-right: 8px; transition: transform .2s; }
+.rubric-card[open] summary::before { transform: rotate(90deg); }
+.rubric-name { font-weight: 600; color: #e0e0e0; }
+.rubric-name-cn { color: var(--text2); font-size: .9rem; margin-left: 4px; }
+.rubric-name-cn::before { content: '/'; margin-right: 6px; color: var(--border); }
+.rubric-body { padding: 0 18px 16px; }
+.rubric-desc { margin-top: 8px; }
+.lang-en, .lang-cn { padding: 8px 12px; border-radius: 6px; margin-bottom: 6px; font-size: .88rem; line-height: 1.65; }
+.lang-en { background: rgba(255,255,255,.03); }
+.lang-cn { background: rgba(255,255,255,.02); color: var(--text2); }
+.pass-fail { margin-top: 10px; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.pass-criteria, .fail-criteria { padding: 8px 12px; border-radius: 6px; font-size: .85rem; }
+.pass-criteria { background: rgba(93,212,155,.06); border-left: 3px solid var(--accent-b); }
+.fail-criteria { background: rgba(239,83,80,.06); border-left: 3px solid var(--accent-red); }
+
+.source-a { border-left: 3px solid var(--accent-a); }
+.source-b { border-left: 3px solid var(--accent-b); }
+.source-m { border-left: 3px solid var(--accent-m); }
+
+.compare-group { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 12px; padding: 16px 18px; }
+.compare-group h4 { font-size: 1rem; margin-bottom: 8px; }
+.compare-note { font-size: .88rem; color: var(--text2); line-height: 1.65; }
+.compare-note strong { color: var(--text); }
+.inline-ref { display: inline; }
+.inline-ref summary { display: inline; cursor: pointer; color: var(--accent-a); border-bottom: 1px dashed var(--accent-a); font-size: .88rem; }
+.inline-ref .ref-content { background: var(--bg3); border: 1px solid var(--border); border-radius: 6px; padding: 10px 14px; margin: 8px 0; font-size: .85rem; line-height: 1.6; }
+.inline-ref.ref-b summary { color: var(--accent-b); border-bottom-color: var(--accent-b); }
+
+.analysis-box { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 22px; margin: 16px 0; }
+.analysis-box h4 { margin-bottom: 10px; }
+.tag-source { font-size: .75rem; padding: 2px 8px; border-radius: 10px; margin-left: 6px; vertical-align: middle; }
+
+.merged-card { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 10px; border-left: 3px solid var(--accent-m); }
+.merged-card summary { padding: 12px 18px; cursor: pointer; display: flex; align-items: center; flex-wrap: wrap; gap: 6px; list-style: none; }
+.merged-card summary::-webkit-details-marker { display: none; }
+.merged-card summary::before { content: '\25B6'; font-size: .7rem; color: var(--text2); margin-right: 8px; transition: transform .2s; }
+.merged-card[open] summary::before { transform: rotate(90deg); }
+.merged-body { padding: 0 18px 16px; }
+.merged-reason { background: var(--accent-m-bg); border-radius: 6px; padding: 10px 14px; margin-top: 8px; font-size: .88rem; line-height: 1.65; }
+.merged-source { margin-top: 8px; font-size: .85rem; color: var(--text2); }
+.priority-tag { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: .72rem; font-weight: 700; margin-left: 8px; }
+.p-critical { background: rgba(239,83,80,.15); color: var(--accent-red); }
+.p-high { background: rgba(245,158,66,.12); color: var(--accent-warn); }
+.p-medium { background: rgba(79,166,232,.12); color: var(--accent-a); }
+.p-low { background: rgba(255,255,255,.06); color: var(--text2); }
+
+@media (max-width: 700px) {
+  .pass-fail { grid-template-columns: 1fr; }
+  .container { padding: 16px 12px 40px; }
+  h1 { font-size: 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>Terminal Bench Rubric 对比分析报告</h1>
+  <p>TB-QA (Auto-QA) vs TASK_IMPLEMENTATION_RUBRIC.toml &mdash; 对比、分析与综合</p>
+</div>
+
+<div class="container">
+
+<div class="nav-bar">
+  <a href="#overview">概览</a>
+  <a href="#source-a">TB-QA 条目</a>
+  <a href="#source-b">TOML 条目</a>
+  <a href="#comparison">对比分析</a>
+  <a href="#rl-analysis">RL 训练适用性</a>
+  <a href="#merged">综合 Rubric</a>
+</div>
+
+<!-- ============ OVERVIEW ============ -->
+<h2 id="overview">一、概览</h2>
+<table>
+<tr><th>维度</th><th style="color:var(--accent-a)">TB-QA.md (Auto-QA)</th><th style="color:var(--accent-b)">TOML (Implementation Rubric)</th></tr>
+<tr><td>定位</td><td>LLM 自动质量检查清单</td><td>人工评审标准</td></tr>
+<tr><td>条目数</td><td>18 条</td><td>19 条</td></tr>
+<tr><td>格式</td><td>Markdown + Prompt Template + JSON 输出</td><td>结构化 TOML，含 PASS/FAIL 标准</td></tr>
+<tr><td>使用方式</td><td>设计为 LLM 逐条自动打分</td><td>设计为人工审查指南</td></tr>
+<tr><td>优先级</td><td>标注了 P1（可忽略）项</td><td>无显式优先级</td></tr>
+<tr><td>关注层面</td><td>偏<strong>实现质量</strong>（文件、依赖、格式合规）</td><td>偏<strong>任务设计</strong>（难度、新颖性、Agent 特性）</td></tr>
+</table>
+
+<!-- ============ SOURCE A ============ -->
+<h2 id="source-a">二、TB-QA 原始条目 <span class="badge badge-a">共 18 条</span></h2>
+<p style="color:var(--text2);margin-bottom:16px;font-size:.9rem">点击条目可展开查看完整英文内容和中文翻译</p>
+
+<details class="rubric-card source-a" id="qa-typos">
+  <summary>
+    <span class="rubric-name">Typos</span>
+    <span class="rubric-name-cn">拼写检查</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Whether there are any typos. Look very closely at file and variable names, because these can be hard to catch.</div>
+      <div class="lang-cn"><strong>中文:</strong> 检查是否存在拼写错误。需特别仔细检查文件名和变量名，因为这类错误很难被发现。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-reproducibility">
+  <summary>
+    <span class="rubric-name">Reproducibility</span>
+    <span class="rubric-name-cn">可复现性</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Are all necessary tools, data sources, APIs, or dependencies clearly set up to ensure the task and its validation can be reliably reproduced?</div>
+      <div class="lang-cn"><strong>中文:</strong> 所有必要的工具、数据源、API 或依赖项是否已清晰配置，以确保任务及其验证可以可靠地重现？</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-pinned-deps">
+  <summary>
+    <span class="rubric-name">Pinned Dependencies</span>
+    <span class="rubric-name-cn">依赖版本锁定</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> If the task uses external dependencies (e.g. pip packages), whether their versions are pinned to ensure reproducibility. Apt packages shall not be pinned, but all python dependencies should be pinned.</div>
+      <div class="lang-cn"><strong>中文:</strong> 如果任务使用外部依赖（如 pip 包），其版本是否已锁定以确保可复现性。Apt 包不应锁定版本，但所有 Python 依赖都应锁定。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-structured-schema">
+  <summary>
+    <span class="rubric-name">Structured Data Schema</span>
+    <span class="rubric-name-cn">结构化数据规格</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> If the task is to produce structured data (e.g. it is tasked with building an API) whether the exact schema is described in the instruction.md or a separate file.</div>
+      <div class="lang-cn"><strong>中文:</strong> 如果任务要求生成结构化数据（如构建 API），精确的 schema 是否在 instruction.md 或单独文件中描述。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-behavior-match">
+  <summary>
+    <span class="rubric-name">Behavior &rarr; Task Instruction Match</span>
+    <span class="rubric-name-cn">行为&rarr;指令匹配</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Are tests checking any behaviors that are NOT clearly described in the task instruction? Whether all specific behaviors, outcomes, data formats, intermediate logic, and constraints assessed by ANY validation criteria (unit tests) are EXPLICITLY and CLEARLY described in the task instruction.</div>
+      <div class="lang-cn"><strong>中文:</strong> 测试是否检查了任务指令中未明确描述的行为？所有被验证标准（单元测试）评估的具体行为、结果、数据格式、中间逻辑和约束条件是否在任务指令中被显式且清晰地描述。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-requirements-match">
+  <summary>
+    <span class="rubric-name">Requirements &rarr; Validation Match</span>
+    <span class="rubric-name-cn">需求&rarr;验证匹配</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Does the task instruction include behavior that is NOT covered by the tests? Whether all key requirements, objectives, intermediate logic, and constraints stated in the task instruction are adequately covered by the provided validation criteria (unit tests).</div>
+      <div class="lang-cn"><strong>中文:</strong> 任务指令中是否包含测试未覆盖的行为？任务指令中所述的所有关键需求、目标、中间逻辑和约束是否被验证标准（单元测试）充分覆盖。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-discriminability">
+  <summary>
+    <span class="rubric-name">Validation Discriminability</span>
+    <span class="rubric-name-cn">验证区分度</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Do the tests cover typical paths, edge cases and failure modes? Are the tests comprehensive enough to reject wrong answers? FAIL if tests only check superficial aspects (e.g., function existence, return types) without verifying actual logic or values. FAIL if tests would pass an empty, trivial, or generic value.</div>
+      <div class="lang-cn"><strong>中文:</strong> 测试是否覆盖了典型路径、边界情况和失败模式？测试是否足够全面以拒绝错误答案？如果测试仅检查表面特征（如函数存在性、返回类型）而不验证实际逻辑或值则 FAIL。如果测试会让空值、简单值或通用值通过则 FAIL。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-test-structure">
+  <summary>
+    <span class="rubric-name">Informative Test Structure</span>
+    <span class="rubric-name-cn">测试结构信息化</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Whether the test script is well-structured with clear sections or comments that describe which behavior they check.</div>
+      <div class="lang-cn"><strong>中文:</strong> 测试脚本是否结构良好，具有清晰的分节或注释来描述其检查的行为。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-task-completeness">
+  <summary>
+    <span class="rubric-name">Task Structure Completeness</span>
+    <span class="rubric-name-cn">任务结构完整性</span>
+    <span class="badge badge-a">TB-QA</span>
+    <span class="badge badge-p1">P1</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Does the task folder contain all required structural elements per Harbor format?</div>
+      <div class="lang-cn"><strong>中文:</strong> 任务文件夹是否包含 Harbor 格式要求的所有必需结构元素？</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-task-realism">
+  <summary>
+    <span class="rubric-name">Task Realism</span>
+    <span class="rubric-name-cn">任务真实性</span>
+    <span class="badge badge-a">TB-QA</span>
+    <span class="badge badge-p1">P1</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Does the task resemble a real-world engineering workflow?</div>
+      <div class="lang-cn"><strong>中文:</strong> 任务是否类似于真实世界的工程工作流？</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-false-negative">
+  <summary>
+    <span class="rubric-name">Test Validation False Negative</span>
+    <span class="rubric-name-cn">测试假阴性</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Would a reasonable, correct solution ever FAIL because the tests are too brittle?</div>
+      <div class="lang-cn"><strong>中文:</strong> 一个合理的、正确的解决方案是否会因为测试太脆弱而失败？</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-test-deps-image">
+  <summary>
+    <span class="rubric-name">Are All Test Dependencies Installed in Image?</span>
+    <span class="rubric-name-cn">测试依赖是否装入镜像</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Are any test dependencies installed in the image during the build process? They should be installed in the test.sh script instead.</div>
+      <div class="lang-cn"><strong>中文:</strong> 是否有测试依赖在构建过程中被安装到镜像中？它们应该在 test.sh 脚本中安装。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-offline">
+  <summary>
+    <span class="rubric-name">Is It Possible to Complete Without Internet?</span>
+    <span class="rubric-name-cn">离线可完成性</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> If the task disables internet access (explicitly via 'allow_internet = false' in task config), is the task possible to complete? Required packages, data, and tools should be available in the image. The solution and test script should not require internet access. NOT_APPLICABLE if the task doesn't explicitly disable internet access.</div>
+      <div class="lang-cn"><strong>中文:</strong> 如果任务禁用了互联网访问（通过 'allow_internet = false'），任务是否仍可完成？所需的包、数据和工具应在镜像中可用。解决方案和测试脚本也不应需要互联网访问。如果任务未明确禁用互联网访问则标记为不适用。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-file-ref">
+  <summary>
+    <span class="rubric-name">Is File Reference Not Mentioned?</span>
+    <span class="rubric-name-cn">文件引用是否遗漏</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> If the agent needs to produce a file to be checked by tests, whether these filenames are mentioned in the instruction.md explicitly.</div>
+      <div class="lang-cn"><strong>中文:</strong> 如果 Agent 需要生成被测试检查的文件，这些文件名是否在 instruction.md 中被明确提及。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-hardcoded">
+  <summary>
+    <span class="rubric-name">Is Solution Hardcoded?</span>
+    <span class="rubric-name-cn">解答是否硬编码</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Does the solution directly output or hard-code the final answer using commands like echo/cat without performing the steps an agent would need to compute it? This check should PASS when the solution demonstrates a sequence of commands that derives the answer, and FAIL when it simply prints the final answer without computation.</div>
+      <div class="lang-cn"><strong>中文:</strong> 解决方案是否直接使用 echo/cat 等命令输出或硬编码最终答案？当解决方案展示了一系列推导答案的命令时应 PASS，仅打印最终答案而无计算时应 FAIL。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-tests-in-image">
+  <summary>
+    <span class="rubric-name">Is Any Tests or Solution in Image?</span>
+    <span class="rubric-name-cn">测试或解答是否在镜像中</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Are the tests/ folder or solution/ folder copied to the image? They should not be. The /tests folder is automatically copied over by the harness after the agent runs, and the solution is only used by OracleAgent.</div>
+      <div class="lang-cn"><strong>中文:</strong> tests/ 或 solution/ 文件夹是否被复制到镜像中？不应如此。/tests 文件夹会在 Agent 运行后由评测框架自动复制，solution 仅供 OracleAgent 使用。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-anti-cheat">
+  <summary>
+    <span class="rubric-name">Anti Cheating</span>
+    <span class="rubric-name-cn">防作弊</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Is it hard for the agent to cheat on the task (e.g. by editing data files, looking inside files for strings that represent solutions, training on the test set, etc.)? Note that the tests and solution are NOT visible to the agent. If environment involves git cloning, ensure the agent won't see newer commits.</div>
+      <div class="lang-cn"><strong>中文:</strong> Agent 是否难以在任务上作弊？注意测试和解答对 Agent 不可见。如果环境涉及 git 克隆，确保 Agent 不会看到包含答案的新提交。</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-a" id="qa-autonomy">
+  <summary>
+    <span class="rubric-name">Instruction Autonomy Level</span>
+    <span class="rubric-name-cn">指令自主性级别</span>
+    <span class="badge badge-a">TB-QA</span>
+  </summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Do the instructions provide an appropriate level of autonomy for the agent to determine its approach, or are they overly prescriptive? FAIL if instructions are a step-by-step walkthrough.</div>
+      <div class="lang-cn"><strong>中文:</strong> 指令是否为 Agent 提供了适当的自主性来决定其方法？如果指令是逐步操作指南则 FAIL。</div>
+    </div>
+  </div>
+</details>
+
+<!-- ============ SOURCE B ============ -->
+<h2 id="source-b">三、TOML 原始条目 <span class="badge badge-b">共 19 条</span></h2>
+<p style="color:var(--text2);margin-bottom:16px;font-size:.9rem">点击条目可展开查看完整英文内容、中文翻译和 PASS/FAIL 标准</p>
+
+<details class="rubric-card source-b" id="toml-verifiable">
+  <summary><span class="rubric-name">Verifiable</span><span class="rubric-name-cn">可验证性</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> All tasks must be verifiable. The verification must be efficient and reliable &mdash; re-running the verifier hundreds of times should show no failures. Using LLM-as-a-judge is permissible in rare circumstances, but only if documented.</div>
+      <div class="lang-cn"><strong>中文:</strong> 所有任务必须可验证。验证必须高效可靠——重复运行数百次应无失败。仅在极少数特殊情况下可使用 LLM 作为评判者，且必须有文档论证。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 验证器确定性、可靠、程序化</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 依赖主观判断、不确定性或无论证的 LLM-as-judge</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-well-specified">
+  <summary><span class="rubric-name">Well Specified</span><span class="rubric-name-cn">规格清晰</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> The problem description must completely describe what the verification algorithm will look for. Nothing left to guessing. Best tasks described in 2-3 paragraphs.</div>
+      <div class="lang-cn"><strong>中文:</strong> 问题描述必须完整说明验证算法要检查的内容，不留猜测空间。最好 2-3 段话说清。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 指令清晰简洁地指定了测试验证的所有行为</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 测试检查未描述的行为，或指令过于冗长引入歧义</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-solvable">
+  <summary><span class="rubric-name">Solvable</span><span class="rubric-name-cn">可解性</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> There must be a working solution that passes all tests. Implementable by an expert in a few hours at most.</div>
+      <div class="lang-cn"><strong>中文:</strong> 必须有通过所有测试的可行解。专家最多几小时可实现。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 提供了通过所有测试的可行解</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 无解、解未通过测试、或实现需要不合理的工作量</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-difficult">
+  <summary><span class="rubric-name">Difficult</span><span class="rubric-name-cn">足够困难</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Tasks should require significant professional experience (e.g., PhD) or several years of domain expertise. Average undergraduate solving in a few days = too easy.</div>
+      <div class="lang-cn"><strong>中文:</strong> 应需要博士级专业经验或数年领域知识。普通本科生几天内能解决的太简单。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 需要真正专业知识，能挑战资深专业人士</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 本科生几天能解决，或难度仅来自繁琐/冷知识/LLM 特定技巧</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-interesting">
+  <summary><span class="rubric-name">Interesting</span><span class="rubric-name-cn">有趣/实用</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Tasks must have real-world value. Someone could get paid to do this. Must not be gimmicks or trick questions.</div>
+      <div class="lang-cn"><strong>中文:</strong> 必须有真实世界应用价值，有人会为此付费。不能是噱头或脑筋急转弯。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 代表现实中专业人员会遇到的问题</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 人为构造的谜题、玩具游戏或无现实对应的练习</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-outcome-verified">
+  <summary><span class="rubric-name">Outcome Verified</span><span class="rubric-name-cn">结果验证而非过程</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Tasks must not be graded based on approach taken, only final solution. Cannot prescribe specific tools. Best instructions are brief with goal stated upfront.</div>
+      <div class="lang-cn"><strong>中文:</strong> 不能基于所采取的方法评分，只评最终结果。不能限定工具。最好的指令简短，目标预先说明。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 测试验证最终结果，指令描述目标而非方法</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 测试强制特定工具、方法或逐步流程</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-anti-cheat">
+  <summary><span class="rubric-name">Anti-Cheat Robustness</span><span class="rubric-name-cn">防作弊鲁棒性</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Tests must resist adversarial shortcuts: fake tool wrappers, monkey-patching, modifying test framework, reading solution files. Agents run as root with full access. Answers must not be in environment files or Docker layers.</div>
+      <div class="lang-cn"><strong>中文:</strong> 测试必须抵抗对抗性快捷方式：伪造工具、猴子补丁、修改测试框架、读取答案文件。Agent 以 root 运行。答案不能嵌入环境文件或 Docker 镜像层。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 主动防止常见对抗性快捷方式</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 答案嵌入可访问文件，测试可被轻易绕过</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-functional-verification">
+  <summary><span class="rubric-name">Functional Verification</span><span class="rubric-name-cn">功能性验证</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Tests should verify behavior by executing code and checking outputs, not scanning source for keywords. Good: execute code, call APIs. Bad: grep function names, match regex patterns.</div>
+      <div class="lang-cn"><strong>中文:</strong> 测试应通过执行代码和检查输出来验证行为，而非扫描源码关键词。好：执行代码、调用 API。差：搜索函数名、匹配正则。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 通过执行、API 调用或输出检查验证行为</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 主要依赖字符串匹配或源码模式检测</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-deterministic">
+  <summary><span class="rubric-name">Deterministic &amp; Reproducible</span><span class="rubric-name-cn">确定性可复现</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Consistent results across runs. Python/pip deps pinned; apt not pinned. No live service dependencies. Stochastic tasks: 100+ trial runs.</div>
+      <div class="lang-cn"><strong>中文:</strong> 多次运行结果一致。Python/pip 依赖锁定；apt 不锁定。不能依赖在线服务。随机任务需 100+ 次验证。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 依赖锁定，无在线服务依赖，结果一致</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 依赖未锁定，依赖在线服务，或结果不一致</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-essential-difficulty">
+  <summary><span class="rubric-name">Essential Difficulty</span><span class="rubric-name-cn">本质难度</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Core difficulty from genuine reasoning, not formatting minutiae or arbitrary precision.</div>
+      <div class="lang-cn"><strong>中文:</strong> 核心难度应来自真正推理，而非格式细节或任意精度要求。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 难度来自真正的技术挑战和逻辑推理</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 大多数失败来自格式边界、输出精度或文书细节</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-test-alignment">
+  <summary><span class="rubric-name">Test-Instruction Alignment</span><span class="rubric-name-cn">测试-指令对齐</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Clear 1:1 mapping between instruction and tests. Tests hand-written, readable, concise (~100 lines). Every assertion maps to a requirement and vice versa.</div>
+      <div class="lang-cn"><strong>中文:</strong> 指令和测试间有清晰的 1:1 映射。测试手写、可读、简洁（约 100 行）。每个断言对应一个需求，反之亦然。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 指令需求和测试断言间有清晰 1:1 映射</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 测试检查未文档化行为，或需求未被测试</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-novel">
+  <summary><span class="rubric-name">Novel</span><span class="rubric-name-cn">新颖性</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Not standard textbook exercises or well-known problems (FizzBuzz, sorting, sudoku). Best: novel skill combinations, domain-specific scenarios, custom codebases.</div>
+      <div class="lang-cn"><strong>中文:</strong> 不能是标准教科书习题或知名问题。最好涉及技能新颖组合、领域特定场景或自定义代码库。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 需要真正推理，不能通过记忆走捷径</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 标准教科书习题或有广泛可用解的知名问题</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-agentic">
+  <summary><span class="rubric-name">Agentic</span><span class="rubric-name-cn">Agent 特性</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Requires genuine agentic capabilities: environment exploration, tool use, debugging, multi-step terminal interaction. Not solvable by a single LLM call.</div>
+      <div class="lang-cn"><strong>中文:</strong> 需要真正的 Agent 能力：环境探索、工具使用、调试、多步终端交互。不能被单次 LLM 调用解决。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 需要多步环境交互</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 可通过零样本生成、简单回忆或单条命令解决</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-reviewable">
+  <summary><span class="rubric-name">Reviewable</span><span class="rubric-name-cn">可审查性</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Non-specialist should be able to verify correctness. Specialized tasks need contributor explanation. Hardcoded expected values without derivation = red flag.</div>
+      <div class="lang-cn"><strong>中文:</strong> 非专业审查者应能验证正确性。专业任务需提供解释。硬编码预期值无推导过程 = 警示信号。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 非专业审查者可验证任务正确性</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 需要领域专业知识审查且无解释</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-instruction-clarity">
+  <summary><span class="rubric-name">Instruction Clarity</span><span class="rubric-name-cn">指令清晰度</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Human-written, concise, clear. Must use absolute paths. No solution hints or step-by-step procedures. LLM-generated instructions = concern.</div>
+      <div class="lang-cn"><strong>中文:</strong> 人工编写、简洁清晰。必须使用绝对路径。不暗示解法，不提供逐步流程。LLM 生成的指令应被标记。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 简洁、人工编写、使用绝对路径、描述目标</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 使用相对路径、暗示解法或疑似 LLM 生成</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-solution-quality">
+  <summary><span class="rubric-name">Solution Quality</span><span class="rubric-name-cn">解答质量</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Solution must not just echo/cat final answer. Must demonstrate actual computation process.</div>
+      <div class="lang-cn"><strong>中文:</strong> 解答不能仅输出最终答案。必须展示真实计算过程。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 通过真实计算过程推导答案</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 直接打印/写入最终答案而无计算</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-environment-hygiene">
+  <summary><span class="rubric-name">Environment Hygiene</span><span class="rubric-name-cn">环境卫生</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Docker image: no tests/ or solution/ copied in. Test deps in test.sh, not image. Apt not pinned, preceded by update, followed by cleanup.</div>
+      <div class="lang-cn"><strong>中文:</strong> Docker 镜像不含 tests/ 或 solution/。测试依赖在 test.sh 中安装。Apt 不锁版本，前置 update，后置清理。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 镜像干净，无测试/解答，测试依赖在 test.sh</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 镜像含测试/解答，或 apt 管理不当</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-structured-schema">
+  <summary><span class="rubric-name">Structured Data Schema</span><span class="rubric-name-cn">结构化数据规格</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> If structured output expected, exact schema must be documented. Examples alone are not sufficient.</div>
+      <div class="lang-cn"><strong>中文:</strong> 如果期望结构化输出，精确 schema 必须被文档化。仅有示例不够。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 结构化输出有精确 schema 文档</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 期望结构化输出但仅给示例无规范 schema</div>
+    </div>
+  </div>
+</details>
+<details class="rubric-card source-b" id="toml-typos">
+  <summary><span class="rubric-name">Typos</span><span class="rubric-name-cn">拼写检查</span><span class="badge badge-b">TOML</span></summary>
+  <div class="rubric-body">
+    <div class="rubric-desc">
+      <div class="lang-en"><strong>EN:</strong> Look closely for typos in filenames, paths, commands, variable names across all task files.</div>
+      <div class="lang-cn"><strong>中文:</strong> 仔细检查所有任务文件中文件名、路径、命令和变量名的拼写错误。</div>
+    </div>
+    <div class="pass-fail">
+      <div class="pass-criteria"><strong>PASS:</strong> 关键标识符无拼写错误</div>
+      <div class="fail-criteria"><strong>FAIL:</strong> 文件名、路径、命令或变量名存在拼写错误</div>
+    </div>
+  </div>
+</details>
+
+<!-- ============ COMPARISON ============ -->
+<h2 id="comparison">四、对比分析</h2>
+
+<h3>4.1 高度重叠的标准</h3>
+<p style="color:var(--text2);margin-bottom:12px;font-size:.9rem">以下标准在两份文档中语义基本一致，点击可展开查看两边原文对照</p>
+
+<details class="compare-group">
+  <summary><strong>拼写检查</strong> <span class="badge badge-a">TB-QA: Typos</span> <span class="badge badge-b">TOML: typos</span> <span class="badge badge-overlap">完全一致</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    两边内容几乎完全一致，都要求检查文件名、路径、命令、变量名中的拼写错误。TOML 额外列举了需要检查的文件范围（instruction.md, tests, solution, Dockerfile）。
+    <br><br>
+    <strong>TB-QA 原文：</strong>Whether there are any typos. Look very closely at file and variable names.
+    <br><strong>TOML 原文：</strong>Look closely for typos in filenames, paths, commands, and variable names across all task files.
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>结构化数据规格</strong> <span class="badge badge-a">TB-QA: Structured Data Schema</span> <span class="badge badge-b">TOML: structured_data_schema</span> <span class="badge badge-overlap">基本一致</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    语义一致。TOML 额外强调"仅有示例不够，必须有规范性 schema"。
+    <br><br>
+    <strong>差异：</strong>TOML 增加了 N/A 选项（如果不期望结构化输出）。TB-QA 无此选项。
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>防作弊</strong> <span class="badge badge-a">TB-QA: Anti Cheating</span> <span class="badge badge-b">TOML: anti_cheat_robustness</span> <span class="badge badge-overlap">高度相似</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    核心一致，但 <strong>TOML 更具体</strong>，列举了常见攻击向量：
+    <ul style="margin:8px 0 0 20px">
+      <li>创建伪造工具封装 (fake tool wrappers)</li>
+      <li>猴子补丁环境库 (monkey-patching)</li>
+      <li>缓存预计算答案</li>
+      <li>修改测试框架本身</li>
+      <li>Agent 以 root 运行、可访问 Docker 镜像层</li>
+    </ul>
+    TB-QA 更侧重"测试和解答对 Agent 不可见"这一前提。
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>解答质量/硬编码</strong> <span class="badge badge-a">TB-QA: Is Solution Hardcoded?</span> <span class="badge badge-b">TOML: solution_quality</span> <span class="badge badge-overlap">一致</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    两边都要求解答通过真实计算推导答案，而非直接 echo/cat 最终结果。TB-QA 的描述更详细，明确说明 echo/cat 写源文件再执行是可接受的。
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>环境卫生/镜像</strong> <span class="badge badge-a">TB-QA: Tests in Image + Test Deps</span> <span class="badge badge-b">TOML: environment_hygiene</span> <span class="badge badge-overlap">TB-QA 拆为两条</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    TOML 合并为一条（environment_hygiene），涵盖：不复制 tests/solution 到镜像、测试依赖在 test.sh 安装、apt 管理规范。
+    <br>TB-QA 拆为两条独立检查：<em>Is Any Tests or Solution in Image?</em> 和 <em>Are All Test Dependencies Installed in Image?</em>。
+    <br><strong>TOML 额外要求：</strong>apt-get update 前置 + rm -rf /var/lib/apt/lists/* 清理。
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>依赖锁定/可复现</strong> <span class="badge badge-a">TB-QA: Reproducibility + Pinned Deps</span> <span class="badge badge-b">TOML: deterministic_reproducible</span> <span class="badge badge-overlap">TB-QA 拆为两条</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    TB-QA 拆为 Reproducibility（整体可复现性）和 Pinned Dependencies（具体的版本锁定）。
+    <br>TOML 合为一条，额外要求：不依赖在线服务、随机性任务需 100+ 次验证。
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>测试↔指令对齐</strong> <span class="badge badge-a">TB-QA: Behavior Match + Requirements Match</span> <span class="badge badge-b">TOML: well_specified + test_instruction_alignment</span> <span class="badge badge-overlap">双向拆分</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    两边都关注"测试和指令要一致"，但<strong>拆分方式不同</strong>：
+    <br><strong>TB-QA</strong>：按方向拆 &mdash; 测试→指令 (Behavior Match) 和 指令→测试 (Requirements Match)
+    <br><strong>TOML</strong>：按属性拆 &mdash; 规格清晰 (well_specified) 和 对齐映射 (test_instruction_alignment)
+    <br>TB-QA 的拆法更便于自动化（每条问一个方向的问题），TOML 的拆法更偏人工审查视角。
+  </div>
+</details>
+
+<details class="compare-group">
+  <summary><strong>指令自主性</strong> <span class="badge badge-a">TB-QA: Instruction Autonomy Level</span> <span class="badge badge-b">TOML: outcome_verified + instruction_clarity</span> <span class="badge badge-overlap">TOML 拆得更细</span></summary>
+  <div class="compare-note" style="margin-top:10px">
+    TB-QA 用一条覆盖"指令不应过度规定"。TOML 拆为两条：outcome_verified（测试验证结果不验证过程）和 instruction_clarity（指令清晰、用绝对路径、人工编写）。
+    <br><strong>TOML 独特要求：</strong>必须使用绝对路径、LLM 生成的指令要被标记。
+  </div>
+</details>
+
+<h3>4.2 TOML 独有的标准（TB-QA 缺失）</h3>
+<p style="color:var(--text2);margin-bottom:12px;font-size:.9rem">这些标准面向 benchmark <strong>任务设计哲学</strong>，是两份文档最关键的差异</p>
+
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Verifiable &mdash; 可验证性 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">验证器必须确定性、可靠、高效。极端情况才可用 LLM-as-judge。<br><strong>对 RL 的意义：</strong>这是 reward signal 可靠性的基石。验证器不可靠 = reward 信号有噪声 = 训练在拟合噪声。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Solvable &mdash; 可解性 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">必须有可行解，专家几小时可实现。<br><strong>对 RL 的意义：</strong>确保训练信号不是永远为 0 的稀疏奖励——如果任务不可解，模型永远得不到正向 reward。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Difficult &mdash; 足够困难 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">需要 PhD 级别或多年专业经验，本科生几天能解决的太简单。<br><strong>对 RL 的意义：</strong>控制难度下限。太简单的任务 pass rate 接近 100%，梯度消失，学不到东西。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Interesting &mdash; 有趣/实用 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">必须有真实世界价值，有人会为此付费。<br><strong>对 RL 的意义：</strong>确保训练出的能力可迁移到实际场景，而非只会做人造习题。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Functional Verification &mdash; 功能性验证 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">测试通过执行代码验证行为，不靠字符串匹配。<br><strong>对 RL 的意义：</strong>防 reward hacking——模型学会插关键词而非真正解决问题，是 RL 训练最严重的失效模式之一。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Essential Difficulty &mdash; 本质难度 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">难度来自推理而非格式细节。<br><strong>对 RL 的意义：</strong>确保 RL 训练的是推理能力，不是格式拟合。格式类失败 = reward 信号偏离真正的学习目标。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Novel &mdash; 新颖性 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">不能是训练语料中可记忆的标准题。<br><strong>对 RL 的意义：</strong>防止模型通过记忆获得奖励——RL 应训练推理能力，而非回忆能力。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Agentic &mdash; Agent 特性 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">需要多步环境交互，不能被单次 LLM 调用解决。<br><strong>对 RL 的意义：</strong>确保任务训练多步交互能力。单步可解的任务使 RL 退化为 SFT，无法训练规划和迭代能力。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-b)">
+  <h4 style="color:var(--accent-b)">Reviewable &mdash; 可审查性 <span class="badge badge-b">TOML 独有</span></h4>
+  <p class="compare-note">非专业审查者可验证正确性。<br><strong>对 RL 的意义：</strong>降低任务审核成本，提高数据 pipeline 可扩展性。</p>
+</div>
+
+<h3>4.3 TB-QA 独有的标准（TOML 缺失）</h3>
+
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Validation Discriminability &mdash; 验证区分度 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">测试是否覆盖边界情况、能否拒绝错误答案？<br><strong>对 RL 的意义（关键）：</strong>如果测试只查表面特征，"错误的解也能得分"，reward signal 过于宽松，模型学到走捷径。这对 RL 是致命的。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Test Validation False Negative &mdash; 测试假阴性 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">正确的解是否会因测试太脆弱而失败？<br><strong>对 RL 的意义（关键）：</strong>对正确行为给惩罚 = 错误梯度方向，比没有训练信号更糟。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Informative Test Structure &mdash; 测试结构信息化 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">测试脚本需有清晰注释和分节。<br><strong>对 RL 的意义：</strong>偏工程规范，对训练本身影响较小。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Task Structure Completeness (P1) &mdash; 任务结构完整性 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">文件夹结构符合 Harbor 格式。<br><strong>对 RL 的意义：</strong>纯格式合规检查，可作为 CI/CD 自动检测项。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Task Realism (P1) &mdash; 任务真实性 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">任务像真实工程工作流。与 TOML 的 "interesting" 部分重叠，但更侧重"工程感"。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Is File Reference Not Mentioned? &mdash; 文件引用遗漏 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">被 TOML 的 test_instruction_alignment 部分隐含覆盖（"If the agent must produce specific files, those filenames must be explicitly stated"）。</p>
+</div>
+<div class="compare-group" style="border-left:3px solid var(--accent-a)">
+  <h4 style="color:var(--accent-a)">Is It Possible to Complete Without Internet? &mdash; 离线可完成性 <span class="badge badge-a">TB-QA 独有</span></h4>
+  <p class="compare-note">TOML 的 deterministic_reproducible 隐含"不依赖在线服务"，但 TB-QA 更具体地检查离线场景。</p>
+</div>
+
+<h3>4.4 核心差异总结</h3>
+<table>
+<tr><th>维度</th><th style="color:var(--accent-a)">TB-QA</th><th style="color:var(--accent-b)">TOML</th></tr>
+<tr><td>设计视角</td><td>自下而上：文件有没有问题</td><td>自上而下：什么是好的 benchmark 任务</td></tr>
+<tr><td>关注层面</td><td>偏<strong>实现质量</strong></td><td>偏<strong>任务设计</strong></td></tr>
+<tr><td>粒度</td><td>更细，可直接自动化 yes/no 检测</td><td>更粗，每条需理解和判断</td></tr>
+<tr><td>自动化适配</td><td>明确为 LLM 自动评分设计</td><td>为人工评审设计</td></tr>
+<tr><td>难度/新颖性</td><td>缺失</td><td>difficult + novel + agentic + essential_difficulty</td></tr>
+<tr><td>Reward 质量</td><td>Discriminability + False Negative</td><td>verifiable + functional_verification</td></tr>
+</table>
+
+<!-- ============ RL ANALYSIS ============ -->
+<h2 id="rl-analysis">五、LLM RL 训练适用性分析</h2>
+
+<div class="analysis-box">
+  <h4>结论：以 TOML 为骨架 + 补充 TB-QA 两条关键项</h4>
+  <p style="margin-top:10px;line-height:1.8">
+    <strong>TOML 的优势（对 RL 至关重要）：</strong>
+  </p>
+  <ul style="margin:10px 0 0 20px;line-height:2">
+    <li><strong>verifiable</strong> &mdash; RL 的基石。奖励函数不可靠 = 训练在拟合噪声。TB-QA 完全缺失。</li>
+    <li><strong>novel</strong> &mdash; 防止模型通过记忆获得奖励。RL 应训练"思考"而非"回忆"。</li>
+    <li><strong>agentic</strong> &mdash; 确保训练多步交互能力。单步可解的任务使 RL 退化为 SFT。</li>
+    <li><strong>essential_difficulty</strong> &mdash; 避免训练预算浪费在学格式细节上。</li>
+    <li><strong>difficult</strong> &mdash; 太简单的任务 pass rate 接近 100%，无学习信号。</li>
+    <li><strong>functional_verification</strong> &mdash; 防 reward hacking，RL 最严重的失效模式之一。</li>
+  </ul>
+  <p style="margin-top:16px;line-height:1.8">
+    <strong>TB-QA 中对 RL 关键但 TOML 缺失的标准：</strong>
+  </p>
+  <ul style="margin:10px 0 0 20px;line-height:2">
+    <li><strong style="color:var(--accent-a)">Validation Discriminability</strong> &mdash; reward signal 区分度。测试太松 = 错误解也得分 = 模型学走捷径。</li>
+    <li><strong style="color:var(--accent-a)">Test Validation False Negative</strong> &mdash; 假阴性控制。对正确行为给惩罚 = 错误梯度方向。</li>
+  </ul>
+  <p style="margin-top:16px;line-height:1.8">
+    <strong>TB-QA 中可降级为 CI/CD 自动检查的标准：</strong>
+  </p>
+  <ul style="margin:10px 0 0 20px;line-height:2;color:var(--text2)">
+    <li>Task Structure Completeness (P1) &mdash; 纯格式合规</li>
+    <li>Informative Test Structure &mdash; 偏代码风格</li>
+    <li>Is File Reference Not Mentioned? &mdash; 被 test_instruction_alignment 覆盖</li>
+  </ul>
+</div>
+
+<!-- ============ MERGED ============ -->
+<h2 id="merged">六、综合 Rubric（推荐方案）</h2>
+<p style="color:var(--text2);margin-bottom:16px;font-size:.9rem">基于以上分析，推荐以下 22 条综合标准。每条注明来源、优先级和纳入原因。</p>
+<p style="color:var(--text2);margin-bottom:16px;font-size:.85rem">
+  优先级：<span class="priority-tag p-critical">Critical</span> 对 RL 训练有直接影响
+  <span class="priority-tag p-high">High</span> 影响任务/数据质量
+  <span class="priority-tag p-medium">Medium</span> 工程规范
+  <span class="priority-tag p-low">Low</span> 可选
+</p>
+
+<details class="merged-card" id="m-verifiable">
+  <summary><span class="rubric-name">1. Verifiable / 可验证性</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">验证器必须确定性、可靠、高效。极少数情况可用 LLM-as-judge 但需论证。<br><strong>纳入原因：</strong>RL 训练的基石——reward function 的可靠性直接决定训练质量。不可靠的 reward = 拟合噪声。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-discriminability">
+  <summary><span class="rubric-name">2. Validation Discriminability / 验证区分度</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-a">来自 TB-QA</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">测试必须覆盖边界情况，能拒绝错误答案。不能只查表面特征。<br><strong>纳入原因：</strong>reward signal 的区分度。测试太松 = 假阳性泛滥 = 模型学会走捷径而非真正解决问题。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-false-negative">
+  <summary><span class="rubric-name">3. Test Validation False Negative / 测试假阴性控制</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-a">来自 TB-QA</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">正确的解不应因测试太脆弱而失败。<br><strong>纳入原因：</strong>假阴性 = 对正确行为给惩罚 = 产生错误梯度方向。比没有训练信号更有害。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-functional">
+  <summary><span class="rubric-name">4. Functional Verification / 功能性验证</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">测试通过执行代码验证行为，不靠字符串匹配。<br><strong>纳入原因：</strong>防 reward hacking。模型可轻松插入关键词而不实现功能，字符串匹配式测试完全无法防御。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-novel">
+  <summary><span class="rubric-name">5. Novel / 新颖性</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">不能是训练语料中可直接记忆的标准题。<br><strong>纳入原因：</strong>防止模型通过记忆获得 reward。RL 应训练推理能力而非回忆能力，否则 RL 阶段的能力提升是虚假的。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-agentic">
+  <summary><span class="rubric-name">6. Agentic / Agent 特性</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">需要多步环境交互，不能被单次 LLM 调用解决。<br><strong>纳入原因：</strong>确保训练的是 Agent 核心能力（规划、探索、迭代、纠错）。单步可解任务使 RL 退化为 SFT。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-essential">
+  <summary><span class="rubric-name">7. Essential Difficulty / 本质难度</span><span class="priority-tag p-critical">Critical</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">难度来自真正推理，不来自格式细节或任意精度。<br><strong>纳入原因：</strong>确保 RL 梯度指向推理能力而非格式拟合。格式类失败 = reward 信号偏离真正学习目标。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-difficult">
+  <summary><span class="rubric-name">8. Difficult / 足够困难</span><span class="priority-tag p-high">High</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">需要专业经验或多年领域知识。<br><strong>纳入原因：</strong>太简单的任务 pass rate 接近 100%，RL 梯度消失，无有效学习信号。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-solvable">
+  <summary><span class="rubric-name">9. Solvable / 可解性</span><span class="priority-tag p-high">High</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">必须有可行解，专家几小时可实现。<br><strong>纳入原因：</strong>不可解的任务 = reward 永远为 0 = 稀疏奖励问题导致训练无法收敛。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-anti-cheat">
+  <summary><span class="rubric-name">10. Anti-Cheat Robustness / 防作弊鲁棒性</span><span class="priority-tag p-high">High</span><span class="badge badge-a">TB-QA</span> + <span class="badge badge-b">TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">合并两边内容。测试抵抗对抗性快捷方式，答案不泄露在环境中。<br><strong>纳入原因：</strong>RL 训练中模型可能发现并利用 reward function 漏洞，形成"reward hacking"循环。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-well-specified">
+  <summary><span class="rubric-name">11. Well Specified / 规格清晰</span><span class="priority-tag p-high">High</span><span class="badge badge-a">TB-QA: Behavior Match</span> + <span class="badge badge-b">TOML: well_specified</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">指令完整描述测试验证的所有行为，无歧义。合并 TB-QA 的"测试→指令"方向检查。<br><strong>纳入原因：</strong>指令模糊 = 模型在探索中浪费大量步数在猜测需求上，降低训练效率。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-test-alignment">
+  <summary><span class="rubric-name">12. Test-Instruction Alignment / 测试-指令对齐</span><span class="priority-tag p-high">High</span><span class="badge badge-a">TB-QA: Requirements Match</span> + <span class="badge badge-b">TOML: test_instruction_alignment</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">指令需求和测试断言间 1:1 映射。合并 TB-QA 的"指令→测试"方向检查。<br><strong>纳入原因：</strong>未被测试覆盖的需求 = 该维度无 reward 信号 = 模型无法学习该能力。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-outcome">
+  <summary><span class="rubric-name">13. Outcome Verified / 结果验证而非过程</span><span class="priority-tag p-high">High</span><span class="badge badge-a">TB-QA: Autonomy</span> + <span class="badge badge-b">TOML: outcome_verified</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">验证最终结果不验证过程。指令描述目标而非步骤。<br><strong>纳入原因：</strong>RL 应鼓励模型探索多种解法。过程约束会限制探索空间，降低 RL 效果。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-deterministic">
+  <summary><span class="rubric-name">14. Deterministic &amp; Reproducible / 确定性可复现</span><span class="priority-tag p-high">High</span><span class="badge badge-a">TB-QA: Reproducibility + Pinned Deps</span> + <span class="badge badge-b">TOML: deterministic_reproducible</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">依赖锁定、不依赖在线服务、结果一致。合并两边。<br><strong>纳入原因：</strong>RL 训练需要可重复的环境。不同 run 结果不同 = reward 信号包含无关噪声。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-interesting">
+  <summary><span class="rubric-name">15. Interesting / 有趣实用</span><span class="priority-tag p-high">High</span><span class="badge badge-b">来自 TOML</span> + <span class="badge badge-a">TB-QA: Task Realism</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">有真实世界应用价值，像真实工程工作流。<br><strong>纳入原因：</strong>确保训练出的能力可迁移到实际任务，而非只能解人造习题。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-instruction-clarity">
+  <summary><span class="rubric-name">16. Instruction Clarity / 指令清晰度</span><span class="priority-tag p-high">High</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">人工编写、简洁、使用绝对路径、不暗示解法。LLM 生成的指令需标记。<br><strong>纳入原因：</strong>清晰的指令确保模型学到的是"理解目标→探索解法"，而非"解码模糊指令"。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-solution-quality">
+  <summary><span class="rubric-name">17. Solution Quality / 解答质量</span><span class="priority-tag p-high">High</span><span class="badge badge-a">TB-QA</span> + <span class="badge badge-b">TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">解答通过真实计算推导，不硬编码最终结果。<br><strong>纳入原因：</strong>确保 oracle solution 可作为 RL 训练的参考 trajectory 或验证 baseline。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-env-hygiene">
+  <summary><span class="rubric-name">18. Environment Hygiene / 环境卫生</span><span class="priority-tag p-medium">Medium</span><span class="badge badge-a">TB-QA</span> + <span class="badge badge-b">TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">Docker 镜像不含 tests/solution，测试依赖在 test.sh 安装，apt 管理规范。<br><strong>纳入原因：</strong>环境卫生确保训练环境和评估环境的一致性，防止信息泄露。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-structured-schema">
+  <summary><span class="rubric-name">19. Structured Data Schema / 结构化数据规格</span><span class="priority-tag p-medium">Medium</span><span class="badge badge-a">TB-QA</span> + <span class="badge badge-b">TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">结构化输出有精确 schema 文档，不仅给示例。<br><strong>纳入原因：</strong>配合 essential_difficulty——输出格式歧义不应成为失败的主要原因。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-reviewable">
+  <summary><span class="rubric-name">20. Reviewable / 可审查性</span><span class="priority-tag p-medium">Medium</span><span class="badge badge-b">来自 TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">非专业审查者可验证任务正确性，或有充分解释。<br><strong>纳入原因：</strong>提高数据 pipeline 可扩展性，降低审核成本，支撑大规模数据生产。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-typos">
+  <summary><span class="rubric-name">21. Typos / 拼写检查</span><span class="priority-tag p-medium">Medium</span><span class="badge badge-a">TB-QA</span> + <span class="badge badge-b">TOML</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">所有文件中文件名、路径、命令、变量名无拼写错误。<br><strong>纳入原因：</strong>拼写错误可导致静默失败，浪费 Agent 的训练步数在错误的方向上。</div>
+  </div>
+</details>
+
+<details class="merged-card" id="m-offline">
+  <summary><span class="rubric-name">22. Offline Completability / 离线可完成性</span><span class="priority-tag p-low">Low</span><span class="badge badge-a">来自 TB-QA</span></summary>
+  <div class="merged-body">
+    <div class="merged-reason">禁用网络的任务需确保所有资源在镜像中可用。<br><strong>纳入原因：</strong>大部分被 deterministic_reproducible 覆盖，但作为独立检查项可捕获特定场景。可降级为 CI/CD 自动检查。</div>
+  </div>
+</details>
+
+<div class="analysis-box" style="margin-top:32px">
+  <h4>降级为 CI/CD 自动检查（不纳入核心 Rubric）</h4>
+  <ul style="margin:10px 0 0 20px;line-height:2;color:var(--text2)">
+    <li><strong>Task Structure Completeness (P1)</strong> &mdash; 纯 Harbor 格式合规检查，可自动化</li>
+    <li><strong>Informative Test Structure</strong> &mdash; 代码风格规范，对 RL 训练无直接影响</li>
+    <li><strong>Is File Reference Not Mentioned?</strong> &mdash; 被 Test-Instruction Alignment 覆盖</li>
+  </ul>
+</div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,2658 @@
+{
+  "categories": {
+    "pre-training": {
+      "name": "预训练",
+      "emoji": "🏗️",
+      "group": "LLM"
+    },
+    "post-training": {
+      "name": "后训练",
+      "emoji": "🎯",
+      "group": "LLM"
+    },
+    "data": {
+      "name": "数据工程",
+      "emoji": "📊",
+      "group": "LLM"
+    },
+    "architecture": {
+      "name": "模型架构",
+      "emoji": "🧱",
+      "group": "LLM"
+    },
+    "evaluation": {
+      "name": "评估指标",
+      "emoji": "📏",
+      "group": "LLM"
+    },
+    "inference": {
+      "name": "推理优化",
+      "emoji": "⚡",
+      "group": "LLM"
+    },
+    "alignment": {
+      "name": "对齐安全",
+      "emoji": "🛡️",
+      "group": "LLM"
+    },
+    "scaling": {
+      "name": "Scaling Laws",
+      "emoji": "📈",
+      "group": "LLM"
+    },
+    "academic": {
+      "name": "学术写作",
+      "emoji": "📝",
+      "group": "通用"
+    },
+    "business": {
+      "name": "商务表达",
+      "emoji": "💼",
+      "group": "通用"
+    },
+    "general": {
+      "name": "通用词汇",
+      "emoji": "📚",
+      "group": "通用"
+    }
+  },
+  "vocabulary": [
+    {
+      "id": "pre-training",
+      "term": "Pre-training",
+      "phonetic": "/priːˈtreɪnɪŋ/",
+      "translation": "预训练",
+      "definition": "The initial phase of training a language model on a large corpus to learn general language representations.",
+      "example": "The model underwent pre-training on 2 trillion tokens of web data.",
+      "exampleCn": "该模型在 2 万亿 token 的网络数据上进行了预训练。",
+      "category": "pre-training",
+      "difficulty": "beginner",
+      "related": [
+        "Fine-tuning",
+        "Continual Pre-training"
+      ]
+    },
+    {
+      "id": "continual-pre-training",
+      "term": "Continual Pre-training",
+      "phonetic": "/kənˈtɪnjuəl priːˈtreɪnɪŋ/",
+      "translation": "持续预训练 / 中训练",
+      "definition": "Additional pre-training on domain-specific data after the initial pre-training phase, to adapt the model to a particular domain without catastrophic forgetting.",
+      "example": "We applied continual pre-training on scientific papers to enhance the model's reasoning capabilities.",
+      "exampleCn": "我们在科学论文上进行了持续预训练，以增强模型的推理能力。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Pre-training",
+        "Domain Adaptation",
+        "Catastrophic Forgetting"
+      ]
+    },
+    {
+      "id": "causal-language-modeling",
+      "term": "Causal Language Modeling",
+      "phonetic": "/ˈkɔːzəl ˈlæŋɡwɪdʒ ˈmɒdəlɪŋ/",
+      "translation": "因果语言建模",
+      "definition": "A training objective where the model predicts the next token given all previous tokens, using left-to-right autoregressive generation.",
+      "example": "GPT-series models are trained with causal language modeling objective.",
+      "exampleCn": "GPT 系列模型使用因果语言建模目标进行训练。",
+      "category": "pre-training",
+      "difficulty": "beginner",
+      "related": [
+        "Autoregressive",
+        "Next Token Prediction"
+      ]
+    },
+    {
+      "id": "learning-rate-schedule",
+      "term": "Learning Rate Schedule",
+      "phonetic": "/ˈlɜːrnɪŋ reɪt ˈʃedjuːl/",
+      "translation": "学习率调度",
+      "definition": "A strategy for adjusting the learning rate during training, typically including warmup and decay phases.",
+      "example": "We used a cosine learning rate schedule with 2000 steps of linear warmup.",
+      "exampleCn": "我们使用了余弦学习率调度，包含 2000 步的线性 warmup。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Warmup",
+        "Cosine Decay"
+      ]
+    },
+    {
+      "id": "warmup",
+      "term": "Warmup",
+      "phonetic": "/ˈwɔːrmʌp/",
+      "translation": "预热",
+      "definition": "A technique where the learning rate gradually increases from a small value at the beginning of training to stabilize optimization.",
+      "example": "We apply linear warmup for the first 1% of training steps.",
+      "exampleCn": "我们在训练的前 1% 步数中使用线性预热。",
+      "category": "pre-training",
+      "difficulty": "beginner",
+      "related": [
+        "Learning Rate Schedule",
+        "Cosine Decay"
+      ]
+    },
+    {
+      "id": "gradient-accumulation",
+      "term": "Gradient Accumulation",
+      "phonetic": "/ˈɡreɪdiənt əˌkjuːmjəˈleɪʃn/",
+      "translation": "梯度累积",
+      "definition": "A technique to simulate larger batch sizes by accumulating gradients over multiple forward passes before performing a weight update.",
+      "example": "With gradient accumulation over 8 steps, our effective batch size is 4M tokens.",
+      "exampleCn": "通过 8 步梯度累积，我们的有效 batch size 为 400 万 token。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Batch Size",
+        "Gradient Checkpointing"
+      ]
+    },
+    {
+      "id": "fine-tuning",
+      "term": "Fine-tuning",
+      "phonetic": "/faɪn ˈtjuːnɪŋ/",
+      "translation": "微调",
+      "definition": "The process of further training a pre-trained model on a smaller, task-specific dataset to adapt it for a particular application.",
+      "example": "After fine-tuning on instruction data, the model's helpfulness improved significantly.",
+      "exampleCn": "在指令数据上微调后，模型的有用性显著提高。",
+      "category": "post-training",
+      "difficulty": "beginner",
+      "related": [
+        "SFT",
+        "Pre-training",
+        "LoRA"
+      ]
+    },
+    {
+      "id": "sft",
+      "term": "Supervised Fine-Tuning (SFT)",
+      "phonetic": "/ˈsuːpərvaɪzd faɪn ˈtjuːnɪŋ/",
+      "translation": "监督微调",
+      "definition": "Training a model on curated (instruction, response) pairs to improve its ability to follow human instructions.",
+      "example": "The SFT stage uses 100K high-quality instruction-response pairs.",
+      "exampleCn": "SFT 阶段使用了 10 万条高质量的指令-回复对。",
+      "category": "post-training",
+      "difficulty": "beginner",
+      "related": [
+        "Fine-tuning",
+        "Instruction Tuning",
+        "RLHF"
+      ]
+    },
+    {
+      "id": "rlhf",
+      "term": "Reinforcement Learning from Human Feedback (RLHF)",
+      "phonetic": "/ˌriːɪnˈfɔːrsmənt/",
+      "translation": "基于人类反馈的强化学习",
+      "definition": "A training paradigm that uses human preference data to train a reward model, then optimizes the language model policy via reinforcement learning.",
+      "example": "RLHF was key to making ChatGPT align with human preferences.",
+      "exampleCn": "RLHF 是使 ChatGPT 与人类偏好对齐的关键技术。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "PPO",
+        "DPO",
+        "Reward Model"
+      ]
+    },
+    {
+      "id": "dpo",
+      "term": "Direct Preference Optimization (DPO)",
+      "phonetic": "/daɪˈrekt ˈprefrəns/",
+      "translation": "直接偏好优化",
+      "definition": "An alternative to RLHF that directly optimizes the policy using preference pairs without training a separate reward model.",
+      "example": "DPO simplifies alignment by eliminating the need for a reward model.",
+      "exampleCn": "DPO 通过消除对奖励模型的需求来简化对齐过程。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "RLHF",
+        "Preference Learning"
+      ]
+    },
+    {
+      "id": "lora",
+      "term": "LoRA (Low-Rank Adaptation)",
+      "phonetic": "/ˈlɔːrə/",
+      "translation": "低秩适配",
+      "definition": "A parameter-efficient fine-tuning method that injects trainable low-rank decomposition matrices into each layer of the Transformer.",
+      "example": "Using LoRA with rank 16 reduced trainable parameters by 99%.",
+      "exampleCn": "使用秩为 16 的 LoRA 将可训练参数减少了 99%。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "QLoRA",
+        "PEFT",
+        "Fine-tuning"
+      ]
+    },
+    {
+      "id": "data-deduplication",
+      "term": "Data Deduplication",
+      "phonetic": "/ˈdeɪtə diːˌdjuːplɪˈkeɪʃn/",
+      "translation": "数据去重",
+      "definition": "The process of removing duplicate or near-duplicate examples from the training dataset to improve model quality and training efficiency.",
+      "example": "After MinHash deduplication, the dataset was reduced by 40%.",
+      "exampleCn": "经过 MinHash 去重后，数据集缩小了 40%。",
+      "category": "data",
+      "difficulty": "beginner",
+      "related": [
+        "MinHash",
+        "Data Quality"
+      ]
+    },
+    {
+      "id": "data-contamination",
+      "term": "Data Contamination",
+      "phonetic": "/ˈdeɪtə kənˌtæmɪˈneɪʃn/",
+      "translation": "数据污染",
+      "definition": "When evaluation benchmark data leaks into the training set, causing inflated performance metrics that don't reflect true capabilities.",
+      "example": "We performed n-gram overlap analysis to detect data contamination.",
+      "exampleCn": "我们进行了 n-gram 重叠分析来检测数据污染。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Benchmark",
+        "Evaluation"
+      ]
+    },
+    {
+      "id": "data-mixing-ratio",
+      "term": "Data Mixing Ratio",
+      "phonetic": "/ˈdeɪtə ˈmɪksɪŋ ˈreɪʃioʊ/",
+      "translation": "数据混合比例",
+      "definition": "The proportion of different data sources (e.g., web, code, books) used during pre-training, which significantly affects model capabilities.",
+      "example": "Adjusting the data mixing ratio of code from 10% to 20% improved coding benchmarks.",
+      "exampleCn": "将代码数据的混合比例从 10% 调整到 20% 提升了代码评测成绩。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Curation",
+        "Domain Weight"
+      ]
+    },
+    {
+      "id": "tokenization",
+      "term": "Tokenization",
+      "phonetic": "/ˌtoʊkənaɪˈzeɪʃn/",
+      "translation": "分词 / Token 化",
+      "definition": "The process of breaking text into sub-word units (tokens) that the model processes, using algorithms like BPE or SentencePiece.",
+      "example": "BPE tokenization with a 128K vocabulary provides good multilingual coverage.",
+      "exampleCn": "使用 128K 词表的 BPE 分词在多语言上有良好的覆盖率。",
+      "category": "data",
+      "difficulty": "beginner",
+      "related": [
+        "BPE",
+        "SentencePiece",
+        "Vocabulary"
+      ]
+    },
+    {
+      "id": "data-curation",
+      "term": "Data Curation",
+      "phonetic": "/ˈdeɪtə kjʊˈreɪʃn/",
+      "translation": "数据筛选 / 数据策展",
+      "definition": "The careful process of selecting, cleaning, filtering, and organizing training data to ensure high quality and diversity.",
+      "example": "Our data curation pipeline includes language identification, quality scoring, and deduplication.",
+      "exampleCn": "我们的数据筛选流水线包括语言识别、质量评分和去重。",
+      "category": "data",
+      "difficulty": "beginner",
+      "related": [
+        "Data Quality",
+        "Data Mixing Ratio"
+      ]
+    },
+    {
+      "id": "synthetic-data",
+      "term": "Synthetic Data",
+      "phonetic": "/sɪnˈθetɪk ˈdeɪtə/",
+      "translation": "合成数据",
+      "definition": "Artificially generated training data, often produced by another LLM, used to augment or replace human-written data.",
+      "example": "We used GPT-4 to generate synthetic math reasoning data for training.",
+      "exampleCn": "我们使用 GPT-4 生成合成数学推理数据用于训练。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Augmentation",
+        "Distillation"
+      ]
+    },
+    {
+      "id": "transformer",
+      "term": "Transformer",
+      "phonetic": "/trænsˈfɔːrmər/",
+      "translation": "Transformer 架构",
+      "definition": "The dominant neural network architecture for language models, based on self-attention mechanisms that process all input positions in parallel.",
+      "example": "The Transformer architecture has become the backbone of modern LLMs.",
+      "exampleCn": "Transformer 架构已成为现代大语言模型的骨干。",
+      "category": "architecture",
+      "difficulty": "beginner",
+      "related": [
+        "Attention",
+        "Self-Attention"
+      ]
+    },
+    {
+      "id": "mha",
+      "term": "Multi-Head Attention (MHA)",
+      "phonetic": "/ˌmʌltiˈhed əˈtenʃn/",
+      "translation": "多头注意力",
+      "definition": "An attention mechanism that runs multiple attention operations in parallel, each with different learned projections, allowing the model to attend to information from different representation subspaces.",
+      "example": "The model uses 32 attention heads with a head dimension of 128.",
+      "exampleCn": "该模型使用 32 个注意力头，头维度为 128。",
+      "category": "architecture",
+      "difficulty": "intermediate",
+      "related": [
+        "GQA",
+        "MQA",
+        "Self-Attention"
+      ]
+    },
+    {
+      "id": "gqa",
+      "term": "Grouped Query Attention (GQA)",
+      "phonetic": "/ɡruːpt ˈkwɪəri/",
+      "translation": "分组查询注意力",
+      "definition": "A variant of multi-head attention where multiple query heads share the same key-value heads, reducing KV cache size during inference.",
+      "example": "GQA with 8 KV heads significantly reduces inference memory usage.",
+      "exampleCn": "GQA 使用 8 个 KV 头大幅减少了推理内存占用。",
+      "category": "architecture",
+      "difficulty": "advanced",
+      "related": [
+        "MHA",
+        "MQA",
+        "KV Cache"
+      ]
+    },
+    {
+      "id": "rope",
+      "term": "RoPE (Rotary Position Embedding)",
+      "phonetic": "/roʊp/",
+      "translation": "旋转位置编码",
+      "definition": "A position encoding method that encodes position information through rotation of the query and key vectors, naturally supporting relative position encoding and length extrapolation.",
+      "example": "RoPE enables the model to generalize to longer sequences than seen during training.",
+      "exampleCn": "RoPE 使模型能够泛化到比训练时更长的序列。",
+      "category": "architecture",
+      "difficulty": "advanced",
+      "related": [
+        "Position Encoding",
+        "ALiBi"
+      ]
+    },
+    {
+      "id": "ffn",
+      "term": "Feed-Forward Network (FFN)",
+      "phonetic": "/fiːd ˈfɔːrwərd/",
+      "translation": "前馈网络",
+      "definition": "The two-layer neural network in each Transformer block that applies non-linear transformations to each position independently.",
+      "example": "Modern LLMs typically use SwiGLU activation in the FFN layers.",
+      "exampleCn": "现代大语言模型通常在 FFN 层中使用 SwiGLU 激活函数。",
+      "category": "architecture",
+      "difficulty": "intermediate",
+      "related": [
+        "SwiGLU",
+        "RMSNorm"
+      ]
+    },
+    {
+      "id": "moe",
+      "term": "Mixture of Experts (MoE)",
+      "phonetic": "/ˈmɪkstʃər əv ˈekspɜːrts/",
+      "translation": "混合专家模型",
+      "definition": "An architecture where each input activates only a subset of the model's parameters through a learned routing mechanism, enabling larger models with the same compute cost.",
+      "example": "The MoE model has 8 experts per layer but only activates 2 for each token.",
+      "exampleCn": "该 MoE 模型每层有 8 个专家，但每个 token 只激活其中 2 个。",
+      "category": "architecture",
+      "difficulty": "advanced",
+      "related": [
+        "Router",
+        "Top-K Routing",
+        "Sparse Model"
+      ]
+    },
+    {
+      "id": "perplexity",
+      "term": "Perplexity",
+      "phonetic": "/pərˈpleksəti/",
+      "translation": "困惑度",
+      "definition": "A measure of how well a probability model predicts a sample. Lower perplexity indicates better prediction, calculated as the exponential of the average cross-entropy.",
+      "example": "Our model achieves a perplexity of 8.5 on the test set.",
+      "exampleCn": "我们的模型在测试集上达到 8.5 的困惑度。",
+      "category": "evaluation",
+      "difficulty": "beginner",
+      "related": [
+        "Cross-Entropy",
+        "Loss"
+      ]
+    },
+    {
+      "id": "benchmark",
+      "term": "Benchmark",
+      "phonetic": "/ˈbentʃmɑːrk/",
+      "translation": "基准评测",
+      "definition": "A standardized test dataset and evaluation protocol used to measure and compare model performance on specific tasks.",
+      "example": "We evaluate our model on standard benchmarks including MMLU, HumanEval, and GSM8K.",
+      "exampleCn": "我们在 MMLU、HumanEval 和 GSM8K 等标准基准上评估模型。",
+      "category": "evaluation",
+      "difficulty": "beginner",
+      "related": [
+        "MMLU",
+        "HumanEval"
+      ]
+    },
+    {
+      "id": "few-shot",
+      "term": "Few-shot Learning",
+      "phonetic": "/fjuː ʃɒt/",
+      "translation": "少样本学习",
+      "definition": "The ability of a model to learn a task from just a few examples provided in the context (prompt), without updating model parameters.",
+      "example": "GPT-3 demonstrated remarkable 5-shot learning on many NLP benchmarks.",
+      "exampleCn": "GPT-3 在许多 NLP 基准上展示了出色的 5-shot 学习能力。",
+      "category": "evaluation",
+      "difficulty": "beginner",
+      "related": [
+        "Zero-shot",
+        "In-Context Learning"
+      ]
+    },
+    {
+      "id": "icl",
+      "term": "In-Context Learning (ICL)",
+      "phonetic": "/ɪn ˈkɒntekst/",
+      "translation": "上下文学习",
+      "definition": "The ability of LLMs to learn to perform tasks by conditioning on examples provided within the input context, without any gradient updates.",
+      "example": "In-context learning emerges as a capability in sufficiently large models.",
+      "exampleCn": "上下文学习作为一种能力在足够大的模型中涌现。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Few-shot",
+        "Emergent Ability"
+      ]
+    },
+    {
+      "id": "kv-cache",
+      "term": "KV Cache",
+      "phonetic": "/keɪ viː kæʃ/",
+      "translation": "KV 缓存",
+      "definition": "A technique that stores previously computed key-value pairs during autoregressive generation to avoid redundant computation.",
+      "example": "KV cache grows linearly with sequence length and is a major memory bottleneck.",
+      "exampleCn": "KV 缓存随序列长度线性增长，是主要的内存瓶颈。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "GQA",
+        "Quantization"
+      ]
+    },
+    {
+      "id": "quantization",
+      "term": "Quantization",
+      "phonetic": "/ˌkwɒntɪˈzeɪʃn/",
+      "translation": "量化",
+      "definition": "Reducing the numerical precision of model weights (e.g., from FP16 to INT4) to decrease memory usage and increase inference speed.",
+      "example": "INT4 quantization reduces model size by 4x with minimal quality loss.",
+      "exampleCn": "INT4 量化将模型大小减小 4 倍，质量损失最小。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "GPTQ",
+        "AWQ",
+        "GGUF"
+      ]
+    },
+    {
+      "id": "speculative-decoding",
+      "term": "Speculative Decoding",
+      "phonetic": "/ˈspekjələtɪv diːˈkoʊdɪŋ/",
+      "translation": "推测性解码",
+      "definition": "An inference acceleration technique where a smaller draft model generates candidate tokens that are verified in parallel by the target model.",
+      "example": "Speculative decoding achieved 2.5x speedup without changing output distribution.",
+      "exampleCn": "推测性解码在不改变输出分布的情况下实现了 2.5 倍加速。",
+      "category": "inference",
+      "difficulty": "advanced",
+      "related": [
+        "Draft Model",
+        "Autoregressive"
+      ]
+    },
+    {
+      "id": "batching",
+      "term": "Batching",
+      "phonetic": "/ˈbætʃɪŋ/",
+      "translation": "批处理",
+      "definition": "Processing multiple requests simultaneously to maximize GPU utilization and throughput during inference.",
+      "example": "Continuous batching allows new requests to be added without waiting for the entire batch to finish.",
+      "exampleCn": "连续批处理允许在不等待整个批次完成的情况下添加新请求。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Continuous Batching",
+        "Throughput"
+      ]
+    },
+    {
+      "id": "knowledge-distillation",
+      "term": "Knowledge Distillation",
+      "phonetic": "/ˈnɒlɪdʒ dɪstɪˈleɪʃn/",
+      "translation": "知识蒸馏",
+      "definition": "Training a smaller student model to mimic the behavior of a larger teacher model, transferring knowledge while reducing model size.",
+      "example": "Through knowledge distillation, a 7B model can capture 90% of the 70B model's capability.",
+      "exampleCn": "通过知识蒸馏，7B 模型可以保留 70B 模型 90% 的能力。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Teacher Model",
+        "Student Model"
+      ]
+    },
+    {
+      "id": "alignment",
+      "term": "Alignment",
+      "phonetic": "/əˈlaɪnmənt/",
+      "translation": "对齐",
+      "definition": "The process of training AI systems to behave in accordance with human intentions, values, and preferences.",
+      "example": "AI alignment research aims to ensure models are helpful, harmless, and honest.",
+      "exampleCn": "AI 对齐研究旨在确保模型是有用的、无害的和诚实的。",
+      "category": "alignment",
+      "difficulty": "beginner",
+      "related": [
+        "RLHF",
+        "Safety"
+      ]
+    },
+    {
+      "id": "hallucination",
+      "term": "Hallucination",
+      "phonetic": "/həˌluːsɪˈneɪʃn/",
+      "translation": "幻觉",
+      "definition": "When a language model generates text that is factually incorrect, fabricated, or not grounded in the provided context.",
+      "example": "Retrieval-augmented generation helps reduce hallucination by grounding outputs in retrieved documents.",
+      "exampleCn": "检索增强生成通过将输出建立在检索到的文档上来帮助减少幻觉。",
+      "category": "alignment",
+      "difficulty": "beginner",
+      "related": [
+        "Grounding",
+        "RAG",
+        "Factuality"
+      ]
+    },
+    {
+      "id": "red-teaming",
+      "term": "Red Teaming",
+      "phonetic": "/red ˈtiːmɪŋ/",
+      "translation": "红队测试",
+      "definition": "The practice of deliberately attempting to elicit harmful, biased, or undesired outputs from a model to identify vulnerabilities and improve safety.",
+      "example": "Our red teaming efforts uncovered several jailbreak vulnerabilities.",
+      "exampleCn": "我们的红队测试发现了若干越狱漏洞。",
+      "category": "alignment",
+      "difficulty": "intermediate",
+      "related": [
+        "Jailbreak",
+        "Safety"
+      ]
+    },
+    {
+      "id": "reward-model",
+      "term": "Reward Model",
+      "phonetic": "/rɪˈwɔːrd ˈmɒdl/",
+      "translation": "奖励模型",
+      "definition": "A model trained on human preference data that scores the quality of language model outputs, used as the reward signal in RLHF training.",
+      "example": "The reward model is trained on 50K human preference comparisons.",
+      "exampleCn": "奖励模型在 5 万条人类偏好比较数据上训练。",
+      "category": "alignment",
+      "difficulty": "intermediate",
+      "related": [
+        "RLHF",
+        "Preference Data"
+      ]
+    },
+    {
+      "id": "scaling-laws",
+      "term": "Scaling Laws",
+      "phonetic": "/ˈskeɪlɪŋ lɔːz/",
+      "translation": "缩放定律",
+      "definition": "Empirical relationships between model performance and factors like model size, dataset size, and compute budget, following power-law curves.",
+      "example": "Chinchilla scaling laws suggest training tokens should scale linearly with model parameters.",
+      "exampleCn": "Chinchilla 缩放定律表明训练 token 数应与模型参数量线性缩放。",
+      "category": "scaling",
+      "difficulty": "intermediate",
+      "related": [
+        "Compute-Optimal",
+        "Chinchilla"
+      ]
+    },
+    {
+      "id": "compute-optimal",
+      "term": "Compute-Optimal Training",
+      "phonetic": "/kəmˈpjuːt ˈɒptɪməl/",
+      "translation": "计算最优训练",
+      "definition": "An approach to allocating a fixed compute budget optimally between model size and training data, based on scaling law predictions.",
+      "example": "Compute-optimal training suggests a 10B model should see about 200B tokens.",
+      "exampleCn": "计算最优训练建议 10B 模型应该处理约 2000 亿 token。",
+      "category": "scaling",
+      "difficulty": "advanced",
+      "related": [
+        "Scaling Laws",
+        "Chinchilla"
+      ]
+    },
+    {
+      "id": "emergent-abilities",
+      "term": "Emergent Abilities",
+      "phonetic": "/ɪˈmɜːrdʒənt/",
+      "translation": "涌现能力",
+      "definition": "Capabilities that appear suddenly and unpredictably when models reach a certain scale, being absent in smaller models but present in larger ones.",
+      "example": "Chain-of-thought reasoning is considered an emergent ability of large language models.",
+      "exampleCn": "思维链推理被认为是大语言模型的涌现能力。",
+      "category": "scaling",
+      "difficulty": "intermediate",
+      "related": [
+        "Scaling Laws",
+        "Chain-of-Thought"
+      ]
+    },
+    {
+      "id": "flops",
+      "term": "FLOPs (Floating Point Operations)",
+      "phonetic": "/flɒps/",
+      "translation": "浮点运算次数",
+      "definition": "A measure of computational cost, commonly used to quantify the compute required for training or inference of neural networks.",
+      "example": "Training GPT-4 is estimated to require ~2e25 FLOPs.",
+      "exampleCn": "训练 GPT-4 估计需要约 2×10²⁵ 次浮点运算。",
+      "category": "scaling",
+      "difficulty": "beginner",
+      "related": [
+        "GPU Hours",
+        "Compute Budget"
+      ]
+    },
+    {
+      "id": "data-mixing-laws",
+      "term": "Data Mixing Laws",
+      "phonetic": "/ˈdeɪtə ˈmɪksɪŋ lɔːz/",
+      "translation": "数据混合定律",
+      "definition": "Empirical scaling laws describing the relationship between domain mixing ratios and downstream model performance, enabling principled data recipe design rather than trial-and-error.",
+      "example": "Data Mixing Laws predict that increasing code ratio from 10% to 25% yields log-linear gains on HumanEval.",
+      "exampleCn": "数据混合定律预测将代码比例从 10% 提升到 25% 在 HumanEval 上产生对数线性收益。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Scaling Laws",
+        "Data Mixing Ratio",
+        "QuaDMix"
+      ]
+    },
+    {
+      "id": "quadmix",
+      "term": "QuaDMix",
+      "phonetic": "/kwɒd mɪks/",
+      "translation": "代理模型数据配比优化",
+      "definition": "A data mixing optimization method using proxy models to predict downstream performance across domain combinations, enabling automated data recipe search without exhaustive experiments.",
+      "example": "QuaDMix reduced data recipe search cost by 50x compared to grid search.",
+      "exampleCn": "QuaDMix 与网格搜索相比将数据配方搜索成本降低了 50 倍。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Data Mixing Laws",
+        "Data Mixing Ratio"
+      ]
+    },
+    {
+      "id": "harness-engineering",
+      "term": "Harness Engineering",
+      "phonetic": "/ˈhɑːrnɪs ˌendʒɪˈnɪərɪŋ/",
+      "translation": "Harness 工程",
+      "definition": "The practice of treating an agent's execution scaffold (harness) as a data flywheel — every failure trajectory captured by the harness becomes training data for the next model iteration. \"The Harness is the Dataset.\"",
+      "example": "Our harness captured 10K failure trajectories in the first month, forming the core of our next fine-tuning dataset.",
+      "exampleCn": "我们的 Harness 第一个月捕获了 1 万条失败轨迹，成为下一轮微调数据集的核心。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "Context Engineering",
+        "Synthetic Data",
+        "RLHF"
+      ]
+    },
+    {
+      "id": "context-engineering",
+      "term": "Context Engineering",
+      "phonetic": "/ˈkɒntekst ˌendʒɪˈnɪərɪŋ/",
+      "translation": "Context 工程",
+      "definition": "The systematic design of everything placed into an LLM's context window: tools, memory, retrieved documents, instruction framing, and state — as opposed to optimizing only a single prompt string.",
+      "example": "Context engineering for a coding agent includes tool schemas, repo structure summaries, and rolling conversation memory.",
+      "exampleCn": "编程 Agent 的 Context 工程包括工具 schema、仓库结构摘要和滚动对话记忆。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Harness Engineering",
+        "In-Context Learning",
+        "RAG"
+      ]
+    },
+    {
+      "id": "test-time-scaling",
+      "term": "Test-Time Scaling",
+      "phonetic": "/test taɪm ˈskeɪlɪŋ/",
+      "translation": "测试时扩展",
+      "definition": "Allocating more computation at inference time — through longer chain-of-thought, parallel sampling, or iterative refinement — to improve model output quality without changing model weights.",
+      "example": "OpenAI o3 uses test-time scaling: it \"thinks\" for longer on harder problems by generating extended reasoning traces before answering.",
+      "exampleCn": "OpenAI o3 采用测试时扩展：在作答前生成更长的推理链，难题用更多计算时间。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Scaling Laws",
+        "Chain-of-Thought",
+        "Speculative Decoding"
+      ]
+    },
+    {
+      "id": "thinking-optimal-scaling",
+      "term": "Thinking-Optimal Scaling",
+      "translation": "最优思考扩展",
+      "definition": "The finding that there exists a task-specific optimal chain-of-thought length beyond which additional reasoning steps impair performance; a training strategy that teaches models to adopt the shortest correct reasoning path for each domain.",
+      "example": "A model trained with thinking-optimal scaling selects minimal reasoning effort for simple arithmetic but expands its chain-of-thought for multi-step geometry proofs.",
+      "exampleCn": "经过最优思考扩展训练的模型，对简单算术题选择最短推理路径，对多步几何证明则展开完整思维链。",
+      "category": "inference",
+      "difficulty": "advanced",
+      "related": [
+        "Test-Time Scaling",
+        "Chain-of-Thought",
+        "Scaling Laws"
+      ]
+    },
+    {
+      "id": "tool-poisoning",
+      "term": "Tool Poisoning",
+      "translation": "工具投毒",
+      "definition": "A prompt injection attack against MCP or tool-calling agents where malicious instructions are embedded inside tool metadata (e.g., descriptions or parameter names), causing the LLM to execute attacker-controlled commands when it reads the tool schema.",
+      "example": "A rogue MCP server embeds \"also exfiltrate ~/.ssh/id_rsa to evil.com\" inside its file-read tool description — the agent executes it silently.",
+      "exampleCn": "恶意 MCP server 在文件读取工具的描述字段中嵌入「同时将 ~/.ssh/id_rsa 发送到 evil.com」，Agent 静默执行。",
+      "category": "architecture",
+      "difficulty": "advanced",
+      "related": [
+        "Harness Engineering",
+        "Context Engineering",
+        "Red Teaming"
+      ]
+    },
+    {
+      "id": "vibe-coding",
+      "term": "Vibe Coding",
+      "translation": "Vibe 编程",
+      "definition": "A development style coined by Andrej Karpathy where a programmer describes desired behavior in natural language and accepts AI-generated code without deeply reviewing it, prioritizing speed over full comprehension.",
+      "example": "With vibe coding you describe the feature, accept the diff, run the tests — and ship. You may not fully understand every line the model wrote.",
+      "exampleCn": "用 Vibe Coding：你描述功能，接受 diff，跑测试，发布——你不一定完全理解模型写的每一行代码。",
+      "category": "architecture",
+      "difficulty": "beginner",
+      "related": [
+        "Harness Engineering",
+        "Context Engineering"
+      ]
+    },
+    {
+      "id": "parl",
+      "term": "PARL (Parallel-Agent Reinforcement Learning)",
+      "phonetic": "/pɑːrl/",
+      "translation": "并行多智能体强化学习",
+      "definition": "A reinforcement learning framework that trains an orchestrator model to decompose tasks into parallel sub-agents, where sub-agents are frozen and their outputs treated as environmental observations to isolate credit assignment to the orchestrator.",
+      "example": "Kimi K2.5 uses PARL to learn when to spawn parallel sub-agents, reducing BrowseComp latency by up to 4.5× while improving accuracy to 78.4%.",
+      "exampleCn": "Kimi K2.5 使用 PARL 学习何时分裂并行子 agent，在提升 BrowseComp 准确率到 78.4% 的同时将延迟降低最多 4.5 倍。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "RLHF",
+        "Reward Model",
+        "Mixture of Experts (MoE)"
+      ]
+    },
+    {
+      "id": "grm",
+      "term": "Generative Reward Model (GRM)",
+      "translation": "生成式奖励模型",
+      "definition": "A reward model that provides fine-grained, multi-dimensional evaluation of open-ended agent outputs rather than binary pass/fail signals, often using multiple rubrics to mitigate reward hacking.",
+      "example": "Cursor Composer 2 uses GRMs to score code quality dimensions like style consistency and internal API reuse, beyond simple test-pass rewards.",
+      "exampleCn": "Cursor Composer 2 使用 GRM 评估代码风格一致性、内部 API 复用等维度，而不只是测试是否通过。",
+      "category": "alignment",
+      "difficulty": "advanced",
+      "related": [
+        "Reward Model",
+        "RLHF",
+        "Red Teaming"
+      ]
+    },
+    {
+      "id": "organicity",
+      "term": "Organicity",
+      "phonetic": "/ˌɔːɡəˈnɪsɪti/",
+      "translation": "合规性（代码有机性）",
+      "definition": "The degree to which AI-generated code adheres to a project's specific conventions, internal APIs, and implicit architectural constraints accumulated over its development history, beyond mere functional correctness.",
+      "example": "A PR that passes all tests but ignores the project's naming conventions and duplicates internal utilities has low organicity and will likely be rejected in code review.",
+      "exampleCn": "一个通过所有测试但忽视了项目命名规范、重复了内部工具的 PR 合规性很低，通常会在代码审查中被拒绝。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Benchmark",
+        "Context Engineering"
+      ]
+    },
+    {
+      "id": "online-repo-memory",
+      "term": "Online Repository Memory",
+      "translation": "在线仓库记忆",
+      "definition": "A mechanism that enables coding agents to learn project-specific patterns from historical commits through supervised contrastive reflection—comparing the agent's predictions against oracle diffs—and storing distilled skills for future pull request generation.",
+      "example": "With Online Repository Memory, an agent learns from past commits that this project always uses internal auth utilities rather than re-implementing JWT validation, improving organicity on future PRs.",
+      "exampleCn": "通过在线仓库记忆，agent 从历史 commit 中学到该项目总是使用内部鉴权工具而非重新实现 JWT 验证，从而提升未来 PR 的合规性。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "Context Engineering",
+        "In-Context Learning (ICL)",
+        "Organicity"
+      ]
+    },
+    {
+      "id": "rollout-as-a-service",
+      "term": "Rollout-as-a-Service",
+      "translation": "Rollout 即服务",
+      "definition": "An infrastructure pattern that decouples the agentic RL rollout lifecycle from the training loop, exposing rollout orchestration—including sandboxed environment management and trajectory collection—as a standalone API service consumed by the training framework.",
+      "example": "NVIDIA ProRL Agent implements Rollout-as-a-Service so that NeMo, Megatron, and other training frameworks can share the same rollout infrastructure without re-implementing sandbox orchestration.",
+      "exampleCn": "NVIDIA ProRL Agent 将 rollout 作为独立服务，让 NeMo 等训练框架共用同一套沙箱编排基础设施，无需各自重新实现。",
+      "category": "inference",
+      "difficulty": "advanced",
+      "related": [
+        "PARL",
+        "Harness Engineering",
+        "RLHF"
+      ]
+    },
+    {
+      "id": "long-tail-trajectory",
+      "term": "Long-Tail Trajectory",
+      "translation": "长尾轨迹",
+      "definition": "In agentic RL training, the small fraction of rollout trajectories that involve many tool calls or long wait times, which disproportionately bottleneck throughput because the training batch cannot proceed until all trajectories in the batch are complete.",
+      "example": "A software engineering task requiring 50+ tool calls and a CI run produces a long-tail trajectory; Heddle uses trajectory-aware scheduling to reduce its impact on overall rollout throughput.",
+      "exampleCn": "需要 50+ 次工具调用和 CI 运行的软件工程任务会产生长尾轨迹；Heddle 通过轨迹感知调度降低其对整体 rollout 吞吐量的影响。",
+      "category": "inference",
+      "difficulty": "advanced",
+      "related": [
+        "Rollout-as-a-Service",
+        "PARL",
+        "Batching"
+      ]
+    },
+    {
+      "id": "critical-steps",
+      "term": "Critical Steps",
+      "translation": "关键步骤数",
+      "definition": "A metric introduced by Kimi K2.5 for measuring computational cost in parallel agent systems, defined as the length of the longest sequential execution chain across all parallel sub-agents—analogous to the critical path in a computation graph. It incentivizes balanced work distribution over maximizing raw parallelism.",
+      "example": "Kimi K2.5's PARL reward penalizes high critical steps, pushing the orchestrator to split tasks so no single sub-agent becomes a bottleneck.",
+      "exampleCn": "Kimi K2.5 的 PARL 奖励惩罚高关键步骤数，促使编排器分配任务时避免单个子 agent 成为瓶颈。",
+      "category": "inference",
+      "difficulty": "advanced",
+      "related": [
+        "PARL",
+        "Long-Tail Trajectory"
+      ]
+    },
+    {
+      "id": "tool-shadowing",
+      "term": "Tool Shadowing",
+      "translation": "工具遮蔽攻击",
+      "definition": "An MCP security attack where a malicious server registers a tool with the same name as a trusted tool from a legitimate server. When the agent selects the tool by name, it may route the call—and any sensitive parameters—to the malicious implementation.",
+      "example": "A malicious MCP server registers a \"query_database\" tool that logs all SQL queries to an external endpoint, shadowing the legitimate postgres-mcp server's tool of the same name.",
+      "exampleCn": "恶意 MCP 服务器注册同名的 \"query_database\" 工具，将 agent 的数据库查询路由到攻击者的端点，遮蔽了合法服务器的同名工具。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Tool Poisoning",
+        "Red Teaming",
+        "Harness Engineering"
+      ]
+    },
+    {
+      "id": "acad-abstract",
+      "term": "Abstract",
+      "phonetic": "/ˈæbstrækt/",
+      "translation": "摘要",
+      "definition": "A concise summary at the beginning of a research paper that outlines the objectives, methods, results, and conclusions of the study.",
+      "example": "The abstract should be self-contained and not exceed 250 words.",
+      "exampleCn": "摘要应当自成一体，且不超过 250 词。",
+      "category": "academic",
+      "difficulty": "beginner",
+      "related": [
+        "Introduction",
+        "Conclusion"
+      ]
+    },
+    {
+      "id": "acad-methodology",
+      "term": "Methodology",
+      "phonetic": "/ˌmeθəˈdɒlədʒi/",
+      "translation": "方法论",
+      "definition": "The systematic framework of methods and principles used to conduct research, including experimental design, data collection, and analysis procedures.",
+      "example": "Our methodology follows a mixed-methods approach combining quantitative analysis with qualitative interviews.",
+      "exampleCn": "我们的方法论采用混合方法，将定量分析与定性访谈相结合。",
+      "category": "academic",
+      "difficulty": "beginner",
+      "related": [
+        "Experimental Design",
+        "Hypothesis"
+      ]
+    },
+    {
+      "id": "acad-peer-review",
+      "term": "Peer Review",
+      "phonetic": "/pɪər rɪˈvjuː/",
+      "translation": "同行评审",
+      "definition": "The evaluation of academic work by experts in the same field to ensure quality, validity, and originality before publication.",
+      "example": "The manuscript underwent double-blind peer review by three anonymous reviewers.",
+      "exampleCn": "手稿经过三位匿名审稿人的双盲同行评审。",
+      "category": "academic",
+      "difficulty": "beginner",
+      "related": [
+        "Rebuttal",
+        "Revision"
+      ]
+    },
+    {
+      "id": "acad-empirical",
+      "term": "Empirical",
+      "phonetic": "/ɪmˈpɪrɪkəl/",
+      "translation": "实证的",
+      "definition": "Based on observation, experimentation, or measurable evidence rather than theory or pure logic.",
+      "example": "We provide empirical evidence that larger models do not always outperform smaller, well-tuned ones.",
+      "exampleCn": "我们提供了实证证据，表明更大的模型并不总是优于精心调优的小模型。",
+      "category": "academic",
+      "difficulty": "intermediate",
+      "related": [
+        "Theoretical",
+        "Quantitative"
+      ]
+    },
+    {
+      "id": "acad-ablation-study",
+      "term": "Ablation Study",
+      "phonetic": "/əˈbleɪʃn ˈstʌdi/",
+      "translation": "消融实验",
+      "definition": "An experiment that systematically removes or disables components of a system to understand each component's contribution to overall performance.",
+      "example": "The ablation study reveals that removing the attention mechanism causes a 15% drop in accuracy.",
+      "exampleCn": "消融实验表明，移除注意力机制导致准确率下降 15%。",
+      "category": "academic",
+      "difficulty": "intermediate",
+      "related": [
+        "Benchmark",
+        "Evaluation"
+      ]
+    },
+    {
+      "id": "acad-reproducibility",
+      "term": "Reproducibility",
+      "phonetic": "/ˌriːprəˌdjuːsəˈbɪləti/",
+      "translation": "可复现性",
+      "definition": "The ability of an experiment or study to be repeated by independent researchers using the same methods and data, yielding consistent results.",
+      "example": "We release all code and data to ensure full reproducibility of our results.",
+      "exampleCn": "我们开源所有代码和数据，以确保结果的完全可复现性。",
+      "category": "academic",
+      "difficulty": "intermediate",
+      "related": [
+        "Open Source",
+        "Benchmark"
+      ]
+    },
+    {
+      "id": "acad-statistical-significance",
+      "term": "Statistical Significance",
+      "phonetic": "/stəˈtɪstɪkəl sɪɡˈnɪfɪkəns/",
+      "translation": "统计显著性",
+      "definition": "The likelihood that a result is not due to chance, typically measured by a p-value threshold (e.g., p < 0.05).",
+      "example": "The improvement is statistically significant with p < 0.01 across all evaluation sets.",
+      "exampleCn": "该改进在所有评估集上均达到统计显著性（p < 0.01）。",
+      "category": "academic",
+      "difficulty": "intermediate",
+      "related": [
+        "Confidence Interval",
+        "Hypothesis Testing"
+      ]
+    },
+    {
+      "id": "acad-citation",
+      "term": "Citation",
+      "phonetic": "/saɪˈteɪʃn/",
+      "translation": "引用",
+      "definition": "A reference to a published work used to credit the original source and support claims in academic writing.",
+      "example": "This paper has received over 10,000 citations since its publication in 2017.",
+      "exampleCn": "这篇论文自 2017 年发表以来已获得超过 10,000 次引用。",
+      "category": "academic",
+      "difficulty": "beginner",
+      "related": [
+        "Reference",
+        "h-index"
+      ]
+    },
+    {
+      "id": "acad-state-of-the-art",
+      "term": "State-of-the-Art (SOTA)",
+      "phonetic": "/steɪt əv ðə ɑːrt/",
+      "translation": "最先进水平",
+      "definition": "The highest level of performance achieved on a particular task or benchmark at a given point in time.",
+      "example": "Our model achieves new state-of-the-art results on 5 out of 8 benchmarks.",
+      "exampleCn": "我们的模型在 8 个基准中的 5 个上取得了新的最先进水平。",
+      "category": "academic",
+      "difficulty": "beginner",
+      "related": [
+        "Benchmark",
+        "Leaderboard"
+      ]
+    },
+    {
+      "id": "acad-literature-review",
+      "term": "Literature Review",
+      "phonetic": "/ˈlɪtrətʃər rɪˈvjuː/",
+      "translation": "文献综述",
+      "definition": "A comprehensive survey and critical analysis of existing research on a topic, used to establish context and identify gaps.",
+      "example": "A thorough literature review reveals that few studies have addressed this specific failure mode.",
+      "exampleCn": "全面的文献综述表明，很少有研究针对这一特定的失效模式。",
+      "category": "academic",
+      "difficulty": "beginner",
+      "related": [
+        "Related Work",
+        "Survey"
+      ]
+    },
+    {
+      "id": "biz-stakeholder",
+      "term": "Stakeholder",
+      "phonetic": "/ˈsteɪkhoʊldər/",
+      "translation": "利益相关方",
+      "definition": "A person, group, or organization with an interest or concern in a project or business outcome.",
+      "example": "We need to align all stakeholders before proceeding with the model deployment.",
+      "exampleCn": "在继续模型部署之前，我们需要与所有利益相关方达成一致。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "Decision Maker",
+        "Sponsor"
+      ]
+    },
+    {
+      "id": "biz-deliverable",
+      "term": "Deliverable",
+      "phonetic": "/dɪˈlɪvərəbl/",
+      "translation": "交付物",
+      "definition": "A tangible or intangible output produced as a result of project work, expected to be delivered to stakeholders.",
+      "example": "The key deliverables for Q2 include a fine-tuned model and an evaluation report.",
+      "exampleCn": "Q2 的关键交付物包括一个微调模型和一份评估报告。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "Milestone",
+        "Sprint"
+      ]
+    },
+    {
+      "id": "biz-bandwidth",
+      "term": "Bandwidth",
+      "phonetic": "/ˈbændwɪdθ/",
+      "translation": "（人力/时间）余量",
+      "definition": "In business context, the capacity or availability of a person or team to take on additional work.",
+      "example": "I don't have the bandwidth to take on another project this quarter.",
+      "exampleCn": "这个季度我没有余量再接另一个项目了。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "Capacity",
+        "Workload"
+      ]
+    },
+    {
+      "id": "biz-roi",
+      "term": "ROI (Return on Investment)",
+      "phonetic": "/ɑːr oʊ aɪ/",
+      "translation": "投资回报率",
+      "definition": "A measure of the profitability or efficiency of an investment, calculated as the net gain divided by the cost of investment.",
+      "example": "The ROI of deploying the new model is estimated at 3x within the first year.",
+      "exampleCn": "部署新模型的投资回报率预计在第一年内达到 3 倍。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "Cost-Benefit Analysis",
+        "TCO"
+      ]
+    },
+    {
+      "id": "biz-bottleneck",
+      "term": "Bottleneck",
+      "phonetic": "/ˈbɒtlnek/",
+      "translation": "瓶颈",
+      "definition": "A point of congestion or blockage in a process that limits the overall throughput or progress.",
+      "example": "Data labeling has become the bottleneck in our model improvement pipeline.",
+      "exampleCn": "数据标注已成为我们模型改进流程中的瓶颈。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "Throughput",
+        "Optimization"
+      ]
+    },
+    {
+      "id": "biz-leverage",
+      "term": "Leverage",
+      "phonetic": "/ˈlevərɪdʒ/",
+      "translation": "利用 / 杠杆",
+      "definition": "To use a resource, advantage, or situation strategically to achieve a desired outcome or maximize impact.",
+      "example": "We can leverage our existing data pipeline to accelerate the new project.",
+      "exampleCn": "我们可以利用现有的数据流水线来加速新项目。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "Utilize",
+        "Capitalize"
+      ]
+    },
+    {
+      "id": "biz-alignment",
+      "term": "Alignment (Business)",
+      "phonetic": "/əˈlaɪnmənt/",
+      "translation": "对齐（业务）",
+      "definition": "The state where all team members, departments, or stakeholders share a common understanding of goals, priorities, and strategies.",
+      "example": "We need better cross-team alignment on the product roadmap before the sprint starts.",
+      "exampleCn": "在 sprint 开始前，我们需要就产品路线图实现更好的跨团队对齐。",
+      "category": "business",
+      "difficulty": "intermediate",
+      "related": [
+        "Stakeholder",
+        "OKR"
+      ]
+    },
+    {
+      "id": "biz-iterate",
+      "term": "Iterate",
+      "phonetic": "/ˈɪtəreɪt/",
+      "translation": "迭代",
+      "definition": "To repeat a process of refining and improving a product, feature, or strategy based on feedback and data.",
+      "example": "Let's ship the MVP first and iterate based on user feedback.",
+      "exampleCn": "先发布 MVP，然后根据用户反馈迭代。",
+      "category": "business",
+      "difficulty": "beginner",
+      "related": [
+        "MVP",
+        "Agile"
+      ]
+    },
+    {
+      "id": "biz-scalable",
+      "term": "Scalable",
+      "phonetic": "/ˈskeɪləbl/",
+      "translation": "可扩展的",
+      "definition": "The ability of a system, process, or business model to handle growing amounts of work or to be easily expanded.",
+      "example": "The solution needs to be scalable to millions of daily active users.",
+      "exampleCn": "该方案需要能够扩展到数百万日活用户。",
+      "category": "business",
+      "difficulty": "intermediate",
+      "related": [
+        "Infrastructure",
+        "Architecture"
+      ]
+    },
+    {
+      "id": "biz-due-diligence",
+      "term": "Due Diligence",
+      "phonetic": "/djuː ˈdɪlɪdʒəns/",
+      "translation": "尽职调查",
+      "definition": "A comprehensive investigation or audit conducted before making a business decision, such as a partnership, acquisition, or technology adoption.",
+      "example": "We conducted due diligence on three open-source LLM frameworks before choosing one.",
+      "exampleCn": "在做出选择之前，我们对三个开源 LLM 框架进行了尽职调查。",
+      "category": "business",
+      "difficulty": "intermediate",
+      "related": [
+        "Risk Assessment",
+        "Evaluation"
+      ]
+    },
+    {
+      "id": "gen-trade-off",
+      "term": "Trade-off",
+      "phonetic": "/ˈtreɪdɒf/",
+      "translation": "权衡 / 取舍",
+      "definition": "A situation where gaining something desirable requires giving up something else, common in engineering and design decisions.",
+      "example": "There is always a trade-off between model accuracy and inference latency.",
+      "exampleCn": "模型精度和推理延迟之间总是存在权衡。",
+      "category": "general",
+      "difficulty": "beginner",
+      "related": [
+        "Optimization",
+        "Constraint"
+      ]
+    },
+    {
+      "id": "gen-robust",
+      "term": "Robust",
+      "phonetic": "/roʊˈbʌst/",
+      "translation": "鲁棒的 / 稳健的",
+      "definition": "The ability of a system or model to maintain performance under varying conditions, including adversarial inputs or distribution shifts.",
+      "example": "The model should be robust to minor typos and formatting variations in the input.",
+      "exampleCn": "模型应对输入中的轻微错字和格式变化保持鲁棒性。",
+      "category": "general",
+      "difficulty": "beginner",
+      "related": [
+        "Generalization",
+        "Adversarial"
+      ]
+    },
+    {
+      "id": "gen-bottleneck-tech",
+      "term": "Overhead",
+      "phonetic": "/ˈoʊvərhed/",
+      "translation": "开销",
+      "definition": "Additional resources (time, memory, computation) required beyond the core task, often introduced by abstractions, protocols, or coordination.",
+      "example": "The communication overhead between GPUs becomes the dominant cost at 1024-node scale.",
+      "exampleCn": "在 1024 节点规模下，GPU 间的通信开销成为主要成本。",
+      "category": "general",
+      "difficulty": "beginner",
+      "related": [
+        "Latency",
+        "Throughput"
+      ]
+    },
+    {
+      "id": "gen-paradigm",
+      "term": "Paradigm",
+      "phonetic": "/ˈpærədaɪm/",
+      "translation": "范式",
+      "definition": "A fundamental model, framework, or pattern of thinking that defines the approach to a particular domain or problem.",
+      "example": "The shift from supervised learning to self-supervised pre-training represents a paradigm change in NLP.",
+      "exampleCn": "从监督学习到自监督预训练的转变代表了 NLP 的范式变革。",
+      "category": "general",
+      "difficulty": "intermediate",
+      "related": [
+        "Framework",
+        "Approach"
+      ]
+    },
+    {
+      "id": "gen-agnostic",
+      "term": "Agnostic",
+      "phonetic": "/æɡˈnɒstɪk/",
+      "translation": "无关的 / 不可知的",
+      "definition": "In technology, describing something that is designed to work independently of a specific system, platform, or implementation detail.",
+      "example": "The evaluation framework is model-agnostic and can be applied to any LLM.",
+      "exampleCn": "该评估框架与模型无关，可以应用于任何大语言模型。",
+      "category": "general",
+      "difficulty": "intermediate",
+      "related": [
+        "Framework",
+        "Abstraction"
+      ]
+    },
+    {
+      "id": "gen-caveat",
+      "term": "Caveat",
+      "phonetic": "/ˈkæviæt/",
+      "translation": "注意事项 / 警告",
+      "definition": "A warning or cautionary statement about potential limitations, risks, or conditions that should be considered.",
+      "example": "One caveat is that these results were obtained on a relatively small test set.",
+      "exampleCn": "需要注意的是，这些结果是在一个相对较小的测试集上获得的。",
+      "category": "general",
+      "difficulty": "intermediate",
+      "related": [
+        "Limitation",
+        "Disclaimer"
+      ]
+    },
+    {
+      "id": "gen-non-trivial",
+      "term": "Non-trivial",
+      "phonetic": "/nɒn ˈtrɪviəl/",
+      "translation": "非平凡的 / 不简单的",
+      "definition": "Describing a problem, task, or implementation that requires significant effort, expertise, or computation — more complex than it may initially appear.",
+      "example": "Supporting multi-turn tool use in a production agent is a non-trivial engineering challenge.",
+      "exampleCn": "在生产环境的 agent 中支持多轮工具调用是一个非平凡的工程挑战。",
+      "category": "general",
+      "difficulty": "beginner",
+      "related": [
+        "Complex",
+        "Challenging"
+      ]
+    },
+    {
+      "id": "gen-verbose",
+      "term": "Verbose",
+      "phonetic": "/vɜːrˈboʊs/",
+      "translation": "冗长的 / 详细输出模式",
+      "definition": "Using more words or output than necessary. In programming, a mode that provides detailed information for debugging.",
+      "example": "The model tends to be verbose when answering simple yes-or-no questions.",
+      "exampleCn": "模型在回答简单的是非问题时往往过于冗长。",
+      "category": "general",
+      "difficulty": "beginner",
+      "related": [
+        "Concise",
+        "Debug"
+      ]
+    },
+    {
+      "id": "gen-deprecated",
+      "term": "Deprecated",
+      "phonetic": "/ˈdeprəkeɪtɪd/",
+      "translation": "已弃用的",
+      "definition": "Marked as obsolete and no longer recommended for use, typically with a newer replacement available.",
+      "example": "The legacy API endpoint has been deprecated; please migrate to v2 by Q3.",
+      "exampleCn": "旧版 API 端点已被弃用，请在 Q3 前迁移到 v2。",
+      "category": "general",
+      "difficulty": "beginner",
+      "related": [
+        "Legacy",
+        "Migration"
+      ]
+    },
+    {
+      "id": "specialized-pretraining",
+      "term": "Specialized Pretraining (SPT)",
+      "phonetic": "/ˈspeʃəlaɪzd priːˈtreɪnɪŋ/",
+      "translation": "专业化预训练",
+      "definition": "A training strategy where domain-specific data (typically reserved for fine-tuning) is mixed into the pretraining phase at a small fraction, allowing the model to learn domain knowledge with less overfitting.",
+      "example": "Using SPT on ChemPile, a 1B model outperformed a 3B standard pretrained model on chemistry benchmarks.",
+      "exampleCn": "在 ChemPile 上使用 SPT，一个 1B 参数模型在化学基准测试上超过了 3B 参数的标准预训练模型。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Continual Pre-training",
+        "Fine-tuning",
+        "Catastrophic Forgetting"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "catastrophic-forgetting",
+      "term": "Catastrophic Forgetting",
+      "phonetic": "/kəˈtæstrəfɪk fəˈɡetɪŋ/",
+      "translation": "灾难性遗忘",
+      "definition": "The tendency of a neural network to abruptly lose previously acquired knowledge when fine-tuned on new data, as new gradient updates overwrite earlier learned representations.",
+      "example": "Fine-tuning a general model on medical data caused catastrophic forgetting of its original language abilities.",
+      "exampleCn": "在医疗数据上微调通用模型导致了灾难性遗忘，模型丧失了原有的语言能力。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Continual Pre-training",
+        "Specialized Pretraining (SPT)",
+        "LoRA (Low-Rank Adaptation)"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "prompt-cache",
+      "term": "Prompt Cache",
+      "phonetic": "/prɒmt kæʃ/",
+      "translation": "提示词缓存",
+      "definition": "A mechanism that stores and reuses the KV states of static prompt prefixes across multiple inference calls, avoiding redundant computation for repeated context.",
+      "example": "Claude Code uses aggressive prompt cache reuse to avoid reprocessing the repository structure on every turn.",
+      "exampleCn": "Claude Code 大量复用提示词缓存，避免每轮对话都重新处理代码仓库结构。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "KV Cache",
+        "Context Engineering",
+        "Harness Engineering"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "credit-assignment",
+      "term": "Credit Assignment",
+      "phonetic": "/ˈkredɪt əˈsaɪnmənt/",
+      "translation": "信用分配 / 贡献归因",
+      "definition": "The problem of determining which actions or components in a multi-step or multi-agent system were responsible for the final outcome, critical for effective reinforcement learning in agentic systems where many sub-actions contribute to a single reward signal.",
+      "example": "PARL freezes sub-agent weights and only trains the orchestrator, isolating credit assignment to the routing decisions.",
+      "exampleCn": "PARL 冻结子 agent 权重只训练编排器，将信用分配隔离到路由决策上。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "RLHF",
+        "PARL",
+        "Reward Model"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "curriculum-learning",
+      "term": "Curriculum Learning",
+      "phonetic": "/kəˈrɪkjʊləm ˈlɜːrnɪŋ/",
+      "translation": "课程学习",
+      "definition": "A training strategy inspired by human education that presents training data in a meaningful order — typically from easier to harder examples — rather than random sampling, enabling the model to build foundational capabilities before tackling complex tasks.",
+      "example": "daVinci-LLM uses a dual-stage adaptive curriculum: foundational capabilities first, then reasoning-intensive augmentation.",
+      "exampleCn": "daVinci-LLM 使用双阶段自适应课程：先构建基础能力，再进行推理密集型增强。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Curation",
+        "Data Mixing Ratio",
+        "Scaling Laws"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "data-provenance",
+      "term": "Data Provenance",
+      "phonetic": "/ˈdeɪtə ˈprɒvənəns/",
+      "translation": "数据溯源",
+      "definition": "The systematic tracking of the origin, transformations, and lineage of training data throughout its lifecycle — including source, licensing, processing steps, and version history — essential for regulatory compliance (e.g., EU AI Act) and reproducibility.",
+      "example": "Common Corpus tracks data provenance for all 2 trillion tokens, ensuring every document is either public domain or permissively licensed.",
+      "exampleCn": "Common Corpus 对全部 2 万亿 token 进行数据溯源，确保每份文档要么属于公共领域，要么采用宽松许可。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Curation",
+        "Data Contamination"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "semantic-deduplication",
+      "term": "Semantic Deduplication",
+      "phonetic": "/sɪˈmæntɪk diːˌdjuːplɪˈkeɪʃn/",
+      "translation": "语义去重",
+      "definition": "A data curation technique that removes semantically redundant examples — documents conveying the same information but with different wording — by comparing embedding-space similarity rather than surface-level n-gram overlap, complementing traditional MinHash deduplication.",
+      "example": "SemDeDup removes 30% of semantically redundant data while maintaining or improving model performance, achieving 1.4x training efficiency.",
+      "exampleCn": "SemDeDup 移除 30% 的语义冗余数据，同时保持或提升模型性能，实现 1.4 倍训练效率。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Data Deduplication",
+        "Data Curation",
+        "Data Quality"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "neuro-symbolic-reasoning",
+      "term": "Neuro-Symbolic Reasoning",
+      "phonetic": "/ˈnjʊəroʊ sɪmˈbɒlɪk ˈriːzənɪŋ/",
+      "translation": "神经符号推理",
+      "definition": "A hybrid AI approach that combines neural networks' pattern recognition with symbolic systems' logical manipulation — the neural component handles perception and representation, while the symbolic component executes structured operations like code generation and formal verification.",
+      "example": "Thinking with Tables uses neuro-symbolic reasoning to generate auxiliary code for tabular operations, achieving 10% accuracy improvement over pure neural approaches.",
+      "exampleCn": "Thinking with Tables 使用神经符号推理生成辅助代码来处理表格操作，准确率比纯神经方法提升 10%。",
+      "category": "architecture",
+      "difficulty": "advanced",
+      "related": [
+        "Transformer",
+        "Chain-of-Thought"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "parl",
+      "term": "PARL",
+      "phonetic": "/ˈpɑːrl/",
+      "translation": "并行智能体强化学习",
+      "definition": "Parallel-Agent Reinforcement Learning: a training framework where an orchestrator model learns to decompose tasks and dispatch them to parallel sub-agents, optimizing coordination through RL with reward shaping to prevent serial collapse and spurious parallelism.",
+      "example": "Kimi K2.5 uses PARL to train the orchestrator to spawn and balance sub-agents, reducing end-to-end task latency via learned parallelism.",
+      "exampleCn": "Kimi K2.5 使用 PARL 训练主控 Agent 学会拆分和分配子任务，通过学到的并行化降低任务整体延迟。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "Agent Swarm",
+        "Credit Assignment",
+        "Outcome-Based Reward"
+      ]
+    },
+    {
+      "id": "agent-swarm",
+      "term": "Agent Swarm",
+      "phonetic": "/ˈeɪdʒənt swɔːrm/",
+      "translation": "智能体群",
+      "definition": "An agentic architecture where a trainable orchestrator dynamically spawns and coordinates multiple specialized sub-agents to execute parallel subtasks, enabling complex task decomposition and concurrent execution.",
+      "example": "In Kimi K2.5's Agent Swarm, the orchestrator uses create_subagent and assign_task tools to parallelize a multi-step coding task across frozen sub-agents.",
+      "exampleCn": "在 Kimi K2.5 的 Agent Swarm 中，主控 Agent 通过 create_subagent 和 assign_task 工具，将一个多步骤编程任务拆分给多个冻结子 Agent 并行执行。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "PARL",
+        "Credit Assignment",
+        "Multi-Agent System"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "intelligence-density",
+      "term": "Intelligence Density",
+      "phonetic": "/ɪnˈtelɪdʒəns ˈdensɪti/",
+      "translation": "智能密度",
+      "definition": "A metric that measures model capability relative to its size, quantified as the negative log of error rate per unit of memory or parameter count. Higher intelligence density means more capable per byte.",
+      "example": "PrismML claims 1-bit Bonsai 8B achieves over 10x the intelligence density of full-precision 8B models due to 14x memory compression with benchmark-parity performance.",
+      "exampleCn": "PrismML 声称 1-bit Bonsai 8B 在 benchmark 性能持平的情况下，内存占用缩小 14 倍，其智能密度是全精度 8B 模型的 10 倍以上。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Quantization",
+        "Weight Compression",
+        "Edge Inference"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "outcome-based-reward",
+      "term": "Outcome-Based Reward",
+      "phonetic": "/ˈaʊtkʌm beɪst rɪˈwɔːrd/",
+      "translation": "结果导向奖励",
+      "definition": "A reinforcement learning reward design where the signal is derived solely from whether the final task outcome is correct or successful, rather than from intermediate step-level supervision. Contrasts with process-reward models (PRM).",
+      "example": "All three production agentic RL systems (Kimi, Cursor, Chroma) use outcome-based rewards: the agent receives signal only after the full task completes, not at each intermediate tool call.",
+      "exampleCn": "Kimi、Cursor、Chroma 三个生产级 Agent RL 系统都使用结果导向奖励：只有在完整任务完成后 Agent 才收到信号，而不是在每次中间工具调用时。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "RLHF",
+        "Process Reward Model",
+        "PARL"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "production-harness",
+      "term": "Production Harness",
+      "translation": "生产 harness（训练环境）",
+      "definition": "The complete set of tools, prompts, execution environments, and infrastructure used in a live production system, repurposed as the training environment for RL rollouts so that the model learns in conditions identical to deployment.",
+      "example": "Cursor trained Composer 2 inside a shadow deployment of its production harness, ensuring the model's RL experience matched exactly what real users encounter.",
+      "exampleCn": "Cursor 在其生产 harness 的影子部署中训练 Composer 2，确保模型的 RL 体验与真实用户场景完全一致。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Shadow Deployment",
+        "PARL",
+        "Agent Swarm"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "shadow-deployment",
+      "term": "Shadow Deployment",
+      "translation": "影子部署",
+      "definition": "A parallel replica of a production system maintained solely for training or testing purposes, receiving the same inputs as the live system but without affecting real users.",
+      "example": "Cursor runs a shadow deployment of its backend during RL training so tool behaviors like semantic search behave identically to production.",
+      "exampleCn": "Cursor 在 RL 训练期间运行后端的影子部署，使语义搜索等工具行为与生产环境完全一致。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Production Harness"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "generative-reward-model",
+      "term": "Generative Reward Model",
+      "phonetic": "/ˌdʒɛnəˈreɪtɪv rɪˈwɔːrd ˈmɒdəl/",
+      "translation": "生成式奖励模型",
+      "definition": "A language model used as a reward signal during RL training, capable of providing fine-grained, open-ended evaluations (e.g., helpfulness, style, correctness) beyond simple binary pass/fail signals.",
+      "example": "Kimi K2.5 uses Generative Reward Models to score open-ended responses, with multiple GRM rubrics rotated to mitigate reward hacking.",
+      "exampleCn": "Kimi K2.5 使用生成式奖励模型对开放式回答打分，并轮换多种评分标准以抑制奖励黑客行为。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "Outcome-Based Reward",
+        "RLHF",
+        "Reward Hacking"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "process-reward-model",
+      "term": "Process Reward Model",
+      "phonetic": "/ˈprɒsɛs rɪˈwɔːrd ˈmɒdəl/",
+      "translation": "过程奖励模型",
+      "definition": "A reward model that scores intermediate reasoning steps during a model's generation, rather than only evaluating the final output. Requires step-level human annotations and is susceptible to reward hacking on intermediate states.",
+      "example": "Process reward models require annotators to label each chain-of-thought step as correct or incorrect, making them costly to build at scale.",
+      "exampleCn": "过程奖励模型需要标注者对每个思维链步骤打分，导致大规模构建成本很高。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "Outcome-Based Reward",
+        "Generative Reward Model",
+        "RLHF"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "distribution-shift",
+      "term": "Distribution Shift",
+      "phonetic": "/ˌdɪstrɪˈbjuːʃən ʃɪft/",
+      "translation": "分布偏移",
+      "definition": "The phenomenon where the statistical distribution of data encountered during deployment differs from the distribution used during training, causing model performance to degrade in real-world conditions.",
+      "example": "Training agents in synthetic environments causes distribution shift: policies that work in simulation often fail when exposed to real tool APIs with unexpected edge cases.",
+      "exampleCn": "在合成环境中训练 Agent 会导致分布偏移：在模拟中有效的策略往往在遇到真实工具 API 的边缘情况时失败。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Production Harness",
+        "Generalization"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "rejection-sampling-fine-tuning",
+      "term": "Rejection Sampling Fine-Tuning",
+      "translation": "拒绝采样微调",
+      "definition": "A training technique where the model generates multiple candidate trajectories for each task, selects only the successful ones, and uses them as supervised fine-tuning data for the next training stage. Creates a self-improving data pipeline from RL rollouts.",
+      "example": "Kimi K2.5 applies rejection sampling fine-tuning after each RL phase: successful agent trajectories are extracted and used as SFT data, with each stage building on the last.",
+      "exampleCn": "Kimi K2.5 在每轮 RL 阶段后执行拒绝采样微调：提取成功的 Agent 轨迹作为 SFT 数据，逐阶段叠加提升。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "PARL",
+        "Outcome-Based Reward",
+        "SFT"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "fuzzing",
+      "term": "Fuzzing",
+      "phonetic": "/ˈfʌzɪŋ/",
+      "translation": "模糊测试",
+      "definition": "An automated software testing technique that feeds large volumes of random or semi-random inputs to a program to discover crashes, memory errors, and security vulnerabilities at scale.",
+      "example": "Google's OSS-Fuzz has run continuous fuzzing against open source projects for years, accumulating millions of CPU hours to surface memory corruption bugs.",
+      "exampleCn": "Google 的 OSS-Fuzz 对开源项目进行了多年的持续模糊测试，积累了数百万 CPU 小时来发现内存损坏漏洞。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Red Teaming",
+        "Memory Corruption",
+        "Zero-Day"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "memory-corruption",
+      "term": "Memory Corruption",
+      "phonetic": "/ˈmeməri kəˌrʌpʃn/",
+      "translation": "内存损坏",
+      "definition": "A class of software vulnerabilities where a program writes data outside its allocated memory region, potentially enabling attackers to hijack control flow or leak sensitive data. Common types include buffer overflows, use-after-free, and heap corruption.",
+      "example": "Anthropic's Claude found over 500 high-severity memory corruption vulnerabilities in well-fuzzed open source projects without any custom tooling.",
+      "exampleCn": "Anthropic 的 Claude 在无需定制工具的情况下，在经过充分模糊测试的开源项目中发现了 500 多个高危内存损坏漏洞。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Fuzzing",
+        "Red Teaming",
+        "Zero-Day"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "zero-day",
+      "term": "Zero-Day",
+      "phonetic": "/ˈzɪərəʊ deɪ/",
+      "translation": "零日漏洞",
+      "definition": "A software vulnerability that is unknown to the vendor or has no available patch, giving defenders zero days to respond before potential exploitation. Also used to describe the exploit targeting such a vulnerability.",
+      "example": "AI agents can now discover zero-days in production software at scale, shifting the traditional asymmetry between attackers and defenders.",
+      "exampleCn": "AI agent 现在可以大规模发现生产软件中的零日漏洞，改变了攻防之间的传统不对称性。",
+      "category": "evaluation",
+      "difficulty": "beginner",
+      "related": [
+        "Fuzzing",
+        "Memory Corruption",
+        "Red Teaming"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "evolutionary-strategy-design",
+      "term": "Evolutionary Strategy Design",
+      "translation": "进化式策略设计",
+      "definition": "A data engineering methodology where an AI framework autonomously generates, evaluates, and iteratively refines data processing strategies across generations, rather than relying on manually crafted rules. Each iteration accumulates knowledge in experience and strategy pools.",
+      "example": "DataEvolve applies evolutionary strategy design to run 30 iterations per data category, producing Darwin-CC which outperforms manually curated datasets like DCLM and FineWeb-Edu.",
+      "exampleCn": "DataEvolve 对每个数据类别运行 30 轮进化式策略设计，产出的 Darwin-CC 超越了 DCLM 和 FineWeb-Edu 等人工策划的数据集。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Data Curation",
+        "Synthetic Data",
+        "Continual Pre-training"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "v-mad-bugs",
+      "term": "MAD Bugs",
+      "translation": "月度 AI 漏洞发现项目",
+      "definition": "Month of AI-Discovered Bugs: a structured initiative where AI models are systematically used to find zero-day vulnerabilities in production software.",
+      "example": "Claude participated in MAD Bugs and found over 500 high-severity zero-days in open-source software.",
+      "exampleCn": "Claude 参与了 MAD Bugs 项目，在开源软件中发现了超过 500 个高危零日漏洞。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Zero-Day",
+        "Exploit Development"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "v-agentic-rl",
+      "term": "Agentic RL",
+      "translation": "智能体强化学习",
+      "definition": "Reinforcement learning applied to train AI agents that operate in multi-step, tool-using environments with outcome-based reward signals rather than step-by-step supervision.",
+      "example": "Kimi K2.5, Cursor Composer 2, and Chroma Context-1 all use Agentic RL trained inside their production harnesses.",
+      "exampleCn": "Kimi K2.5、Cursor Composer 2 和 Chroma Context-1 都在生产环境中使用 Agentic RL 进行训练。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "PARL",
+        "Agent Swarm",
+        "Outcome-based Reward"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "v-outcome-reward",
+      "term": "Outcome-based Reward",
+      "translation": "结果导向奖励",
+      "definition": "A reinforcement learning reward signal derived purely from verifiable end-task outcomes (e.g., tests pass / shell obtained) rather than step-level human annotations.",
+      "example": "Using outcome-based reward, the agent is rewarded only when the final answer is correct, not for intermediate reasoning steps.",
+      "exampleCn": "使用结果导向奖励时，智能体仅在最终答案正确时获得奖励，而非因中间推理步骤。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Agentic RL",
+        "GRPO",
+        "RLHF"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "v-rop-chain",
+      "term": "ROP Chain",
+      "phonetic": "/ɑːr oʊ piː tʃeɪn/",
+      "translation": "返回导向编程链",
+      "definition": "Return-Oriented Programming chain: a sequence of small existing code snippets (gadgets) chained together to execute arbitrary instructions, bypassing code-injection defenses.",
+      "example": "Claude autonomously constructed a ROP chain from available kernel gadgets to develop the FreeBSD exploit.",
+      "exampleCn": "Claude 从可用内核代码片段中自主构造了一条 ROP Chain，用于开发 FreeBSD 漏洞利用程序。",
+      "category": "evaluation",
+      "difficulty": "advanced",
+      "related": [
+        "Zero-Day",
+        "Exploit Development"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "v-component-manipulation",
+      "term": "Component Manipulation",
+      "translation": "组件操纵攻击",
+      "definition": "An attack strategy against MCP servers that distributes malicious logic across multiple components (tools, resources, prompts) to evade single-point detection while achieving system compromise through their composition.",
+      "example": "The paper showed that component manipulation attacks on MCP servers outperform single-component attacks because malicious intent is dispersed.",
+      "exampleCn": "研究表明，对 MCP 服务器的组件操纵攻击比单组件攻击更有效，因为恶意意图被分散到各个组件中。",
+      "category": "evaluation",
+      "difficulty": "advanced",
+      "related": [
+        "Tool Poisoning",
+        "Prompt Injection",
+        "MCP"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "train-to-test-scaling",
+      "term": "Train-to-Test Scaling",
+      "phonetic": "/treɪn tə test ˈskeɪlɪŋ/",
+      "translation": "训练-推理联合缩放",
+      "definition": "A scaling framework (T² Scaling Laws) that jointly optimizes model size, training tokens, and inference-time compute samples under a fixed end-to-end budget, extending Chinchilla laws to account for test-time scaling costs.",
+      "example": "T² Scaling Laws show that when test-time scaling is available, optimal pretraining shifts radically into the overtraining regime.",
+      "exampleCn": "T² 缩放定律表明，当推理时可做 test-time scaling 时，最优预训练策略会大幅偏向「过训练」方向。",
+      "category": "scaling",
+      "difficulty": "advanced",
+      "related": [
+        "Chinchilla",
+        "Test-Time Scaling",
+        "Overtraining"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "overtraining",
+      "term": "Overtraining",
+      "phonetic": "/ˌoʊvərˈtreɪnɪŋ/",
+      "translation": "过训练",
+      "definition": "Training a model on significantly more tokens than Chinchilla-optimal recommendations suggest, which becomes beneficial when test-time scaling (repeated sampling) is part of the inference strategy.",
+      "example": "Under T² scaling, overtraining a smaller model can outperform a Chinchilla-optimal larger model when both use the same total compute budget.",
+      "exampleCn": "在 T² 缩放框架下，对小模型进行过训练，在相同总计算预算内可能优于 Chinchilla 最优配置的大模型。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Chinchilla",
+        "Train-to-Test Scaling",
+        "Scaling Laws"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "context-rot",
+      "term": "Context Rot",
+      "phonetic": "/ˈkɒntekst rɒt/",
+      "translation": "上下文腐烂",
+      "definition": "The degradation of LLM agent performance as irrelevant or redundant information accumulates in the context window during multi-turn agentic tasks, increasing cost and reducing generation quality.",
+      "example": "Chroma's Context-1 addresses context rot by training the model to actively prune irrelevant retrieved documents during multi-hop search.",
+      "exampleCn": "Chroma 的 Context-1 通过训练模型主动剪除无关检索文档，来解决多轮搜索过程中的上下文腐烂问题。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Self-Editing Context",
+        "RAG",
+        "Context Window"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "self-editing-context",
+      "term": "Self-Editing Context",
+      "phonetic": "/self ˈedɪtɪŋ ˈkɒntekst/",
+      "translation": "自编辑上下文",
+      "definition": "An agentic capability where a model actively decides which parts of its accumulated context to retain or discard, allowing long-horizon tasks to continue within a bounded context window.",
+      "example": "Chroma Context-1 uses self-editing context to selectively prune retrieved documents, freeing space for further multi-hop search without losing critical information.",
+      "exampleCn": "Chroma Context-1 通过自编辑上下文，在多跳搜索中选择性地丢弃已检索文档，在有限上下文窗口内继续长任务。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Context Rot",
+        "RAG",
+        "Multi-hop Retrieval"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "agentic-harness",
+      "term": "Agentic Harness",
+      "phonetic": "/eɪˈdʒentɪk ˈhɑːrnɪs/",
+      "translation": "智能体训练框架",
+      "definition": "The software scaffold surrounding an LLM agent that manages tools, prompts, state, and control flow during both training rollouts and production inference, ensuring the model trains in the same environment it will be deployed in.",
+      "example": "Cursor maintains a shadow deployment of its backend as an agentic harness so Composer 2 trains with identical tool behaviors to production.",
+      "exampleCn": "Cursor 维护了一套 shadow backend 作为智能体训练框架，确保 Composer 2 在与生产完全一致的工具环境中进行 RL 训练。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Agentic RL",
+        "Production Harness",
+        "PARL"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "parallel-agent-rl",
+      "term": "PARL (Parallel-Agent Reinforcement Learning)",
+      "translation": "并行 Agent 强化学习",
+      "definition": "A training paradigm where an orchestrator model learns to decompose tasks and dispatch them to parallel sub-agents through reinforcement learning, with sub-agents frozen to enable clean credit assignment.",
+      "example": "Kimi K2.5 uses PARL to train its Agent Swarm, reducing inference latency by up to 4.5× on complex multi-source tasks.",
+      "exampleCn": "Kimi K2.5 使用 PARL 训练其 Agent Swarm，在复杂多源任务上将推理延迟降低最多 4.5 倍。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "Agent Swarm",
+        "PARL",
+        "Reinforcement Learning"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "serial-collapse",
+      "term": "Serial Collapse",
+      "translation": "串行坍塌",
+      "definition": "A training failure mode in parallel agent systems where the orchestrator defaults to single-agent sequential execution instead of leveraging parallelism, representing a local optimum in the reward landscape.",
+      "example": "To prevent serial collapse, Kimi's PARL reward includes a parallelism incentive that encourages the orchestrator to spawn sub-agents.",
+      "exampleCn": "为防止串行坍塌，Kimi 的 PARL 奖励中包含并行激励项，促使 orchestrator 主动派生子 agent。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "PARL",
+        "Agent Swarm",
+        "Spurious Parallelism"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "spurious-parallelism",
+      "term": "Spurious Parallelism",
+      "translation": "虚假并行",
+      "definition": "A reward-hacking behavior in multi-agent training where the orchestrator spawns many sub-agents without meaningful task decomposition, solely to collect parallelism reward signals.",
+      "example": "The finish reward component in PARL penalizes spurious parallelism by requiring sub-agents to actually complete assigned subtasks.",
+      "exampleCn": "PARL 中的完成奖励通过要求子 agent 真正完成分配任务，来惩罚虚假并行行为。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "PARL",
+        "Serial Collapse",
+        "Reward Hacking"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "thinking-redaction",
+      "term": "Thinking Redaction",
+      "translation": "思维链隐藏",
+      "definition": "A deployment practice where a model's internal chain-of-thought (extended thinking) tokens are generated but hidden from users, reducing token costs and preventing adversarial exploitation of reasoning traces.",
+      "example": "Anthropic rolled out thinking redaction in Claude Code starting March 2026, which correlated with measurable degradation in complex engineering tasks as reasoning depth dropped 73%.",
+      "exampleCn": "Anthropic 于 2026 年 3 月开始在 Claude Code 中推行思维链隐藏，与此同时复杂工程任务质量出现可测量的下降，推理深度降低了 73%。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Extended Thinking",
+        "Chain-of-Thought",
+        "Test-Time Compute"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "pass-at-k",
+      "term": "pass@k",
+      "phonetic": "/pæs æt keɪ/",
+      "translation": "pass@k 采样评估",
+      "definition": "An evaluation metric for code generation and reasoning models that measures the probability of at least one correct solution appearing among k independent samples. Unlike greedy decoding metrics, pass@k rewards models whose output distribution covers the correct answer even if no single sample is highly confident.",
+      "example": "Under T² Scaling Laws, a small overtrained model achieves higher pass@k than a Chinchilla-optimal larger model, because its samples are more diverse and errors less correlated.",
+      "exampleCn": "在 T² 缩放定律下，过训练的小模型 pass@k 表现优于 Chinchilla 最优的大模型，因为其采样多样性更高、错误相关性更低。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Test-Time Scaling",
+        "Best-of-N",
+        "Train-to-Test Scaling"
+      ]
+    },
+    {
+      "id": "agent-harness",
+      "term": "Agent Harness",
+      "phonetic": "/ˈeɪdʒənt ˈhɑːrnɪs/",
+      "translation": "Agent 执行框架",
+      "definition": "The software scaffold surrounding an LLM that manages context, tool use, prompts, state, and control flow to enable multi-step agentic behavior beyond what the model alone can do.",
+      "example": "Claude Code and Codex are coding harnesses—a specialized form of agent harness—that wrap an LLM with repo context, tool execution, and iterative feedback to dramatically improve coding performance.",
+      "exampleCn": "Claude Code 和 Codex 是代码 harness——agent harness 的特化形式——它们通过仓库上下文、工具执行和迭代反馈包裹 LLM，大幅提升编码能力。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Context Engineering",
+        "Tool Use",
+        "PARL"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "reward-hacking",
+      "term": "Reward Hacking",
+      "phonetic": "/rɪˈwɔːrd ˈhækɪŋ/",
+      "translation": "奖励黑客 / 奖励作弊",
+      "definition": "The phenomenon where an RL-trained model exploits loopholes in the reward function to achieve high reward without genuinely completing the intended task, a core challenge in agentic RL systems that rely on automated reward signals.",
+      "example": "Kimi K2.5 rotates multiple GRM rubrics during training to prevent reward hacking — a single evaluator is easily gamed by the model.",
+      "exampleCn": "Kimi K2.5 在训练中轮换多种 GRM 评分标准来防止奖励作弊——单一评估器容易被模型钻空子。",
+      "category": "alignment",
+      "difficulty": "intermediate",
+      "related": [
+        "Reward Model",
+        "Generative Reward Model",
+        "RLHF"
+      ]
+    },
+    {
+      "id": "zero-day-vulnerability",
+      "term": "Zero-Day Vulnerability",
+      "phonetic": "/ˈzɪərəʊ deɪ ˌvʌlnərəˈbɪlɪti/",
+      "translation": "零日漏洞",
+      "definition": "A software security flaw that is unknown to the software's developers and has not yet been patched, leaving systems exposed from the moment the vulnerability is discovered by an attacker.",
+      "example": "Claude Mythos Preview autonomously identified thousands of zero-day vulnerabilities across every major OS and browser, including a 27-year-old OpenBSD bug.",
+      "exampleCn": "Claude Mythos Preview 在各主要操作系统和浏览器中自主发现了数千个零日漏洞，包括一个存在 27 年的 OpenBSD 漏洞。",
+      "category": "alignment",
+      "difficulty": "intermediate",
+      "related": [
+        "Red Teaming",
+        "Exploit",
+        "AI Safety"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "multi-hop-retrieval",
+      "term": "Multi-hop Retrieval",
+      "phonetic": "/ˌmʌltiˈhɒp rɪˈtriːvəl/",
+      "translation": "多跳检索",
+      "definition": "A retrieval strategy where the agent performs multiple sequential searches, using information from earlier retrieval results to formulate subsequent queries, enabling it to answer questions that require chaining evidence across several documents.",
+      "example": "Chroma Context-1 trains a 20B retrieval subagent on synthetic multi-hop retrieval tasks, learning to prune irrelevant documents between hops to avoid context rot.",
+      "exampleCn": "Chroma Context-1 在合成的多跳检索任务上训练 20B 检索子 agent，学会在每跳之间剪除无关文档以避免上下文腐烂。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Context Rot",
+        "Self-Editing Context",
+        "RAG"
+      ]
+    },
+    {
+      "id": "production-traffic-rl",
+      "term": "Production Traffic RL",
+      "translation": "生产流量强化学习",
+      "definition": "A training methodology where reinforcement learning rollouts are collected from real user interactions in a live production system, allowing the model to continuously improve from actual deployment signals rather than synthetic or offline data.",
+      "example": "Cursor's Composer 2 uses production traffic RL, collecting success and failure trajectories from real coding sessions to update the model in near real-time.",
+      "exampleCn": "Cursor Composer 2 采用生产流量强化学习，从真实编码会话中收集成功与失败轨迹，近实时更新模型。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "RLHF",
+        "Online Learning",
+        "Rollout-as-a-Service"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "mid-training",
+      "term": "Mid-training",
+      "phonetic": "/mɪd ˈtreɪnɪŋ/",
+      "translation": "中训练",
+      "definition": "An independent training stage between pre-training and post-training, where the model undergoes continued language modeling on curated domain-specific data (code, math, long documents) to acquire targeted capabilities before alignment fine-tuning.",
+      "example": "Llama 3.1, Qwen 2.5, and DeepSeek-V3 all include a mid-training stage that uses domain-heavy data mixtures to sharpen reasoning and coding before SFT.",
+      "exampleCn": "Llama 3.1、Qwen 2.5 和 DeepSeek-V3 都包含中训练阶段，使用领域密集的数据配比来增强推理和编码能力，然后再进行 SFT。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Continual Pre-training",
+        "Curriculum Learning",
+        "D-CPT Law"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "training-data-attribution",
+      "term": "Training Data Attribution (TDA)",
+      "phonetic": "/ˈtreɪnɪŋ ˈdeɪtə ˌætrɪˈbjuːʃn/",
+      "translation": "训练数据归因",
+      "definition": "Methods for determining which training examples influenced a model's specific prediction, essential for data auditing, copyright tracing, and understanding model behavior. Approaches range from gradient-based influence functions to Bayesian information-theoretic frameworks.",
+      "example": "A Bayesian information-theoretic TDA approach at AISTATS 2026 measures attribution via the entropy increase induced by removing a training subset, naturally promoting diversity in coreset selection.",
+      "exampleCn": "AISTATS 2026 的贝叶斯信息论 TDA 方法通过移除训练子集引发的熵增来衡量归因，天然地在核心集选择中促进了多样性。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Data Provenance",
+        "Data Contamination",
+        "Data Curation"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "data-laundering",
+      "term": "Data Laundering",
+      "phonetic": "/ˈdeɪtə ˈlɔːndərɪŋ/",
+      "translation": "数据洗白",
+      "definition": "A covert training-data infringement technique where copyrighted text is style-transferred (e.g., prose rewritten as lyrics, academic papers as dialogue) to preserve core knowledge while defeating standard membership inference detection methods.",
+      "example": "SDR (Synthetic Data Recovery) combats data laundering by inferring the unknown style transformation through black-box queries to the target LLM, then synthesizing probes that elicit stronger detection signals.",
+      "exampleCn": "SDR（合成数据恢复）通过黑盒查询目标 LLM 推断未知的风格转换方式，合成能引发更强检测信号的探针来对抗数据洗白。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Data Provenance",
+        "Data Contamination",
+        "Synthetic Data"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "stability-gap",
+      "term": "Stability Gap",
+      "phonetic": "/stəˈbɪləti ɡæp/",
+      "translation": "稳定性差距",
+      "definition": "A systematic phenomenon in continual pre-training where the model's performance on general tasks temporarily degrades at the start of domain-specific training due to abrupt distribution shift, before gradually recovering as parameters readjust.",
+      "example": "Using multi-epoch training with domain-relevance sampling, the stability gap was mitigated while achieving better domain performance at only 40% of the original compute budget.",
+      "exampleCn": "使用多轮训练配合领域相关性采样，仅用 40% 的原始计算预算就缓解了稳定性差距，同时取得了更好的领域性能。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Continual Pre-training",
+        "Mid-training",
+        "Catastrophic Forgetting"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "model-collapse",
+      "term": "Model Collapse",
+      "phonetic": "/ˈmɒdl kəˈlæps/",
+      "translation": "模型坍塌",
+      "definition": "The progressive degradation of model output diversity and quality when models are recursively trained on synthetic data generated by previous model generations, as low-probability but valuable patterns in the long tail are systematically erased with each iteration.",
+      "example": "A Nature 2024 study showed that recursive training on AI-generated text causes model collapse; an ICLR 2025 follow-up found that even 0.1% synthetic data can trigger it over multiple iterations.",
+      "exampleCn": "Nature 2024 研究表明递归训练 AI 生成文本会导致模型坍塌；ICLR 2025 后续研究发现即使仅 0.1% 的合成数据经多轮迭代也能触发该现象。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Synthetic Data",
+        "Data Curation",
+        "Data Deduplication"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "memory-poisoning",
+      "term": "Memory Poisoning",
+      "phonetic": "/ˈmeməri ˈpɔɪzənɪŋ/",
+      "translation": "内存投毒",
+      "definition": "An attack where adversarial content is injected into an LLM agent's long-term memory during one session, causing the agent to behave maliciously in all future sessions that retrieve that memory.",
+      "example": "The paper \"Poison Once, Exploit Forever\" shows that a single malicious web page can implant instructions into a web agent's memory, persisting across sessions and websites.",
+      "exampleCn": "论文「Poison Once, Exploit Forever」证明，一个恶意网页可以将指令植入 Web Agent 的记忆，在之后的所有会话和网站中持续生效。",
+      "category": "alignment",
+      "difficulty": "advanced",
+      "related": [
+        "Tool Poisoning",
+        "Prompt Injection",
+        "Memory Corruption"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "zombie-agent",
+      "term": "Zombie Agent",
+      "phonetic": "/ˈzɒmbi ˈeɪdʒənt/",
+      "translation": "僵尸代理",
+      "definition": "An LLM agent that has been persistently compromised by self-reinforcing injections, where adversarial instructions become more deeply embedded each time the agent updates or optimizes its own behavior.",
+      "example": "Researchers demonstrated zombie agent attacks where malicious instructions survived and strengthened through multiple self-evolution cycles of an autonomous agent.",
+      "exampleCn": "研究人员展示了僵尸代理攻击：恶意指令在自主 Agent 多轮自我进化周期中不仅存活，还变得更加根深蒂固。",
+      "category": "alignment",
+      "difficulty": "advanced",
+      "related": [
+        "Memory Poisoning",
+        "Prompt Injection",
+        "Agentic RL"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "thinking-time-penalty",
+      "term": "Thinking Time Penalty",
+      "phonetic": "/ˈθɪŋkɪŋ taɪm ˈpenəlti/",
+      "translation": "思维时间惩罚",
+      "definition": "A reinforcement learning technique that adds a penalty to the reward signal based on the number of reasoning tokens used, encouraging models to achieve high accuracy with fewer tokens while balancing correctness and efficiency.",
+      "example": "Meta's Muse Spark uses thinking time penalties in RL training, observing a phase transition where the model suddenly compresses equally accurate reasoning into significantly fewer tokens.",
+      "exampleCn": "Meta 的 Muse Spark 在 RL 训练中使用思维时间惩罚，观察到模型突然将同样正确的推理压缩成更少 token 的「相变」现象。",
+      "category": "post-training",
+      "difficulty": "advanced",
+      "related": [
+        "RLHF",
+        "Reward Hacking",
+        "Test-Time Compute"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "personal-superintelligence",
+      "term": "Personal Superintelligence",
+      "phonetic": "/ˈpɜːsənl ˌsuːpərɪnˈtelɪdʒəns/",
+      "translation": "个人超智能",
+      "definition": "A vision of AI assistants that surpass expert-level human capabilities in a broad range of tasks while being personalized, always available, and deeply integrated into an individual's daily life and social context.",
+      "example": "Meta Superintelligence Labs frames Muse Spark as a step toward personal superintelligence: an AI that can see the world with you and understand your social graph.",
+      "exampleCn": "Meta Superintelligence Labs 将 Muse Spark 定位为迈向个人超智能的一步：一个能与你共同观察世界并理解你社交图谱的 AI。",
+      "category": "scaling",
+      "difficulty": "intermediate",
+      "related": [
+        "Agent Swarm",
+        "Agentic RL"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "chaotic-system-llm",
+      "term": "Chaotic System (LLMs)",
+      "translation": "混沌系统（大语言模型语境）",
+      "definition": "The property of LLMs whereby small, seemingly innocuous changes to input tokens produce large, unpredictable changes in output, creating broad and illegible attack surfaces for adversarial manipulation.",
+      "example": "Because LLMs exhibit chaotic behavior, flipping a single pixel or rephrasing a question with synonyms can completely change the model's response.",
+      "exampleCn": "因为 LLM 具有混沌系统特性，翻转单个像素或用同义词改写问题都可能完全改变模型的回答，从而实现对抗性操控。",
+      "category": "alignment",
+      "difficulty": "intermediate",
+      "related": [
+        "Prompt Injection",
+        "Memory Poisoning"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "model-cascade",
+      "term": "Model Cascade",
+      "phonetic": "/ˈmɒdl kæˈskeɪd/",
+      "translation": "模型级联",
+      "definition": "A cost-optimization inference strategy that routes inputs through a sequence of models from cheapest to most expensive: a small/fast model handles easy cases, and only uncertain or difficult cases are escalated to a larger, more capable model, achieving near-parity quality at a fraction of the cost.",
+      "example": "Streaming Model Cascades for Semantic SQL achieve F1 > 0.95 while routing only boundary cases to the large model, reducing per-query LLM cost by 5-10×.",
+      "exampleCn": "流式模型级联在语义 SQL 中达到 F1 > 0.95，仅将边界案例路由到大模型，每查询 LLM 成本降低 5-10 倍。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Speculative Decoding",
+        "Knowledge Distillation",
+        "Quantization"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "llm-as-judge",
+      "term": "LLM-as-Judge",
+      "phonetic": "/ˌel el ˈem æz dʒʌdʒ/",
+      "translation": "LLM 评委",
+      "definition": "The practice of using a large language model to evaluate, score, or rank the outputs of other models or systems, serving as an automated alternative to human evaluation. While cost-effective and scalable, LLM judges exhibit systematic biases including position bias, length bias, and self-enhancement bias.",
+      "example": "BiasScope (ICLR 2026) showed that even the strongest LLM judges have error rates exceeding 50% on adversarially constructed evaluation sets.",
+      "exampleCn": "BiasScope（ICLR 2026）表明即使最强的 LLM 评委在对抗性构造的评估集上错误率也超过 50%。",
+      "category": "evaluation",
+      "difficulty": "intermediate",
+      "related": [
+        "Reward Model",
+        "Generative Reward Model",
+        "Benchmark"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "rlaif",
+      "term": "RLAIF (Reinforcement Learning from AI Feedback)",
+      "phonetic": "/ˌɑːr el eɪ aɪ ˈef/",
+      "translation": "基于 AI 反馈的强化学习",
+      "definition": "A training paradigm that replaces human preference annotators with LLM-generated preference labels for reinforcement learning alignment, achieving comparable quality to RLHF at ~1/100th the cost and unlimited scale. A variant called d-RLAIF skips reward model training entirely by using the LLM's scores directly as reward signals.",
+      "example": "Google's RLAIF experiments on PaLM 2 showed no significant difference from RLHF across summarization and dialogue tasks, while d-RLAIF actually outperformed standard RLAIF.",
+      "exampleCn": "Google 在 PaLM 2 上的 RLAIF 实验表明，在摘要和对话任务上与 RLHF 无显著差异，而 d-RLAIF 的效果甚至优于标准 RLAIF。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "RLHF",
+        "LLM-as-Judge",
+        "DPO",
+        "Reward Model"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "edge-inference",
+      "term": "Edge Inference",
+      "phonetic": "/edʒ ˈɪnfərəns/",
+      "translation": "边缘推理",
+      "definition": "Running LLM inference directly on resource-constrained devices (smartphones, IoT, embedded systems) rather than in the cloud, enabling offline operation, lower latency, and data privacy by keeping all computation and data on-device.",
+      "example": "Google's LiteRT-LM framework enables production-grade LLM inference on Android phones and Raspberry Pi, while Gemma 4 E2B runs with just 1.5GB memory on edge devices.",
+      "exampleCn": "Google 的 LiteRT-LM 框架支持在 Android 手机和树莓派上进行生产级 LLM 推理，而 Gemma 4 E2B 仅需 1.5GB 内存即可在边缘设备运行。",
+      "category": "inference",
+      "difficulty": "intermediate",
+      "related": [
+        "Quantization",
+        "Knowledge Distillation",
+        "Intelligence Density"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "semantic-operator",
+      "term": "Semantic Operator",
+      "phonetic": "/sɪˈmæntɪk ˈɒpəreɪtər/",
+      "translation": "语义算子",
+      "definition": "LLM-powered data processing primitives (such as AI_FILTER, AI_CLASSIFY, AI_JOIN) that extend traditional relational operators with natural-language understanding, enabling SQL-like queries over unstructured or semi-structured data by embedding LLM calls as first-class database operations.",
+      "example": "HoldUp shows that naively applying semantic operators row-by-row misses dataset-level context, improving classification accuracy by up to 33% when cluster-aware context is injected into each LLM call.",
+      "exampleCn": "HoldUp 论文表明逐行应用语义算子会遗漏数据集级别的上下文，在每次 LLM 调用中注入聚类感知上下文后分类准确率最高提升 33%。",
+      "category": "data",
+      "difficulty": "advanced",
+      "related": [
+        "Tokenization",
+        "Data Curation",
+        "Model Cascade"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "data-darwinism",
+      "term": "Data Darwinism",
+      "phonetic": "/ˈdeɪtə ˈdɑːrwɪnɪzəm/",
+      "translation": "数据进化论",
+      "definition": "A framework for categorizing pretraining data processing into ten levels (L0-L9), from raw filtering to synthetic generation, treating data processing depth as a scalable dimension alongside data volume.",
+      "example": "The daVinci-LLM project uses Data Darwinism to show that processing depth systematically enhances model capabilities, independent of scale.",
+      "exampleCn": "daVinci-LLM 项目使用数据进化论证明数据处理深度能系统性地提升模型能力，与规模无关。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Curation",
+        "Synthetic Data",
+        "Pre-training"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "rlvr",
+      "term": "RLVR",
+      "phonetic": "/ˌɑːr el viː ˈɑːr/",
+      "translation": "可验证奖励强化学习",
+      "definition": "Reinforcement Learning with Verifiable Rewards — a training paradigm where model outputs are scored against ground-truth or rule-based verifiers (e.g., math answers, code test cases), enabling scalable RL without human labelers.",
+      "example": "SUPERNOVA extends RLVR beyond math and code to general reasoning by using expert-annotated instruction-tuning datasets as verifiable reward signals.",
+      "exampleCn": "SUPERNOVA 通过将专家标注的指令微调数据集用作可验证奖励信号，将 RLVR 从数学和代码扩展到通用推理。",
+      "category": "post-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Reinforcement Learning from Human Feedback (RLHF)",
+        "Agentic RL",
+        "Process Reward Model"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "adaptive-curriculum",
+      "term": "Adaptive Curriculum",
+      "phonetic": "/əˈdæptɪv kəˈrɪkjʊləm/",
+      "translation": "自适应训练课程",
+      "definition": "A training strategy that dynamically adjusts the mix of data domains or task types during training, based on observed model capabilities and domain-specific saturation dynamics.",
+      "example": "daVinci-LLM uses a two-stage adaptive curriculum that progressively shifts from general language data to reasoning-intensive content as training progresses.",
+      "exampleCn": "daVinci-LLM 采用两阶段自适应课程，随着训练进展，逐步从通用语言数据转向推理密集型内容。",
+      "category": "pre-training",
+      "difficulty": "intermediate",
+      "related": [
+        "Curriculum Learning",
+        "Data Mixing Ratio",
+        "Pre-training"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "processing-depth",
+      "term": "Processing Depth",
+      "translation": "处理深度",
+      "definition": "The degree of transformation applied to raw training data, ranging from simple deduplication and filtering (shallow) to model-based quality scoring, semantic deduplication, and synthetic generation (deep). Proposed as an independent scaling axis alongside data volume.",
+      "example": "Increasing processing depth from basic deduplication to model-based quality filtering yielded gains comparable to 10x more data in the daVinci-LLM experiments.",
+      "exampleCn": "在 daVinci-LLM 实验中，将处理深度从基础去重提升到基于模型的质量过滤，带来了相当于 10 倍数据量的性能提升。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Darwinism",
+        "Data Curation",
+        "Scaling Laws"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "soft-contamination",
+      "term": "Soft Contamination",
+      "phonetic": "/sɒft ˌkɒntæmɪˈneɪʃən/",
+      "translation": "软污染",
+      "definition": "A form of benchmark data leakage where training data contains semantically equivalent paraphrases of test items that evade n-gram deduplication filters, causing inflated benchmark scores that do not reflect genuine out-of-distribution generalization.",
+      "example": "Embedding analysis of OLMo-3's training corpus found soft contamination for 78% of CodeForces problems, skewing benchmark results upward.",
+      "exampleCn": "对 OLMo-3 训练语料的嵌入分析发现，78% 的 CodeForces 题目存在软污染，导致 benchmark 分数虚高。",
+      "category": "data",
+      "difficulty": "intermediate",
+      "related": [
+        "Data Contamination",
+        "Benchmark",
+        "Deduplication",
+        "Generalization"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "benchmark-shadow",
+      "term": "Benchmark Shadow",
+      "translation": "Benchmark 阴影效应",
+      "definition": "The phenomenon where training on benchmark-aligned data produces narrow, concentrated parameter updates that improve evaluation metrics without developing broader representational capability, as revealed by spectral analysis of weight matrices.",
+      "example": "Benchmark Shadows paper shows that benchmark-aligned training leaves a distinct 'footprint' in parameter space—high-rank updates concentrated in specific weight directions.",
+      "exampleCn": "Benchmark Shadows 论文表明，针对 benchmark 的训练在参数空间留下独特「指纹」——特定权重方向上的高秩集中更新。",
+      "category": "evaluation",
+      "difficulty": "advanced",
+      "related": [
+        "Soft Contamination",
+        "Generalization",
+        "Spectral Analysis",
+        "Benchmark"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "inter-rollout-agreement",
+      "term": "Inter-Rollout Action Agreement",
+      "translation": "Rollout 间行动一致性",
+      "definition": "A training-free signal measuring how consistently an LLM agent chooses the same action across multiple independent rollouts at a given timestep; high agreement indicates an easy decision, while low agreement signals genuine uncertainty requiring more compute.",
+      "example": "TrACE uses inter-rollout action agreement to allocate inference compute adaptively: confident steps get fewer calls, uncertain steps trigger additional sampling.",
+      "exampleCn": "TrACE 利用 rollout 间行动一致性自适应分配推理计算：确定的步骤调用次数少，不确定的步骤触发额外采样。",
+      "category": "inference",
+      "difficulty": "advanced",
+      "related": [
+        "Self-Consistency",
+        "Adaptive Compute",
+        "Test-Time Scaling",
+        "LLM Agent"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "kernel-fusion",
+      "term": "Kernel Fusion",
+      "phonetic": "/ˈkɜːrnəl ˈfjuːʒən/",
+      "translation": "算子融合",
+      "definition": "A GPU optimization technique that combines multiple small compute kernels into a single, larger kernel to reduce memory traffic and kernel launch overhead, thereby improving throughput for operations like matrix multiplications and element-wise transforms.",
+      "example": "KernelBench measures whether an LLM can discover kernel fusion opportunities that manual engineers often miss, collapsing a chain of pointwise ops into one fused CUDA kernel.",
+      "exampleCn": "KernelBench 衡量 LLM 能否发现人类工程师经常遗漏的算子融合机会，将一连串逐点运算合并为一个融合 CUDA 内核。",
+      "category": "systems",
+      "difficulty": "advanced",
+      "related": [
+        "CUDA",
+        "GPU Optimization",
+        "Memory Bandwidth",
+        "Operator Scheduling"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "engram",
+      "term": "Engram",
+      "phonetic": "/ˈenɡræm/",
+      "translation": "印迹体（模型架构单元）",
+      "definition": "In the context of DeepSeek V4 architecture, an engram is a persistent memory unit that stores compressed representations of prior context, enabling the model to maintain long-range dependencies without full attention recomputation.",
+      "example": "DeepSeek V4 introduces an engram-based architecture that decouples memory from attention, allowing the model to retain key information across extremely long contexts.",
+      "exampleCn": "DeepSeek V4 引入了基于印迹体的架构，将记忆与注意力解耦，使模型能在超长上下文中保留关键信息。",
+      "category": "architecture",
+      "difficulty": "advanced",
+      "related": [
+        "Attention Mechanism",
+        "Long-Context",
+        "KV Cache",
+        "Memory Augmentation"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "prompt-injection",
+      "term": "Prompt Injection",
+      "phonetic": "/prɒmpt ɪnˈdʒekʃn/",
+      "translation": "提示词注入",
+      "definition": "An adversarial attack where a malicious user embeds instructions inside an input prompt (or data the model reads) to override the system prompt and hijack the model's behavior, posing a critical risk in agentic and tool-using LLM systems.",
+      "example": "In the LLM chaos security study, prompt injection was identified as the most common attack vector, allowing adversaries to exfiltrate data or trigger unauthorized tool calls through carefully crafted payloads.",
+      "exampleCn": "在 LLM 混沌安全研究中，提示词注入被识别为最常见的攻击向量，攻击者通过精心构造的载荷窃取数据或触发未授权的工具调用。",
+      "category": "safety",
+      "difficulty": "intermediate",
+      "related": [
+        "Red Teaming",
+        "Jailbreak",
+        "Agentic Security",
+        "Component Manipulation"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "long-horizon-planning",
+      "term": "Long-Horizon Planning",
+      "phonetic": "/lɒŋ həˈraɪzn ˈplænɪŋ/",
+      "translation": "长程规划",
+      "definition": "The ability of an agent to decompose a complex goal into a multi-step plan spanning dozens to hundreds of actions, maintaining coherence and recovering from errors over the full trajectory; identified as the primary bottleneck for current coding agents on repository-level tasks.",
+      "example": "NL2Repo-Bench revealed that even frontier models fail at long-horizon planning: they can implement individual functions but struggle to coordinate file creation, dependency resolution, and test validation across an entire repository.",
+      "exampleCn": "NL2Repo-Bench 揭示了即便是前沿模型也在长程规划上失败：它们能实现单个函数，但难以在整个仓库范围内协调文件创建、依赖解析和测试验证。",
+      "category": "agent",
+      "difficulty": "advanced",
+      "related": [
+        "Agentic Harness",
+        "Scaffolding",
+        "Task Decomposition",
+        "Error Recovery"
+      ],
+      "isNew": true
+    },
+    {
+      "id": "scaffolding",
+      "term": "Scaffolding",
+      "phonetic": "/ˈskæfəldɪŋ/",
+      "translation": "脚手架（Agent 辅助框架）",
+      "definition": "The external infrastructure wrapping a base LLM to create an agent: tool definitions, memory management, retry logic, output parsers, and orchestration code that collectively determine how effectively the model can act in real-world environments.",
+      "example": "The code benchmark landscape study found that scaffolding choices — such as retry budgets and context window management — can swing benchmark scores by 15-20 points, sometimes exceeding the impact of model upgrades.",
+      "exampleCn": "代码评测全景研究发现，脚手架选择——如重试预算和上下文窗口管理——可以使评测分数波动 15-20 分，有时甚至超过模型升级带来的影响。",
+      "category": "agent",
+      "difficulty": "intermediate",
+      "related": [
+        "Agentic Harness",
+        "Production Harness",
+        "Tool Use",
+        "Long-Horizon Planning"
+      ],
+      "isNew": true
+    }
+  ],
+  "expressions": [
+    {
+      "id": "expr-001",
+      "english": "We observe that ... scales predictably with ...",
+      "chinese": "我们观察到 ... 随着 ... 可预测地缩放",
+      "context": "描述 Scaling Laws 实验发现",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-002",
+      "english": "Our approach achieves state-of-the-art performance on ...",
+      "chinese": "我们的方法在 ... 上达到了最先进的性能",
+      "context": "描述实验结果",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-003",
+      "english": "We ablate the effect of ... by ...",
+      "chinese": "我们通过 ... 消融了 ... 的影响",
+      "context": "描述消融实验",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-004",
+      "english": "The model is trained for ... steps with a batch size of ...",
+      "chinese": "模型训练了 ... 步，batch size 为 ...",
+      "context": "描述训练设置",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-005",
+      "english": "We hypothesize that this improvement stems from ...",
+      "chinese": "我们假设这种改进源于 ...",
+      "context": "分析实验结果",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-006",
+      "english": "Contrary to prior work, we find that ...",
+      "chinese": "与先前的工作不同，我们发现 ...",
+      "context": "与已有工作对比",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-007",
+      "english": "The key insight behind our approach is ...",
+      "chinese": "我们方法背后的关键洞察是 ...",
+      "context": "介绍方法创新点",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-008",
+      "english": "We leave a more thorough investigation to future work.",
+      "chinese": "我们将更深入的研究留给未来工作。",
+      "context": "讨论局限性",
+      "category": "论文写作"
+    },
+    {
+      "id": "expr-009",
+      "english": "This is a known issue with ... and the standard workaround is ...",
+      "chinese": "这是 ... 的一个已知问题，标准的解决方法是 ...",
+      "context": "技术讨论中指出已知问题",
+      "category": "技术讨论"
+    },
+    {
+      "id": "expr-010",
+      "english": "The trade-off here is between ... and ...",
+      "chinese": "这里的权衡是在 ... 和 ... 之间",
+      "context": "讨论技术取舍",
+      "category": "技术讨论"
+    },
+    {
+      "id": "expr-011",
+      "english": "We observe diminishing returns beyond ...",
+      "chinese": "超过 ... 之后我们观察到收益递减",
+      "context": "讨论超参调优结果",
+      "category": "技术讨论"
+    },
+    {
+      "id": "expr-012",
+      "english": "The bottleneck is ... rather than ...",
+      "chinese": "瓶颈在于 ... 而不是 ...",
+      "context": "分析性能瓶颈",
+      "category": "技术讨论"
+    },
+    {
+      "id": "expr-013",
+      "english": "This can be attributed to ...",
+      "chinese": "这可以归因于 ...",
+      "context": "归因分析",
+      "category": "技术讨论"
+    },
+    {
+      "id": "expr-014",
+      "english": "One potential explanation is that ...",
+      "chinese": "一种可能的解释是 ...",
+      "context": "提出假设解释",
+      "category": "技术讨论"
+    },
+    {
+      "id": "expr-015",
+      "english": "This implementation doesn't account for the edge case where ...",
+      "chinese": "这个实现没有考虑到 ... 的边界情况",
+      "context": "代码审查",
+      "category": "工程讨论"
+    },
+    {
+      "id": "expr-016",
+      "english": "We should profile this to identify the actual bottleneck.",
+      "chinese": "我们应该对此进行性能分析以找到实际瓶颈。",
+      "context": "性能优化讨论",
+      "category": "工程讨论"
+    },
+    {
+      "id": "expr-017",
+      "english": "The throughput degrades significantly when ...",
+      "chinese": "当 ... 时，吞吐量显著下降",
+      "context": "报告性能问题",
+      "category": "工程讨论"
+    },
+    {
+      "id": "expr-018",
+      "english": "We need to ensure backward compatibility with ...",
+      "chinese": "我们需要确保与 ... 的向后兼容性",
+      "context": "工程决策讨论",
+      "category": "工程讨论"
+    },
+    {
+      "id": "expr-019",
+      "english": "To put this in perspective, ...",
+      "chinese": "换个角度来看 / 直观来说，...",
+      "context": "让数据更直观",
+      "category": "汇报展示"
+    },
+    {
+      "id": "expr-020",
+      "english": "The main takeaway is that ...",
+      "chinese": "主要结论是 ...",
+      "context": "总结汇报要点",
+      "category": "汇报展示"
+    },
+    {
+      "id": "expr-021",
+      "english": "Here's a breakdown of ...",
+      "chinese": "下面是 ... 的详细拆解",
+      "context": "展示详细分析",
+      "category": "汇报展示"
+    },
+    {
+      "id": "expr-022",
+      "english": "Looking at the numbers, ...",
+      "chinese": "从数据来看，...",
+      "context": "用数据说话",
+      "category": "汇报展示"
+    }
+  ]
+}

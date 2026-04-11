@@ -1,0 +1,598 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostCard from '../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allArticles = (await getCollection('articles'))
+  .filter((article) => !article.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug))
+  .slice(0, 6);
+
+const latestResearch = (await getCollection('research'))
+  .filter((r) => !r.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug))
+  .slice(0, 4);
+
+const allColumns = (await getCollection('column'))
+  .filter((col) => !col.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug))
+  .slice(0, 4);
+
+const latestVoices = (await getCollection('voices'))
+  .filter((v) => !v.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.data.volume - a.data.volume)
+  .slice(0, 2);
+
+const allBookChapters = (await getCollection('book'))
+  .filter((ch) => !ch.data.draft);
+const llmBookChapters = allBookChapters
+  .filter(ch => ch.data.bookSlug === 'llm-complete')
+  .sort((a, b) => a.data.chapter - b.data.chapter);
+const keyMomentsChapters = allBookChapters
+  .filter(ch => ch.data.bookSlug === 'key-moments' && ch.data.chapter > 0)
+  .sort((a, b) => a.data.chapter - b.data.chapter);
+const dataEngineeringChapters = allBookChapters
+  .filter(ch => ch.data.bookSlug === 'data-engineering' && ch.data.chapter > 0 && ch.data.chapter < 100)
+  .sort((a, b) => a.data.chapter - b.data.chapter);
+
+// 从集中注册表获取 playground 数据
+import { getFeaturedItems, getTotalCount } from '../data/playground-registry';
+const playgroundCount = getTotalCount();
+const highlights = getFeaturedItems(6);
+
+const columnSeriesConfig: Record<string, { bgColor: string; badgeClass: string }> = {
+  'AI 前沿速递': { bgColor: 'bg-blue-500', badgeClass: 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300' },
+  '数据工程观察': { bgColor: 'bg-emerald-500', badgeClass: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300' },
+  '数据论文速递': { bgColor: 'bg-violet-500', badgeClass: 'bg-violet-50 dark:bg-violet-950/30 text-violet-700 dark:text-violet-300' },
+  '大模型前沿动态': { bgColor: 'bg-orange-500', badgeClass: 'bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300' },
+};
+const defaultColumnConfig = { bgColor: 'bg-primary-500', badgeClass: 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300' };
+
+const voicePlatformConfig: Record<string, { label: string; color: string; bgColor: string }> = {
+  youtube: { label: 'YouTube', color: 'text-red-600 dark:text-red-400', bgColor: 'bg-red-50 dark:bg-red-950/30' },
+  podcast: { label: '播客', color: 'text-purple-600 dark:text-purple-400', bgColor: 'bg-purple-50 dark:bg-purple-950/30' },
+  x: { label: 'X', color: 'text-slate-800 dark:text-slate-200', bgColor: 'bg-slate-100 dark:bg-slate-800' },
+  bilibili: { label: 'B站', color: 'text-cyan-600 dark:text-cyan-400', bgColor: 'bg-cyan-50 dark:bg-cyan-950/30' },
+  blog: { label: '博客', color: 'text-emerald-600 dark:text-emerald-400', bgColor: 'bg-emerald-50 dark:bg-emerald-950/30' },
+  news: { label: '新闻', color: 'text-amber-600 dark:text-amber-400', bgColor: 'bg-amber-50 dark:bg-amber-950/30' },
+  other: { label: '其他', color: 'text-slate-600 dark:text-slate-400', bgColor: 'bg-slate-50 dark:bg-slate-800' },
+};
+const defaultVoicePlatformConfig = voicePlatformConfig.other;
+
+const changeTypeConfig: Record<string, { label: string; dotColor: string }> = {
+  content: { label: '新内容', dotColor: 'bg-emerald-500' },
+  feature: { label: '新功能', dotColor: 'bg-blue-500' },
+  improve: { label: '优化', dotColor: 'bg-amber-500' },
+  fix: { label: '修复', dotColor: 'bg-rose-500' },
+};
+
+// 进化状态统计
+const automationCount = 13; // 活跃自动化任务数
+const totalArticles = (await getCollection('articles')).filter(a => !a.data.draft).length;
+const totalResearch = (await getCollection('research')).filter(r => !r.data.draft).length;
+const totalColumns = (await getCollection('column')).filter(c => !c.data.draft).length;
+const totalVoices = (await getCollection('voices')).filter(v => !v.data.draft).length;
+const allChangelogs = (await getCollection('changelog')).filter(e => !e.data.draft);
+const totalChangelogs = allChangelogs.length;
+const totalBookChapters = allBookChapters.length;
+const totalContent = totalArticles + totalResearch + totalColumns + totalVoices + totalBookChapters;
+
+const latestChangelogs = allChangelogs
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug))
+  .slice(0, 3);
+
+const sections = [
+  { title: '书架', description: '三本大模型深度书籍', icon: 'M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253', href: '/books' },
+  { title: '专栏追踪', description: '定期更新的行业观察', icon: 'M13 10V3L4 14h7v7l9-11h-7z', href: '/column' },
+  { title: '文章', description: 'AI 前沿观点 · 技术趋势 · 行业观察', icon: 'M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z', href: '/articles' },
+  { title: '研究', description: '论文精读 · 调研 · 原创论文', icon: 'M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5', href: '/research' },
+  { title: '声浪', description: 'YouTube · 播客 · X — AI 前沿', icon: 'M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z', href: '/voices' },
+  { title: '探索', description: 'AI 工具 · 创意体验 · 开发者工具', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z', href: '/playground' },
+];
+---
+
+<BaseLayout title="首页" description="Maxwell — 一个会自己生长的知识平台 · 书籍自动演进 · AI 专栏每日产出 · 大模型算法方向">
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10">
+      <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-br from-primary-500/10 via-accent-500/10 to-blue-500/10 rounded-full blur-3xl"></div>
+      <div class="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:60px_60px]"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24 text-center">
+      <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/30 mb-6">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+        </span>
+        <span class="text-xs font-medium text-emerald-700 dark:text-emerald-300">自主进化中 · {automationCount} 个 AI 智能体持续运行</span>
+      </div>
+      <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6">
+        <span class="gradient-text">Maxwell</span>
+      </h1>
+      <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-3">
+        一个会自己生长的知识平台
+      </p>
+      <p class="text-sm text-slate-500 dark:text-slate-500 max-w-xl mx-auto mb-10">
+        书籍每天自动研究与修订 · 专栏由 AI 智能体每日产出 · Playground 持续进化 · 全部开源可追溯
+      </p>
+      <div class="flex flex-wrap items-center justify-center gap-4">
+        <a href="/books" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/25 hover:shadow-xl hover:shadow-amber-500/30 hover:-translate-y-0.5 transition-all duration-200">
+          书架
+        </a>
+        <a href="/column" class="px-6 py-3 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-xl hover:shadow-primary-500/30 hover:-translate-y-0.5 transition-all duration-200">
+          最新专栏
+        </a>
+        <a href="/playground" class="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200">
+          探索
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Evolution Status Panel -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-50 via-emerald-50/30 to-slate-50 dark:from-slate-800/50 dark:via-emerald-950/20 dark:to-slate-800/50 border border-slate-200/50 dark:border-slate-700/50 p-6 sm:p-8">
+      <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-bl from-emerald-500/5 to-transparent rounded-full blur-3xl"></div>
+      <div class="relative">
+        <!-- Title -->
+        <div class="flex items-center gap-2 mb-5">
+          <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0012 15a9.065 9.065 0 00-6.23.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+          </svg>
+          <h2 class="text-base font-semibold text-slate-900 dark:text-white">进化机制</h2>
+        </div>
+
+        <!-- Evolution Mechanisms - 3 columns -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/30 dark:border-slate-700/30">
+            <div class="shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-sm shadow-sm">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900 dark:text-white">书籍自动演进</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">研究员 → 编辑 → 审校员<br/>三角色每日串行修订</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/30 dark:border-slate-700/30">
+            <div class="shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white text-sm shadow-sm">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900 dark:text-white">专栏 AI 产出</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">4 系列专栏 + 声浪聚合<br/>每日自动追踪前沿</p>
+            </div>
+          </div>
+          <div class="flex items-start gap-3 p-3 rounded-xl bg-white/60 dark:bg-slate-800/60 border border-slate-200/30 dark:border-slate-700/30">
+            <div class="shrink-0 w-9 h-9 rounded-lg bg-gradient-to-br from-violet-500 to-fuchsia-500 flex items-center justify-center text-white text-sm shadow-sm">
+              <svg class="w-4.5 h-4.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900 dark:text-white">Playground 进化</h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">策划 → 实现 → 质检<br/>{playgroundCount} 个项目持续迭代</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Stats Bar -->
+        <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-slate-500 dark:text-slate-400">
+          <div class="flex items-center gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+            <span><strong class="text-slate-700 dark:text-slate-300">{totalContent}</strong> 篇内容</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+            <span><strong class="text-slate-700 dark:text-slate-300">{playgroundCount}</strong> 个互动工具</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+            <span><strong class="text-slate-700 dark:text-slate-300">{totalChangelogs}</strong> 次自动更新</span>
+          </div>
+          <div class="flex items-center gap-1.5">
+            <div class="w-1.5 h-1.5 rounded-full bg-violet-500"></div>
+            <span><strong class="text-slate-700 dark:text-slate-300">{automationCount}</strong> 个智能体</span>
+          </div>
+          <a href="/changelog" class="inline-flex items-center gap-1 text-primary-600 dark:text-primary-400 hover:underline ml-auto">
+            查看进化日志
+            <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick Entry Section -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      {sections.map((section) => (
+        <a href={section.href} class="group card card-hover p-6 flex items-start gap-4">
+          <div class="shrink-0 w-12 h-12 rounded-xl bg-gradient-to-br from-primary-500/10 to-accent-500/10 dark:from-primary-500/20 dark:to-accent-500/20 flex items-center justify-center text-primary-600 dark:text-primary-400 group-hover:scale-110 transition-transform duration-300">
+            <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round" d={section.icon} />
+            </svg>
+          </div>
+          <div>
+            <h3 class="font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+              {section.title}
+            </h3>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">{section.description}</p>
+          </div>
+          <svg class="w-5 h-5 text-slate-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all duration-200 ml-auto shrink-0 self-center" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Book Feature Banners -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      {/* 大模型全书 */}
+      <a href="/books/llm-complete" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/20 dark:via-orange-950/15 dark:to-slate-900 border border-amber-200/50 dark:border-amber-800/30 p-6 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">
+              全
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">
+                《大模型全书》
+              </h3>
+              <span class="text-xs text-amber-600 dark:text-amber-400 font-medium">
+                共 {llmBookChapters.length} 章 · 持续更新中
+              </span>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            从架构到训练到部署——一本书成为大模型领域专家
+          </p>
+        </div>
+      </a>
+
+      {/* 大模型数据工程 */}
+      <a href="/books/data-engineering" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/20 dark:via-teal-950/15 dark:to-slate-900 border border-emerald-200/50 dark:border-emerald-800/30 p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform">
+              数
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">
+                《大模型数据工程》
+              </h3>
+              <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
+                共 {dataEngineeringChapters.length} 章 · 持续更新中
+              </span>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            从数据采集到合成数据——大模型训练数据全链路指南
+          </p>
+        </div>
+      </a>
+
+      {/* 大模型的关键时刻 */}
+      <a href="/books/key-moments" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-violet-50 dark:from-indigo-950/20 dark:via-purple-950/15 dark:to-slate-900 border border-indigo-200/50 dark:border-indigo-800/30 p-6 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300">
+        <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-full blur-2xl"></div>
+        <div class="relative">
+          <div class="flex items-center gap-3 mb-3">
+            <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">
+              键
+            </div>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                《大模型的关键时刻》
+              </h3>
+              <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">
+                共 {keyMomentsChapters.length} 章 · 已完稿
+              </span>
+            </div>
+          </div>
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            九年、八个转折点，与一场未完的革命——认知简史
+          </p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <!-- Latest Columns -->
+  {allColumns.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">最新专栏</h2>
+        <a href="/column" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+          查看全部 &rarr;
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {allColumns.map((col) => {
+          const cfg = columnSeriesConfig[col.data.series] || defaultColumnConfig;
+          const borderClass = cfg.bgColor;
+          const seriesBadgeClass = cfg.badgeClass;
+          const formattedDate = col.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+          return (
+            <a href={`/column/${col.slug}`} class="group block card card-hover overflow-hidden">
+              <div class="flex">
+                <div class={`w-1 shrink-0 ${borderClass}`} />
+                <div class="flex-1 p-5">
+                  <div class="flex items-center gap-3 mb-2 text-xs">
+                    <span class={`px-2 py-0.5 rounded-full font-semibold ${seriesBadgeClass}`}>
+                      {col.data.series} · Vol.{col.data.volume}
+                    </span>
+                    <time datetime={col.data.date.toISOString()} class="text-slate-500 dark:text-slate-400">{formattedDate}</time>
+                  </div>
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-1">
+                    {col.data.title}
+                  </h3>
+                  {col.data.description && (
+                    <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{col.data.description}</p>
+                  )}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- Latest Voices -->
+  {latestVoices.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-500/20">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z" />
+            </svg>
+          </div>
+          <h2 class="text-2xl font-bold text-slate-900 dark:text-white">前沿声浪</h2>
+        </div>
+        <a href="/voices" class="text-sm font-medium text-rose-600 dark:text-rose-400 hover:underline">
+          查看全部 &rarr;
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {latestVoices.map((voice) => {
+          const items = voice.data.items || [];
+          const formattedDate = voice.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+          return (
+            <div class="card overflow-hidden">
+              <a href={`/voices/${voice.slug}`} class="group block p-4 pb-2">
+                <div class="flex items-center gap-2 mb-1.5 text-xs">
+                  <span class="px-2 py-0.5 rounded-full font-semibold bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300">
+                    Vol.{voice.data.volume}
+                  </span>
+                  <time class="text-slate-500 dark:text-slate-400">{formattedDate}</time>
+                </div>
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-2">
+                  {voice.data.title}
+                </h3>
+              </a>
+              {items.length > 0 && (
+                <div class="border-t border-slate-100 dark:border-slate-800">
+                  {items.slice(0, 3).map((item, idx) => {
+                    const pcfg = voicePlatformConfig[item.platform] || defaultVoicePlatformConfig;
+                    return (
+                      <a
+                        href={item.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class:list={[
+                          'group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs',
+                          idx < Math.min(items.length, 3) - 1 ? 'border-b border-slate-50 dark:border-slate-800/50' : '',
+                        ]}
+                      >
+                        <span class={`shrink-0 px-1.5 py-0.5 rounded font-semibold ${pcfg.bgColor} ${pcfg.color}`} style="font-size:10px">
+                          {pcfg.label}
+                        </span>
+                        <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">
+                          {item.title}
+                        </span>
+                        <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" />
+                        </svg>
+                      </a>
+                    );
+                  })}
+                  {items.length > 3 && (
+                    <a href={`/voices/${voice.slug}`} class="block px-4 py-2 text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors">
+                      还有 {items.length - 3} 条 →
+                    </a>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- Latest Research -->
+  {latestResearch.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">最新研究</h2>
+        <a href="/research" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+          查看全部 &rarr;
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {latestResearch.map((item) => {
+          const categoryColors = {
+            '原创论文': 'bg-rose-500',
+            '研究提案': 'bg-violet-500',
+            '论文精读': 'bg-cyan-500',
+            '综合调研': 'bg-indigo-500',
+            '专题研究': 'bg-teal-500',
+            '行业分析': 'bg-amber-500',
+          };
+          const borderColor = categoryColors[item.data.category] || 'bg-cyan-500';
+          const formattedDate = item.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+          return (
+            <a href={`/research/${item.slug}`} class="group block card card-hover overflow-hidden">
+              <div class="flex">
+                <div class={`w-1 shrink-0 ${borderColor}`} />
+                <div class="flex-1 p-5">
+                  <div class="flex items-center gap-3 mb-2 text-xs">
+                    <span class="px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-medium">
+                      {item.data.category}
+                    </span>
+                    <time datetime={item.data.date.toISOString()} class="text-slate-500 dark:text-slate-400">{formattedDate}</time>
+                  </div>
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 transition-colors mb-1 line-clamp-2">
+                    {item.data.title}
+                  </h3>
+                  {item.data.description && (
+                    <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">{item.data.description}</p>
+                  )}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </section>
+  )}
+
+  <!-- Latest Articles -->
+  {allArticles.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div class="flex items-center justify-between mb-8">
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">最新文章</h2>
+        <a href="/articles" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+          查看全部 &rarr;
+        </a>
+      </div>
+      <div class="grid gap-4">
+        {allArticles.map((article) => (
+          <PostCard
+            title={article.data.title}
+            description={article.data.description}
+            date={article.data.date}
+            tags={article.data.tags}
+            category={article.data.category}
+            href={`/articles/${article.slug}`}
+            type="doc"
+          />
+        ))}
+      </div>
+    </section>
+  )}
+
+  <!-- Playground Highlights -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-8">
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h2 class="text-2xl font-bold text-slate-900 dark:text-white">探索</h2>
+        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">AI 工具 · 创意体验 · 开发者工具箱</p>
+      </div>
+      <a href="/playground" class="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline">
+        查看全部 ({playgroundCount} 个) &rarr;
+      </a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+      {highlights.map((item) => (
+        <a href={item.href} class="group relative card card-hover overflow-hidden p-6 text-center">
+          <div class={`absolute inset-0 bg-gradient-to-br ${item.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`} />
+          <div class="absolute inset-[1px] bg-white dark:bg-slate-800 rounded-[11px] z-0" />
+          <div class="relative z-10">
+            <div class={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${item.gradient} flex items-center justify-center text-2xl text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+              {item.icon}
+            </div>
+            <div class="flex items-center justify-center gap-2 mb-2">
+              <h3 class="font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                {item.name}
+              </h3>
+              {item.tag && (
+                <span class={`px-1.5 py-0.5 rounded text-[10px] font-medium ${
+                  item.tag === 'AI' || item.tag === '热门'
+                    ? 'bg-primary-50 dark:bg-primary-950/30 text-primary-600 dark:text-primary-400'
+                    : item.tag === '新'
+                      ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400'
+                      : 'bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400'
+                }`}>
+                  {item.tag}
+                </span>
+              )}
+            </div>
+            <p class="text-sm text-slate-500 dark:text-slate-400">{item.description}</p>
+          </div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- Evolution Log (Recent Updates) -->
+  {latestChangelogs.length > 0 && (
+    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-8">
+      <div class="flex items-center justify-between mb-8">
+        <div class="flex items-center gap-3">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center shadow-lg shadow-emerald-500/20">
+            <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z" />
+            </svg>
+          </div>
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900 dark:text-white">进化日志</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400 mt-0.5">每一次自动更新都被记录</p>
+          </div>
+        </div>
+        <a href="/changelog" class="text-sm font-medium text-emerald-600 dark:text-emerald-400 hover:underline">
+          查看全部 &rarr;
+        </a>
+      </div>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        {latestChangelogs.map((entry) => {
+          const formattedDate = entry.data.date.toLocaleDateString('zh-CN', { month: 'long', day: 'numeric' });
+          return (
+            <div class="card p-5 hover:shadow-md transition-shadow relative overflow-hidden">
+              <div class="absolute top-0 left-0 w-full h-0.5 bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500"></div>
+              <div class="flex items-center justify-between mb-3">
+                {entry.data.version && (
+                  <span class="px-2 py-0.5 rounded-md bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 text-xs font-mono font-semibold">
+                    {entry.data.version}
+                  </span>
+                )}
+                <time class="text-xs text-slate-400 dark:text-slate-500">{formattedDate}</time>
+              </div>
+              <h3 class="font-semibold text-slate-900 dark:text-white text-sm mb-3">{entry.data.title}</h3>
+              <ul class="space-y-1.5">
+                {entry.data.changes.slice(0, 3).map((change) => {
+                  const cfg = changeTypeConfig[change.type];
+                  return (
+                    <li class="flex items-start gap-2 text-xs">
+                      <div class:list={['w-1.5 h-1.5 rounded-full mt-1.5 shrink-0', cfg.dotColor]} />
+                      {change.link ? (
+                        <a href={change.link} class="text-slate-600 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors underline decoration-slate-300 dark:decoration-slate-600 underline-offset-2 hover:decoration-primary-400">{change.summary}</a>
+                      ) : (
+                        <span class="text-slate-600 dark:text-slate-400">{change.summary}</span>
+                      )}
+                    </li>
+                  );
+                })}
+                {entry.data.changes.length > 3 && (
+                  <li class="text-xs text-slate-400 dark:text-slate-500 pl-3.5">
+                    还有 {entry.data.changes.length - 3} 项更新…
+                  </li>
+                )}
+              </ul>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  )}
+</BaseLayout>

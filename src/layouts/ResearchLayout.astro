@@ -1,0 +1,266 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import BookmarkButton from '../components/tools/BookmarkButton';
+import ContentHub from '../components/tools/ContentHub';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  category?: string;
+  tags?: string[];
+  paperTitle?: string;
+  authors?: string;
+  arxiv?: string;
+  htmlVersion?: string;
+  headings?: { depth: number; slug: string; text: string }[];
+  prevPost?: { slug: string; title: string } | null;
+  nextPost?: { slug: string; title: string } | null;
+}
+
+const { title, description, date, category, tags = [], paperTitle, authors, arxiv, htmlVersion, headings = [], prevPost, nextPost } = Astro.props;
+
+const formattedDate = date.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+
+const categoryColors = {
+  '原创论文': 'bg-rose-100 dark:bg-rose-950/40 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800',
+  '研究提案': 'bg-violet-100 dark:bg-violet-950/40 text-violet-700 dark:text-violet-300 border-violet-200 dark:border-violet-800',
+  '论文精读': 'bg-cyan-100 dark:bg-cyan-950/40 text-cyan-700 dark:text-cyan-300 border-cyan-200 dark:border-cyan-800',
+  '综合调研': 'bg-indigo-100 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
+  '专题研究': 'bg-teal-100 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border-teal-200 dark:border-teal-800',
+  '行业分析': 'bg-amber-100 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+};
+
+const categoryClass = category ? (categoryColors[category] || 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700') : '';
+---
+
+<BaseLayout title={`${title} | 研究`} description={description}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class:list={[tocHeadings.length > 0 ? 'lg:grid lg:grid-cols-[1fr_240px] lg:gap-12' : '']}>
+      <!-- Main Content -->
+      <article class="min-w-0 max-w-3xl mx-auto lg:mx-0 lg:max-w-none">
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+          <a href="/research" class="hover:text-cyan-600 dark:hover:text-cyan-400 transition-colors">研究</a>
+          {category && (
+            <>
+              <span>/</span>
+              <span>{category}</span>
+            </>
+          )}
+        </nav>
+
+        <!-- Title Area -->
+        <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700">
+          {category && (
+            <div class="flex items-center gap-3 mb-4">
+              <span class:list={['inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border', categoryClass]}>
+                {category}
+              </span>
+            </div>
+          )}
+
+          <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance">
+            {title}
+          </h1>
+          {description && (
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">{description}</p>
+          )}
+
+          <!-- Paper metadata -->
+          {(paperTitle || authors || arxiv) && (
+            <div class="mb-4 p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 space-y-1.5">
+              {paperTitle && (
+                <div class="text-sm">
+                  <span class="font-medium text-slate-700 dark:text-slate-300">论文：</span>
+                  <span class="text-slate-600 dark:text-slate-400 italic">{paperTitle}</span>
+                </div>
+              )}
+              {authors && (
+                <div class="text-sm">
+                  <span class="font-medium text-slate-700 dark:text-slate-300">作者：</span>
+                  <span class="text-slate-600 dark:text-slate-400">{authors}</span>
+                </div>
+              )}
+              {arxiv && (
+                <div class="text-sm">
+                  <span class="font-medium text-slate-700 dark:text-slate-300">arXiv：</span>
+                  <a href={`https://arxiv.org/abs/${arxiv}`} target="_blank" rel="noopener noreferrer" class="text-cyan-600 dark:text-cyan-400 hover:underline">
+                    {arxiv}
+                  </a>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div class="flex flex-wrap items-center gap-3 text-sm">
+            <time datetime={date.toISOString()} class="text-slate-500 dark:text-slate-400">
+              {formattedDate}
+            </time>
+            {tags.map((tag) => (
+              <span class="px-2.5 py-0.5 rounded-full bg-cyan-50 dark:bg-cyan-950/50 text-cyan-600 dark:text-cyan-400 font-medium text-xs">
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {/* View mode toggle */}
+          {htmlVersion && (
+            <div class="mt-4 flex items-center gap-2" id="view-toggle-container">
+              <div class="inline-flex rounded-lg bg-slate-100 dark:bg-slate-800 p-0.5">
+                <button
+                  id="btn-markdown"
+                  class="view-toggle-btn px-3 py-1.5 rounded-md text-sm font-medium transition-all bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm"
+                >
+                  <svg class="inline-block w-4 h-4 mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                  文章
+                </button>
+                <button
+                  id="btn-html"
+                  class="view-toggle-btn px-3 py-1.5 rounded-md text-sm font-medium transition-all text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
+                >
+                  <svg class="inline-block w-4 h-4 mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg>
+                  富文本
+                </button>
+              </div>
+              <a
+                href={htmlVersion}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-md text-sm text-slate-500 dark:text-slate-400 hover:text-cyan-600 dark:hover:text-cyan-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                title="在新窗口打开富文本版本"
+              >
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                新窗口
+              </a>
+            </div>
+          )}
+          <div class="mt-4">
+            <BookmarkButton client:load collection="research" />
+          </div>
+        </header>
+
+        <!-- Content: Markdown view -->
+        <div class="prose-custom" id="markdown-view">
+          <slot />
+        </div>
+
+        <!-- Content: HTML iframe view (hidden by default) -->
+        {htmlVersion && (
+          <div id="html-view" class="hidden">
+            <iframe
+              id="html-iframe"
+              data-src={htmlVersion}
+              class="w-full border-0 rounded-xl"
+              style="min-height: 800px;"
+              title="富文本版本"
+            ></iframe>
+          </div>
+        )}
+
+        <!-- Post Navigation -->
+        {(prevPost || nextPost) && (
+          <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
+            <div class="grid grid-cols-2 gap-4">
+              {prevPost ? (
+                <a href={`/research/${prevPost.slug}`} class="group card p-4 hover:border-cyan-300 dark:hover:border-cyan-600">
+                  <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一篇</span>
+                  <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 mt-1 line-clamp-2">{prevPost.title}</p>
+                </a>
+              ) : <div />}
+              {nextPost ? (
+                <a href={`/research/${nextPost.slug}`} class="group card p-4 text-right hover:border-cyan-300 dark:hover:border-cyan-600">
+                  <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一篇</span>
+                  <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-cyan-600 dark:group-hover:text-cyan-400 mt-1 line-clamp-2">{nextPost.title}</p>
+                </a>
+              ) : <div />}
+            </div>
+          </nav>
+        )}
+      </article>
+
+      <!-- Table of Contents (Desktop) -->
+      {tocHeadings.length > 0 && (
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+              目录
+            </h4>
+            <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto">
+              {tocHeadings.map((heading) => (
+                <a
+                  href={`#${heading.slug}`}
+                  class:list={[
+                    'block text-sm transition-colors duration-200 hover:text-cyan-600 dark:hover:text-cyan-400',
+                    heading.depth === 2
+                      ? 'text-slate-600 dark:text-slate-400 font-medium'
+                      : 'text-slate-500 dark:text-slate-500 pl-4',
+                  ]}
+                >
+                  {heading.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+  <ContentHub client:load />
+</BaseLayout>
+
+<script>
+  // View toggle between Markdown and HTML versions
+  const btnMarkdown = document.getElementById('btn-markdown');
+  const btnHtml = document.getElementById('btn-html');
+  const markdownView = document.getElementById('markdown-view');
+  const htmlView = document.getElementById('html-view');
+  const iframe = document.getElementById('html-iframe') as HTMLIFrameElement | null;
+
+  if (btnMarkdown && btnHtml && markdownView && htmlView && iframe) {
+    const activeClass = ['bg-white', 'dark:bg-slate-700', 'text-slate-900', 'dark:text-white', 'shadow-sm'];
+    const inactiveClass = ['text-slate-600', 'dark:text-slate-400', 'hover:text-slate-900', 'dark:hover:text-white'];
+
+    function setView(mode: 'markdown' | 'html') {
+      if (mode === 'markdown') {
+        markdownView!.classList.remove('hidden');
+        htmlView!.classList.add('hidden');
+        btnMarkdown!.classList.add(...activeClass);
+        btnMarkdown!.classList.remove(...inactiveClass);
+        btnHtml!.classList.remove(...activeClass);
+        btnHtml!.classList.add(...inactiveClass);
+      } else {
+        markdownView!.classList.add('hidden');
+        htmlView!.classList.remove('hidden');
+        btnHtml!.classList.add(...activeClass);
+        btnHtml!.classList.remove(...inactiveClass);
+        btnMarkdown!.classList.remove(...activeClass);
+        btnMarkdown!.classList.add(...inactiveClass);
+        // Lazy load iframe
+        if (iframe && !iframe.dataset.loaded && iframe.dataset.src) {
+          iframe.src = iframe.dataset.src;
+          iframe.dataset.loaded = 'true';
+        }
+        // Auto-resize iframe
+        iframe?.addEventListener('load', () => {
+          try {
+            const h = iframe.contentDocument?.documentElement?.scrollHeight;
+            if (h) iframe.style.height = h + 40 + 'px';
+          } catch {
+            // Cross-origin: use default min-height
+            iframe.style.height = '90vh';
+          }
+        });
+      }
+    }
+
+    btnMarkdown.addEventListener('click', () => setView('markdown'));
+    btnHtml.addEventListener('click', () => setView('html'));
+  }
+</script>

@@ -1,0 +1,60 @@
+---
+import BookLayout from '../../../layouts/BookLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const allChapters = (await getCollection('book'))
+    .filter((ch) => !ch.data.draft);
+
+  // Group by bookSlug
+  const bookGroups = new Map<string, typeof allChapters>();
+  allChapters.forEach((ch) => {
+    const slug = ch.data.bookSlug;
+    if (!bookGroups.has(slug)) bookGroups.set(slug, []);
+    bookGroups.get(slug)!.push(ch);
+  });
+
+  const paths: any[] = [];
+
+  for (const [bookSlug, chapters] of bookGroups.entries()) {
+    const sorted = chapters.sort((a, b) => a.data.chapter - b.data.chapter);
+
+    sorted.forEach((ch, index) => {
+      paths.push({
+        params: { book: bookSlug, slug: ch.slug },
+        props: {
+          chapter: ch,
+          bookSlug,
+          prevChapter: index > 0
+            ? { slug: sorted[index - 1].slug, title: sorted[index - 1].data.title, chapter: sorted[index - 1].data.chapter }
+            : null,
+          nextChapter: index < sorted.length - 1
+            ? { slug: sorted[index + 1].slug, title: sorted[index + 1].data.title, chapter: sorted[index + 1].data.chapter }
+            : null,
+        },
+      });
+    });
+  }
+
+  return paths;
+}
+
+const { chapter, bookSlug, prevChapter, nextChapter } = Astro.props;
+const { Content, headings } = await chapter.render();
+---
+
+<BookLayout
+  title={chapter.data.title}
+  description={chapter.data.description}
+  date={chapter.data.date}
+  updatedDate={chapter.data.updatedDate}
+  chapter={chapter.data.chapter}
+  part={chapter.data.part}
+  tags={chapter.data.tags}
+  headings={headings}
+  prevChapter={prevChapter}
+  nextChapter={nextChapter}
+  bookSlug={bookSlug}
+>
+  <Content />
+</BookLayout>

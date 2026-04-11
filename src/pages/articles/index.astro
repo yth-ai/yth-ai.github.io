@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+import { getCollection } from 'astro:content';
+
+const allArticles = (await getCollection('articles'))
+  .filter((article) => !article.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug));
+
+// Get all unique categories and tags
+const categories = [...new Set(allArticles.map((a) => a.data.category))];
+const allTags = [...new Set(allArticles.flatMap((a) => a.data.tags))];
+---
+
+<BaseLayout title="文章" description="AI 前沿观点、技术趋势与行业观察">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">文章</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">AI 前沿观点、技术趋势与行业观察</p>
+
+      <!-- Category Filter -->
+      {categories.length > 1 && (
+        <div class="flex flex-wrap gap-2 mt-6" id="category-filter">
+          <button
+            data-category="all"
+            class="category-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-primary-50 dark:bg-primary-950/50 text-primary-600 dark:text-primary-400"
+          >
+            全部 ({allArticles.length})
+          </button>
+          {categories.map((cat) => {
+            const count = allArticles.filter((a) => a.data.category === cat).length;
+            return (
+              <button
+                data-category={cat}
+                class="category-btn px-3 py-1.5 rounded-lg text-sm font-medium transition-colors bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700"
+              >
+                {cat} ({count})
+              </button>
+            );
+          })}
+        </div>
+      )}
+
+      <!-- Tags Cloud -->
+      {allTags.length > 0 && (
+        <div class="flex flex-wrap gap-2 mt-4">
+          {allTags.map((tag) => (
+            <span class="px-2.5 py-1 rounded-lg bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-500 text-xs font-medium cursor-default">
+              {tag}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+
+    <!-- Articles List -->
+    {allArticles.length > 0 ? (
+      <div class="grid gap-4" id="articles-list">
+        {allArticles.map((article) => (
+          <div data-category={article.data.category} class="article-item">
+            <PostCard
+              title={article.data.title}
+              description={article.data.description}
+              date={article.data.date}
+              tags={article.data.tags}
+              category={article.data.category}
+              href={`/articles/${article.slug}`}
+              type="doc"
+            />
+          </div>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-20">
+        <div class="w-16 h-16 mx-auto mb-4 rounded-2xl bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-slate-400">
+          <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+          </svg>
+        </div>
+        <p class="text-slate-500 dark:text-slate-400">暂无文章</p>
+        <p class="text-sm text-slate-400 dark:text-slate-500 mt-1">在 src/content/articles/ 目录下添加 Markdown 文件即可</p>
+      </div>
+    )}
+  </div>
+</BaseLayout>
+
+<script>
+  // Category filter functionality
+  document.querySelectorAll('.category-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const category = (btn as HTMLElement).dataset.category;
+
+      // Update button styles
+      document.querySelectorAll('.category-btn').forEach((b) => {
+        b.classList.remove('bg-primary-50', 'dark:bg-primary-950/50', 'text-primary-600', 'dark:text-primary-400');
+        b.classList.add('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-400');
+      });
+      btn.classList.remove('bg-slate-100', 'dark:bg-slate-800', 'text-slate-600', 'dark:text-slate-400');
+      btn.classList.add('bg-primary-50', 'dark:bg-primary-950/50', 'text-primary-600', 'dark:text-primary-400');
+
+      // Filter articles
+      document.querySelectorAll('.article-item').forEach((item) => {
+        const el = item as HTMLElement;
+        if (category === 'all' || el.dataset.category === category) {
+          el.style.display = '';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    });
+  });
+</script>

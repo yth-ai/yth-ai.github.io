@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TokenEconomics from '../../components/lab/TokenEconomics';
+---
+
+<BaseLayout title="Token 不平等 — 全球语言经济学" description="同一句话，不同语言需要多少 Token？一张地图看全球语言的数字鸿沟">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Header -->
+    <div class="mb-8">
+      <a href="/playground" class="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors mb-4">
+        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+        返回探索
+      </a>
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-3">
+        Token 不平等
+        <span class="text-lg font-normal text-slate-500 dark:text-slate-400 ml-2">全球语言经济学地图</span>
+      </h1>
+      <p class="text-slate-600 dark:text-slate-400 max-w-3xl">
+        同一句「你好世界」，英语只需 2 个 Token，泰语需要 10 个，缅甸语需要 14 个。
+        这不只是技术问题——<strong>这是一种隐形的数字不平等</strong>。每多一个 Token，就多一份 API 费用、多一点延迟、少一些上下文窗口。
+      </p>
+    </div>
+
+    <TokenEconomics client:load />
+  </div>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TextCleaningPipeline from '../../components/tools/text-cleaning/TextCleaningPipeline';
+---
+
+<BaseLayout title="LLM 预训练数据工坊" description="12 步可视化清洗管线 · 6 种真实管线预设对比 · 5 篇交互式数据处理教程">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">LLM 预训练数据工坊</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">LLM 预训练数据工坊</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">从原始网页到干净语料——可视化预训练数据的完整清洗流程，对比 FineWeb/Dolma 等真实管线</p>
+    </div>
+    <TextCleaningPipeline client:load />
+  </div>
+</BaseLayout>

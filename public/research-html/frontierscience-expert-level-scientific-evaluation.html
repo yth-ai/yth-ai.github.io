@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FrontierScience 深度精读：AI 能否完成专家级科学任务？</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-card: #1a1d27;
+    --bg-card-alt: #141722;
+    --border: #2a2d3a;
+    --text: #e4e4e7;
+    --text-muted: #9ca3af;
+    --text-dim: #6b7280;
+    --accent-blue: #3b82f6;
+    --accent-purple: #8b5cf6;
+    --accent-emerald: #10b981;
+    --accent-amber: #f59e0b;
+    --accent-rose: #f43f5e;
+    --accent-cyan: #06b6d4;
+    --accent-orange: #f97316;
+    --gradient-hero: linear-gradient(135deg, #1e1b4b 0%, #0f172a 50%, #1a1d27 100%);
+    --gradient-blue: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    --gradient-emerald: linear-gradient(135deg, #10b981, #06b6d4);
+    --gradient-amber: linear-gradient(135deg, #f59e0b, #f97316);
+    --gradient-rose: linear-gradient(135deg, #f43f5e, #ec4899);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.75;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* ===== Hero ===== */
+  .hero {
+    background: var(--gradient-hero);
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    right: -20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(139, 92, 246, 0.15);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    color: #c4b5fd;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 500;
+    margin-bottom: 20px;
+  }
+
+  .hero h1 {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #e4e4e7, #c4b5fd);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  .hero-subtitle {
+    font-size: 18px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    max-width: 750px;
+  }
+
+  .hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 28px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+
+  .hero-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .hero-meta-item a {
+    color: var(--accent-blue);
+    text-decoration: none;
+  }
+
+  .hero-meta-item a:hover {
+    text-decoration: underline;
+  }
+
+  /* ===== Key Number Banner ===== */
+  .key-numbers {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 40px 0;
+  }
+
+  .key-number {
+    background: var(--bg-card);
+    padding: 24px 16px;
+    text-align: center;
+  }
+
+  .key-number .value {
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .key-number .label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .key-number.blue .value { color: var(--accent-blue); }
+  .key-number.purple .value { color: var(--accent-purple); }
+  .key-number.emerald .value { color: var(--accent-emerald); }
+  .key-number.rose .value { color: var(--accent-rose); }
+
+  /* ===== Sections ===== */
+  .section {
+    padding: 48px 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .section:last-child {
+    border-bottom: none;
+  }
+
+  .section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--accent-purple);
+    margin-bottom: 12px;
+  }
+
+  .section h2 {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    color: #f4f4f5;
+  }
+
+  .section h3 {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 32px 0 16px;
+    color: #e4e4e7;
+  }
+
+  .section h4 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 24px 0 12px;
+    color: #d4d4d8;
+  }
+
+  p {
+    margin-bottom: 16px;
+    color: var(--text-muted);
+  }
+
+  strong {
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ===== TLDR Card ===== */
+  .tldr {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(59, 130, 246, 0.1));
+    border: 1px solid rgba(139, 92, 246, 0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 32px 0;
+  }
+
+  .tldr-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--accent-purple);
+    margin-bottom: 10px;
+  }
+
+  .tldr p {
+    color: var(--text);
+    font-size: 16px;
+    line-height: 1.7;
+    margin: 0;
+  }
+
+  /* ===== Comparison Cards ===== */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .comparison-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .comparison-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+
+  .comparison-card.olympiad::before {
+    background: var(--gradient-blue);
+  }
+
+  .comparison-card.research::before {
+    background: var(--gradient-emerald);
+  }
+
+  .comparison-card h4 {
+    margin: 0 0 16px;
+    font-size: 18px;
+    color: #f4f4f5;
+  }
+
+  .comparison-card .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    font-size: 14px;
+  }
+
+  .comparison-card .stat-row:last-child {
+    border-bottom: none;
+  }
+
+  .comparison-card .stat-label {
+    color: var(--text-dim);
+  }
+
+  .comparison-card .stat-value {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  /* ===== Tables ===== */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 24px 0;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  thead th {
+    background: var(--bg-card);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    color: var(--text);
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+
+  tbody td {
+    padding: 10px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    color: var(--text-muted);
+  }
+
+  tbody tr:hover {
+    background: rgba(255,255,255,0.02);
+  }
+
+  tbody tr.highlight {
+    background: rgba(139, 92, 246, 0.06);
+  }
+
+  .medal { font-size: 16px; }
+
+  .score-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .score-bar .bar {
+    height: 6px;
+    border-radius: 3px;
+    background: var(--accent-purple);
+    transition: width 0.3s;
+  }
+
+  .score-bar .bar.blue { background: var(--accent-blue); }
+  .score-bar .bar.emerald { background: var(--accent-emerald); }
+
+  /* ===== Insight Cards ===== */
+  .insight-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin: 24px 0;
+  }
+
+  .insight-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    border-left: 3px solid;
+  }
+
+  .insight-card.blue { border-left-color: var(--accent-blue); }
+  .insight-card.purple { border-left-color: var(--accent-purple); }
+  .insight-card.emerald { border-left-color: var(--accent-emerald); }
+  .insight-card.amber { border-left-color: var(--accent-amber); }
+
+  .insight-card h4 {
+    margin: 0 0 12px;
+    font-size: 16px;
+    color: #f4f4f5;
+  }
+
+  .insight-card p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+
+  /* ===== Rubric Diagram ===== */
+  .rubric-diagram {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+
+  .rubric-flow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 20px 0;
+    flex-wrap: wrap;
+  }
+
+  .rubric-step {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px;
+    text-align: center;
+    font-size: 13px;
+    min-width: 120px;
+  }
+
+  .rubric-step .step-score {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent-purple);
+    margin-bottom: 4px;
+  }
+
+  .rubric-step .step-label {
+    color: var(--text-dim);
+    font-size: 12px;
+  }
+
+  .rubric-arrow {
+    color: var(--text-dim);
+    font-size: 18px;
+  }
+
+  /* ===== Spectrum ===== */
+  .spectrum {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin: 24px 0;
+  }
+
+  .spectrum h4 {
+    text-align: center;
+    margin: 0 0 24px;
+    font-size: 16px;
+    color: #f4f4f5;
+  }
+
+  .spectrum-bar {
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  .spectrum-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    color: white;
+    position: relative;
+  }
+
+  .spectrum-segment.saturated { background: #22c55e; flex: 2; }
+  .spectrum-segment.high { background: #3b82f6; flex: 2; }
+  .spectrum-segment.partial { background: #f59e0b; flex: 2; }
+  .spectrum-segment.early { background: #ef4444; flex: 2; }
+
+  .spectrum-labels {
+    display: flex;
+  }
+
+  .spectrum-label {
+    flex: 2;
+    text-align: center;
+    font-size: 11px;
+    color: var(--text-dim);
+    padding-top: 4px;
+  }
+
+  .spectrum-label .benchmark {
+    display: block;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 2px;
+  }
+
+  /* ===== Failure Modes ===== */
+  .failure-list {
+    list-style: none;
+    margin: 16px 0;
+  }
+
+  .failure-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+  }
+
+  .failure-list li:last-child {
+    border-bottom: none;
+  }
+
+  .failure-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .failure-icon.critical { background: rgba(239, 68, 68, 0.15); }
+  .failure-icon.warning { background: rgba(245, 158, 11, 0.15); }
+  .failure-icon.info { background: rgba(59, 130, 246, 0.15); }
+
+  .failure-content h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+  }
+
+  .failure-content p {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin: 0;
+  }
+
+  /* ===== Tags ===== */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 20px 0;
+  }
+
+  .tag {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    color: #c4b5fd;
+    padding: 4px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    font-weight: 500;
+  }
+
+  /* ===== Blockquote ===== */
+  blockquote {
+    border-left: 3px solid var(--accent-purple);
+    padding: 16px 20px;
+    margin: 24px 0;
+    background: rgba(139, 92, 246, 0.05);
+    border-radius: 0 8px 8px 0;
+  }
+
+  blockquote p {
+    color: var(--text-muted);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* ===== Conclusion ===== */
+  .conclusion {
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(59, 130, 246, 0.05));
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 32px 0;
+  }
+
+  .conclusion h3 {
+    margin: 0 0 16px;
+    font-size: 20px;
+    color: #f4f4f5;
+  }
+
+  .conclusion p {
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .conclusion .highlight-number {
+    font-size: 48px;
+    font-weight: 800;
+    background: var(--gradient-rose);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    display: block;
+    text-align: center;
+    margin: 20px 0 8px;
+  }
+
+  .conclusion .highlight-caption {
+    text-align: center;
+    font-size: 14px;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  /* ===== Footer ===== */
+  .footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  .footer a {
+    color: var(--accent-blue);
+    text-decoration: none;
+  }
+
+  /* ===== Responsive ===== */
+  @media (max-width: 768px) {
+    .hero { padding: 48px 0 40px; }
+    .hero h1 { font-size: 26px; }
+    .key-numbers { grid-template-columns: repeat(2, 1fr); }
+    .comparison-grid { grid-template-columns: 1fr; }
+    .rubric-flow { flex-direction: column; }
+    .rubric-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<header class="hero">
+  <div class="container">
+    <span class="hero-badge">📄 论文精读</span>
+    <h1>FrontierScience 深度精读：<br>AI 能否完成专家级科学任务？</h1>
+    <p class="hero-subtitle">OpenAI 推出的新一代科学推理基准，包含奥赛级和博士级研究问题。GPT-5.2 最高仅 25% 的 Research 得分，揭示了 AI 科学能力的真实天花板。</p>
+    <div class="hero-meta">
+      <span class="hero-meta-item">📝 Miles Wang, Robi Lin, Kat Hu, Joy Jiao 等 · OpenAI</span>
+      <span class="hero-meta-item">📅 2026 年 1 月</span>
+      <span class="hero-meta-item">🔗 <a href="https://arxiv.org/abs/2601.21165" target="_blank">arXiv:2601.21165</a></span>
+    </div>
+    <div class="tags" style="margin-top: 20px;">
+      <span class="tag">科学推理</span>
+      <span class="tag">Benchmark</span>
+      <span class="tag">OpenAI</span>
+      <span class="tag">GPT-5</span>
+      <span class="tag">Olympiad</span>
+      <span class="tag">PhD-level</span>
+    </div>
+  </div>
+</header>
+
+<main class="container">
+
+  <!-- Key Numbers -->
+  <div class="key-numbers">
+    <div class="key-number blue">
+      <div class="value">160</div>
+      <div class="label">开源黄金题数</div>
+    </div>
+    <div class="key-number purple">
+      <div class="value">77%</div>
+      <div class="label">Olympiad SOTA</div>
+    </div>
+    <div class="key-number rose">
+      <div class="value">25%</div>
+      <div class="label">Research SOTA</div>
+    </div>
+    <div class="key-number emerald">
+      <div class="value">52pp</div>
+      <div class="label">解题 vs 科研落差</div>
+    </div>
+  </div>
+
+  <!-- TLDR -->
+  <div class="tldr">
+    <div class="tldr-label">⚡ 一句话总结</div>
+    <p><strong>FrontierScience</strong> 是 OpenAI 推出的专家级科学推理基准，包含奥赛级（Olympiad）和博士级研究（Research）两个互补轨道。最强模型 GPT-5.2 在奥赛题上达 77%，但在开放式研究题上仅 25%——这 52 个百分点的落差，精确标定了当前 AI 在"解题"与"做研究"之间的鸿沟。</p>
+  </div>
+
+  <!-- Section 1: Why -->
+  <section class="section">
+    <div class="section-label">背景</div>
+    <h2>为什么需要这个基准？</h2>
+
+    <h3>现有基准已经饱和</h3>
+    <p>科学基准测试遵循着一个熟悉的模式：<strong>设计 → 模型追赶 → 饱和 → 设计新基准</strong>。</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th>基准</th><th>类型</th><th>SOTA</th><th>问题</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>MMLU</td><td>多选题</td><td>>90%</td><td>知识检索为主，非推理</td></tr>
+          <tr><td>GPQA (Diamond)</td><td>博士级多选题</td><td>>80%</td><td>多选格式限制诊断能力</td></tr>
+          <tr><td>ScienceQA</td><td>多选题</td><td>>95%</td><td>已完全饱和</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p>这些基准的共同缺陷：多选格式有 25% 猜测基线，依赖已发表信息，封闭式答案无法评估科研过程能力。</p>
+
+    <p><strong>FrontierScience 的解法</strong>：原创题目 + 双轨设计 + 基于评分标准（rubric）的细粒度评估。</p>
+  </section>
+
+  <!-- Section 2: Design -->
+  <section class="section">
+    <div class="section-label">基准设计</div>
+    <h2>双轨架构：两个世界</h2>
+
+    <div class="comparison-grid">
+      <div class="comparison-card olympiad">
+        <h4>🏅 Olympiad 轨道</h4>
+        <div class="stat-row"><span class="stat-label">黄金题数</span><span class="stat-value">100 道</span></div>
+        <div class="stat-row"><span class="stat-label">出题者</span><span class="stat-value">42 位奥赛奖牌获得者</span></div>
+        <div class="stat-row"><span class="stat-label">总奖牌数</span><span class="stat-value">108 枚</span></div>
+        <div class="stat-row"><span class="stat-label">覆盖</span><span class="stat-value">IPhO / IChO / IBO 级</span></div>
+        <div class="stat-row"><span class="stat-label">答案类型</span><span class="stat-value">封闭式数值/表达式</span></div>
+        <div class="stat-row"><span class="stat-label">评分方式</span><span class="stat-value">精确匹配</span></div>
+        <div class="stat-row"><span class="stat-label">核心考察</span><span class="stat-value">极端推理 + 计算</span></div>
+      </div>
+      <div class="comparison-card research">
+        <h4>🔬 Research 轨道</h4>
+        <div class="stat-row"><span class="stat-label">黄金题数</span><span class="stat-value">60 道</span></div>
+        <div class="stat-row"><span class="stat-label">出题者</span><span class="stat-value">45 位 PhD 科学家</span></div>
+        <div class="stat-row"><span class="stat-label">资质</span><span class="stat-value">博士/博后/教授</span></div>
+        <div class="stat-row"><span class="stat-label">覆盖</span><span class="stat-value">物理 / 化学 / 生物</span></div>
+        <div class="stat-row"><span class="stat-label">答案类型</span><span class="stat-value">开放式研究回答</span></div>
+        <div class="stat-row"><span class="stat-label">评分方式</span><span class="stat-value">Rubric 细粒度 0-10 分</span></div>
+        <div class="stat-row"><span class="stat-label">核心考察</span><span class="stat-value">研究方法论</span></div>
+      </div>
+    </div>
+
+    <h3>关键设计选择</h3>
+
+    <h4>1. 原创性保证</h4>
+    <p>所有题目均为原创，经过内部模型预评估排除简单题，答案经至少两位独立领域专家交叉验证。确保不在任何已公开数据集中出现。</p>
+
+    <h4>2. Rubric-based 评估框架（核心创新）</h4>
+    <p>这是本文最重要的方法论贡献。传统基准只看最终答案对错，但科研能力远不止于此。</p>
+
+    <div class="rubric-diagram">
+      <h4 style="text-align:center; margin:0 0 20px; color:#f4f4f5;">Research 评估流程</h4>
+      <div class="rubric-flow">
+        <div class="rubric-step">
+          <div class="step-score">2分</div>
+          <div class="step-label">方法选择</div>
+        </div>
+        <span class="rubric-arrow">→</span>
+        <div class="rubric-step">
+          <div class="step-score">3分</div>
+          <div class="step-label">中间推理</div>
+        </div>
+        <span class="rubric-arrow">→</span>
+        <div class="rubric-step">
+          <div class="step-score">2分</div>
+          <div class="step-label">关键假设</div>
+        </div>
+        <span class="rubric-arrow">→</span>
+        <div class="rubric-step">
+          <div class="step-score">3分</div>
+          <div class="step-label">最终结论</div>
+        </div>
+      </div>
+      <p style="text-align:center; font-size:13px; color:var(--text-dim); margin-top:12px;">总分 10 分 · ≥7 分视为成功解决 · 过程导向（50%+ 分数给中间步骤）</p>
+    </div>
+
+    <p>这种设计使得即使模型没有得到完美答案，也能定位推理链的哪个环节失败——这对改进模型极其有价值。</p>
+
+    <h4>3. 裁判模型</h4>
+    <p>使用 GPT-5（高推理力度）作为裁判，与人类专家评分的 <strong>Spearman 相关系数 > 0.85</strong>，"是否成功"二分类的<strong>一致率 > 90%</strong>。</p>
+  </section>
+
+  <!-- Section 3: Results -->
+  <section class="section">
+    <div class="section-label">实验结果</div>
+    <h2>排行榜与深度解读</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr><th></th><th>模型</th><th>Olympiad (%)</th><th>Research (%)</th></tr>
+        </thead>
+        <tbody>
+          <tr class="highlight">
+            <td><span class="medal">🥇</span></td>
+            <td><strong>GPT-5.2</strong></td>
+            <td>
+              <div class="score-bar"><div class="bar" style="width:77%;"></div><span>77.1</span></div>
+            </td>
+            <td>
+              <div class="score-bar"><div class="bar emerald" style="width:50%;"></div><span>25.0</span></div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="medal">🥈</span></td>
+            <td>Gemini 3 Pro</td>
+            <td>
+              <div class="score-bar"><div class="bar" style="width:76%;"></div><span>76.0</span></div>
+            </td>
+            <td>
+              <div class="score-bar"><div class="bar emerald" style="width:40%;"></div><span>20.0</span></div>
+            </td>
+          </tr>
+          <tr>
+            <td><span class="medal">🥉</span></td>
+            <td>GPT-5</td>
+            <td>
+              <div class="score-bar"><div class="bar" style="width:72%;"></div><span>72.0</span></div>
+            </td>
+            <td>
+              <div class="score-bar"><div class="bar emerald" style="width:50%;"></div><span>25.0</span></div>
+            </td>
+          </tr>
+          <tr>
+            <td></td><td>GPT-5.1</td>
+            <td><div class="score-bar"><div class="bar" style="width:70%;"></div><span>70.0</span></div></td>
+            <td><div class="score-bar"><div class="bar emerald" style="width:44%;"></div><span>22.0</span></div></td>
+          </tr>
+          <tr>
+            <td></td><td>Grok 4</td>
+            <td><div class="score-bar"><div class="bar" style="width:68%;"></div><span>68.0</span></div></td>
+            <td><div class="score-bar"><div class="bar emerald" style="width:36%;"></div><span>18.0</span></div></td>
+          </tr>
+          <tr>
+            <td></td><td>OpenAI o3</td>
+            <td><div class="score-bar"><div class="bar" style="width:62%;"></div><span>62.0</span></div></td>
+            <td><div class="score-bar"><div class="bar emerald" style="width:30%;"></div><span>15.0</span></div></td>
+          </tr>
+          <tr>
+            <td></td><td>Claude Opus 4.5</td>
+            <td><div class="score-bar"><div class="bar" style="width:55%;"></div><span>55.0</span></div></td>
+            <td><div class="score-bar"><div class="bar emerald" style="width:24%;"></div><span>12.0</span></div></td>
+          </tr>
+          <tr>
+            <td></td><td>OpenAI o4-mini</td>
+            <td><div class="score-bar"><div class="bar" style="width:50%;"></div><span>50.0</span></div></td>
+            <td><div class="score-bar"><div class="bar emerald" style="width:20%;"></div><span>10.0</span></div></td>
+          </tr>
+          <tr>
+            <td></td><td>GPT-4o</td>
+            <td><div class="score-bar"><div class="bar" style="width:35%;"></div><span>35.0</span></div></td>
+            <td><div class="score-bar"><div class="bar emerald" style="width:10%;"></div><span>5.0</span></div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>三个关键发现</h3>
+
+    <div class="insight-cards">
+      <div class="insight-card blue">
+        <h4>发现一：奥赛 vs 研究的巨大鸿沟</h4>
+        <p>最强模型在 Olympiad 77%，在 Research 仅 25%。这不是简单的"难度更大"——它反映了两种根本不同的能力需求：<strong>奥赛</strong>是在给定框架内精确推理（"用量子力学求解这个体系"），<strong>研究</strong>是选择框架、设计方法、处理开放约束（"分析这个未知体系的性质"）。52 个百分点的差距 = "AI 做题" vs "AI 做科研" 的真实距离。</p>
+      </div>
+
+      <div class="insight-card purple">
+        <h4>发现二：推理力度（Reasoning Effort）的效果与局限</h4>
+        <p>GPT-5.2 从 medium → xhigh 推理力度，Olympiad 提升 9.6pp（67.5% → 77.1%），Research 提升 7pp（18% → 25%）。更多"思考时间"确实有帮助，但收益递减——Research 的天花板远比 Olympiad 低，暗示当前 scaling 路线在"做科研"维度可能面临瓶颈。</p>
+      </div>
+
+      <div class="insight-card emerald">
+        <h4>发现三：学科间的有趣差异</h4>
+        <p><strong>Olympiad</strong>：化学 > 物理 > 生物（化学推理更多规则应用和模式匹配）。<strong>Research</strong>：化学 > 生物 > 物理（物理研究需从第一性原理构建数学模型，正是 LLM 最薄弱的环节）。物理在两个轨道都排名靠后，揭示了模型在原创性建模方面的根本短板。</p>
+      </div>
+    </div>
+
+    <h3>常见失败模式</h3>
+
+    <ul class="failure-list">
+      <li>
+        <div class="failure-icon critical">❌</div>
+        <div class="failure-content">
+          <h5>推理逻辑错误（最常见）</h5>
+          <p>推理链中某个步骤出错，导致后续全部偏离。这是级联失败的根源。</p>
+        </div>
+      </li>
+      <li>
+        <div class="failure-icon warning">⚠️</div>
+        <div class="failure-content">
+          <h5>小众概念理解困难</h5>
+          <p>对前沿或非主流知识点的掌握不足，在研究题中尤为突出。</p>
+        </div>
+      </li>
+      <li>
+        <div class="failure-icon warning">⚠️</div>
+        <div class="failure-content">
+          <h5>计算错误</h5>
+          <p>纯计算步骤出现数值错误，在奥赛题的复杂推导中频繁出现。</p>
+        </div>
+      </li>
+      <li>
+        <div class="failure-icon info">ℹ️</div>
+        <div class="failure-content">
+          <h5>事实不准确</h5>
+          <p>引用了不存在的定理或错误的物理常数，即"幻觉"在科学领域的体现。</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Section 4: Implications -->
+  <section class="section">
+    <div class="section-label">深度思考</div>
+    <h2>对我们的启示</h2>
+
+    <div class="insight-cards">
+      <div class="insight-card blue">
+        <h4>1. 科学基准设计的范式转移</h4>
+        <p>从"知识检索型"到"能力诊断型"。Rubric-based 评估框架可推广到代码 Review 能力评估、研究方案设计评估、复杂 debug 过程评估等任何需要评估开放式回答质量的场景。</p>
+      </div>
+
+      <div class="insight-card purple">
+        <h4>2. Test-time Compute 的价值与局限</h4>
+        <p>给模型更多思考时间在封闭推理上提升显著，但在开放式研究问题上收益有限。当前 scaling 路线在"做科研"维度可能面临根本性瓶颈。</p>
+      </div>
+
+      <div class="insight-card emerald">
+        <h4>3. 对训练数据构建的方向指引</h4>
+        <p>Research 轨道的短板揭示了三个数据改进方向：① 过程导向的科研思维数据（完整推理链而非问答对）；② 方法论选择训练数据（为什么选这个方法？）；③ 跨学科迁移数据。</p>
+      </div>
+
+      <div class="insight-card amber">
+        <h4>4. AI 科学能力的准确定位</h4>
+        <p>知识问答 (>90%) → 博士多选 (>80%) → 奥赛推理 (77%) → 开放科研 (25%)。AI 在知识检索和封闭推理方面已非常强大，但在真正的科研能力上还有很长的路要走。</p>
+      </div>
+    </div>
+
+    <!-- Spectrum -->
+    <div class="spectrum">
+      <h4>AI 科学能力谱系（2026 年初）</h4>
+      <div class="spectrum-bar">
+        <div class="spectrum-segment saturated">已饱和</div>
+        <div class="spectrum-segment high">高水平</div>
+        <div class="spectrum-segment partial">部分能力</div>
+        <div class="spectrum-segment early">早期阶段</div>
+      </div>
+      <div class="spectrum-labels">
+        <div class="spectrum-label"><span class="benchmark">MMLU / SciQA</span>>90%&nbsp;·&nbsp;知识问答</div>
+        <div class="spectrum-label"><span class="benchmark">GPQA Diamond</span>>80%&nbsp;·&nbsp;博士多选</div>
+        <div class="spectrum-label"><span class="benchmark">FS-Olympiad</span>77%&nbsp;·&nbsp;奥赛推理</div>
+        <div class="spectrum-label"><span class="benchmark">FS-Research</span>25%&nbsp;·&nbsp;开放科研</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Section 5: Limitations -->
+  <section class="section">
+    <div class="section-label">局限性</div>
+    <h2>基准的边界</h2>
+
+    <ul class="failure-list">
+      <li>
+        <div class="failure-icon info">1</div>
+        <div class="failure-content">
+          <h5>仅评估"解决问题"，不评估"提出问题"</h5>
+          <p>科研中最有价值的能力——提出好问题和新颖假设——没有被覆盖。</p>
+        </div>
+      </li>
+      <li>
+        <div class="failure-icon info">2</div>
+        <div class="failure-content">
+          <h5>纯文本模态</h5>
+          <p>不包含实验操作、图表解读等多模态能力，也不涵盖湿实验室等现实场景。</p>
+        </div>
+      </li>
+      <li>
+        <div class="failure-icon info">3</div>
+        <div class="failure-content">
+          <h5>裁判模型的主观性</h5>
+          <p>虽然 rubric 试图客观化，但开放式回答的评分本质上有主观成分。</p>
+        </div>
+      </li>
+      <li>
+        <div class="failure-icon info">4</div>
+        <div class="failure-content">
+          <h5>缺少人类基准</h5>
+          <p>没有同等条件下的人类表现数据作为对比，无法回答"这 25% 对人类来说是什么水平"。</p>
+        </div>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Conclusion -->
+  <section class="section">
+    <div class="conclusion">
+      <h3>结论：最值得关注的数字</h3>
+      <span class="highlight-number">25%</span>
+      <p class="highlight-caption">当前最强模型在博士级开放式科研题上的得分</p>
+      <p>FrontierScience 的核心贡献不在于发现"AI 还不够强"，而在于精确标定了差距——77% vs 25% 的双轨对比清晰区分了"推理计算能力"和"研究方法论能力"；Rubric-based 评估能诊断模型在推理链的哪个环节失败；25% 的分数意味着这个基准在相当长时间内不会饱和。</p>
+      <p style="margin-bottom:0;"><strong>当 Research 分数达到 70% 以上时，我们或许可以开始谈论"AI 科学家"了。</strong></p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="container">
+    <p>基于 <a href="https://arxiv.org/abs/2601.21165" target="_blank">arXiv:2601.21165</a> 精读完成 · Maxwell 研究站</p>
+  </div>
+</footer>
+
+</body>
+</html>

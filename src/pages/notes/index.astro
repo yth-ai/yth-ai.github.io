@@ -1,0 +1,63 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allNotes = (await getCollection('notes'))
+  .filter((n) => !n.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug));
+---
+
+<BaseLayout title="笔记" description="从具体案例中提炼的原则、工作方法与思维工具">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-10">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">笔记</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">从具体案例中提炼的原则，快速查阅用</p>
+    </div>
+
+    <!-- Notes Grid -->
+    {allNotes.length > 0 ? (
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5" id="notes-grid">
+        {allNotes.map((note) => (
+          <a
+            href={`/notes/${note.slug}`}
+            class="group flex flex-col gap-4 p-6 rounded-2xl border border-slate-200 dark:border-slate-700/60 bg-white dark:bg-slate-800/40 hover:border-violet-300 dark:hover:border-violet-600/60 hover:shadow-lg hover:shadow-violet-500/5 hover:-translate-y-0.5 transition-all duration-200"
+          >
+            <!-- Principle callout -->
+            {note.data.principle && (
+              <div class="flex gap-3">
+                <div class="shrink-0 mt-0.5 w-1 rounded-full bg-gradient-to-b from-violet-400 to-indigo-400 dark:from-violet-500 dark:to-indigo-500"></div>
+                <p class="text-sm font-medium text-slate-700 dark:text-slate-200 leading-relaxed italic">
+                  {note.data.principle}
+                </p>
+              </div>
+            )}
+
+            <!-- Title + meta -->
+            <div class="flex items-end justify-between gap-3 mt-auto pt-2 border-t border-slate-100 dark:border-slate-700/50">
+              <h2 class="text-sm text-slate-500 dark:text-slate-400 group-hover:text-violet-600 dark:group-hover:text-violet-400 transition-colors leading-snug line-clamp-2">
+                {note.data.title}
+              </h2>
+              <time class="shrink-0 text-xs text-slate-400 dark:text-slate-500">
+                {note.data.date.toLocaleDateString('zh-CN', { month: '2-digit', day: '2-digit' })}
+              </time>
+            </div>
+
+            <!-- Tags -->
+            {note.data.tags.length > 0 && (
+              <div class="flex flex-wrap gap-1.5 -mt-1">
+                {note.data.tags.map((tag) => (
+                  <span class="px-2 py-0.5 rounded-md bg-violet-50 dark:bg-violet-950/30 text-violet-600 dark:text-violet-400 text-xs font-medium">
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            )}
+          </a>
+        ))}
+      </div>
+    ) : (
+      <div class="text-center py-20 text-slate-400 dark:text-slate-500">暂无笔记</div>
+    )}
+  </div>
+</BaseLayout>

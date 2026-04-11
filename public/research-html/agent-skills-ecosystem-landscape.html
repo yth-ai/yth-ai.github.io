@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Agent Skills 生态全景：从开放标准到万级市场的爆发式增长</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface2: #334155;
+    --text: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --accent: #38bdf8;
+    --accent2: #818cf8;
+    --accent3: #a78bfa;
+    --green: #4ade80;
+    --orange: #fb923c;
+    --rose: #fb7185;
+    --amber: #fbbf24;
+    --border: #475569;
+    --code-bg: #0d1117;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Noto Sans SC', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+  }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(129, 140, 248, 0.1), rgba(167, 139, 250, 0.1));
+    border-radius: 1.5rem;
+    border: 1px solid rgba(56, 189, 248, 0.2);
+    margin-bottom: 3rem;
+  }
+  .hero h1 {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, var(--accent), var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  .hero p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .hero-stats {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+  }
+  .hero-stat {
+    text-align: center;
+  }
+  .hero-stat .number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-stat .label {
+    color: var(--text-secondary);
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Sections */
+  .section {
+    margin-bottom: 3rem;
+  }
+  h2 {
+    font-size: 1.8rem;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid var(--surface2);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  h3 {
+    font-size: 1.3rem;
+    color: var(--accent2);
+    margin: 1.5rem 0 1rem;
+  }
+  h4 {
+    font-size: 1.1rem;
+    color: var(--accent3);
+    margin: 1.2rem 0 0.8rem;
+  }
+  p { margin-bottom: 1rem; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  /* Cards */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  }
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .card-desc { color: var(--text-secondary); font-size: 0.9rem; }
+  .card-stats {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+  }
+  .card-stat {
+    background: var(--surface2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    font-size: 0.8rem;
+    color: var(--accent);
+    font-weight: 600;
+  }
+
+  /* Tables */
+  .table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    border-radius: 0.75rem;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.7rem 1rem;
+    border-top: 1px solid var(--border);
+    color: var(--text);
+  }
+  tr:hover td { background: rgba(56, 189, 248, 0.05); }
+
+  /* Code */
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    padding: 1.2rem;
+    overflow-x: auto;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+    line-height: 1.6;
+  }
+  code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'SF Mono', monospace;
+    color: var(--green);
+  }
+  pre code { color: var(--text); }
+  .keyword { color: var(--accent); }
+  .string { color: var(--green); }
+  .comment { color: var(--text-secondary); }
+
+  /* Badges */
+  .badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    border-radius: 0.4rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-right: 0.3rem;
+  }
+  .badge-blue { background: rgba(56, 189, 248, 0.15); color: var(--accent); }
+  .badge-green { background: rgba(74, 222, 128, 0.15); color: var(--green); }
+  .badge-orange { background: rgba(251, 146, 60, 0.15); color: var(--orange); }
+  .badge-rose { background: rgba(251, 113, 133, 0.15); color: var(--rose); }
+  .badge-purple { background: rgba(167, 139, 250, 0.15); color: var(--accent3); }
+
+  /* Progress bars */
+  .bar-chart { margin: 1.5rem 0; }
+  .bar-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    gap: 1rem;
+  }
+  .bar-label {
+    width: 160px;
+    text-align: right;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+  .bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--surface2);
+    border-radius: 0.5rem;
+    overflow: hidden;
+    position: relative;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 0.5rem;
+    display: flex;
+    align-items: center;
+    padding-left: 0.8rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: white;
+    white-space: nowrap;
+  }
+
+  /* Comparison */
+  .vs-box {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1.5rem;
+    align-items: start;
+    margin: 2rem 0;
+  }
+  .vs-panel {
+    background: var(--surface);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    border: 1px solid var(--border);
+  }
+  .vs-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-secondary);
+    padding-top: 3rem;
+  }
+
+  /* Key insight box */
+  .insight {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.08), rgba(129, 140, 248, 0.08));
+    border-left: 4px solid var(--accent);
+    border-radius: 0 0.75rem 0.75rem 0;
+    padding: 1.2rem 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .insight-title {
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 0.3rem;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+    margin: 1.5rem 0;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent2), var(--accent3));
+    border-radius: 2px;
+  }
+  .timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.35rem;
+    top: 0.5rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: 3px solid var(--bg);
+  }
+  .timeline-date {
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  /* Stars */
+  .stars { color: var(--amber); }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body { padding: 1rem; }
+    .hero { padding: 2rem 1rem; }
+    .hero h1 { font-size: 1.6rem; }
+    .hero-stats { gap: 1.5rem; }
+    .hero-stat .number { font-size: 1.8rem; }
+    .card-grid { grid-template-columns: 1fr; }
+    .vs-box { grid-template-columns: 1fr; }
+    .vs-divider { padding: 0; font-size: 1.2rem; }
+    .bar-label { width: 100px; font-size: 0.75rem; }
+    h2 { font-size: 1.4rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero Section -->
+<div class="hero">
+  <h1>🧩 AI Agent Skills 生态全景</h1>
+  <p>从开放标准到万级市场的爆发式增长——覆盖 12+ 平台、50 万+ Skills、30+ 兼容工具的系统性调研</p>
+  <div class="hero-stats">
+    <div class="hero-stat">
+      <div class="number">500K+</div>
+      <div class="label">Skills 总量</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number">30+</div>
+      <div class="label">兼容工具</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number">12+</div>
+      <div class="label">分发平台</div>
+    </div>
+    <div class="hero-stat">
+      <div class="number">2,917</div>
+      <div class="label">贡献者</div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 1: Open Standard -->
+<div class="section">
+  <h2>📐 开放标准：技术基石</h2>
+  
+  <p>Agent Skills 的核心是 <code>SKILL.md</code>——一个 Markdown 文件，用自然语言定义 AI 代理的能力扩展。由 Anthropic 发起，<a href="https://agentskills.io">agentskills.io</a> 作为开放标准已获广泛采纳。</p>
+
+  <h3>SKILL.md 规范示例</h3>
+  <pre><code><span class="comment">---</span>
+<span class="keyword">name</span>: <span class="string">skill-name</span>
+<span class="keyword">description</span>: <span class="string">帮助 Agent 决定何时使用此技能</span>
+<span class="keyword">allowed-tools</span>: <span class="string">Read, Grep, Write</span>
+<span class="keyword">context</span>: <span class="string">fork</span>          <span class="comment"># 在子代理中运行</span>
+<span class="keyword">effort</span>: <span class="string">medium</span>
+<span class="comment">---</span>
+
+<span class="comment"># 当用户请求 X 时，按以下步骤执行：</span>
+1. 分析上下文...
+2. 执行操作...
+3. 验证结果...</code></pre>
+
+  <div class="insight">
+    <div class="insight-title">💡 核心设计原则</div>
+    <strong>自然语言优先</strong>（Markdown 而非代码） · <strong>按需加载</strong>（Agent 自动选择） · <strong>渐进式披露</strong>（从指令到脚本） · <strong>零依赖</strong>（一个文件即可运行）
+  </div>
+
+  <h3>30+ 工具原生支持</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr>
+        <th>类别</th>
+        <th>工具</th>
+      </tr>
+      <tr>
+        <td><span class="badge badge-blue">一线 IDE/CLI</span></td>
+        <td>Claude Code · GitHub Copilot · Cursor · Codex CLI · Gemini CLI · Windsurf</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-purple">JetBrains</span></td>
+        <td>Junie (JetBrains)</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-green">独立工具</span></td>
+        <td>VS Code · Roocode · Ampcode · Kiro · OpenCode · Trae</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-orange">平台型</span></td>
+        <td>GitHub · Databricks · Snowflake Cortex · Factory AI</td>
+      </tr>
+      <tr>
+        <td><span class="badge badge-rose">框架级</span></td>
+        <td>Spring AI · Goose (Block) · Letta · Laravel Boost</td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+<!-- Section 2: Skills vs MCP -->
+<div class="section">
+  <h2>⚡ Skills vs MCP：互补而非替代</h2>
+  
+  <div class="vs-box">
+    <div class="vs-panel">
+      <h4 style="color: var(--accent); margin-top: 0;">🧠 Agent Skills</h4>
+      <p><strong>定位：</strong>领域知识 & 工作流</p>
+      <p><strong>形式：</strong>Markdown 文件</p>
+      <p><strong>加载：</strong>注入上下文窗口</p>
+      <p><strong>类比：</strong>教科书 / 操作手册</p>
+      <p><strong>运行时：</strong>零成本</p>
+      <p><strong>规模：</strong><span class="badge badge-blue">500K+</span></p>
+    </div>
+    <div class="vs-divider">VS</div>
+    <div class="vs-panel">
+      <h4 style="color: var(--accent3); margin-top: 0;">🔌 MCP Servers</h4>
+      <p><strong>定位：</strong>外部数据 & 工具连接</p>
+      <p><strong>形式：</strong>JSON-RPC 服务</p>
+      <p><strong>加载：</strong>工具调用 (Tool Call)</p>
+      <p><strong>类比：</strong>API 接口 / 数据管道</p>
+      <p><strong>运行时：</strong>需要进程</p>
+      <p><strong>规模：</strong><span class="badge badge-purple">19K+</span></p>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">关键认知</div>
+    在同一个 Plugin 中可以同时包含 Skills 和 MCP 配置。Skills 告诉 AI <strong>如何思考和行动</strong>，MCP 给 AI <strong>连接外部世界的能力</strong>。两者在 Plugin 层统一打包分发。
+  </div>
+</div>
+
+<!-- Section 3: Platform Landscape -->
+<div class="section">
+  <h2>🗺️ 平台全景：12+ 平台深度对比</h2>
+
+  <h3>规模总览</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr>
+        <th>平台</th>
+        <th>Skills 数量</th>
+        <th>贡献者</th>
+        <th>分类</th>
+        <th>定位</th>
+      </tr>
+      <tr>
+        <td><strong>SkillsMP</strong></td>
+        <td><span class="badge badge-blue">500,000+</span></td>
+        <td>—</td>
+        <td>多维</td>
+        <td>最大聚合市场</td>
+      </tr>
+      <tr>
+        <td><strong>OpenClaw Registry</strong></td>
+        <td><span class="badge badge-purple">12,200+</span></td>
+        <td>2,917+</td>
+        <td>30 类</td>
+        <td>官方注册表</td>
+      </tr>
+      <tr>
+        <td><strong>ClawSkills</strong></td>
+        <td><span class="badge badge-green">5,147</span></td>
+        <td>2,917</td>
+        <td>30 类</td>
+        <td>精选子集</td>
+      </tr>
+      <tr>
+        <td><strong>ClawdHub</strong></td>
+        <td><span class="badge badge-orange">3,286+</span></td>
+        <td>—</td>
+        <td>多类</td>
+        <td>CLI 安装市场</td>
+      </tr>
+      <tr>
+        <td><strong>Claudate</strong></td>
+        <td>数千</td>
+        <td>—</td>
+        <td>—</td>
+        <td>Claude 专属市场</td>
+      </tr>
+      <tr>
+        <td><strong>OpenAIToolsHub</strong></td>
+        <td><span class="badge badge-rose">349 精选</span></td>
+        <td>—</td>
+        <td>12 类</td>
+        <td>权威排名</td>
+      </tr>
+      <tr>
+        <td><strong>GetAgentSkills</strong></td>
+        <td>数千</td>
+        <td>—</td>
+        <td>3 类</td>
+        <td>验证型市场</td>
+      </tr>
+      <tr>
+        <td><strong>MCP.so</strong></td>
+        <td><span class="badge badge-purple">19,095 MCP</span></td>
+        <td>—</td>
+        <td>3 层</td>
+        <td>MCP 目录</td>
+      </tr>
+    </table>
+  </div>
+
+  <h3>🦞 OpenClaw 生态——精选的力量</h3>
+  <p>OpenClaw 的官方注册表是目前最成熟的分发基础设施。ClawSkills 从 12,200+ 原始条目中严格过滤，仅保留 5,147 条精选 Skills：</p>
+
+  <div class="bar-chart">
+    <div class="bar-item">
+      <div class="bar-label">垃圾/低质量</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 57.5%; background: linear-gradient(90deg, #ef4444, #f87171);">4,065（33.3%）</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">重复/名称相似</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 14.7%; background: linear-gradient(90deg, #f97316, #fb923c);">1,040</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">低质量/非英语</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 12%; background: linear-gradient(90deg, #eab308, #fbbf24);">851</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">加密/金融/交易</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 10.3%; background: linear-gradient(90deg, #8b5cf6, #a78bfa);">731</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">⚠️ 恶意软件</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 5.3%; background: linear-gradient(90deg, #dc2626, #ef4444);">373（3%）</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label" style="color: var(--green); font-weight: 700;">✅ 精选保留</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 42.2%; background: linear-gradient(90deg, #22c55e, #4ade80);">5,147（42.2%）</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">⚠️ 安全警示</div>
+    原始注册表中超过 <strong>57.8%</strong> 的提交存在质量或安全问题，其中恶意软件占比 3%。在安装任何 Skill 前，务必使用经过过滤的精选平台或进行安全审查。
+  </div>
+</div>
+
+<!-- Section 4: Top Skills -->
+<div class="section">
+  <h2>🏆 热门 Skills 排行</h2>
+
+  <h3>全网安装量 TOP 5（skills.sh 数据）</h3>
+  <div class="bar-chart">
+    <div class="bar-item">
+      <div class="bar-label">find-skills</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 100%; background: linear-gradient(90deg, #38bdf8, #818cf8);">418.6K</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">react-best-practices</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 42.1%; background: linear-gradient(90deg, #38bdf8, #818cf8);">176.4K</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">web-design-guidelines</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 32.7%; background: linear-gradient(90deg, #38bdf8, #818cf8);">137.0K</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">remotion-best-practices</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 30.1%; background: linear-gradient(90deg, #38bdf8, #818cf8);">126.0K</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">frontend-design</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 29.6%; background: linear-gradient(90deg, #38bdf8, #818cf8);">124.1K</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>ClawSkills 热门 TOP 10</h3>
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title">🌐 agent-browser</div>
+      <div class="card-desc">基于 Rust 的快速无头浏览器自动化 CLI</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 137.7K</span>
+        <span class="card-stat">🏷️ 自动化</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📧 gog</div>
+      <div class="card-desc">Google Workspace CLI — Gmail、日历、云盘、联系人、表格</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 117.1K</span>
+        <span class="card-stat">🏷️ 生产力</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔄 auto-updater</div>
+      <div class="card-desc">自动更新 Clawdbot 和所有已安装技能</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 46.8K</span>
+        <span class="card-stat">🏷️ 工具</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔌 api-gateway</div>
+      <div class="card-desc">调用第三方 API 的网关，支持托管身份验证</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 45.7K</span>
+        <span class="card-stat">🏷️ 集成</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">🔍 baidu-search</div>
+      <div class="card-desc">百度 AI 搜索引擎 (BDSE) 网络搜索</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 45.2K</span>
+        <span class="card-stat">🏷️ 搜索</span>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">⚡ automation-workflows</div>
+      <div class="card-desc">设计和实施自动化工作流程以节省时间</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 41.9K</span>
+        <span class="card-stat">🏷️ 自动化</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 5: Category Taxonomy -->
+<div class="section">
+  <h2>📊 十二类能力图谱</h2>
+  
+  <div class="bar-chart">
+    <div class="bar-item">
+      <div class="bar-label">💻 开发与编码</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 35%; background: linear-gradient(90deg, #38bdf8, #0ea5e9);">~35%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🎨 设计与前端</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 12%; background: linear-gradient(90deg, #a78bfa, #8b5cf6);">~12%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🔧 DevOps & 测试</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 10%; background: linear-gradient(90deg, #fb923c, #f97316);">~10%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">📊 数据与分析</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 8%; background: linear-gradient(90deg, #4ade80, #22c55e);">~8%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">📝 文档与内容</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 8%; background: linear-gradient(90deg, #fbbf24, #eab308);">~8%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🌐 浏览器自动化</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 7%; background: linear-gradient(90deg, #fb7185, #e11d48);">~7%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🔍 搜索与研究</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 5%; background: linear-gradient(90deg, #818cf8, #6366f1);">~5%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">💬 通信与社交</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 5%; background: linear-gradient(90deg, #2dd4bf, #14b8a6);">~5%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🧠 记忆与上下文</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 3%; background: linear-gradient(90deg, #c084fc, #a855f7);">~3%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">📈 金融与商业</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 3%; background: linear-gradient(90deg, #f472b6, #ec4899);">~3%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🎯 方法论与流程</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 2%; background: linear-gradient(90deg, #67e8f9, #22d3ee);">~2%</div>
+      </div>
+    </div>
+    <div class="bar-item">
+      <div class="bar-label">🛠️ 工具与实用</div>
+      <div class="bar-track">
+        <div class="bar-fill" style="width: 2%; background: linear-gradient(90deg, #d4d4d8, #a1a1aa);">~2%</div>
+      </div>
+    </div>
+  </div>
+
+  <h3>三种 Skills 范式</h3>
+  <div class="card-grid">
+    <div class="card" style="border-color: var(--accent);">
+      <div class="card-title" style="color: var(--accent);">📚 参考型（Reference）</div>
+      <div class="card-desc">编码约定、风格指南，自动加载到上下文。Agent 始终感知这些知识。</div>
+      <div class="card-stats">
+        <span class="card-stat">vercel-react-best-practices</span>
+        <span class="card-stat">web-design-guidelines</span>
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-title" style="color: var(--green);">⚙️ 任务型（Task）</div>
+      <div class="card-desc">具体操作步骤，通常通过 <code>/skill-name</code> 手动调用执行。</div>
+      <div class="card-stats">
+        <span class="card-stat">PDF Toolkit</span>
+        <span class="card-stat">XLSX Master</span>
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--accent3);">
+      <div class="card-title" style="color: var(--accent3);">🏗️ 方法论型（Methodology）</div>
+      <div class="card-desc">完整工程流程，从根本上改变 Agent 的工作方式。</div>
+      <div class="card-stats">
+        <span class="card-stat">superpowers (14 skills)</span>
+        <span class="card-stat">test-driven-development</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 6: Cross-platform -->
+<div class="section">
+  <h2>🔄 跨平台兼容性</h2>
+
+  <h3>Skills 发现路径</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr>
+        <th>工具</th>
+        <th>项目级路径</th>
+        <th>用户级路径</th>
+      </tr>
+      <tr><td>Claude Code</td><td><code>.claude/skills/</code></td><td><code>~/.claude/skills/</code></td></tr>
+      <tr><td>GitHub Copilot</td><td><code>.github/skills/</code></td><td><code>~/.copilot/skills/</code></td></tr>
+      <tr><td>Codex CLI</td><td><code>.agents/skills/</code></td><td>—</td></tr>
+      <tr><td>Gemini CLI</td><td><code>.gemini/skills/</code></td><td><code>~/.gemini/skills/</code></td></tr>
+      <tr><td>Cursor</td><td><code>.cursor/skills/</code></td><td>—</td></tr>
+      <tr><td>Windsurf</td><td><code>.windsurf/skills/</code></td><td>—</td></tr>
+    </table>
+  </div>
+
+  <h3>功能矩阵</h3>
+  <div class="table-wrapper">
+    <table>
+      <tr>
+        <th>特性</th>
+        <th>Claude Code</th>
+        <th>Copilot</th>
+        <th>Codex CLI</th>
+        <th>Gemini CLI</th>
+        <th>Cursor</th>
+        <th>Windsurf</th>
+      </tr>
+      <tr><td>SKILL.md</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>自动发现</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>脚本执行</td><td>✅</td><td>✅</td><td>🟡</td><td>✅</td><td>🟡</td><td>🟡</td></tr>
+      <tr><td>子代理运行</td><td>✅</td><td>✅</td><td>❌</td><td>🟡</td><td>❌</td><td>❌</td></tr>
+      <tr><td>动态上下文注入</td><td>✅</td><td>🟡</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>MCP 集成</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td><td>✅</td></tr>
+      <tr><td>Hooks</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Plugin 打包</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>❌</td><td>❌</td></tr>
+      <tr><td>Marketplace</td><td>✅</td><td>✅</td><td>🟡</td><td>✅</td><td>❌</td><td>❌</td></tr>
+    </table>
+  </div>
+
+  <div class="insight">
+    <div class="insight-title">互操作性结论</div>
+    <code>SKILL.md</code> 本身完全可移植（所有工具都支持基础读取），但高级功能（子代理、动态注入、Plugin 打包）仍有显著工具差异。<strong>Claude Code 和 GitHub Copilot</strong> 在高级功能上领先。
+  </div>
+</div>
+
+<!-- Section 7: Timeline -->
+<div class="section">
+  <h2>📅 发展时间线</h2>
+  
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-date">🔥 2025 Q3-Q4 · 萌芽期</div>
+      <p>Anthropic 发布 Agent Skills 概念。仅 Claude Code 原生支持。社区手动分享 SKILL.md 文件。</p>
+    </div>
+    <div class="timeline-item" style="--dot-color: var(--accent2);">
+      <div class="timeline-date">🚀 2026 Q1 · 爆发期</div>
+      <p>开放标准发布，30+ 工具接入。OpenClaw 注册表突破 12,000。SkillsMP 聚合量达 50 万+。三大平台形成。</p>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-date">📈 2026 Q2+ · 预判趋势</div>
+      <p>Plugin 打包格式趋于统一。企业级 Skills 管理兴起。AI 生成 Skills（元技能）加速产出。MCP + Skills 在 Plugin 层融合。</p>
+    </div>
+  </div>
+</div>
+
+<!-- Section 8: Benchmarks -->
+<div class="section">
+  <h2>⭐ 标杆案例</h2>
+
+  <div class="card-grid">
+    <div class="card" style="border-color: var(--amber);">
+      <div class="card-title"><span class="stars">⭐</span> obra/superpowers</div>
+      <div class="card-desc">将软件工程最佳实践固化为 14 个可执行 Skills：构思 → 计划 → TDD → 实现 → 审查 → Git 管理。证明了 <strong>质量 > 数量</strong> 的关键观点。</div>
+      <div class="card-stats">
+        <span class="card-stat">⭐ 94K Stars</span>
+        <span class="card-stat">📦 14 Skills</span>
+        <span class="card-stat">🏷️ 方法论</span>
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--accent);">
+      <div class="card-title">🔍 find-skills (Vercel Labs)</div>
+      <div class="card-desc">帮助用户发现和安装其他 Skills 的"元技能"。降低了整个生态的使用门槛，成为 Skills 生态的"搜索引擎"。</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 418.6K 安装</span>
+        <span class="card-stat">🏷️ 元工具</span>
+        <span class="card-stat">🥇 全网第一</span>
+      </div>
+    </div>
+    <div class="card" style="border-color: var(--green);">
+      <div class="card-title">🌐 agent-browser</div>
+      <div class="card-desc">基于 Rust 的无头浏览器自动化 CLI。证明 Skills 不仅是"说明书"，也可以包装真正的工具能力。</div>
+      <div class="card-stats">
+        <span class="card-stat">📥 137.7K 安装</span>
+        <span class="card-stat">🏷️ 能力型</span>
+        <span class="card-stat">🦀 Rust</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 9: Insights -->
+<div class="section">
+  <h2>💡 核心发现与启示</h2>
+
+  <div class="card-grid">
+    <div class="card">
+      <div class="card-title" style="color: var(--accent);">🏗️ 对 AI 工程师</div>
+      <div class="card-desc">
+        <p>• 将团队编码规范、Review 流程转化为 <code>SKILL.md</code></p>
+        <p>• 项目 Skills 提交到仓库，确保团队共享</p>
+        <p>• Skills（知识）+ MCP（工具）+ Plugin（分发）三层架构</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--green);">🏢 对平台建设者</div>
+      <div class="card-desc">
+        <p>• 质量控制是核心——过滤 57.8% 的做法值得借鉴</p>
+        <p>• 安装量透明化是最可靠的质量信号</p>
+        <p>• 遵循开放标准，避免厂商锁定</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title" style="color: var(--accent3);">🔬 对研究者</div>
+      <div class="card-desc">
+        <p>• 50 万+ Skills 是"人类如何教 AI 做事"的大规模语料</p>
+        <p>• superpowers 类框架提供了工程流程编码化的研究方向</p>
+        <p>• 373 条恶意 Skills 的特征分析有助于安全防护</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 10: Summary -->
+<div class="section">
+  <h2>🎯 总结</h2>
+  
+  <div class="insight" style="border-left-color: var(--amber);">
+    <div class="insight-title" style="color: var(--amber);">2026 年 AI Agent Skills 生态六大格局</div>
+    <p>1️⃣ <strong>标准统一</strong> — Agent Skills 开放标准获 30+ 工具支持，SKILL.md 成为事实标准</p>
+    <p>2️⃣ <strong>规模爆发</strong> — 从零到 50 万+ 仅用半年，增速远超 MCP 生态</p>
+    <p>3️⃣ <strong>质量分化</strong> — 原始注册表超半数为低质量内容，精选平台价值凸显</p>
+    <p>4️⃣ <strong>安全隐忧</strong> — 恶意 Skills 占比约 3%，安全审计机制仍在完善</p>
+    <p>5️⃣ <strong>工具收敛</strong> — Claude Code 和 Copilot 在高级功能上领先</p>
+    <p>6️⃣ <strong>商业萌芽</strong> — 从纯开源到 Free + Premium 模式</p>
+  </div>
+</div>
+
+<!-- Footer -->
+<div style="text-align: center; padding: 2rem 0; border-top: 1px solid var(--border); margin-top: 3rem;">
+  <p style="color: var(--text-secondary); font-size: 0.85rem;">
+    Maxwell Research · 2026-03-28<br>
+    数据来源：agentskills.io · clawskills.sh · openaitoolshub.org · mcp.so · getagentskills.com
+  </p>
+</div>
+
+</body>
+</html>

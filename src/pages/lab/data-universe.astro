@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="一句话画宇宙" description="一句简单的话，展开成一个完整的数据叙事世界——5 个主题、15 个章节、90+ 数据点">
+  <a href="/playground" class="fixed top-20 left-4 z-50 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full shadow-md hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    返回探索
+  </a>
+  <div id="app"></div>
+</BaseLayout>
+
+<script>
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+  import DataUniverse from '../../components/lab/DataUniverse';
+
+  const root = createRoot(document.getElementById('app')!);
+  root.render(createElement(DataUniverse));
+</script>

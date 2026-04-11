@@ -1,0 +1,304 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import BookmarkButton from '../components/tools/BookmarkButton';
+import ContentHub from '../components/tools/ContentHub';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  description?: string;
+  date: Date;
+  updatedDate?: Date;
+  chapter: number;
+  part?: string;
+  tags?: string[];
+  headings?: { depth: number; slug: string; text: string }[];
+  prevChapter?: { slug: string; title: string; chapter: number } | null;
+  nextChapter?: { slug: string; title: string; chapter: number } | null;
+  bookSlug?: string;
+}
+
+const { title, description, date, updatedDate, chapter, part, tags = [], headings = [], prevChapter, nextChapter, bookSlug = 'llm-complete' } = Astro.props;
+
+// 优先展示 updatedDate（最后修改日期），没有则展示 date（首次发布日期）
+const displayDate = updatedDate || date;
+const formattedDate = displayDate.toLocaleDateString('zh-CN', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const dateLabel = updatedDate ? '最后更新' : '发布于';
+
+// Book-specific metadata
+const booksConfig = {
+  'llm-complete': {
+    title: '大模型全书',
+    icon: '全',
+    gradient: 'from-amber-500 to-orange-500',
+    shadowColor: 'shadow-amber-500/25',
+    accentColor: 'amber',
+    activeBg: 'bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300',
+    badgeBg: 'bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800',
+    tagBg: 'bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400',
+    hoverBorder: 'hover:border-amber-300 dark:hover:border-amber-600',
+    hoverText: 'group-hover:text-amber-600 dark:group-hover:text-amber-400',
+    hoverTextNav: 'hover:text-amber-600 dark:hover:text-amber-400',
+  },
+  'key-moments': {
+    title: '大模型的关键时刻',
+    icon: '键',
+    gradient: 'from-indigo-500 to-purple-500',
+    shadowColor: 'shadow-indigo-500/25',
+    accentColor: 'indigo',
+    activeBg: 'bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300',
+    badgeBg: 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800',
+    tagBg: 'bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400',
+    hoverBorder: 'hover:border-indigo-300 dark:hover:border-indigo-600',
+    hoverText: 'group-hover:text-indigo-600 dark:group-hover:text-indigo-400',
+    hoverTextNav: 'hover:text-indigo-600 dark:hover:text-indigo-400',
+  },
+  'data-engineering': {
+    title: '大模型数据工程',
+    icon: '数',
+    gradient: 'from-emerald-500 to-teal-500',
+    shadowColor: 'shadow-emerald-500/25',
+    accentColor: 'emerald',
+    activeBg: 'bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300',
+    badgeBg: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800',
+    tagBg: 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400',
+    hoverBorder: 'hover:border-emerald-300 dark:hover:border-emerald-600',
+    hoverText: 'group-hover:text-emerald-600 dark:group-hover:text-emerald-400',
+    hoverTextNav: 'hover:text-emerald-600 dark:hover:text-emerald-400',
+  },
+};
+
+type BookConfigKey = keyof typeof booksConfig;
+const config = booksConfig[bookSlug as BookConfigKey] || booksConfig['llm-complete'];
+
+// Fetch chapters for this book only
+const allChapters = (await getCollection('book'))
+  .filter((ch) => !ch.data.draft && ch.data.bookSlug === bookSlug)
+  .sort((a, b) => a.data.chapter - b.data.chapter);
+
+// Group chapters by part
+const partMap = new Map<string, typeof allChapters>();
+allChapters.forEach((ch) => {
+  const p = ch.data.part || '正文';
+  if (!partMap.has(p)) partMap.set(p, []);
+  partMap.get(p)!.push(ch);
+});
+
+const tocHeadings = headings.filter((h) => h.depth >= 2 && h.depth <= 3);
+
+// Extract current slug from pathname
+const pathParts = Astro.url.pathname.split('/').filter(Boolean);
+const currentSlug = pathParts.slice(2).join('/'); // /books/xxx/slug -> slug
+
+// For chapter display
+const chapterLabel = chapter <= 0
+  ? (chapter === 0 ? '目录' : '前言')
+  : `第 ${chapter} 章`;
+---
+
+<BaseLayout title={`${title} | ${config.title}`} description={description}>
+  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12">
+
+      <!-- Left Sidebar: Chapter Navigation -->
+      <aside class="hidden lg:block">
+        <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin">
+          <!-- Book title -->
+          <a href={`/books/${bookSlug}`} class="flex items-center gap-2 mb-6 group">
+            <div class={`w-8 h-8 rounded-lg bg-gradient-to-br ${config.gradient} flex items-center justify-center text-white text-xs font-bold shadow-lg ${config.shadowColor}`}>
+              {config.icon}
+            </div>
+            <span class={`text-sm font-bold text-slate-900 dark:text-white ${config.hoverText} transition-colors`}>
+              {config.title}
+            </span>
+          </a>
+
+          <!-- Chapter list grouped by parts -->
+          <nav class="space-y-5">
+            {[...partMap.entries()].map(([partName, chapters]) => (
+              <div>
+                {partName !== '正文' && (
+                  <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2">
+                    {partName}
+                  </h5>
+                )}
+                <ul class="space-y-0.5">
+                  {chapters.map((ch) => {
+                    const isActive = ch.slug === currentSlug;
+                    return (
+                      <li>
+                        <a
+                          href={`/books/${bookSlug}/${ch.slug}`}
+                          class:list={[
+                            'block text-sm px-2 py-1.5 rounded-lg transition-all duration-200',
+                            isActive
+                              ? `${config.activeBg} font-semibold`
+                              : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800',
+                          ]}
+                        >
+                          {ch.data.chapter > 0 && (
+                            <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">{ch.data.chapter}.</span>
+                          )}
+                          <span class="line-clamp-1">{ch.data.title.replace(/^第\S+章[：:]\s*/, '').replace(/^目录[：:]\s*/, '').replace(/^前言[：:]\s*/, '前言：')}</span>
+                        </a>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <article class="min-w-0">
+        <!-- Mobile Chapter Nav -->
+        <div class="lg:hidden mb-6">
+          <details class="card p-3">
+            <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300">
+              <span class="flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7" />
+                </svg>
+                章节导航
+              </span>
+              <span class="text-xs text-slate-500">{chapterLabel} / 共 {allChapters.filter(ch => ch.data.chapter > 0).length} 章</span>
+            </summary>
+            <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto">
+              {allChapters.map((ch) => {
+                const isActive = ch.slug === currentSlug;
+                return (
+                  <a
+                    href={`/books/${bookSlug}/${ch.slug}`}
+                    class:list={[
+                      'block text-sm px-2 py-1.5 rounded-lg transition-colors',
+                      isActive
+                        ? `${config.activeBg} font-semibold`
+                        : 'text-slate-600 dark:text-slate-400',
+                    ]}
+                  >
+                    {ch.data.chapter > 0 && (
+                      <span class="text-xs text-slate-400 mr-1">{ch.data.chapter}.</span>
+                    )}
+                    {ch.data.title.replace(/^第\S+章[：:]\s*/, '').replace(/^目录[：:]\s*/, '')}
+                  </a>
+                );
+              })}
+            </nav>
+          </details>
+        </div>
+
+        <!-- Breadcrumb -->
+        <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6">
+          <a href="/books" class={`${config.hoverTextNav} transition-colors`}>书架</a>
+          <span>/</span>
+          <a href={`/books/${bookSlug}`} class={`${config.hoverTextNav} transition-colors`}>{config.title}</a>
+          <span>/</span>
+          {part && (
+            <>
+              <span class="text-slate-400 dark:text-slate-500">{part}</span>
+              <span>/</span>
+            </>
+          )}
+          <span class="text-slate-900 dark:text-white">{chapterLabel}</span>
+        </nav>
+
+        <!-- Title Area -->
+        <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700">
+          <!-- Chapter badge -->
+          <div class="flex items-center gap-3 mb-4">
+            <span class={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border ${config.badgeBg}`}>
+              {chapterLabel}
+            </span>
+            {part && (
+              <span class="text-xs text-slate-500 dark:text-slate-400">{part}</span>
+            )}
+          </div>
+
+          <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance">
+            {title}
+          </h1>
+          {description && (
+            <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">{description}</p>
+          )}
+          <div class="flex flex-wrap items-center gap-3 text-sm">
+            <time datetime={displayDate.toISOString()} class="text-slate-500 dark:text-slate-400">
+              {dateLabel}：{formattedDate}
+            </time>
+            {tags.map((tag) => (
+              <span class={`px-2.5 py-0.5 rounded-full ${config.tagBg} font-medium text-xs`}>
+                {tag}
+              </span>
+            ))}
+          </div>
+          <div class="mt-4">
+            <BookmarkButton client:load collection="book" />
+          </div>
+        </header>
+
+        <!-- Content -->
+        <div class="prose-custom">
+          <slot />
+        </div>
+
+        <!-- Chapter Navigation -->
+        {(prevChapter || nextChapter) && (
+          <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700">
+            <div class="grid grid-cols-2 gap-4">
+              {prevChapter ? (
+                <a href={`/books/${bookSlug}/${prevChapter.slug}`} class={`group card p-4 ${config.hoverBorder}`}>
+                  <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span>
+                  <p class={`text-sm font-medium text-slate-900 dark:text-white ${config.hoverText} mt-1 line-clamp-2`}>
+                    {prevChapter.chapter > 0 && <span class="text-slate-400 mr-1">Ch.{prevChapter.chapter}</span>}
+                    {prevChapter.title.replace(/^第\S+章[：:]\s*/, '')}
+                  </p>
+                </a>
+              ) : <div />}
+              {nextChapter ? (
+                <a href={`/books/${bookSlug}/${nextChapter.slug}`} class={`group card p-4 text-right ${config.hoverBorder}`}>
+                  <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span>
+                  <p class={`text-sm font-medium text-slate-900 dark:text-white ${config.hoverText} mt-1 line-clamp-2`}>
+                    {nextChapter.chapter > 0 && <span class="text-slate-400 mr-1">Ch.{nextChapter.chapter}</span>}
+                    {nextChapter.title.replace(/^第\S+章[：:]\s*/, '')}
+                  </p>
+                </a>
+              ) : <div />}
+            </div>
+          </nav>
+        )}
+      </article>
+
+      <!-- Right Sidebar: Table of Contents -->
+      {tocHeadings.length > 0 && (
+        <aside class="hidden lg:block">
+          <div class="sticky top-24">
+            <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+              本章目录
+            </h4>
+            <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto">
+              {tocHeadings.map((heading) => (
+                <a
+                  href={`#${heading.slug}`}
+                  class:list={[
+                    `block text-sm transition-colors duration-200 ${config.hoverTextNav}`,
+                    heading.depth === 2
+                      ? 'text-slate-600 dark:text-slate-400 font-medium'
+                      : 'text-slate-500 dark:text-slate-500 pl-4',
+                  ]}
+                >
+                  {heading.text}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+      )}
+    </div>
+  </div>
+  <ContentHub client:load />
+</BaseLayout>

@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LLMTimeline from '../../components/lab/LLMTimeline';
+---
+
+<BaseLayout 
+  title="LLM 编年史" 
+  description="从 Transformer 到 Agent — 大语言模型九年发展历程的交互式时间线"
+>
+  <a href="/playground" class="fixed top-20 left-4 z-50 inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm rounded-full shadow-md hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+    返回探索
+  </a>
+  <LLMTimeline client:load />
+</BaseLayout>
+
+<style is:global>
+  /* 自定义滚动条 */
+  .scrollbar-thin::-webkit-scrollbar {
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: linear-gradient(90deg, #818cf8, #a78bfa);
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+  }
+</style>

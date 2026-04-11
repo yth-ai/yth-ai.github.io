@@ -1,0 +1,219 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const allColumns = (await getCollection('column'))
+  .filter((col) => !col.data.draft)
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug));
+
+// Group by series
+const seriesMap = new Map<string, typeof allColumns>();
+allColumns.forEach((col) => {
+  const series = col.data.series;
+  if (!seriesMap.has(series)) seriesMap.set(series, []);
+  seriesMap.get(series)!.push(col);
+});
+
+const allSeries = [...seriesMap.keys()];
+
+const seriesInfo: Record<string, { description: string; icon: string; color: string; borderColor: string; bgColor: string; badgeClass: string }> = {
+  'AI 前沿速递': {
+    description: '每周追踪 AI 领域重要动态，简要点评值得关注的事件和发布',
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+    color: 'from-blue-500 to-cyan-500',
+    borderColor: 'border-blue-200 dark:border-blue-800',
+    bgColor: 'bg-blue-500',
+    badgeClass: 'bg-blue-50 dark:bg-blue-950/30 text-blue-700 dark:text-blue-300',
+  },
+  '数据工程观察': {
+    description: '聚焦预训练/中训练数据相关技术进展，开源数据集和新方法论',
+    icon: 'M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4',
+    color: 'from-emerald-500 to-teal-500',
+    borderColor: 'border-emerald-200 dark:border-emerald-800',
+    bgColor: 'bg-emerald-500',
+    badgeClass: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300',
+  },
+  '数据论文速递': {
+    description: '每日精选与大模型数据相关的最新论文，解读核心发现与实践启示',
+    icon: 'M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25',
+    color: 'from-violet-500 to-purple-500',
+    borderColor: 'border-violet-200 dark:border-violet-800',
+    bgColor: 'bg-violet-500',
+    badgeClass: 'bg-violet-50 dark:bg-violet-950/30 text-violet-700 dark:text-violet-300',
+  },
+  '大模型前沿动态': {
+    description: '追踪 OpenAI、Anthropic、Google、字节 Seed、腾讯混元、Qwen 等头部厂商的最新研究进展',
+    icon: 'M3.75 13.5l10.5-11.25L12 10.5h8.25L9.75 21.75 12 13.5H3.75z',
+    color: 'from-orange-500 to-amber-500',
+    borderColor: 'border-orange-200 dark:border-orange-800',
+    bgColor: 'bg-orange-500',
+    badgeClass: 'bg-orange-50 dark:bg-orange-950/30 text-orange-700 dark:text-orange-300',
+  },
+  };
+
+const defaultSeriesInfo = {
+  description: '', icon: 'M12 6v6m0 0v6m0-6h6m-6 0H6',
+  color: 'from-primary-500 to-accent-500', borderColor: 'border-slate-200 dark:border-slate-700',
+  bgColor: 'bg-primary-500', badgeClass: 'bg-primary-50 dark:bg-primary-950/30 text-primary-700 dark:text-primary-300',
+};
+---
+
+<BaseLayout title="专栏" description="定期更新的技术追踪与行业观察">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-10 flex items-end justify-between gap-4 flex-wrap">
+      <div>
+        <h1 class="text-3xl font-bold text-slate-900 dark:text-white">专栏</h1>
+        <p class="text-slate-600 dark:text-slate-400 mt-2">定期更新的技术追踪与行业观察</p>
+      </div>
+      <!-- Active filter hint -->
+      <div id="filter-hint" class="hidden text-sm text-slate-500 dark:text-slate-400">
+        <span id="filter-hint-text"></span>
+        <button id="clear-filter" class="ml-2 text-primary-600 dark:text-primary-400 hover:underline font-medium">
+          显示全部
+        </button>
+      </div>
+    </div>
+
+    <!-- Series Cards (clickable for filtering) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10" id="series-cards">
+      {allSeries.map((series) => {
+        const info = seriesInfo[series] || defaultSeriesInfo;
+        const count = seriesMap.get(series)!.length;
+        return (
+          <button
+            class={`series-card text-left card p-5 border-l-4 ${info.borderColor} transition-all duration-200 hover:shadow-md cursor-pointer focus:outline-none`}
+            data-series={series}
+            aria-pressed="false"
+          >
+            <div class="flex items-start gap-4">
+              <div class={`shrink-0 w-10 h-10 rounded-xl bg-gradient-to-br ${info.color} flex items-center justify-center text-white shadow`}>
+                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                  <path stroke-linecap="round" stroke-linejoin="round" d={info.icon} />
+                </svg>
+              </div>
+              <div class="flex-1 min-w-0">
+                <div class="flex items-center gap-2">
+                  <h3 class="text-base font-bold text-slate-900 dark:text-white truncate">{series}</h3>
+                  <span class={`shrink-0 text-xs px-1.5 py-0.5 rounded-full font-semibold ${info.badgeClass}`}>{count}</span>
+                </div>
+                <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">{info.description}</p>
+              </div>
+            </div>
+          </button>
+        );
+      })}
+    </div>
+
+    <!-- Post list -->
+    {allColumns.length > 0 ? (
+      <div class="space-y-3" id="posts-list">
+        {allColumns.map((col) => {
+          const info = seriesInfo[col.data.series] || defaultSeriesInfo;
+          const borderClass = info.bgColor;
+          const seriesBadgeClass = info.badgeClass;
+          const formattedDate = col.data.date.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+
+          return (
+            <a
+              href={`/column/${col.slug}`}
+              class="group block card card-hover overflow-hidden post-item"
+              data-series={col.data.series}
+            >
+              <div class="flex">
+                <div class={`w-1 shrink-0 ${borderClass}`} />
+                <div class="flex-1 p-5">
+                  <div class="flex items-center gap-3 mb-1.5 text-xs">
+                    <span class={`px-2 py-0.5 rounded-full font-semibold ${seriesBadgeClass}`}>
+                      {col.data.series}{col.data.volume != null ? ` · Vol.${col.data.volume}` : ''}
+                    </span>
+                    <time datetime={col.data.date.toISOString()} class="text-slate-500 dark:text-slate-400">{formattedDate}</time>
+                  </div>
+                  <h3 class="text-base font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-1.5">
+                    {col.data.title}
+                  </h3>
+                  {col.data.description && (
+                    <p class="text-sm text-slate-600 dark:text-slate-400 line-clamp-2">
+                      {col.data.description}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+      <!-- Empty state when filter yields nothing -->
+      <div id="empty-filtered" class="hidden text-center py-16">
+        <p class="text-slate-400 dark:text-slate-500 text-sm">该专栏暂无内容</p>
+      </div>
+    ) : (
+      <div class="text-center py-20">
+        <p class="text-slate-500 dark:text-slate-400">暂无专栏内容</p>
+      </div>
+    )}
+  </div>
+
+  <script>
+    const cards = document.querySelectorAll<HTMLButtonElement>('.series-card');
+    const posts = document.querySelectorAll<HTMLElement>('.post-item');
+    const filterHint = document.getElementById('filter-hint')!;
+    const filterHintText = document.getElementById('filter-hint-text')!;
+    const clearBtn = document.getElementById('clear-filter')!;
+    const emptyFiltered = document.getElementById('empty-filtered');
+
+    let activeSeries: string | null = null;
+
+    function applyFilter(series: string | null) {
+      activeSeries = series;
+
+      // Update card states
+      cards.forEach((card) => {
+        const s = card.dataset.series!;
+        if (series === null) {
+          card.classList.remove('ring-2', 'ring-offset-1', 'ring-primary-500', 'opacity-40');
+          card.setAttribute('aria-pressed', 'false');
+        } else if (s === series) {
+          card.classList.add('ring-2', 'ring-offset-1', 'ring-primary-500');
+          card.classList.remove('opacity-40');
+          card.setAttribute('aria-pressed', 'true');
+        } else {
+          card.classList.remove('ring-2', 'ring-offset-1', 'ring-primary-500');
+          card.classList.add('opacity-40');
+          card.setAttribute('aria-pressed', 'false');
+        }
+      });
+
+      // Show/hide posts
+      let visible = 0;
+      posts.forEach((post) => {
+        if (series === null || post.dataset.series === series) {
+          post.style.display = '';
+          visible++;
+        } else {
+          post.style.display = 'none';
+        }
+      });
+
+      // Empty state
+      if (emptyFiltered) emptyFiltered.classList.toggle('hidden', visible > 0);
+
+      // Filter hint
+      if (series) {
+        filterHint.classList.remove('hidden');
+        filterHintText.textContent = `正在查看：${series}（${visible} 篇）`;
+      } else {
+        filterHint.classList.add('hidden');
+      }
+    }
+
+    cards.forEach((card) => {
+      card.addEventListener('click', () => {
+        const s = card.dataset.series!;
+        applyFilter(activeSeries === s ? null : s);
+      });
+    });
+
+    clearBtn.addEventListener('click', () => applyFilter(null));
+  </script>
+</BaseLayout>

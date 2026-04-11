@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DecontaminationDetector from '../../components/tools/DecontaminationDetector';
+---
+
+<BaseLayout title="去污染检测器" description="检测训练数据中是否包含已知 Benchmark 数据泄露，覆盖 MMLU、GSM8K、HumanEval 等主流评测集">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">去污染检测器</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">去污染检测器</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">检测训练数据中的 Benchmark 泄露，覆盖 8 个主流评测集</p>
+    </div>
+
+    <!-- Tool Component -->
+    <DecontaminationDetector client:load />
+  </div>
+</BaseLayout>

@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DataQualityGame from '../../components/tools/DataQualityGame';
+---
+
+<BaseLayout title="训练数据猜猜乐" description="你能分辨出高质量和低质量的训练数据吗？看看你的判断力能不能超过自动过滤器！">
+  <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">训练数据猜猜乐</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">训练数据猜猜乐</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">给你一段真实文本，猜猜来源和质量——看看你能不能比 FineWeb 的过滤器做得更好</p>
+    </div>
+
+    <!-- Tool Component -->
+    <DataQualityGame client:load />
+  </div>
+</BaseLayout>

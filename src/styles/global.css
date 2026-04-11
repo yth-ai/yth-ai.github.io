@@ -1,0 +1,227 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg: 248 250 252;
+    --color-surface: 255 255 255;
+    --color-text: 15 23 42;
+    --color-text-muted: 71 85 105;
+    --color-border: 226 232 240;
+  }
+
+  .dark {
+    --color-bg: 15 23 42;
+    --color-surface: 30 41 59;
+    --color-text: 248 250 252;
+    --color-text-muted: 148 163 184;
+    --color-border: 51 65 85;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100 font-sans antialiased transition-colors duration-300;
+  }
+
+  /* Scrollbar styling */
+  ::-webkit-scrollbar {
+    @apply w-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-slate-300 dark:bg-slate-600 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-slate-400 dark:bg-slate-500;
+  }
+}
+
+@layer components {
+  .gradient-text {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-500 via-accent-500 to-blue-500;
+  }
+
+  .glass {
+    @apply bg-white/70 dark:bg-slate-800/70 backdrop-blur-xl border border-slate-200/50 dark:border-slate-700/50;
+  }
+
+  .card {
+    @apply bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm hover:shadow-md transition-all duration-300;
+  }
+
+  .card-hover {
+    @apply hover:-translate-y-1 hover:shadow-lg hover:border-primary-300 dark:hover:border-primary-600;
+  }
+
+  /* Prose / Markdown content styling */
+  .prose-custom {
+    @apply prose prose-slate dark:prose-invert max-w-none;
+    @apply prose-headings:font-bold prose-headings:tracking-tight;
+    @apply prose-a:text-primary-600 dark:prose-a:text-primary-400 prose-a:no-underline;
+    @apply prose-img:rounded-xl prose-img:shadow-md;
+  }
+  .prose-custom a:hover {
+    text-decoration: underline;
+  }
+
+  /* ── Inline code (NOT inside pre) ── */
+  .prose-custom :not(pre) > code {
+    @apply text-primary-700 dark:text-primary-300 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded text-[0.875em] font-mono;
+    font-weight: 500;
+  }
+  .prose-custom :not(pre) > code::before,
+  .prose-custom :not(pre) > code::after {
+    content: none;
+  }
+
+  /* ── Code blocks (Shiki dual-theme) ── */
+  .prose-custom pre {
+    @apply rounded-xl border text-sm leading-relaxed my-6;
+    border-color: #e2e8f0;
+    padding: 1.25rem 1.5rem;
+    overflow-x: auto;
+  }
+  .dark .prose-custom pre {
+    border-color: #334155;
+  }
+
+  /* Astro Shiki dual-theme: pre has inline background-color for light theme.
+     In dark mode, override with --shiki-dark-bg variable. */
+  .prose-custom pre.astro-code,
+  .prose-custom .astro-code {
+    border-radius: 0.75rem;
+  }
+  .dark .prose-custom pre.astro-code,
+  .dark .prose-custom .astro-code {
+    background-color: var(--shiki-dark-bg, #0d1117) !important;
+    color: var(--shiki-dark, #e1e4e8) !important;
+  }
+
+  /* Shiki dual-theme: switch span colors in dark mode */
+  .dark .prose-custom pre.astro-code span[style],
+  .dark .prose-custom .astro-code span[style] {
+    color: var(--shiki-dark) !important;
+  }
+
+  .prose-custom pre code {
+    @apply bg-transparent p-0 rounded-none text-inherit;
+    font-size: inherit;
+    font-weight: inherit;
+  }
+
+  /* ── Tables ── */
+  .prose-custom table {
+    @apply w-full text-sm border-collapse my-6;
+  }
+  .prose-custom thead th {
+    @apply bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold text-left px-4 py-2.5;
+    @apply border-b-2 border-slate-200 dark:border-slate-600;
+  }
+  .prose-custom tbody td {
+    @apply px-4 py-2 border-b border-slate-100 dark:border-slate-700/50 text-slate-700 dark:text-slate-300;
+  }
+  .prose-custom tbody tr:hover {
+    @apply bg-slate-50 dark:bg-slate-800/50;
+  }
+
+  /* ── KaTeX math formulas ── */
+  .prose-custom .katex-display {
+    @apply my-6 overflow-x-auto overflow-y-hidden py-2;
+    -webkit-overflow-scrolling: touch;
+  }
+  .prose-custom .katex-display > .katex {
+    @apply text-slate-800 dark:text-slate-100;
+  }
+  .prose-custom .katex {
+    @apply text-slate-800 dark:text-slate-100;
+    font-size: 1.05em;
+  }
+  /* Fix KaTeX elements in dark mode */
+  .dark .prose-custom .katex .mord,
+  .dark .prose-custom .katex .mrel,
+  .dark .prose-custom .katex .mbin,
+  .dark .prose-custom .katex .mopen,
+  .dark .prose-custom .katex .mclose,
+  .dark .prose-custom .katex .mpunct,
+  .dark .prose-custom .katex .mop,
+  .dark .prose-custom .katex .minner,
+  .dark .prose-custom .katex .textit,
+  .dark .prose-custom .katex .textrm {
+    color: #e2e8f0;
+  }
+  .dark .prose-custom .katex .katex-html .base {
+    color: #e2e8f0;
+  }
+  /* Horizontal rule for KaTeX fractions in dark mode */
+  .dark .prose-custom .katex .frac-line {
+    border-bottom-color: #94a3b8;
+  }
+  .dark .prose-custom .katex .sqrt > .root {
+    color: #e2e8f0;
+  }
+  .dark .prose-custom .katex .overline .overline-line,
+  .dark .prose-custom .katex .underline .underline-line {
+    border-bottom-color: #94a3b8;
+  }
+
+  /* ── Blockquotes ── */
+  .prose-custom blockquote {
+    @apply border-l-4 border-primary-300 dark:border-primary-600 bg-primary-50/50 dark:bg-primary-950/20 pl-4 py-0.5 my-6 rounded-r-lg;
+    font-style: normal;
+  }
+  .prose-custom blockquote p {
+    @apply text-slate-700 dark:text-slate-300;
+  }
+
+  /* ── Horizontal rules ── */
+  .prose-custom hr {
+    @apply border-slate-200 dark:border-slate-700 my-8;
+  }
+
+  /* ── Lists ── */
+  .prose-custom ul > li::marker {
+    @apply text-slate-400 dark:text-slate-500;
+  }
+  .prose-custom ol > li::marker {
+    @apply text-slate-500 dark:text-slate-400 font-medium;
+  }
+
+  /* ── Strong / Bold ── */
+  .prose-custom strong {
+    @apply text-slate-900 dark:text-white font-semibold;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* ── Search result highlight (Pagefind) ── */
+#search-results mark {
+  @apply bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300 rounded px-0.5;
+  text-decoration: none;
+}
+
+#search-results .search-result-item:hover {
+  @apply bg-slate-50 dark:bg-slate-700/50;
+}
+
+/* Smooth search modal entrance */
+#search-modal {
+  animation: searchFadeIn 0.15s ease-out;
+}
+@keyframes searchFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

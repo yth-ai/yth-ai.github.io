@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ScalingLawsPlayground from '../../components/tools/ScalingLawsPlayground';
+---
+
+<BaseLayout title="Scaling Laws 游乐场 2.0" description="训练 + 推理双范式——亲手感受 AI 时代两条最重要的幂律曲线">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">Scaling Laws 游乐场</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Scaling Laws 游乐场 2.0</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">训练 + 推理双范式——拖动滑块、切换策略，探索参数量、数据量、算力和"思考时间"如何改变模型表现</p>
+    </div>
+
+    <!-- Tool Component -->
+    <ScalingLawsPlayground client:load />
+  </div>
+</BaseLayout>

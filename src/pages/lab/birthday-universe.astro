@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import BirthdayUniverse from '../../components/lab/BirthdayUniverse';
+---
+
+<BaseLayout title="你的生日那天，宇宙长什么样" description="输入生日，看看那天的星空、月相、最近的行星、以及你的光走了多远">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">你的生日那天，宇宙长什么样</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">你的生日那天，宇宙长什么样</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">输入生日，看看那天的星空、月相、最近的行星——以及你出生那一刻的光，现在飞到了哪里</p>
+    </div>
+    <BirthdayUniverse client:load />
+  </div>
+</BaseLayout>

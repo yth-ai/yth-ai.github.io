@@ -1,0 +1,16 @@
+---
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const chapters = (await getCollection('book'))
+    .filter((ch) => !ch.data.draft);
+
+  return chapters.map((ch) => ({
+    params: { slug: ch.slug },
+    props: { bookSlug: ch.data.bookSlug, chapterSlug: ch.slug },
+  }));
+}
+
+const { bookSlug, chapterSlug } = Astro.props;
+return Astro.redirect(`/books/${bookSlug}/${chapterSlug}`, 301);
+---

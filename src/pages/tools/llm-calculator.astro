@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import LLMCalculator from '../../components/tools/llm-calculator/LLMCalculator';
+---
+
+<BaseLayout title="LLM 架构工作台" description="参数计算 + MoE 支持 + KV Cache 分析 + 推理吞吐量 + 模型对决 — 20+ 主流模型预设">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">LLM 架构工作台</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">LLM 架构工作台</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">Dense + MoE 参数计算 · KV Cache 与推理分析 · 模型对决 — 覆盖 LLaMA 4 / DeepSeek-V3 / Qwen-3 等 20+ 模型</p>
+    </div>
+    <LLMCalculator client:load />
+  </div>
+</BaseLayout>

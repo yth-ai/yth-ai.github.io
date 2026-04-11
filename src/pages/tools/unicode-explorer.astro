@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import UnicodeExplorer from '../../components/tools/UnicodeExplorer';
+---
+
+<BaseLayout title="Unicode 编码探测" description="深度分析文本中每个字符的 Unicode 码点、UTF-8/UTF-16 编码和所属 Block">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">Unicode 编码探测</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Unicode 编码探测</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">深度分析每个字符的 Unicode 码点、UTF-8/UTF-16 编码字节和 Block 分布</p>
+    </div>
+    <UnicodeExplorer client:load />
+  </div>
+</BaseLayout>

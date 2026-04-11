@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="思维地形图 — LLM 推理路径可视化" description="将 LLM 的推理步骤映射为二维地形图——CoT、Tree-of-Thought、直觉快答三种策略在 5 道经典推理题上的路径对比">
+  <a href="/playground" class="fixed top-20 left-4 z-50 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/80 dark:bg-slate-800/80 backdrop-blur text-sm text-slate-600 dark:text-slate-300 hover:text-indigo-600 dark:hover:text-indigo-400 border border-slate-200 dark:border-slate-700 shadow-sm transition-colors">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5m0 0 7 7m-7-7 7-7"/></svg>
+    返回探索
+  </a>
+  <div id="app" class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12"></div>
+</BaseLayout>
+
+<script>
+  import { createElement } from 'react';
+  import { createRoot } from 'react-dom/client';
+  import ReasoningLandscape from '../../components/lab/ReasoningLandscape';
+
+  const root = createRoot(document.getElementById('app')!);
+  root.render(createElement(ReasoningLandscape));
+</script>

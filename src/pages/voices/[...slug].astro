@@ -1,0 +1,36 @@
+---
+import VoicesLayout from '../../layouts/VoicesLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const voices = (await getCollection('voices'))
+    .filter((v) => !v.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.data.volume - a.data.volume);
+
+  return voices.map((v, index) => ({
+    params: { slug: v.slug },
+    props: {
+      voice: v,
+      prevPost: index > 0 ? { slug: voices[index - 1].slug, title: voices[index - 1].data.title } : null,
+      nextPost: index < voices.length - 1 ? { slug: voices[index + 1].slug, title: voices[index + 1].data.title } : null,
+    },
+  }));
+}
+
+const { voice, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await voice.render();
+---
+
+<VoicesLayout
+  title={voice.data.title}
+  description={voice.data.description}
+  date={voice.data.date}
+  volume={voice.data.volume}
+  tags={voice.data.tags}
+  items={voice.data.items}
+  headings={headings}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</VoicesLayout>

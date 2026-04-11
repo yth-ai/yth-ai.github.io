@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DialectCountdown from '../../components/lab/DialectCountdown';
+---
+
+<BaseLayout title="方言消亡倒计时" description="中国方言的消亡时间线——点击地图上的每个方言区，看看它还能存在多久">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">方言消亡倒计时</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">方言消亡倒计时</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">按照当前衰退速度，这些方言预计何时功能性消亡？——点击地图上的方言区查看详情</p>
+    </div>
+    <DialectCountdown client:load />
+  </div>
+</BaseLayout>

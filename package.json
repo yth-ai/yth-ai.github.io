@@ -1,0 +1,31 @@
+{
+  "name": "maxwell",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Maxwell - 个人综合平台：文档 / 工具 / 博客",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build && pagefind --site dist",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/check": "^0.9.4",
+    "@astrojs/mdx": "^4.2.4",
+    "@astrojs/react": "^4.2.1",
+    "@astrojs/rss": "^4.0.17",
+    "@astrojs/sitemap": "^3.7.1",
+    "@astrojs/tailwind": "^6.0.2",
+    "@tailwindcss/typography": "^0.5.19",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "astro": "^5.7.10",
+    "pagefind": "^1.4.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.3"
+  }
+}

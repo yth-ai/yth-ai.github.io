@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScienceClaw × EvoScientist 深度研读：AI 科研智能体的两条路线</title>
+<style>
+  :root {
+    --bg: #0f172a;
+    --surface: #1e293b;
+    --surface-alt: #334155;
+    --border: #475569;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --accent-primary: #38bdf8;      /* sky-400 */
+    --accent-secondary: #a78bfa;    /* violet-400 */
+    --accent-warm: #fb923c;         /* orange-400 */
+    --accent-green: #34d399;        /* emerald-400 */
+    --accent-rose: #fb7185;         /* rose-400 */
+    --accent-amber: #fbbf24;        /* amber-400 */
+    --accent-primary-bg: rgba(56,189,248,0.08);
+    --accent-secondary-bg: rgba(167,139,250,0.08);
+    --accent-warm-bg: rgba(251,146,60,0.08);
+    --accent-green-bg: rgba(52,211,153,0.08);
+    --accent-rose-bg: rgba(251,113,133,0.08);
+    --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1a1a40 50%, #1e293b 100%);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    font-size: 16px;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  /* Hero */
+  .hero {
+    background: var(--gradient-hero);
+    padding: 80px 24px 60px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(ellipse at 30% 20%, rgba(56,189,248,0.06) 0%, transparent 50%),
+                radial-gradient(ellipse at 70% 80%, rgba(167,139,250,0.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    background: rgba(56,189,248,0.1);
+    border: 1px solid rgba(56,189,248,0.2);
+    border-radius: 24px;
+    font-size: 13px;
+    color: var(--accent-primary);
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: 2.4em;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+  }
+  .hero .subtitle {
+    font-size: 1.15em;
+    color: var(--text-muted);
+    max-width: 720px;
+    margin: 0 auto 32px;
+    line-height: 1.6;
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: center;
+    gap: 32px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* Section */
+  section { padding: 48px 0; }
+  section + section { border-top: 1px solid rgba(71,85,105,0.3); }
+  .section-header {
+    margin-bottom: 32px;
+  }
+  .section-label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--accent-primary);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent-primary); }
+  .card h3 {
+    font-size: 1.15em;
+    font-weight: 700;
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card p { color: var(--text-muted); margin-bottom: 8px; }
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  /* Dual column */
+  .dual-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 768px) {
+    .dual-col { grid-template-columns: 1fr; }
+  }
+
+  /* System card */
+  .system-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+  .system-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+  }
+  .system-card.sky::before { background: var(--accent-primary); }
+  .system-card.violet::before { background: var(--accent-secondary); }
+
+  .system-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+  .system-logo {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: 800;
+  }
+  .system-logo.sky { background: rgba(56,189,248,0.15); color: var(--accent-primary); }
+  .system-logo.violet { background: rgba(167,139,250,0.15); color: var(--accent-secondary); }
+  .system-name { font-size: 1.3em; font-weight: 800; }
+  .system-org { font-size: 0.85em; color: var(--text-dim); }
+
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+  }
+  .stat-item {
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 1.5em;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+  .stat-value.sky { color: var(--accent-primary); }
+  .stat-value.violet { color: var(--accent-secondary); }
+  .stat-label { font-size: 11px; color: var(--text-dim); margin-top: 4px; }
+
+  /* Comparison table */
+  .comparison-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin: 20px 0;
+    font-size: 14px;
+  }
+  .comparison-table thead th {
+    background: var(--surface-alt);
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 700;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-muted);
+    border-bottom: 2px solid var(--border);
+  }
+  .comparison-table thead th:first-child { border-radius: 8px 0 0 0; }
+  .comparison-table thead th:last-child { border-radius: 0 8px 0 0; }
+  .comparison-table tbody td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(71,85,105,0.3);
+    vertical-align: top;
+  }
+  .comparison-table tbody tr:last-child td { border-bottom: none; }
+  .comparison-table tbody tr:hover { background: rgba(255,255,255,0.02); }
+  .comparison-table .dim-cell { font-weight: 600; color: var(--accent-primary); width: 140px; }
+
+  /* Tags */
+  .tag {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin: 2px 4px 2px 0;
+  }
+  .tag.sky { background: rgba(56,189,248,0.12); color: var(--accent-primary); }
+  .tag.violet { background: rgba(167,139,250,0.12); color: var(--accent-secondary); }
+  .tag.green { background: rgba(52,211,153,0.12); color: var(--accent-green); }
+  .tag.warm { background: rgba(251,146,60,0.12); color: var(--accent-warm); }
+  .tag.rose { background: rgba(251,113,133,0.12); color: var(--accent-rose); }
+  .tag.amber { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
+
+  /* Flow diagram */
+  .flow-box {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+  .flow-step {
+    background: var(--surface-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  .flow-arrow { color: var(--text-dim); font-size: 18px; }
+
+  /* Insight box */
+  .insight-box {
+    background: var(--accent-primary-bg);
+    border-left: 3px solid var(--accent-primary);
+    border-radius: 0 8px 8px 0;
+    padding: 20px 24px;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  .insight-box.violet {
+    background: var(--accent-secondary-bg);
+    border-left-color: var(--accent-secondary);
+  }
+  .insight-box.warm {
+    background: var(--accent-warm-bg);
+    border-left-color: var(--accent-warm);
+  }
+  .insight-box.green {
+    background: var(--accent-green-bg);
+    border-left-color: var(--accent-green);
+  }
+  .insight-box.rose {
+    background: var(--accent-rose-bg);
+    border-left-color: var(--accent-rose);
+  }
+  .insight-box strong { color: var(--text); }
+
+  /* Architecture diagram */
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 32px;
+    margin: 24px 0;
+    text-align: center;
+  }
+  .arch-layer {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 8px 0;
+    flex-wrap: wrap;
+  }
+  .arch-node {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    border: 1px solid;
+  }
+  .arch-node.sky { background: rgba(56,189,248,0.1); border-color: rgba(56,189,248,0.3); color: var(--accent-primary); }
+  .arch-node.violet { background: rgba(167,139,250,0.1); border-color: rgba(167,139,250,0.3); color: var(--accent-secondary); }
+  .arch-node.green { background: rgba(52,211,153,0.1); border-color: rgba(52,211,153,0.3); color: var(--accent-green); }
+  .arch-node.warm { background: rgba(251,146,60,0.1); border-color: rgba(251,146,60,0.3); color: var(--accent-warm); }
+  .arch-node.rose { background: rgba(251,113,133,0.1); border-color: rgba(251,113,133,0.3); color: var(--accent-rose); }
+  .arch-connector {
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 20px;
+    margin: 4px 0;
+  }
+  .arch-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 6px;
+    font-weight: 700;
+  }
+
+  /* Key metric */
+  .metric-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(71,85,105,0.2);
+  }
+  .metric-row:last-child { border-bottom: none; }
+  .metric-label { flex: 1; font-size: 14px; color: var(--text-muted); }
+  .metric-bar {
+    flex: 2;
+    height: 8px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+  }
+  .metric-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+  .metric-fill.sky { background: var(--accent-primary); }
+  .metric-fill.violet { background: var(--accent-secondary); }
+  .metric-value { font-size: 14px; font-weight: 700; width: 48px; text-align: right; }
+
+  /* Verdict */
+  .verdict-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin: 20px 0;
+  }
+  @media (max-width: 640px) { .verdict-grid { grid-template-columns: 1fr; } }
+  .verdict-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .verdict-item h4 { font-size: 14px; color: var(--text-muted); margin-bottom: 8px; }
+  .verdict-item .winner {
+    font-size: 1.1em;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+  .verdict-item p { font-size: 13px; color: var(--text-dim); }
+
+  /* Paragraph */
+  .prose { max-width: 100%; }
+  .prose p { margin-bottom: 16px; color: var(--text-muted); }
+  .prose h2 { font-size: 1.4em; font-weight: 700; color: var(--text); margin: 32px 0 16px; }
+  .prose h3 { font-size: 1.15em; font-weight: 700; color: var(--text); margin: 24px 0 12px; }
+  .prose ul { margin: 12px 0; padding-left: 24px; }
+  .prose li { margin-bottom: 8px; color: var(--text-muted); }
+  .prose li strong { color: var(--text); }
+  .prose code {
+    background: var(--surface-alt);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    font-family: 'SF Mono', 'Cascadia Code', monospace;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 40px 24px;
+    text-align: center;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+  }
+
+  /* Number emphasis */
+  .num { font-weight: 800; font-variant-numeric: tabular-nums; }
+  .num.sky { color: var(--accent-primary); }
+  .num.violet { color: var(--accent-secondary); }
+  .num.green { color: var(--accent-green); }
+  .num.warm { color: var(--accent-warm); }
+  .num.rose { color: var(--accent-rose); }
+
+  /* Quote */
+  blockquote {
+    border-left: 3px solid var(--accent-secondary);
+    padding: 12px 20px;
+    margin: 16px 0;
+    background: rgba(167,139,250,0.05);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text-muted);
+  }
+</style>
+</head>
+<body>
+
+<!-- =============== HERO =============== -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">🔬 AI 科研智能体 · 深度对比研读</div>
+    <h1>ScienceClaw × EvoScientist<br>AI 科研智能体的两条路线</h1>
+    <p class="subtitle">
+      一个走「Skill 即 Markdown」的极简工程路线，一个走「多智能体 + 持久记忆」的自进化学术路线。<br>
+      当 AI 真正成为科研伙伴，哪种范式更有生命力？
+    </p>
+    <div class="hero-meta">
+      <span>📅 2026-03-28</span>
+      <span>🏷️ AI 科研智能体 · 多智能体系统 · 自进化 · Skill 架构</span>
+      <span>⏱️ 深度研读 · ~25 min</span>
+    </div>
+  </div>
+</div>
+
+<!-- =============== TL;DR =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Executive Summary</div>
+      <div class="section-title">一分钟要点</div>
+    </div>
+
+    <div class="insight-box">
+      <strong>核心结论：</strong>ScienceClaw 和 EvoScientist 代表了 AI 科研智能体的两个极端设计哲学——
+      前者是<strong>「零代码 Skill 栈」</strong>（所有领域知识用 Markdown 教给模型），后者是<strong>「多智能体进化系统」</strong>（6 个角色 + 持久记忆 + 自我进化管理器）。
+      两者都聚焦于从"内容生成"到"全流程任务执行"的范式转变，但在架构复杂度、可扩展性、学术可验证性上走出了截然不同的路。
+    </div>
+
+    <div class="dual-col">
+      <div class="system-card sky">
+        <div class="system-header">
+          <div class="system-logo sky">🦞</div>
+          <div>
+            <div class="system-name">ScienceClaw</div>
+            <div class="system-org">OpenClaw 开源版 · Zaoqu Liu</div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-value sky">266</div>
+            <div class="stat-label">Markdown Skills</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value sky">77+</div>
+            <div class="stat-label">数据库接口</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value sky">0</div>
+            <div class="stat-label">自定义代码行</div>
+          </div>
+        </div>
+        <p style="font-size:13px; color:var(--text-dim);">
+          <strong style="color:var(--text)">核心公式</strong>：OpenClaw engine + SCIENCE.md (~600行) + 266 Skills (Markdown) = 0 行自定义代码
+        </p>
+      </div>
+
+      <div class="system-card violet">
+        <div class="system-header">
+          <div class="system-logo violet">🧬</div>
+          <div>
+            <div class="system-name">EvoScientist</div>
+            <div class="system-org">华为 · arXiv 2603.08127 · KDD 2026</div>
+          </div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-item">
+            <div class="stat-value violet">6/6</div>
+            <div class="stat-label">ICAIS 论文接收</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value violet">6</div>
+            <div class="stat-label">专业智能体</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-value violet">2</div>
+            <div class="stat-label">持久记忆模块</div>
+          </div>
+        </div>
+        <p style="font-size:13px; color:var(--text-dim);">
+          <strong style="color:var(--text)">核心创新</strong>：进化管理器（EMA）将成功/失败经验蒸馏为可重用知识，驱动多智能体持续自我改进
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== PART 1: ScienceClaw =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Part I</div>
+      <div class="section-title">ScienceClaw：「Skill 即 Markdown」的极简主义</div>
+    </div>
+
+    <div class="prose">
+      <p>ScienceClaw 的设计哲学可以用一句话概括：<strong>用 Markdown 教会模型做科研</strong>。它不依赖任何 TypeScript、Python 后端、MCP 协议或插件系统——所有领域知识都被编码为 Markdown 文件（Skills），由底层的 OpenClaw 引擎按需加载。</p>
+    </div>
+
+    <h3 style="margin-bottom:16px;">📐 架构分层</h3>
+    <div class="arch-diagram">
+      <div class="arch-label">用户层</div>
+      <div class="arch-layer">
+        <div class="arch-node sky">Terminal UI</div>
+        <div class="arch-node sky">Web Dashboard</div>
+        <div class="arch-node sky">Telegram</div>
+        <div class="arch-node sky">WeChat</div>
+        <div class="arch-node sky">Slack / Discord</div>
+      </div>
+      <div class="arch-connector">↕</div>
+      <div class="arch-label">网关层</div>
+      <div class="arch-layer">
+        <div class="arch-node green">OpenClaw Gateway（路由 · 会话 · 工具调用）</div>
+      </div>
+      <div class="arch-connector">↕</div>
+      <div class="arch-label">代理层</div>
+      <div class="arch-layer">
+        <div class="arch-node violet">SCIENCE.md（身份 · 研究纪律）</div>
+        <div class="arch-node violet">266 Skills（按需加载）</div>
+      </div>
+      <div class="arch-connector">↕</div>
+      <div class="arch-label">工具层</div>
+      <div class="arch-layer">
+        <div class="arch-node warm">web_search（Brave）</div>
+        <div class="arch-node warm">bash（Python/R/Julia + curl）</div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:16px;">🧩 Skill 系统解剖</h3>
+    <div class="prose">
+      <p>266 个 Skill 是 ScienceClaw 的核心知识库。每个 Skill 是一个 Markdown 文件，包含 API 模式、代码模板和验证步骤。这种设计的激进之处在于——<strong>完全不写代码</strong>。</p>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>领域</th>
+          <th>数量</th>
+          <th>代表性 Skill</th>
+          <th>特点</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim-cell">可视化</td>
+          <td><span class="num sky">35+</span></td>
+          <td>matplotlib, seaborn, plotly, networkx</td>
+          <td>包含完整绘图代码模板</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">生物信息学</td>
+          <td><span class="num sky">30+</span></td>
+          <td>scanpy, anndata, pydeseq2, biopython</td>
+          <td>scRNA-seq 全流程覆盖</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">数据库</td>
+          <td><span class="num sky">20+</span></td>
+          <td>UniProt, PDB, STRING, Reactome</td>
+          <td>REST API 调用模板</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">药物发现</td>
+          <td><span class="num sky">20+</span></td>
+          <td>ChEMBL, RDKit, ZINC, AlphaFold</td>
+          <td>成药性预测管道</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">科学写作</td>
+          <td><span class="num sky">15+</span></td>
+          <td>文献搜索, 同行评审, LaTeX模板</td>
+          <td>从初稿到投稿</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">基因组学</td>
+          <td><span class="num sky">15+</span></td>
+          <td>Ensembl, GWAS, ClinVar, GEO</td>
+          <td>多组学整合</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">机器学习</td>
+          <td><span class="num sky">10+</span></td>
+          <td>scikit-learn, SHAP, aeon</td>
+          <td>可解释性优先</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3 style="margin-bottom:16px;">🧪 Research Recipes：预构建工作流</h3>
+    <div class="prose">
+      <p>ScienceClaw 提供 6 个预构建的「研究配方」(Research Recipes)，可以根据一句自然语言自动匹配并执行完整的多步分析管道：</p>
+    </div>
+
+    <div class="flow-box" style="margin-bottom:12px;">
+      <div class="flow-step" style="background:rgba(56,189,248,0.1); border-color:rgba(56,189,248,0.3); color:var(--accent-primary);">用户输入</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">文献搜索</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">TCGA 表达</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">生存分析</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">免疫浸润</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step">通路富集</div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-step" style="background:rgba(52,211,153,0.1); border-color:rgba(52,211,153,0.3); color:var(--accent-green);">结构化报告</div>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-top:16px;">
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px;">🔬 gene-landscape</div>
+        <div style="font-size:12px; color:var(--text-dim);">基因全景分析</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px;">🎯 target-validation</div>
+        <div style="font-size:12px; color:var(--text-dim);">靶点成药性评估</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px;">📚 literature-review</div>
+        <div style="font-size:12px; color:var(--text-dim);">自动文献综述</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px;">📊 diff-expression</div>
+        <div style="font-size:12px; color:var(--text-dim);">差异表达分析</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px;">🏥 clinical-query</div>
+        <div style="font-size:12px; color:var(--text-dim);">临床查询</div>
+      </div>
+      <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:16px;">
+        <div style="font-weight:700; font-size:14px; margin-bottom:6px;">👤 person-research</div>
+        <div style="font-size:12px; color:var(--text-dim);">研究者调研</div>
+      </div>
+    </div>
+
+    <div class="insight-box" style="margin-top:24px;">
+      <strong>💡 关键洞察：</strong>ScienceClaw 的哲学是<strong>「Skill 即函数签名」</strong>——每个 Markdown Skill 本质上是一个用自然语言描述的函数接口，包含输入格式、执行步骤和预期输出。它赌的是：<strong>足够好的 LLM + 足够好的 Prompt = 不需要写代码</strong>。这在 2026 年初期确实是可行的——前提是底层 LLM 足够强。
+    </div>
+
+    <h3 style="margin-bottom:16px;">⚠️ 紫东太初版 vs 开源版</h3>
+    <div class="prose">
+      <p>需要注意的是，「ScienceClaw」这个名字下目前至少有<strong>两个不同的项目</strong>：</p>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>维度</th>
+          <th>开源版 (Zaoqu-Liu)</th>
+          <th>紫东太初版</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim-cell">架构</td>
+          <td>OpenClaw 引擎 + Markdown Skills</td>
+          <td>LangChain DeepAgents + AIO Sandbox</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">Skill 数量</td>
+          <td>266 个 Markdown Skills</td>
+          <td>1900+ 工具与技能</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">数据库</td>
+          <td>77+ REST API</td>
+          <td>未公开具体数量</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">代码基</td>
+          <td>Shell 87% + JS 13%，0 行自定义逻辑</td>
+          <td>完全自研，未开源</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">安全模型</td>
+          <td>OpenClaw 默认沙箱</td>
+          <td>Docker 容器 + AIO Sandbox 双层隔离</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">学科偏重</td>
+          <td>生物医学为主，强单细胞/药物发现</td>
+          <td>八大学科（含天文、环境、化学等）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">交互渠道</td>
+          <td>Terminal + 多平台（继承 OpenClaw）</td>
+          <td>微信 ClawBot 插件</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">许可证</td>
+          <td>MIT（完全开源）</td>
+          <td>商用平台</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="insight-box warm">
+      <strong>⚠️ 注意：</strong>本文后续对 ScienceClaw 的架构分析主要基于<strong>开源版</strong>（Zaoqu-Liu/ScienceClaw），因为它有完整的代码和文档可供审查。紫东太初版虽然技能更丰富，但技术架构细节未公开。
+    </div>
+  </div>
+</section>
+
+<!-- =============== PART 2: EvoScientist =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Part II</div>
+      <div class="section-title">EvoScientist：「持久记忆 + 自我进化」的学术路线</div>
+    </div>
+
+    <div class="prose">
+      <p>EvoScientist 来自华为技术和阿姆斯特丹自由大学的联合研究，发表于 KDD 2026。它解决的核心问题是：<strong>现有 AI 科学家系统是「静态」的——每次都从零开始，不会从历史交互中学习</strong>。</p>
+      <p>这导致三个致命问题：忽略有前景的研究方向、重复失败的实验、追求不可行的想法。EvoScientist 通过引入<strong>持久化记忆</strong>和<strong>进化管理器</strong>来解决这些问题。</p>
+    </div>
+
+    <h3 style="margin-bottom:16px;">🧠 三智能体 + 双记忆架构</h3>
+    <div class="arch-diagram">
+      <div class="arch-label">科研任务输入</div>
+      <div class="arch-layer">
+        <div class="arch-node warm">用户研究目标 G</div>
+      </div>
+      <div class="arch-connector">↓</div>
+      <div class="arch-label">阶段一：想法生成</div>
+      <div class="arch-layer">
+        <div class="arch-node violet">Research Agent (RA)</div>
+        <div class="arch-node sky" style="font-size:12px;">← 构思记忆 M<sub>I</sub> 检索</div>
+      </div>
+      <div class="arch-connector">↓ 研究提案 P</div>
+      <div class="arch-label">阶段二：实验执行</div>
+      <div class="arch-layer">
+        <div class="arch-node violet">Engineer Agent (EA)</div>
+        <div class="arch-node sky" style="font-size:12px;">← 实验记忆 M<sub>E</sub> 检索</div>
+      </div>
+      <div class="arch-connector">↓ 执行报告 W</div>
+      <div class="arch-label">阶段三：进化蒸馏</div>
+      <div class="arch-layer">
+        <div class="arch-node rose">Evolution Manager Agent (EMA)</div>
+      </div>
+      <div class="arch-connector">↓ 更新记忆</div>
+      <div class="arch-layer">
+        <div class="arch-node green">构思记忆 M<sub>I</sub></div>
+        <div class="arch-node green">实验记忆 M<sub>E</sub></div>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:16px;">💾 两种持久记忆</h3>
+    <div class="dual-col">
+      <div class="card">
+        <h3><span class="card-icon" style="background:rgba(56,189,248,0.1);"><span style="color:var(--accent-primary)">💡</span></span>构思记忆 M<sub>I</sub></h3>
+        <p><strong style="color:var(--text);">存储内容：</strong></p>
+        <ul style="font-size:14px; margin:8px 0; padding-left:20px;">
+          <li><span class="tag green">✓ 可行方向</span> 从高排名想法中总结的有效研究方向</li>
+          <li><span class="tag rose">✗ 失败方向</span> 验证失败的方向（避免重蹈覆辙）</li>
+        </ul>
+        <p><strong style="color:var(--text);">检索方式：</strong>基于嵌入的余弦相似度，Top-k<sub>I</sub> 检索</p>
+        <p><strong style="color:var(--text);">效果：</strong>帮助 RA 生成更高质量、更具可行性的研究想法</p>
+      </div>
+      <div class="card">
+        <h3><span class="card-icon" style="background:rgba(167,139,250,0.1);"><span style="color:var(--accent-secondary)">🔧</span></span>实验记忆 M<sub>E</sub></h3>
+        <p><strong style="color:var(--text);">存储内容：</strong></p>
+        <ul style="font-size:14px; margin:8px 0; padding-left:20px;">
+          <li><span class="tag violet">策略</span> 有效的数据处理和模型训练策略</li>
+          <li><span class="tag sky">代码</span> 从搜索轨迹中提取的最佳实现</li>
+        </ul>
+        <p><strong style="color:var(--text);">检索方式：</strong>基于研究提案 P 检索可重用执行策略</p>
+        <p><strong style="color:var(--text);">效果：</strong>帮助 EA 提高代码执行成功率</p>
+      </div>
+    </div>
+
+    <h3 style="margin-bottom:16px;">🔄 三种进化机制</h3>
+    <div class="card" style="border-left:3px solid var(--accent-primary);">
+      <h3 style="color:var(--accent-primary);">① 想法方向进化 (IDE)</h3>
+      <p><strong style="color:var(--text);">触发时机：</strong>生成候选想法后</p>
+      <p><strong style="color:var(--text);">操作：</strong>EMA 从排名靠前的想法中总结有前景的研究方向 → 更新 M<sub>I</sub></p>
+      <p><strong style="color:var(--text);">消融实验证据：</strong>去除后新颖性下降 <span class="num rose">66.67%</span>，可行性下降 <span class="num rose">50.00%</span></p>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-secondary);">
+      <h3 style="color:var(--accent-secondary);">② 想法验证进化 (IVE)</h3>
+      <p><strong style="color:var(--text);">触发时机：</strong>EA 执行失败或方法不如基线时</p>
+      <p><strong style="color:var(--text);">操作：</strong>EMA 分析执行报告 → 总结失败原因 → 更新 M<sub>I</sub> 的负面记忆</p>
+      <p><strong style="color:var(--text);">消融实验证据：</strong>去除后可行性暴跌 <span class="num rose">63.33%</span> — 这是保证"不做不可行研究"的关键</p>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-green);">
+      <h3 style="color:var(--accent-green);">③ 实验策略进化 (ESE)</h3>
+      <p><strong style="color:var(--text);">触发时机：</strong>每个实验阶段完成后</p>
+      <p><strong style="color:var(--text);">操作：</strong>EMA 从代码搜索轨迹和最佳实现中总结可重用策略 → 更新 M<sub>E</sub></p>
+      <p><strong style="color:var(--text);">效果：</strong>代码执行成功率从 <span class="num rose">34.39%</span> 提升到 <span class="num green">44.56%</span>（+10.17 百分点）</p>
+    </div>
+
+    <h3 style="margin-bottom:16px;">📊 实验结果</h3>
+    <div class="prose">
+      <p>EvoScientist 在 <strong>30 个研究查询</strong>上与 7 个系统（含开源和商业）进行了对比：</p>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:16px;">🏆 ICAIS 2025 AI Scientist Track</h3>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+        <div>
+          <div class="metric-row">
+            <div class="metric-label">论文接收率</div>
+            <div class="metric-bar"><div class="metric-fill violet" style="width:100%"></div></div>
+            <div class="metric-value" style="color:var(--accent-secondary)">6/6</div>
+          </div>
+          <div class="metric-row">
+            <div class="metric-label">会议整体接收率</div>
+            <div class="metric-bar"><div class="metric-fill sky" style="width:31.71%"></div></div>
+            <div class="metric-value" style="color:var(--text-dim)">31.7%</div>
+          </div>
+        </div>
+        <div>
+          <p style="font-size:14px; color:var(--text-muted);">
+            🥇 <strong style="color:var(--accent-amber)">最佳论文奖</strong>：基于超条件先验的自适应证据元学习心电图个性化方法<br>
+            🏅 <strong style="color:var(--accent-amber)">AI 评审赞赏奖</strong>：层次变化特征分析框架（工业时间序列故障检测）
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-bottom:16px;">📈 想法生成质量（自动评估 + 人工评估）</h3>
+      <div class="metric-row">
+        <div class="metric-label">新颖性</div>
+        <div class="metric-bar"><div class="metric-fill violet" style="width:92%"></div></div>
+        <div class="metric-value" style="color:var(--accent-secondary)">+93</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">可行性</div>
+        <div class="metric-bar"><div class="metric-fill violet" style="width:85%"></div></div>
+        <div class="metric-value" style="color:var(--accent-secondary)">+85</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">相关性</div>
+        <div class="metric-bar"><div class="metric-fill violet" style="width:75%"></div></div>
+        <div class="metric-value" style="color:var(--accent-secondary)">+75</div>
+      </div>
+      <div class="metric-row">
+        <div class="metric-label">清晰度</div>
+        <div class="metric-bar"><div class="metric-fill violet" style="width:70%"></div></div>
+        <div class="metric-value" style="color:var(--accent-secondary)">+70</div>
+      </div>
+      <p style="font-size:12px; color:var(--text-dim); margin-top:8px;">* 数字为对最强开源基线的平均胜率差距 (Avg. gap)</p>
+    </div>
+
+    <div class="insight-box violet">
+      <strong>🔑 最关键的发现：</strong>消融实验表明，进化机制的主要收益在于<strong>新颖性和可行性</strong>，而非清晰度和相关性。换言之，记忆机制让系统学会了"什么能做、什么不能做"，而不仅仅是"怎么把话说好听"。这是非常重要的区别——它说明持久记忆确实在影响<strong>研究判断力</strong>，而非表面文字功夫。
+    </div>
+
+    <h3 style="margin-bottom:16px;">🛠️ 工程系统（GitHub 开源版）</h3>
+    <div class="prose">
+      <p>EvoScientist 的 GitHub 版本在论文基础上进行了大量工程化扩展：</p>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th>特性</th>
+          <th>论文版</th>
+          <th>GitHub 开源版 (v0.0.5)</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim-cell">智能体数量</td>
+          <td>3（RA + EA + EMA）</td>
+          <td>6（Plan + Research + Code + Debug + Analyze + Write）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">LLM 支持</td>
+          <td>未公开</td>
+          <td>9 家供应商（Anthropic/OpenAI/Google/NVIDIA 等）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">交互通道</td>
+          <td>实验脚本</td>
+          <td>CLI + Telegram/Slack/WeChat/Discord/QQ 等 10+</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">扩展机制</td>
+          <td>固定流程</td>
+          <td>MCP + EvoSkills（10 个研究生命周期技能）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">科学工作流</td>
+          <td>2 阶段</td>
+          <td>6 阶段（Intake→Plan→Execute→Evaluate→Write→Verify）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">基准成绩</td>
+          <td>ICAIS 2025 6/6</td>
+          <td>+ AstaBench #1 + DeepResearch Bench II #1</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- =============== PART 3: 深度对比 =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Part III</div>
+      <div class="section-title">深度对比：两条路线的本质分歧</div>
+    </div>
+
+    <table class="comparison-table">
+      <thead>
+        <tr>
+          <th style="width:160px;">对比维度</th>
+          <th>ScienceClaw 🦞</th>
+          <th>EvoScientist 🧬</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="dim-cell">设计哲学</td>
+          <td><span class="tag sky">Skill 即 Markdown</span> 零代码，所有知识用 Prompt 表达</td>
+          <td><span class="tag violet">多智能体 + 持久记忆</span> 角色分工 + 经验蒸馏</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">知识表示</td>
+          <td>266 个 Markdown 文件 + 1 个 SCIENCE.md</td>
+          <td>向量化记忆库（嵌入 + 余弦检索）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">学习能力</td>
+          <td>❌ 静态 — Skill 需人工编写和更新</td>
+          <td>✅ 自进化 — EMA 从交互中自动蒸馏知识</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">工具接口</td>
+          <td>仅 2 个（web_search + bash）</td>
+          <td>LangGraph 状态机 + MCP + EvoSkills</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">可验证性</td>
+          <td>无学术论文，无 benchmark 对比</td>
+          <td>KDD 2026 + ICAIS 6/6 + AstaBench #1</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">领域偏重</td>
+          <td>生物医学（单细胞、药物发现、基因组学）</td>
+          <td>通用 ML/AI 研究（NLP, CV, 时间序列等）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">可复现性</td>
+          <td>高（全部 Markdown，任何 LLM 可用）</td>
+          <td>中等（依赖特定 LLM 能力和向量库质量）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">扩展成本</td>
+          <td>极低（写一个 .md 文件）</td>
+          <td>中等（需设计 Agent 协作逻辑和记忆结构）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">上限高度</td>
+          <td>受限于 LLM 单次推理能力</td>
+          <td>理论上可持续提升（记忆越积越好）</td>
+        </tr>
+        <tr>
+          <td class="dim-cell">安全模型</td>
+          <td>OpenClaw 默认沙箱</td>
+          <td>300s 超时 + 输出限制 + 自动恢复</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="verdict-grid">
+      <div class="verdict-item">
+        <h4>🏗️ 架构简洁性</h4>
+        <div class="winner" style="color:var(--accent-primary);">→ ScienceClaw</div>
+        <p>「0 行自定义代码」是一个极其大胆的设计选择。它证明了在 LLM 足够强的前提下，领域知识可以完全通过 Prompt 注入。</p>
+      </div>
+      <div class="verdict-item">
+        <h4>🧪 学术严谨性</h4>
+        <div class="winner" style="color:var(--accent-secondary);">→ EvoScientist</div>
+        <p>有 KDD 论文 + 消融实验 + 多维度评估 + 真实会议验证（6/6 接收 + 最佳论文），可验证性远超前者。</p>
+      </div>
+      <div class="verdict-item">
+        <h4>📈 成长潜力</h4>
+        <div class="winner" style="color:var(--accent-secondary);">→ EvoScientist</div>
+        <p>持久记忆意味着"用得越多越好用"。ScienceClaw 的 Skill 是静态的，不会从交互中学习。</p>
+      </div>
+      <div class="verdict-item">
+        <h4>🔧 易用性 & 部署成本</h4>
+        <div class="winner" style="color:var(--accent-primary);">→ ScienceClaw</div>
+        <p>写一个 Markdown 就能新增能力，任何有 Bash 的环境都能运行。EvoScientist 需要向量数据库和多 Agent 编排基础设施。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== PART 4: 核心技术洞察 =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Part IV</div>
+      <div class="section-title">核心技术洞察</div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-primary);">
+      <h3><span class="card-icon" style="background:rgba(56,189,248,0.1);"><span style="color:var(--accent-primary)">1</span></span>「Skill 即 Markdown」可能是过渡态</h3>
+      <div class="prose">
+        <p>ScienceClaw 的零代码方案<strong>在当前 LLM 能力下是可行的</strong>——特别是对于"调用已有工具执行标准分析"这类任务。但它有一个根本限制：<strong>Markdown Prompt 无法编码超出 LLM 上下文窗口的复杂状态转换逻辑</strong>。</p>
+        <p>当任务需要 20+ 步的多分支决策（比如"分析失败时选择替代方案 A 还是 B"），Markdown 模板的可靠性会急剧下降。这也是为什么 ScienceClaw 只支持 6 个预构建 Recipe 而不是任意组合——<strong>它的天花板是 LLM 单次规划能力的天花板</strong>。</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-secondary);">
+      <h3><span class="card-icon" style="background:rgba(167,139,250,0.1);"><span style="color:var(--accent-secondary)">2</span></span>「失败记忆」比「成功记忆」更有价值</h3>
+      <div class="prose">
+        <p>EvoScientist 的消融实验揭示了一个深刻的规律：<strong>去除 IVE（想法验证进化）对可行性的伤害（-63.33%）大于去除 IDE（想法方向进化）的伤害（-50.00%）</strong>。</p>
+        <p>这意味着：<strong>"知道什么不能做"比"知道什么能做"更重要</strong>。这与人类科研经验高度一致——优秀的研究者之所以高效，往往不是因为想法多，而是因为能快速排除不可行的方向。</p>
+        <p>这个发现对 AI 科研系统的设计有深远影响：<strong>与其投入大量资源收集成功案例，不如系统性地记录和分类失败</strong>。</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-green);">
+      <h3><span class="card-icon" style="background:rgba(52,211,153,0.1);"><span style="color:var(--accent-green)">3</span></span>两条路线可能最终融合</h3>
+      <div class="prose">
+        <p>ScienceClaw 的 Skill 系统和 EvoScientist 的记忆系统并不互斥。一个自然的融合方向是：</p>
+        <ul>
+          <li><strong>Skill 作为知识的初始编码</strong>（ScienceClaw 式，快速冷启动）</li>
+          <li><strong>持久记忆作为知识的运行时增长</strong>（EvoScientist 式，越用越好）</li>
+          <li><strong>进化管理器负责将记忆蒸馏回 Skill</strong>（闭环，Skill 本身也进化）</li>
+        </ul>
+        <p>这就形成了一个<strong>「Skill-Memory-Skill」循环</strong>：静态知识 → 动态经验 → 升级后的静态知识。</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-warm);">
+      <h3><span class="card-icon" style="background:rgba(251,146,60,0.1);"><span style="color:var(--accent-warm)">4</span></span>代码执行成功率是真正的瓶颈</h3>
+      <div class="prose">
+        <p>EvoScientist 诚实地报告了一个令人清醒的数字：即使经过策略进化，<strong>"提出的方法"阶段的代码执行成功率只有 21.57%</strong>。</p>
+        <p>这意味着将近 <strong>80% 的创新方法实现会失败</strong>。这不是 EvoScientist 的问题——这是整个 AI 科研领域的根本瓶颈。对比 ScienceClaw 的预构建 Recipe（走标准分析管道），它的成功率会高得多，但代价是<strong>没有真正的创新</strong>。</p>
+        <p>这揭示了一个深层张力：<strong>可靠性与创新性之间的权衡</strong>。标准流程可靠但无趣，创新尝试有趣但容易失败。</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left:3px solid var(--accent-rose);">
+      <h3><span class="card-icon" style="background:rgba(251,113,133,0.1);"><span style="color:var(--accent-rose)">5</span></span>「Human-on-the-Loop」vs「Full Automation」</h3>
+      <div class="prose">
+        <p>EvoScientist 明确提出了<strong>「Human-on-the-Loop」</strong>范式——人不在循环中做决策，而是在循环上做监督。6 篇论文全部接收证明这种范式在某些条件下可行。</p>
+        <p>ScienceClaw 则更接近<strong>「Human-in-the-Loop」</strong>——用户输入需求，系统执行，用户审查结果。</p>
+        <p>两者的区别不仅是技术性的，更是<strong>科研伦理和学术责任归属</strong>的问题。当 AI 完全自主产出论文并被顶会接收，我们需要重新思考"作者"意味着什么。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== PART 5: 对数据工作的启示 =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Part V</div>
+      <div class="section-title">对数据工作的启示</div>
+    </div>
+
+    <div class="dual-col">
+      <div class="card" style="border-top:3px solid var(--accent-primary);">
+        <h3>📐 Skill 设计即数据管道设计</h3>
+        <p>ScienceClaw 证明了一个重要论点：<strong>领域专家的隐性知识可以用 Markdown 编码为可执行的 Skill</strong>。这对数据团队的启示是——<strong>把你的 ETL 最佳实践写成 Skill</strong>，而不只是写在 Confluence 里。一个 Markdown Skill 比一篇内部文档更有执行力。</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--accent-secondary);">
+        <h3>💾 失败日志 → 训练信号</h3>
+        <p>EvoScientist 的 IVE 机制告诉我们：<strong>系统性地记录失败比收集成功更重要</strong>。在数据管道运维中，这意味着 CI/CD 失败日志、数据质量告警、SLA 超时记录不是需要"处理掉"的噪音——它们是<strong>训练下一代数据系统的核心资产</strong>。</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--accent-green);">
+        <h3>🔄 从"做完就算"到"做完就学"</h3>
+        <p>绝大多数数据管道是<strong>无状态</strong>的——执行完就结束，不留任何"经验"。EvoScientist 的进化管理器提示我们：<strong>每次管道执行都应该产生可复用的元数据</strong>。哪些表的 join 最慢？哪些数据质量检查最频繁报错？这些"进化信号"应该被系统性捕获。</p>
+      </div>
+      <div class="card" style="border-top:3px solid var(--accent-warm);">
+        <h3>🧬 Agent 训练数据的新来源</h3>
+        <p>结合前文的 SkillWeave 研究：ScienceClaw 的 266 个 Skill 本身就是<strong>高质量的 Agent 训练数据蓝图</strong>。每个 Skill 定义了"输入→工具调用→输出"的完整范式——从这些 Skill 出发合成训练数据，比从零开始构造任务要自然得多。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =============== PART 6: 不足与展望 =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Part VI</div>
+      <div class="section-title">不足与未来方向</div>
+    </div>
+
+    <div class="prose">
+      <h3>ScienceClaw 的局限</h3>
+      <ul>
+        <li><strong>无学术验证</strong>：没有发表论文，没有 benchmark 对比，难以评估其真实能力边界</li>
+        <li><strong>领域偏窄</strong>：266 个 Skill 高度集中在生物医学，其他学科覆盖薄弱</li>
+        <li><strong>无进化能力</strong>：Skill 是手工编写的，用户的使用经验不会回流到 Skill 改进中</li>
+        <li><strong>LLM 强依赖</strong>：零代码架构意味着系统表现完全取决于底层 LLM 的 Prompt Following 能力</li>
+        <li><strong>品牌混淆</strong>：至少三个不同项目使用"ScienceClaw"名称，造成用户混淆</li>
+      </ul>
+
+      <h3>EvoScientist 的局限</h3>
+      <ul>
+        <li><strong>代码执行成功率仍低</strong>：21.57% 的创新方法成功率远不足以支持全自动科研</li>
+        <li><strong>评估局限</strong>：30 个查询 + 6 篇论文的样本量偏小，统计功效有限</li>
+        <li><strong>记忆可迁移性未验证</strong>：在 A 领域积累的记忆对 B 领域是否有正迁移？未实验验证</li>
+        <li><strong>评审偏差</strong>：ICAIS 2025 作为首届会议，其评审标准和学术声誉尚未建立</li>
+        <li><strong>复杂度成本</strong>：6 智能体 + 2 记忆模块 + 向量库的系统运维成本不低</li>
+      </ul>
+
+      <h3>值得关注的未来方向</h3>
+      <ul>
+        <li><strong>Skill 自动生成</strong>：让 AI 自己编写和进化 Skill（Memento-Skills 已经在做这件事）</li>
+        <li><strong>跨领域记忆迁移</strong>：药物发现中的实验策略能否迁移到材料科学？</li>
+        <li><strong>多模态科研</strong>：当前两个系统都是文本为主，如何处理显微镜图像、光谱数据、分子结构等多模态输入？</li>
+        <li><strong>可复现性标准</strong>：AI 科研系统需要像 ML 社区一样建立可复现性标准</li>
+        <li><strong>科研伦理框架</strong>：当 AI 自主产出被顶会接收的论文，学术责任如何界定？</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- =============== CONCLUSION =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">Conclusion</div>
+      <div class="section-title">结论：AI 科研助手的「两条路线」是伪命题</div>
+    </div>
+
+    <div class="insight-box green">
+      <strong>最终判断：</strong>ScienceClaw 的「Skill 即 Markdown」和 EvoScientist 的「多智能体自进化」不是非此即彼的选择——它们解决的是<strong>不同时间尺度上的不同问题</strong>。Skill 解决冷启动（"如何让 AI 立刻能做事"），记忆解决长期增长（"如何让 AI 越用越好"），进化解决知识更新（"如何让旧知识不过时"）。<strong>终局必然是三者的融合</strong>。
+    </div>
+
+    <div class="prose">
+      <p>如果我要设计下一代 AI 科研智能体，我会：</p>
+      <ul>
+        <li><strong>用 ScienceClaw 的方式冷启动</strong>：快速编写 Markdown Skill 覆盖基本能力</li>
+        <li><strong>用 EvoScientist 的方式持续进化</strong>：双记忆机制积累使用经验</li>
+        <li><strong>加一个 Skill 回写器</strong>：进化管理器定期将记忆蒸馏回 Skill，让下一个用户的冷启动也更好</li>
+        <li><strong>加一个严格的实验验证器</strong>：代码执行成功率是瓶颈，需要专门的 Debug + Test Agent</li>
+      </ul>
+      <p style="color:var(--text); font-weight:600; font-size:1.05em; margin-top:24px;">
+        科研 AI 的终极形态不是"替代科学家"，而是"让每个科学家都有一个会成长的研究搭档"。
+        ScienceClaw 证明了入门门槛可以低到零，EvoScientist 证明了成长上限可以高到顶会最佳论文。
+        <br>现在的问题是——谁来把这两个极端连接起来？
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- =============== REFERENCES =============== -->
+<section>
+  <div class="container">
+    <div class="section-header">
+      <div class="section-label">References</div>
+      <div class="section-title">参考资料</div>
+    </div>
+
+    <div class="prose" style="font-size:14px;">
+      <ol>
+        <li>Lyu, Y., et al. "EvoScientist: Towards Multi-Agent Evolving AI Scientists for End-to-End Scientific Discovery." arXiv:2603.08127 (2026). [KDD 2026]</li>
+        <li>ScienceClaw (OpenClaw 版). GitHub: <a href="https://github.com/Zaoqu-Liu/ScienceClaw" style="color:var(--accent-primary);">Zaoqu-Liu/ScienceClaw</a></li>
+        <li>EvoScientist GitHub. <a href="https://github.com/EvoScientist/EvoScientist" style="color:var(--accent-primary);">EvoScientist/EvoScientist</a> (v0.0.5, Apache 2.0)</li>
+        <li>中科紫东太初 ScienceClaw. <a href="https://scienceclaw.taichuai.cn/" style="color:var(--accent-primary);">scienceclaw.taichuai.cn</a> (2026年3月上线)</li>
+        <li>EvoScientist 官方网站. <a href="https://evoscientist.ai/" style="color:var(--accent-primary);">evoscientist.ai</a></li>
+        <li>ICAIS 2025 — The 1st International Conference on AI Scientists. Best Paper Award & AI Reviewer's Appraisal Award.</li>
+        <li>AstaBench — Code & Execution / Data Analysis. Allen AI. (EvoScientist #1, March 2026)</li>
+        <li>DeepResearch Bench II. AgentResearchLab. (EvoScientist #1, March 2026)</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<div class="footer">
+  <p>Maxwell Research · ScienceClaw × EvoScientist 深度对比研读 · 2026-03-28</p>
+  <p style="margin-top:8px;">以 AI 科研智能体构建者的视角审视两条技术路线</p>
+</div>
+
+</body>
+</html>

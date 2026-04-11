@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import AttentionWorkbench from '../../components/tools/attention/AttentionWorkbench';
+---
+
+<BaseLayout title="Attention 全景工作台" description="注意力机制可视化 + MHA/GQA/MQA/MLA 架构对比 + KV Cache 计算 + 窗口策略 + 进化时间线">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">Attention 全景工作台</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Attention 全景工作台</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">注意力机制可视化 · MHA/GQA/MQA/MLA 架构对比 · KV Cache 计算 · 窗口策略 · 进化时间线</p>
+    </div>
+
+    <AttentionWorkbench client:load />
+  </div>
+</BaseLayout>

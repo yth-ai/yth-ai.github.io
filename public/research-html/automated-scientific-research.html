@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>自动化科研：从工具辅助到自主发现的范式革命</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d28;
+    --surface-2: #232736;
+    --border: #2d3148;
+    --text: #e4e6f0;
+    --text-secondary: #9ca0b8;
+    --accent: #6c7aff;
+    --accent-dim: rgba(108, 122, 255, 0.12);
+    --green: #34d399;
+    --green-dim: rgba(52, 211, 153, 0.12);
+    --amber: #fbbf24;
+    --amber-dim: rgba(251, 191, 36, 0.12);
+    --rose: #f472b6;
+    --rose-dim: rgba(244, 114, 182, 0.12);
+    --cyan: #22d3ee;
+    --cyan-dim: rgba(34, 211, 238, 0.12);
+    --violet: #a78bfa;
+    --violet-dim: rgba(167, 139, 250, 0.12);
+    --orange: #fb923c;
+    --orange-dim: rgba(251, 146, 60, 0.12);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* Hero */
+  .hero {
+    padding: 80px 0 60px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    top: -200px; left: 50%; transform: translateX(-50%);
+    width: 800px; height: 800px;
+    background: radial-gradient(circle, rgba(108,122,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 20px;
+    background: var(--accent-dim); color: var(--accent);
+    font-size: 13px; font-weight: 600; margin-bottom: 24px;
+    border: 1px solid rgba(108,122,255,0.2);
+  }
+  .hero h1 {
+    font-size: 42px; font-weight: 800; line-height: 1.2;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, #9ca0b8 100%);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+  }
+  .hero .subtitle {
+    font-size: 18px; color: var(--text-secondary);
+    max-width: 720px; margin: 0 auto 32px;
+  }
+  .hero-meta {
+    display: flex; justify-content: center; gap: 24px;
+    font-size: 13px; color: var(--text-secondary);
+  }
+  .hero-meta span { display: flex; align-items: center; gap: 6px; }
+
+  /* Section */
+  section { padding: 48px 0; }
+  .section-header {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 32px; padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    display: flex; align-items: center; justify-content: center;
+    width: 36px; height: 36px; border-radius: 10px;
+    font-size: 16px; font-weight: 700;
+  }
+  .section-header h2 {
+    font-size: 26px; font-weight: 700;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: rgba(108,122,255,0.3); }
+  .card h3 {
+    font-size: 18px; font-weight: 700; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card p { color: var(--text-secondary); font-size: 15px; }
+
+  /* Grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 768px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 28px; }
+  }
+
+  /* Stat Cards */
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .stat-card .stat-value {
+    font-size: 32px; font-weight: 800;
+    margin-bottom: 4px;
+  }
+  .stat-card .stat-label {
+    font-size: 13px; color: var(--text-secondary);
+  }
+
+  /* Timeline */
+  .timeline { position: relative; padding-left: 32px; }
+  .timeline::before {
+    content: ''; position: absolute;
+    left: 12px; top: 0; bottom: 0;
+    width: 2px; background: var(--border);
+  }
+  .timeline-item {
+    position: relative; margin-bottom: 32px;
+  }
+  .timeline-item::before {
+    content: ''; position: absolute;
+    left: -26px; top: 6px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--bg);
+  }
+  .timeline-item .year {
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin-bottom: 4px;
+  }
+  .timeline-item h4 {
+    font-size: 16px; font-weight: 700; margin-bottom: 6px;
+  }
+  .timeline-item p {
+    font-size: 14px; color: var(--text-secondary);
+  }
+
+  /* Table */
+  .table-wrap {
+    overflow-x: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%; border-collapse: collapse;
+    font-size: 14px;
+  }
+  th {
+    background: var(--surface-2);
+    font-weight: 700; text-align: left;
+    padding: 12px 16px; white-space: nowrap;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-secondary);
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(108,122,255,0.04); }
+
+  /* Tags */
+  .tag {
+    display: inline-flex; align-items: center;
+    padding: 3px 10px; border-radius: 6px;
+    font-size: 12px; font-weight: 600;
+  }
+  .tag-accent { background: var(--accent-dim); color: var(--accent); }
+  .tag-green { background: var(--green-dim); color: var(--green); }
+  .tag-amber { background: var(--amber-dim); color: var(--amber); }
+  .tag-rose { background: var(--rose-dim); color: var(--rose); }
+  .tag-cyan { background: var(--cyan-dim); color: var(--cyan); }
+  .tag-violet { background: var(--violet-dim); color: var(--violet); }
+  .tag-orange { background: var(--orange-dim); color: var(--orange); }
+
+  /* Callout */
+  .callout {
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin: 24px 0;
+    border-left: 4px solid;
+  }
+  .callout-accent { background: var(--accent-dim); border-color: var(--accent); }
+  .callout-green { background: var(--green-dim); border-color: var(--green); }
+  .callout-amber { background: var(--amber-dim); border-color: var(--amber); }
+  .callout-rose { background: var(--rose-dim); border-color: var(--rose); }
+  .callout h4 { font-size: 15px; margin-bottom: 8px; }
+  .callout p { font-size: 14px; color: var(--text-secondary); }
+
+  /* Flow diagram */
+  .flow {
+    display: flex; align-items: center; gap: 0;
+    flex-wrap: wrap; justify-content: center;
+    margin: 24px 0;
+  }
+  .flow-step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 20px;
+    text-align: center;
+    min-width: 120px;
+  }
+  .flow-step .emoji { font-size: 20px; margin-bottom: 4px; }
+  .flow-step .label { font-size: 13px; font-weight: 600; }
+  .flow-arrow {
+    font-size: 18px; color: var(--text-secondary);
+    padding: 0 6px;
+  }
+
+  /* Comparison bars */
+  .compare-bar {
+    margin-bottom: 16px;
+  }
+  .compare-label {
+    display: flex; justify-content: space-between;
+    font-size: 13px; margin-bottom: 6px;
+  }
+  .compare-track {
+    height: 8px; border-radius: 4px;
+    background: var(--surface-2);
+    overflow: hidden;
+  }
+  .compare-fill {
+    height: 100%; border-radius: 4px;
+    transition: width 0.6s ease;
+  }
+
+  /* System profile cards */
+  .system-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+  .system-card .sys-header {
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 16px;
+  }
+  .system-card .sys-icon {
+    width: 48px; height: 48px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .system-card .sys-title {
+    font-size: 20px; font-weight: 800;
+  }
+  .system-card .sys-subtitle {
+    font-size: 13px; color: var(--text-secondary);
+  }
+  .sys-tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+  .sys-detail { font-size: 14px; color: var(--text-secondary); line-height: 1.8; }
+  .sys-detail strong { color: var(--text); }
+
+  /* Insight blocks */
+  .insight-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 16px;
+  }
+  .insight-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .insight-card .insight-num {
+    font-size: 13px; font-weight: 700;
+    color: var(--accent); margin-bottom: 8px;
+  }
+  .insight-card h4 { font-size: 16px; margin-bottom: 8px; }
+  .insight-card p { font-size: 13px; color: var(--text-secondary); }
+
+  /* Separator */
+  .sep { height: 1px; background: var(--border); margin: 48px 0; }
+
+  /* Blockquote */
+  blockquote {
+    border-left: 3px solid var(--accent);
+    padding: 12px 20px;
+    margin: 20px 0;
+    background: var(--accent-dim);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  /* Lists in content */
+  .content-list { padding-left: 20px; }
+  .content-list li {
+    font-size: 14px; color: var(--text-secondary);
+    margin-bottom: 8px; line-height: 1.7;
+  }
+  .content-list li strong { color: var(--text); }
+
+  /* Footer */
+  footer {
+    padding: 40px 0;
+    text-align: center;
+    color: var(--text-secondary);
+    font-size: 13px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* Sub-section h3 */
+  .sub-title {
+    font-size: 20px; font-weight: 700;
+    margin: 32px 0 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+
+  /* pillar cards */
+  .pillar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+  }
+  .pillar-card .pillar-icon {
+    width: 56px; height: 56px;
+    border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin: 0 auto 12px;
+  }
+  .pillar-card h4 { font-size: 16px; margin-bottom: 8px; }
+  .pillar-card p { font-size: 13px; color: var(--text-secondary); }
+</style>
+</head>
+<body>
+
+<!-- ==================== HERO ==================== -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-badge">🔬 综合调研</div>
+    <h1>自动化科研：从工具辅助<br>到自主发现的范式革命</h1>
+    <p class="subtitle">系统梳理 The AI Scientist、EvoScientist、ScienceClaw、DeepScientist 等代表性系统，分析自动化科研的演进轨迹、技术架构与工程启示——特别是对训练数据合成的深层影响。</p>
+    <div class="hero-meta">
+      <span>📅 2026-03-28</span>
+      <span>📖 约 15 分钟</span>
+      <span>🏷️ 综合调研</span>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ==================== 核心数据 ==================== -->
+<div class="grid-3" style="margin-bottom: 48px;">
+  <div class="stat-card">
+    <div class="stat-value" style="color: var(--accent);">12+</div>
+    <div class="stat-label">主要自动化科研系统</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="color: var(--green);">6/6</div>
+    <div class="stat-label">EvoScientist 论文接收率</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="color: var(--amber);">100万行</div>
+    <div class="stat-label">AI Scientist 无人工编码生成</div>
+  </div>
+</div>
+
+<!-- ==================== §1 为什么关注 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--accent-dim); color: var(--accent);">1</div>
+    <h2>为什么关注自动化科研</h2>
+  </div>
+
+  <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px;">
+    2026 年 3 月，两件事标志着自动化科研进入新纪元：<strong style="color:var(--text);">Sakana AI 团队的 The AI Scientist 论文登上 Nature</strong>（3 月 25 日），<strong style="color:var(--text);">华为 EvoScientist 的 6 篇 AI 生成论文全部被 ICAIS 2025 接收</strong>（含最佳论文奖）。自动化科研不再是概念验证——它正在产出能通过同行评审的真实科学成果。
+  </p>
+
+  <div class="callout callout-accent">
+    <h4>💡 核心命题</h4>
+    <p>如果 AI 能自主完成"假设 → 实验 → 分析 → 写作"的科研全流程，那它的中间产物——结构化推理轨迹、实验代码、数据分析过程——本身就是极高质量的训练数据。<strong style="color:var(--text);">自动化科研系统可能是目前最被低估的训练数据工厂。</strong></p>
+  </div>
+</section>
+
+<!-- ==================== §2 演进时间线 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--green-dim); color: var(--green);">2</div>
+    <h2>演进时间线：三个阶段</h2>
+  </div>
+
+  <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 32px;">
+    基于华中科技大学 Tie et al. 的综述《A Survey of AI Scientists》(arXiv:2510.23045)，自动化科研经历了三个清晰的发展阶段。
+  </p>
+
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="year">Phase I · 2022–2023 · 基础模块期</div>
+      <h4>单点能力突破</h4>
+      <p>系统聚焦科学流程中的单一环节。<strong style="color:var(--text);">DS-1000</strong> 解决数据科学代码生成，<strong style="color:var(--text);">Coscientist</strong>（Nature 2023）首次在真实实验室完成闭环化学实验，<strong style="color:var(--text);">ChemCrow</strong>（NMI 2024）集成 18 个化学专家工具，<strong style="color:var(--text);">MLAgentBench</strong> 建立了 ML 研究的基准测试。这一阶段的关键词是：<span class="tag tag-accent">垂直深耕</span></p>
+    </div>
+    <div class="timeline-item">
+      <div class="year">Phase II · 2024 · 闭环集成期</div>
+      <h4>端到端从想法到论文</h4>
+      <p><strong style="color:var(--text);">The AI Scientist v1</strong>（Sakana AI, 2024.08）首次实现了完整的六阶段闭环：文献回顾 → 想法生成 → 实验准备 → 实验执行 → 科学写作 → 论文生成。<strong style="color:var(--text);">SciAgents</strong>（MIT, 2024.09）探索了多智能体在想法生成阶段的协作。这一阶段的关键词是：<span class="tag tag-green">全流程打通</span></p>
+    </div>
+    <div class="timeline-item">
+      <div class="year">Phase III · 2025–2026 · 可扩展影响期</div>
+      <h4>质量逼近人类、系统可进化</h4>
+      <p>三条并行前沿：<strong style="color:var(--text);">AI Scientist v2</strong> 通过树搜索消除模板依赖，论文首次通过 ICLR 同行评审；<strong style="color:var(--text);">DeepScientist</strong>（西湖大学）用贝叶斯优化追求前沿发现；<strong style="color:var(--text);">EvoScientist</strong>（华为）引入持久记忆实现自我进化。<strong style="color:var(--text);">ScienceClaw</strong>（中科紫东太初）覆盖八大学科，内置 1900+ 工具。这一阶段的关键词是：<span class="tag tag-rose">进化 & 规模化</span></p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== §3 六阶段框架 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--amber-dim); color: var(--amber);">3</div>
+    <h2>统一方法学：六阶段科研框架</h2>
+  </div>
+
+  <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px;">
+    所有自动化科研系统都可以用这个六阶段框架来解构和对比。完整覆盖六个阶段的系统才是真正的"端到端"。
+  </p>
+
+  <div class="flow">
+    <div class="flow-step">
+      <div class="emoji">📚</div>
+      <div class="label">文献回顾</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="emoji">💡</div>
+      <div class="label">想法生成</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="emoji">📋</div>
+      <div class="label">实验准备</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="emoji">⚗️</div>
+      <div class="label">实验执行</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="emoji">✍️</div>
+      <div class="label">科学写作</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step">
+      <div class="emoji">📄</div>
+      <div class="label">论文生成</div>
+    </div>
+  </div>
+
+  <div style="margin-top: 32px;">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>系统</th>
+            <th>机构</th>
+            <th>年份</th>
+            <th>文献</th>
+            <th>想法</th>
+            <th>准备</th>
+            <th>执行</th>
+            <th>写作</th>
+            <th>论文</th>
+            <th>特色</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong style="color:var(--text)">Coscientist</strong></td>
+            <td>CMU</td>
+            <td>2023</td>
+            <td>✅</td><td></td><td>✅</td><td>✅</td><td></td><td></td>
+            <td><span class="tag tag-green">真实实验室</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">ChemCrow</strong></td>
+            <td>EPFL</td>
+            <td>2024</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td></td><td></td>
+            <td><span class="tag tag-amber">18 化学工具</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">AI Scientist v1</strong></td>
+            <td>Sakana AI</td>
+            <td>2024</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+            <td><span class="tag tag-accent">首个端到端</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">AI Scientist v2</strong></td>
+            <td>Sakana AI</td>
+            <td>2025</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+            <td><span class="tag tag-accent">树搜索+无模板</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">AI-Researcher</strong></td>
+            <td>HKU</td>
+            <td>2025</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+            <td><span class="tag tag-violet">Scientist-Bench</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">DeepScientist</strong></td>
+            <td>西湖大学</td>
+            <td>2025</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+            <td><span class="tag tag-cyan">贝叶斯优化</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">EvoScientist</strong></td>
+            <td>华为</td>
+            <td>2026</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+            <td><span class="tag tag-rose">持久记忆进化</span></td>
+          </tr>
+          <tr>
+            <td><strong style="color:var(--text)">ScienceClaw</strong></td>
+            <td>中科紫东太初</td>
+            <td>2026</td>
+            <td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td>
+            <td><span class="tag tag-orange">1900+ 工具</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== §4 核心系统深度剖析 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--rose-dim); color: var(--rose);">4</div>
+    <h2>核心系统深度剖析</h2>
+  </div>
+
+  <!-- The AI Scientist -->
+  <div class="system-card">
+    <div class="sys-header">
+      <div class="sys-icon" style="background: var(--accent-dim);">🧪</div>
+      <div>
+        <div class="sys-title">The AI Scientist (v1 → v2)</div>
+        <div class="sys-subtitle">Sakana AI · Nature 2026 · 端到端自动科研的开创者</div>
+      </div>
+    </div>
+    <div class="sys-tags">
+      <span class="tag tag-accent">Nature 发表</span>
+      <span class="tag tag-green">ICLR 同行评审通过</span>
+      <span class="tag tag-amber">开源 Apache 2.0</span>
+    </div>
+    <div class="sys-detail">
+      <p><strong>核心贡献：</strong>首次实现了从"想法 → 代码 → 实验 → 写作 → 评审"的完整自动化闭环。</p>
+      <br>
+      <p><strong>v1（2024.08）</strong>：基于人工代码模板的集中模式。4 个顺序阶段：想法生成（Semantic Scholar API 去重）→ 实验执行（线性计划）→ 手稿生成（LaTeX 模板）→ 自动评审（5 评审 + 元评审）。</p>
+      <br>
+      <p><strong>v2（2025.04）</strong>：关键升级——<strong>消除人工模板</strong>，引入<strong>渐进式智能体树搜索</strong>（Progressive Agentic Tree Search），由实验管理器智能体统筹。新增 VLM 反馈循环优化图表质量。</p>
+      <br>
+      <p><strong>Nature 论文关键实证：</strong></p>
+      <ul class="content-list">
+        <li>3 人团队、5 个月、零手动编码生成 <strong>100 万行</strong>代码</li>
+        <li>自动评审员准确率与人类评审员相当（平衡准确率：人类 69% vs 自动 66%）</li>
+        <li>3 篇论文提交 ICLR 2025 研讨会（接受率 70%），<strong>1 篇获评分 6.33 超过接受阈值</strong></li>
+        <li>论文质量随模型能力提升和计算资源增加呈<strong>明确正相关</strong></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- EvoScientist -->
+  <div class="system-card">
+    <div class="sys-header">
+      <div class="sys-icon" style="background: var(--rose-dim);">🧬</div>
+      <div>
+        <div class="sys-title">EvoScientist</div>
+        <div class="sys-subtitle">华为 + 阿姆斯特丹自由大学 · arXiv:2603.08127 · 自进化 AI 科学家</div>
+      </div>
+    </div>
+    <div class="sys-tags">
+      <span class="tag tag-rose">ICAIS 最佳论文奖</span>
+      <span class="tag tag-green">6/6 论文全部接收</span>
+      <span class="tag tag-violet">1.5K GitHub Stars</span>
+    </div>
+    <div class="sys-detail">
+      <p><strong>核心创新：持久记忆驱动的自我进化。</strong>现有系统是"无状态"的——每次任务从零开始。EvoScientist 通过记忆库让 AI 越用越聪明。</p>
+      <br>
+      <p><strong>三智能体架构：</strong></p>
+      <ul class="content-list">
+        <li><strong>研究智能体（RA）</strong>："点子大王"——生成候选想法，多轮竞赛评估新颖性/可行性/相关性/清晰度</li>
+        <li><strong>工程智能体（EA）</strong>："技术专家"——四阶段递进实现：基础功能 → 参数调优 → 核心方法 → 对比实验</li>
+        <li><strong>进化管理智能体（EMA）</strong>："智慧长者"——从每个项目中提炼可复用知识，维护记忆库</li>
+      </ul>
+      <br>
+      <p><strong>双记忆系统：</strong></p>
+      <ul class="content-list">
+        <li><strong>想法记忆库</strong>：记录成功方向 + 失败教训，语义检索引导后续探索</li>
+        <li><strong>实验技巧记忆库</strong>：编程方法、数据处理策略、错误解决方案的操作手册</li>
+      </ul>
+      <br>
+      <p><strong>实证成果：</strong></p>
+      <ul class="content-list">
+        <li>6 篇论文全部被 ICAIS 2025 接收（会议整体接收率仅 31.71%）</li>
+        <li>最佳论文：《基于超条件先验的自适应证据元学习心电图个性化方法》</li>
+        <li>代码执行成功率从 34.39% 提升至 44.56%（记忆积累效果）</li>
+        <li>与 7 个顶级系统对比，各维度胜率 >60%，最高达 96.67%</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- DeepScientist -->
+  <div class="system-card">
+    <div class="sys-header">
+      <div class="sys-icon" style="background: var(--cyan-dim);">🔭</div>
+      <div>
+        <div class="sys-title">DeepScientist</div>
+        <div class="sys-subtitle">西湖大学 · arXiv:2509.26603 · 目标驱动的前沿科学发现</div>
+      </div>
+    </div>
+    <div class="sys-tags">
+      <span class="tag tag-cyan">贝叶斯优化</span>
+      <span class="tag tag-accent">超越人类 SOTA</span>
+      <span class="tag tag-green">自适应探索</span>
+    </div>
+    <div class="sys-detail">
+      <p><strong>与 AI Scientist 的关键区别：</strong>AI Scientist 追求"数量"（大量生成论文），DeepScientist 追求"质量"（聚焦人类定义的前沿科学问题）。</p>
+      <br>
+      <p><strong>核心方法：</strong>用<strong>贝叶斯优化</strong>建模科学发现全周期，在"探索新假设"和"利用已有知识"之间自动平衡。采用渐进式工作流：宽泛调研 → 聚焦假设 → 实验验证 → 结果分析 → 论文撰写。</p>
+      <br>
+      <p><strong>特色能力：</strong></p>
+      <ul class="content-list">
+        <li><strong>AutoFigure</strong>：将实验结果自动转化为可编辑的出版级科学图表</li>
+        <li><strong>持久研究地图</strong>：每个分支的实验历史可追溯、可恢复</li>
+        <li><strong>自适应扩展</strong>：当收益停滞时自动扩大搜索半径，引入新假设</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ScienceClaw -->
+  <div class="system-card">
+    <div class="sys-header">
+      <div class="sys-icon" style="background: var(--orange-dim);">🦞</div>
+      <div>
+        <div class="sys-title">ScienceClaw</div>
+        <div class="sys-subtitle">中科紫东太初 · 2026.03 · 国内首个科研专属 AI 智能体</div>
+      </div>
+    </div>
+    <div class="sys-tags">
+      <span class="tag tag-orange">1900+ 工具</span>
+      <span class="tag tag-green">八大学科覆盖</span>
+      <span class="tag tag-violet">77+ 数据库</span>
+    </div>
+    <div class="sys-detail">
+      <p><strong>定位差异：</strong>与 AI Scientist / EvoScientist 的"端到端论文生成"不同，ScienceClaw 更像一个<strong>全能科研助理</strong>——覆盖药物发现、天文学、化学材料等八大学科的全流程任务执行。</p>
+      <br>
+      <p><strong>两个版本：</strong></p>
+      <ul class="content-list">
+        <li><strong>紫东太初版</strong>（scienceclaw.taichuai.cn）：基于 LangChain DeepAgents + AIO Sandbox，国产大模型驱动，容器隔离运行</li>
+        <li><strong>开源版</strong>（github.com/Zaoqu-Liu/ScienceClaw）：266 个 Markdown 技能文件，"零代码"架构——用 SCIENCE.md (~600行) 定义 Agent 身份，技能以 MD 形式存在</li>
+      </ul>
+      <br>
+      <p><strong>技术亮点：</strong></p>
+      <ul class="content-list">
+        <li>15+ 文献来源（PubMed、arXiv、ClinicalTrials.gov 等）自动检索</li>
+        <li>77+ 专业数据库 REST API 接入（基因组/蛋白质组/药理学/免疫学等）</li>
+        <li>6 个预置研究食谱：基因全景、靶点验证、文献综述、差异表达、临床查询、人物调研</li>
+        <li>一键导出 Word / PowerPoint / LaTeX</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== §5 关键技术模式 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--violet-dim); color: var(--violet);">5</div>
+    <h2>关键技术模式</h2>
+  </div>
+
+  <p style="font-size: 15px; color: var(--text-secondary); margin-bottom: 24px;">
+    对比各系统后，我们提炼出五个反复出现的关键技术模式：
+  </p>
+
+  <div class="grid-3" style="margin-bottom: 24px;">
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: var(--accent-dim);">🌳</div>
+      <h4>树搜索 vs 线性执行</h4>
+      <p>AI Scientist v2 引入树搜索替代线性计划，允许分支探索和回溯。DeepScientist 用贝叶斯优化实现类似的探索-利用平衡。</p>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: var(--rose-dim);">🧠</div>
+      <h4>持久记忆</h4>
+      <p>EvoScientist 的双记忆系统（想法 + 实验）是核心创新。这解决了 AI 科研的"健忘症"问题——每次任务不再从零开始。</p>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: var(--green-dim);">🤖</div>
+      <h4>多智能体分工</h4>
+      <p>从 AI Scientist 的单体到 EvoScientist 的 3 智能体、ScienceClaw 的 9 智能体。分工越细，各环节质量越高。</p>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: var(--amber-dim);">📊</div>
+      <h4>AI 评审闭环</h4>
+      <p>AI Scientist 首创"自动评审员"概念：5 个独立评审 + 1 个元评审。评审准确率已达人类水平（±3%）。这实现了质量的自动筛选。</p>
+    </div>
+    <div class="pillar-card">
+      <div class="pillar-icon" style="background: var(--cyan-dim);">🔧</div>
+      <h4>工具增强</h4>
+      <p>ChemCrow 18 个工具，ScienceClaw 1900+ 工具。趋势很明确：模型能力 + 外部工具生态 = 科研能力的乘数效应。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== §6 性能对比 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--cyan-dim); color: var(--cyan);">6</div>
+    <h2>性能实证对比</h2>
+  </div>
+
+  <h3 class="sub-title">📈 同行评审通过率</h3>
+  <div style="max-width: 600px;">
+    <div class="compare-bar">
+      <div class="compare-label">
+        <span>EvoScientist (ICAIS 2025)</span>
+        <span style="color:var(--green); font-weight:700;">100% (6/6)</span>
+      </div>
+      <div class="compare-track">
+        <div class="compare-fill" style="width:100%; background: var(--green);"></div>
+      </div>
+    </div>
+    <div class="compare-bar">
+      <div class="compare-label">
+        <span>AI Scientist v2 (ICLR Workshop)</span>
+        <span style="color:var(--accent); font-weight:700;">33% (1/3)</span>
+      </div>
+      <div class="compare-track">
+        <div class="compare-fill" style="width:33%; background: var(--accent);"></div>
+      </div>
+    </div>
+    <div class="compare-bar">
+      <div class="compare-label">
+        <span>ICAIS 2025 人类平均接收率</span>
+        <span style="color:var(--text-secondary); font-weight:700;">31.71%</span>
+      </div>
+      <div class="compare-track">
+        <div class="compare-fill" style="width:31.71%; background: var(--text-secondary);"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3 class="sub-title">🧪 自动评审员 vs 人类评审员</h3>
+  <div class="grid-2">
+    <div class="stat-card">
+      <div class="stat-value" style="color: var(--accent);">66%</div>
+      <div class="stat-label">AI Scientist 自动评审员平衡准确率</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value" style="color: var(--green);">69%</div>
+      <div class="stat-label">NeurIPS 2021 人类评审员平衡准确率</div>
+    </div>
+  </div>
+
+  <div class="callout callout-green" style="margin-top: 24px;">
+    <h4>📊 关键发现</h4>
+    <p>自动评审员的决策准确率已经<strong style="color:var(--text);">与人类评审员处于同一水平</strong>（相差仅 3 个百分点）。这意味着 AI 科研系统可以实现完全自动化的质量控制闭环——无需人类参与即可筛选出高质量成果。</p>
+  </div>
+</section>
+
+<!-- ==================== §7 方向演进展望 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--orange-dim); color: var(--orange);">7</div>
+    <h2>方向演进：五大趋势</h2>
+  </div>
+
+  <div class="insight-grid">
+    <div class="insight-card">
+      <div class="insight-num">趋势 ①</div>
+      <h4>从 ML-only 到全学科</h4>
+      <p>AI Scientist 目前仅限 ML 领域（实验在计算机上完成）。ScienceClaw 覆盖八大学科，ChemCrow/Coscientist 已接入真实实验室。下一步：<strong style="color:var(--text);">物理世界的闭环实验自动化</strong>（机器人实验室 + AI 大脑）。</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">趋势 ②</div>
+      <h4>从无状态到自我进化</h4>
+      <p>EvoScientist 的持久记忆已证明：记忆积累使代码成功率从 34% → 45%。未来系统将拥有<strong style="color:var(--text);">跨项目、跨领域的长期科研直觉</strong>——类似于资深科学家数十年积累的隐性知识。</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">趋势 ③</div>
+      <h4>从单体到科研团队模拟</h4>
+      <p>从 AI Scientist 的单智能体到 EvoScientist 的 3 智能体、ScienceClaw 的 9 智能体。趋势是模拟真实科研团队的分工协作：<strong style="color:var(--text);">PI、博士生、工程师、评审员、编辑</strong>各司其职。</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">趋势 ④</div>
+      <h4>Scaling Law 显现</h4>
+      <p>Nature 论文明确证实：<strong style="color:var(--text);">模型能力 × 计算资源 = 论文质量</strong>。更好的基础模型和更多的推理计算预算，直接转化为更高质量的科研输出。这与 LLM 本身的 Scaling Law 高度一致。</p>
+    </div>
+    <div class="insight-card">
+      <div class="insight-num">趋势 ⑤</div>
+      <h4>人机协作的新范式</h4>
+      <p>不是"AI 替代科学家"，而是 <strong style="color:var(--text);">"人在环上"</strong>（Human-on-the-loop）：科学家定义方向、设定约束、审核结果，AI 负责苦力活（文献检索、代码实现、图表生成、初稿撰写）。Freephdlabor 系统最能体现这一范式。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== §8 对数据工作的启示 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: linear-gradient(135deg, var(--accent-dim), var(--rose-dim)); color: var(--accent);">8</div>
+    <h2>对数据工作的启示：训练数据合成的金矿</h2>
+  </div>
+
+  <div class="callout callout-rose">
+    <h4>🎯 核心洞察</h4>
+    <p>自动化科研系统的最大"副产品"不是论文本身，而是<strong style="color:var(--text);">过程数据</strong>。每一次科研循环都生产大量高质量的结构化推理轨迹——这恰恰是当前 LLM 训练最稀缺的数据类型。</p>
+  </div>
+
+  <h3 class="sub-title">🏭 六类可合成的训练数据</h3>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>📝 科学推理链</h3>
+      <p><strong style="color:var(--text)">来源：</strong>AI Scientist 的"想法生成 → 假设验证"过程<br>
+      <strong style="color:var(--text)">形式：</strong>给定研究领域/问题 → 生成假设 → 设计实验 → 预测结果 → 分析偏差<br>
+      <strong style="color:var(--text)">价值：</strong>训练模型进行多步骤科学推理，这类数据在现有语料库中极为稀缺</p>
+    </div>
+    <div class="card">
+      <h3>💻 实验代码 + 调试轨迹</h3>
+      <p><strong style="color:var(--text)">来源：</strong>EvoScientist 工程智能体的四阶段实现过程<br>
+      <strong style="color:var(--text)">形式：</strong>任务描述 → 初始代码 → 错误信息 → 调试过程 → 最终通过的代码<br>
+      <strong style="color:var(--text)">价值：</strong>代码-调试对(code-debug pairs)是 Agentic Coding 模型最需要的训练数据</p>
+    </div>
+    <div class="card">
+      <h3>📊 数据分析叙事</h3>
+      <p><strong style="color:var(--text)">来源：</strong>从实验结果到图表到文字分析的完整过程<br>
+      <strong style="color:var(--text)">形式：</strong>原始数据 → 选择分析方法 → 执行分析 → 生成图表 → 文字解读<br>
+      <strong style="color:var(--text)">价值：</strong>训练模型进行数据驱动的叙事推理，从数字到洞察的跨越</p>
+    </div>
+    <div class="card">
+      <h3>📖 文献-想法映射</h3>
+      <p><strong style="color:var(--text)">来源：</strong>AI Scientist 的文献回顾 → 想法生成过程<br>
+      <strong style="color:var(--text)">形式：</strong>一组相关论文 → 知识空白识别 → 创新想法 → 可行性分析<br>
+      <strong style="color:var(--text)">价值：</strong>训练模型的"创造性综合"能力——从已有知识中发现新机会</p>
+    </div>
+    <div class="card">
+      <h3>⚖️ 评审-修订对</h3>
+      <p><strong style="color:var(--text)">来源：</strong>自动评审员的评审意见 + 系统的修订响应<br>
+      <strong style="color:var(--text)">形式：</strong>论文草稿 → 评审意见（优点/缺点/建议）→ 修订后的论文<br>
+      <strong style="color:var(--text)">价值：</strong>训练模型的批判性思维和自我改进能力，是 RLHF 的高质量替代</p>
+    </div>
+    <div class="card">
+      <h3>🔄 进化记忆知识</h3>
+      <p><strong style="color:var(--text)">来源：</strong>EvoScientist 进化管理智能体提炼的可复用知识<br>
+      <strong style="color:var(--text)">形式：</strong>具体经历 → 抽象原则 → 应用条件 → 反例/边界<br>
+      <strong style="color:var(--text)">价值：</strong>训练模型的元学习能力——学会从经验中提炼规律</p>
+    </div>
+  </div>
+
+  <h3 class="sub-title">🔗 数据飞轮：自动化科研作为合成数据引擎</h3>
+
+  <div class="flow" style="margin-bottom: 24px;">
+    <div class="flow-step" style="border-color: var(--rose);">
+      <div class="emoji">🔬</div>
+      <div class="label">科研 Agent<br>执行任务</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color: var(--amber);">
+      <div class="emoji">📦</div>
+      <div class="label">收集过程数据<br>(推理+代码+分析)</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color: var(--green);">
+      <div class="emoji">🏷️</div>
+      <div class="label">自动评审<br>质量筛选</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color: var(--accent);">
+      <div class="emoji">🧠</div>
+      <div class="label">训练更强模型</div>
+    </div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step" style="border-color: var(--violet);">
+      <div class="emoji">⬆️</div>
+      <div class="label">更强的科研能力<br>更好的数据质量</div>
+    </div>
+  </div>
+
+  <div class="callout callout-amber">
+    <h4>💎 关键优势：自带质量信号</h4>
+    <p>与普通合成数据不同，科研过程数据<strong style="color:var(--text);">天然带有多维度的质量信号</strong>：实验是否成功运行（执行验证）、结果是否符合预期（科学验证）、论文是否通过评审（质量验证）。这三重验证使得数据筛选的可靠性远高于传统的 LLM-as-Judge。</p>
+  </div>
+
+  <h3 class="sub-title">🛠️ 实操建议：如何利用这些系统构建训练数据</h3>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>策略</th>
+          <th>数据类型</th>
+          <th>推荐系统</th>
+          <th>预期规模</th>
+          <th>难度</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong style="color:var(--text)">① 科研轨迹收集</strong></td>
+          <td>完整推理链</td>
+          <td>AI Scientist (开源)</td>
+          <td>每轮 ~50 个完整轨迹</td>
+          <td><span class="tag tag-green">中等</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">② 代码-调试对挖掘</strong></td>
+          <td>代码生成+修复</td>
+          <td>EvoScientist (开源)</td>
+          <td>每轮 ~200 个代码对</td>
+          <td><span class="tag tag-green">中等</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">③ 评审数据生成</strong></td>
+          <td>评审-修订对</td>
+          <td>AI Scientist 自动评审员</td>
+          <td>每论文 5+ 评审</td>
+          <td><span class="tag tag-accent">较低</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">④ 文献综合推理</strong></td>
+          <td>知识综合链</td>
+          <td>ScienceClaw (开源)</td>
+          <td>每任务 ~10 条推理链</td>
+          <td><span class="tag tag-amber">较高</span></td>
+        </tr>
+        <tr>
+          <td><strong style="color:var(--text)">⑤ 进化记忆提炼</strong></td>
+          <td>元认知知识</td>
+          <td>EvoScientist EMA 模块</td>
+          <td>每轮 ~20 条知识规则</td>
+          <td><span class="tag tag-rose">较高</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <blockquote style="margin-top: 24px;">
+    "科研是人类最高级的推理活动之一。如果我们能自动化它的过程，那这些过程数据本身就是训练下一代推理模型的最优燃料。这不是'用 AI 生成垃圾数据'——这是用 AI 的最高质量输出来训练更强的 AI。"
+  </blockquote>
+</section>
+
+<!-- ==================== §9 局限与风险 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: var(--amber-dim); color: var(--amber);">9</div>
+    <h2>局限与风险</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border-left: 3px solid var(--amber);">
+      <h3>⚠️ 技术局限</h3>
+      <ul class="content-list">
+        <li><strong>幻觉</strong>：引用不准确、数据编造仍然存在，Nature 论文明确指出这是主要失败模式</li>
+        <li><strong>深度不足</strong>：生成的想法往往"幼稚或未充分发展"，缺乏资深科学家的直觉</li>
+        <li><strong>领域受限</strong>：目前端到端系统仅在 ML 领域有效（实验可完全在计算机上完成）</li>
+        <li><strong>成功率低</strong>：AI Scientist v2 在 ICLR 仅 1/3 通过，离稳定高质量还有距离</li>
+      </ul>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--rose);">
+      <h3>🚨 伦理风险</h3>
+      <ul class="content-list">
+        <li><strong>论文洪水</strong>：如果 AI 大量生成论文，将压垮现有的同行评审系统</li>
+        <li><strong>资历膨胀</strong>：科学家可能用 AI 批量生产论文以人为膨胀学术资历</li>
+        <li><strong>知识污染</strong>：低质量 AI 论文可能污染科学文献库，误导后续研究</li>
+        <li><strong>就业影响</strong>：科研助理、博士后等初级研究人员的角色可能被部分替代</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="callout callout-amber" style="margin-top: 20px;">
+    <h4>⚖️ Sakana AI 的负责任做法</h4>
+    <p>值得称道的是，Nature 论文团队事先获得了 ICLR 领导层和 UBC IRB 的伦理审批，并<strong style="color:var(--text);">预先承诺在评审后撤回所有 AI 生成的论文</strong>，避免为完全自动化发表设定先例。这为后续研究树立了重要的伦理标杆。</p>
+  </div>
+</section>
+
+<!-- ==================== §10 总结 ==================== -->
+<section>
+  <div class="section-header">
+    <div class="section-num" style="background: linear-gradient(135deg, var(--accent-dim), var(--green-dim)); color: var(--accent);">10</div>
+    <h2>总结与行动建议</h2>
+  </div>
+
+  <div class="grid-2">
+    <div class="card" style="border: 1px solid var(--accent);">
+      <h3 style="color: var(--accent);">🔬 对科研界</h3>
+      <p>自动化科研不会取代科学家，但会<strong style="color:var(--text)">重新定义科学家的角色</strong>——从"亲手做实验的工匠"转变为"定义方向和审核质量的建筑师"。拥抱这些工具的科学家将获得数量级的生产力提升。</p>
+    </div>
+    <div class="card" style="border: 1px solid var(--rose);">
+      <h3 style="color: var(--rose);">📊 对数据工作</h3>
+      <p>自动化科研系统是<strong style="color:var(--text)">当前最被低估的训练数据来源</strong>。其过程数据（推理轨迹、代码调试对、评审修订对）具有三重自验证属性，是构建下一代推理模型的最优合成数据管道。建议立即开始收集和结构化这些数据。</p>
+    </div>
+  </div>
+
+  <div class="callout callout-accent" style="margin-top: 24px;">
+    <h4>🎯 一句话总结</h4>
+    <p style="font-size: 16px; font-weight: 600; color: var(--text);">自动化科研正在从"能不能做"走向"做得好不好"。2024 年证明了可行性，2025-2026 年正在逼近人类质量水平。而对数据工程而言，这场范式革命的最大红利不在终点（论文），而在路上——科研过程本身就是最珍贵的训练数据金矿。</p>
+  </div>
+</section>
+
+<div class="sep"></div>
+
+<!-- ==================== 参考文献 ==================== -->
+<section>
+  <h3 class="sub-title">📚 参考来源</h3>
+  <ol class="content-list" style="font-size: 13px;">
+    <li>Lu, C. et al. "Towards end-to-end automation of AI research." <strong>Nature</strong>, 2026. DOI: 10.1038/s41586-026-10265-5</li>
+    <li>Yamada, Y. et al. "The AI Scientist-v2: Workshop-Level Automated Scientific Discovery via Agentic Tree Search." arXiv:2504.08066, 2025.</li>
+    <li>Lyu, Y. et al. "EvoScientist: Towards Multi-Agent Evolving AI Scientists for End-to-End Scientific Discovery." arXiv:2603.08127, 2026.</li>
+    <li>Tie, G. et al. "A Survey of AI Scientists." arXiv:2510.23045, 2025.</li>
+    <li>Wei, J. et al. "From AI for Science to Agentic Science: A Survey on Autonomous Scientific Discovery." arXiv:2508.14111, 2025.</li>
+    <li>Tang, J. et al. "AI-Researcher: Autonomous Scientific Innovation." arXiv:2505.18705, 2025.</li>
+    <li>Bran, A.M. et al. "Augmenting large language models with chemistry tools." Nature Machine Intelligence, 2024.</li>
+    <li>Boiko, D.A. et al. "Autonomous chemical research with large language models." Nature, 2023.</li>
+    <li>ScienceClaw. GitHub: github.com/Zaoqu-Liu/ScienceClaw. 百度百科 "ScienceClaw" 词条.</li>
+    <li>DeepScientist. arXiv:2509.26603, 2025. 西湖大学张岳教授团队.</li>
+    <li>Ren, S. et al. "Towards Scientific Intelligence: A Survey of LLM-based Scientific Agents." arXiv:2503.24047, 2025.</li>
+  </ol>
+</section>
+
+<footer>
+  <p>Maxwell Research · 自动化科研综合调研 · 2026-03-28</p>
+</footer>
+
+</div>
+</body>
+</html>

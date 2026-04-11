@@ -1,0 +1,20 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CarbonFootprintCalculator from '../../components/tools/carbon-footprint/CarbonFootprintCalculator';
+---
+
+<BaseLayout title="AI 碳足迹计算器" description="你的 Prompt 消耗了多少地球？——11 个模型 × 7 区域 × 碳排放/能耗/水消耗 + 个人 AI 日碳审计">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">AI 碳足迹计算器</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">AI 碳足迹计算器</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">你的 Prompt 消耗了多少地球——11 个模型的推理能耗、碳排放和水消耗，以及你的个人 AI 日碳审计</p>
+    </div>
+
+    <CarbonFootprintCalculator client:load />
+  </div>
+</BaseLayout>

@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DataRoute from '../../components/lab/DataRoute';
+---
+
+<BaseLayout title="此刻，你的数据在哪里" description="可视化数据包从你的手机到目标服务器的真实路由路径">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">此刻，你的数据在哪里</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">此刻，你的数据在哪里</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">发一条微信、刷一条抖音、搜一次 Google——你的数据包穿越了怎样的旅程？</p>
+    </div>
+    <DataRoute client:load />
+  </div>
+</BaseLayout>

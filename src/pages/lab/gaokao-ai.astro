@@ -1,0 +1,39 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import GaokaoAI from '../../components/lab/GaokaoAI';
+---
+
+<BaseLayout title="如果 GPT-5 来考高考" description="AI vs 人类认知能力雷达图——8 个学科、6 个模型、12 道真题挑战">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header -->
+    <div class="mb-8">
+      <a href="/playground" class="inline-flex items-center text-sm text-slate-500 dark:text-slate-400 hover:text-primary-500 transition-colors mb-4">
+        ← 返回探索
+      </a>
+      <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3">
+        🎓 如果 GPT-5 来考高考
+      </h1>
+      <p class="text-lg text-slate-600 dark:text-slate-400 max-w-3xl">
+        AI 能考上清华吗？8 个学科、6 个模型的能力雷达图对比。
+        猜猜哪些高考题 AI 能答对，哪些会翻车——你了解 AI 的认知边界吗？
+      </p>
+      <div class="flex flex-wrap gap-3 mt-4">
+        <span class="px-3 py-1 rounded-full text-xs font-medium bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300">
+          8 个学科
+        </span>
+        <span class="px-3 py-1 rounded-full text-xs font-medium bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300">
+          6 个模型对比
+        </span>
+        <span class="px-3 py-1 rounded-full text-xs font-medium bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300">
+          12 道真题挑战
+        </span>
+        <span class="px-3 py-1 rounded-full text-xs font-medium bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300">
+          40 项细分能力
+        </span>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <GaokaoAI client:load />
+  </div>
+</BaseLayout>

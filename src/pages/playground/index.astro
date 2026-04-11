@@ -1,0 +1,174 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { playgroundCategories, pinnedItems, getTotalCount } from '../../data/playground-registry';
+
+const totalCount = getTotalCount();
+const aiTools = playgroundCategories.find(c => c.id === 'ai-tools')!;
+const creative = playgroundCategories.find(c => c.id === 'creative')!;
+const devTools = playgroundCategories.find(c => c.id === 'dev-tools')!;
+---
+
+<BaseLayout title="探索" description={`AI 实验工具 · 创意体验 · 开发者工具箱 — ${totalCount} 个交互式项目`}>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-12">
+      <h1 class="text-3xl font-bold text-slate-900 dark:text-white">探索</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-2">
+        {totalCount} 个交互式项目 · 全部纯前端实现 · 点击即玩
+      </p>
+      <!-- Section Quick Jump -->
+      <div class="flex flex-wrap gap-2 mt-4">
+        {pinnedItems.length > 0 && (
+          <a href="#pinned" class="px-3 py-1.5 rounded-full text-xs font-medium bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 hover:opacity-80 transition-colors">
+            常用工具 ({pinnedItems.length})
+          </a>
+        )}
+        {playgroundCategories.map((cat) => (
+          <a href={`#${cat.id}`} class={`px-3 py-1.5 rounded-full text-xs font-medium ${cat.badgeClass} hover:opacity-80 transition-colors`}>
+            {cat.title} ({cat.items.length})
+          </a>
+        ))}
+      </div>
+    </div>
+
+    <!-- ========== 常用工具（置顶） ========== -->
+    {pinnedItems.length > 0 && (
+      <section id="pinned" class="mb-16 scroll-mt-24">
+        <div class="flex items-center gap-3 mb-6">
+          <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-amber-500/20">
+            ★
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 dark:text-white">常用工具</h2>
+            <p class="text-sm text-slate-500 dark:text-slate-400">经过打磨、日常使用的独立工具</p>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {pinnedItems.map((tool) => (
+            <a href={tool.href} class="group relative card card-hover overflow-hidden p-8">
+              <div class={`absolute inset-0 bg-gradient-to-br ${tool.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`} />
+              <div class="absolute inset-[1px] bg-white dark:bg-slate-800 rounded-[11px] z-0" />
+              <div class="relative z-10">
+                <div class={`w-16 h-16 mx-auto mb-5 rounded-2xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center font-mono text-xl font-bold text-white shadow-lg`}>
+                  {tool.icon}
+                </div>
+                <h3 class="text-lg font-semibold text-slate-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-2">
+                  {tool.name}
+                </h3>
+                <p class="text-sm text-slate-500 dark:text-slate-400 text-center">
+                  {tool.description}
+                </p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- ========== AI 实验工具 ========== -->
+    <section id={aiTools.id} class="mb-16 scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <div class={`w-8 h-8 rounded-lg bg-gradient-to-br ${aiTools.iconGradient} flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-primary-500/20`}>
+          {aiTools.icon}
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">{aiTools.title}</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{aiTools.subtitle}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {aiTools.items.map((tool) => (
+          <a href={tool.href} class="group relative card card-hover overflow-hidden p-6">
+            <div class={`absolute inset-0 bg-gradient-to-br ${tool.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`} />
+            <div class="absolute inset-[1px] bg-white dark:bg-slate-800 rounded-[11px] z-0" />
+            <div class="relative z-10">
+              {tool.tag && (
+                <span class="absolute top-0 right-0 px-2 py-0.5 rounded-bl-lg rounded-tr-[11px] bg-amber-500/15 text-amber-600 dark:text-amber-400 text-xs font-semibold">
+                  {tool.tag}
+                </span>
+              )}
+              <div class={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center font-mono text-lg font-bold text-white shadow-lg`}>
+                {tool.icon}
+              </div>
+              <h3 class="text-base font-semibold text-slate-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-2">
+                {tool.name}
+              </h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 text-center line-clamp-2">
+                {tool.description}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ========== 创意体验 ========== -->
+    <section id={creative.id} class="mb-16 scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <div class={`w-8 h-8 rounded-lg bg-gradient-to-br ${creative.iconGradient} flex items-center justify-center text-white text-lg shadow-lg shadow-violet-500/20`}>
+          {creative.icon}
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">{creative.title}</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{creative.subtitle}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+        {creative.items.map((exp) => (
+          <a href={exp.href} class="group relative card card-hover overflow-hidden p-6">
+            <div class={`absolute inset-0 bg-gradient-to-br ${exp.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`} />
+            <div class="absolute inset-[1px] bg-white dark:bg-slate-800 rounded-[11px] z-0" />
+            <div class="relative z-10">
+              {exp.tag && (
+                <span class="absolute top-0 right-0 px-2 py-0.5 rounded-bl-lg rounded-tr-[11px] bg-violet-500/10 text-violet-600 dark:text-violet-400 text-xs font-medium">
+                  {exp.tag}
+                </span>
+              )}
+              <div class={`w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br ${exp.gradient} flex items-center justify-center text-2xl shadow-lg`}>
+                {exp.icon}
+              </div>
+              <h3 class="text-base font-semibold text-slate-900 dark:text-white text-center group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors mb-2">
+                {exp.name}
+              </h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400 text-center line-clamp-2">
+                {exp.description}
+              </p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+
+    <!-- ========== 开发者工具箱 ========== -->
+    <section id={devTools.id} class="mb-8 scroll-mt-24">
+      <div class="flex items-center gap-3 mb-6">
+        <div class={`w-8 h-8 rounded-lg bg-gradient-to-br ${devTools.iconGradient} flex items-center justify-center text-white text-sm font-bold shadow-lg shadow-sky-500/20`}>
+          {devTools.icon}
+        </div>
+        <div>
+          <h2 class="text-xl font-bold text-slate-900 dark:text-white">{devTools.title}</h2>
+          <p class="text-sm text-slate-500 dark:text-slate-400">{devTools.subtitle}</p>
+        </div>
+      </div>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        {devTools.items.map((tool) => (
+          <a href={tool.href} class="group relative card card-hover overflow-hidden p-5">
+            <div class={`absolute inset-0 bg-gradient-to-br ${tool.gradient} opacity-0 group-hover:opacity-100 transition-opacity duration-300 -z-10`} />
+            <div class="absolute inset-[1px] bg-white dark:bg-slate-800 rounded-[11px] z-0" />
+            <div class="relative z-10 flex items-center gap-3">
+              <div class={`w-10 h-10 shrink-0 rounded-xl bg-gradient-to-br ${tool.gradient} flex items-center justify-center font-mono text-sm font-bold text-white`}>
+                {tool.icon}
+              </div>
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+                  {tool.name}
+                </h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">{tool.description}</p>
+              </div>
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  </div>
+</BaseLayout>

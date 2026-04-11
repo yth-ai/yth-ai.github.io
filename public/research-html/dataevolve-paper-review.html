@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>论文深度解读 | DataEvolve: AI自主进化预训练数据策展</title>
+    <style>
+        :root {
+            --bg: #0f0f14;
+            --surface: #1a1a24;
+            --surface2: #22222e;
+            --border: #2d2d3d;
+            --text: #e4e4ed;
+            --text-dim: #9898ab;
+            --accent: #6c63ff;
+            --accent-light: #8b83ff;
+            --green: #4ade80;
+            --red: #f87171;
+            --orange: #fb923c;
+            --yellow: #fbbf24;
+            --cyan: #22d3ee;
+            --pink: #f472b6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            padding: 80px 0 60px;
+            text-align: center;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -200px; left: 50%; transform: translateX(-50%);
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(108,99,255,0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: rgba(108,99,255,0.15);
+            border: 1px solid rgba(108,99,255,0.3);
+            border-radius: 20px;
+            font-size: 13px;
+            color: var(--accent-light);
+            margin-bottom: 24px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .hero h1 {
+            font-size: 42px;
+            font-weight: 700;
+            line-height: 1.25;
+            max-width: 900px;
+            margin: 0 auto 16px;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-light) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero .subtitle {
+            font-size: 18px;
+            color: var(--text-dim);
+            max-width: 700px;
+            margin: 0 auto 32px;
+        }
+        .meta-row {
+            display: flex;
+            justify-content: center;
+            gap: 24px;
+            flex-wrap: wrap;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+        .meta-row span { display: flex; align-items: center; gap: 6px; }
+        .meta-row .dot { width: 4px; height: 4px; border-radius: 50%; background: var(--accent); }
+
+        /* Container */
+        .container {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 56px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 28px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+        .section-num {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent), #9333ea);
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+        .section-header h2 {
+            font-size: 26px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Cards */
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 28px;
+            margin-bottom: 20px;
+            transition: border-color 0.2s;
+        }
+        .card:hover { border-color: var(--accent); }
+        .card h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .card p, .card li {
+            color: var(--text-dim);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .card ul { padding-left: 20px; margin-top: 8px; }
+        .card li { margin-bottom: 6px; }
+
+        /* Critical Card */
+        .critical-card {
+            background: linear-gradient(135deg, rgba(248,113,113,0.06), rgba(251,146,60,0.06));
+            border: 1px solid rgba(248,113,113,0.25);
+        }
+        .critical-card:hover { border-color: var(--red); }
+        .critical-card h3 { color: var(--red); }
+
+        /* Positive Card */
+        .positive-card {
+            background: linear-gradient(135deg, rgba(74,222,128,0.06), rgba(34,211,238,0.06));
+            border: 1px solid rgba(74,222,128,0.25);
+        }
+        .positive-card:hover { border-color: var(--green); }
+        .positive-card h3 { color: var(--green); }
+
+        /* Flow diagram */
+        .flow {
+            display: flex;
+            align-items: stretch;
+            gap: 0;
+            margin: 32px 0;
+            overflow-x: auto;
+            padding-bottom: 8px;
+        }
+        .flow-step {
+            flex: 1;
+            min-width: 160px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px 16px;
+            text-align: center;
+            position: relative;
+        }
+        .flow-step .step-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .flow-step .step-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 6px;
+        }
+        .flow-step .step-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+        .flow-arrow {
+            display: flex;
+            align-items: center;
+            padding: 0 6px;
+            color: var(--accent);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        /* Table */
+        .table-wrap {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+        thead th {
+            background: var(--surface2);
+            color: #fff;
+            font-weight: 600;
+            padding: 12px 14px;
+            text-align: left;
+            white-space: nowrap;
+            border-bottom: 1px solid var(--border);
+        }
+        tbody td {
+            padding: 10px 14px;
+            border-bottom: 1px solid rgba(45,45,61,0.5);
+            color: var(--text-dim);
+            white-space: nowrap;
+        }
+        tbody tr:hover { background: rgba(108,99,255,0.05); }
+        .val-up { color: var(--green); font-weight: 600; }
+        .val-down { color: var(--red); font-weight: 600; }
+        .val-best { color: var(--yellow); font-weight: 700; }
+        .val-highlight { background: rgba(108,99,255,0.08); }
+
+        /* Stats row */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 28px 0;
+        }
+        .stat-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 6px;
+        }
+
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 6px;
+            margin-bottom: 6px;
+        }
+        .tag-green { background: rgba(74,222,128,0.15); color: var(--green); }
+        .tag-red { background: rgba(248,113,113,0.15); color: var(--red); }
+        .tag-orange { background: rgba(251,146,60,0.15); color: var(--orange); }
+        .tag-purple { background: rgba(108,99,255,0.15); color: var(--accent-light); }
+        .tag-cyan { background: rgba(34,211,238,0.15); color: var(--cyan); }
+
+        /* Verdict */
+        .verdict-box {
+            background: linear-gradient(135deg, rgba(108,99,255,0.1), rgba(147,51,234,0.1));
+            border: 1px solid rgba(108,99,255,0.3);
+            border-radius: 16px;
+            padding: 36px;
+            margin: 40px 0;
+        }
+        .verdict-box h3 {
+            font-size: 22px;
+            color: #fff;
+            margin-bottom: 16px;
+        }
+        .verdict-score {
+            display: inline-flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .verdict-score .big {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-light), var(--cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .verdict-score .small {
+            font-size: 20px;
+            color: var(--text-dim);
+        }
+
+        /* Callout */
+        .callout {
+            display: flex;
+            gap: 14px;
+            padding: 18px 22px;
+            border-radius: 10px;
+            margin: 16px 0;
+            font-size: 14px;
+            line-height: 1.7;
+        }
+        .callout-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+        .callout-warn {
+            background: rgba(251,191,36,0.08);
+            border-left: 3px solid var(--yellow);
+            color: var(--text);
+        }
+        .callout-info {
+            background: rgba(34,211,238,0.08);
+            border-left: 3px solid var(--cyan);
+            color: var(--text);
+        }
+
+        /* Impact chart bars */
+        .impact-bar-wrap {
+            margin: 8px 0;
+        }
+        .impact-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .impact-bar {
+            height: 8px;
+            border-radius: 4px;
+            background: var(--surface2);
+            overflow: hidden;
+        }
+        .impact-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.6s ease;
+        }
+        .fill-green { background: linear-gradient(90deg, var(--green), var(--cyan)); }
+        .fill-red { background: linear-gradient(90deg, var(--red), var(--orange)); }
+        .fill-gray { background: var(--text-dim); }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 48px 0;
+            color: var(--text-dim);
+            font-size: 13px;
+            border-top: 1px solid var(--border);
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 28px; }
+            .flow { flex-direction: column; align-items: center; }
+            .flow-arrow { transform: rotate(90deg); padding: 4px 0; }
+            .stats-row { grid-template-columns: 1fr 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ========== HERO ========== -->
+<div class="hero">
+    <div class="container">
+        <div class="hero-badge">📄 论文深度解读 & 批判性分析</div>
+        <h1>Data Darwinism Part II: DataEvolve</h1>
+        <p class="subtitle">AI 能否自主进化预训练数据的策展策略？一篇关于"数据达尔文主义"的技术解读与批判性审视</p>
+        <div class="meta-row">
+            <span><span class="dot"></span>arXiv: 2603.14420</span>
+            <span><span class="dot"></span>2026.03.15</span>
+            <span><span class="dot"></span>GAIR-NLP (FDU / SJTU)</span>
+            <span><span class="dot"></span>Pengfei Liu 团队</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+
+<!-- ========== TL;DR ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">⚡</div>
+        <h2>一句话总结</h2>
+    </div>
+    <div class="card" style="border-left: 3px solid var(--accent);">
+        <p style="font-size: 17px; color: var(--text); line-height: 1.9;">
+            <strong style="color:#fff;">DataEvolve</strong> 提出了一个让 AI 自主"进化"预训练数据清洗策略的框架：通过 <strong>观察→设计→执行→评估</strong> 的闭环迭代（每类别30代），在 Nemotron-CC 672B tokens 上生成了 <strong>Darwin-CC</strong>（504B tokens）。用 Darwin-CC 训练 3B 模型，在 18 个 benchmark 上平均得分 <strong style="color:var(--green);">44.13</strong>，比原始数据高 <strong style="color:var(--green);">+3.96</strong>，超越 DCLM / FineWeb-Edu / Ultra-FineWeb。核心发现：进化出的策略收敛到 <strong>"清洗而非转换"</strong> 的范式。
+        </p>
+    </div>
+</div>
+
+<!-- ========== 核心数字 ========== -->
+<div class="stats-row">
+    <div class="stat-card">
+        <div class="stat-value">672B→504B</div>
+        <div class="stat-label">原始 → 清洗后 tokens</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">+3.96</div>
+        <div class="stat-label">vs 原始数据平均提升</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">44.13</div>
+        <div class="stat-label">18 benchmarks 平均分</div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-value">30</div>
+        <div class="stat-label">每类别进化迭代数</div>
+    </div>
+</div>
+
+<!-- ========== Section 1: 背景与动机 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">1</div>
+        <h2>背景与动机</h2>
+    </div>
+
+    <div class="card">
+        <h3>🧬 从 Part I 到 Part II 的逻辑演进</h3>
+        <p>Data Darwinism Part I 建立了一套 <strong>十级数据处理层次结构</strong>，核心结论是"更强的处理 = 更大的数据价值"。但 Part I 有一个致命缺陷：<strong>所有策略都依赖于手动设计</strong>，且仅针对单一类别验证。</p>
+        <ul>
+            <li>现代预训练语料库（如 Common Crawl 衍生物）包含 <strong>数百个异构类别</strong>（不同领域 × 不同质量 × 不同内容类型）</li>
+            <li>为每个类别手工设计清洗策略 → 成本不可接受</li>
+            <li>Part II 的核心问题：<strong>策略能否自动"进化"出来</strong>？</li>
+        </ul>
+    </div>
+
+    <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div>这篇论文的定位非常清晰——它不是在做"用LLM清洗数据"（这已经不新鲜了），而是在做 <strong>"用LLM进化出清洗数据的策略"</strong>。这个元层级的抽象是它的核心贡献。</div>
+    </div>
+</div>
+
+<!-- ========== Section 2: 方法论 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">2</div>
+        <h2>方法论：DataEvolve 框架</h2>
+    </div>
+
+    <p style="color: var(--text-dim); margin-bottom: 24px;">DataEvolve 是一个由 4 个 AI 角色组成的闭环进化系统，每个角色由不同的 LLM 扮演。</p>
+
+    <!-- Flow diagram -->
+    <div class="flow">
+        <div class="flow-step">
+            <div class="step-icon">🔍</div>
+            <div class="step-title">Data Observer</div>
+            <div class="step-desc">观察样本<br>识别质量问题<br><span class="tag tag-purple">GPT-4o-mini</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-icon">🎯</div>
+            <div class="step-title">Strategy Designer</div>
+            <div class="step-desc">设计清洗策略<br>生成 Prompt<br><span class="tag tag-purple">o4-mini</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-icon">⚙️</div>
+            <div class="step-title">Data Cleaner</div>
+            <div class="step-desc">执行清洗<br>处理文档对<br><span class="tag tag-purple">gpt-oss-120b</span></div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+            <div class="step-icon">📊</div>
+            <div class="step-title">Quality Judge</div>
+            <div class="step-desc">评分 1-10<br>诊断反馈<br><span class="tag tag-purple">gpt-5-mini</span></div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>🔄 进化机制的关键设计</h3>
+        <ul>
+            <li><strong>经验池 (Experience Pool)</strong>：累积所有已发现的质量问题，跨代共享</li>
+            <li><strong>策略池 (Strategy Pool)</strong>：存储每代的 Prompt、分数、诊断反馈</li>
+            <li><strong>选择机制</strong>：每代选最优策略为"父代"，通过变异产生后代，适者生存</li>
+            <li><strong>独立进化</strong>：8 个类别各自独立进化 30 代，互不干扰</li>
+            <li><strong>适应度近似</strong>：用样本质量评分近似真实训练效果，避免每代都训练完整模型</li>
+        </ul>
+    </div>
+
+    <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>我的存疑 #1：适应度函数的可靠性</strong><br>
+        论文用"质量评分"近似策略的适应度，但这个评分本身是由另一个 LLM (gpt-5-mini) 给出的。LLM-as-Judge 的已知问题（偏好冗长、偏好自身生成风格、位置偏差等）在这里会被 <strong>放大 30 代</strong>。如果评估器有系统性偏差，进化出的策略可能只是在"讨好评估器"，而非真正提升数据质量。论文虽然用最终训练结果验证了最优策略有效，但没有验证进化路径本身是否高效。</div>
+    </div>
+</div>
+
+<!-- ========== Section 3: 实验设计 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">3</div>
+        <h2>实验设计</h2>
+    </div>
+
+    <div class="card">
+        <h3>📋 数据集构成：Darwin-CC</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>内容类型</th>
+                        <th>质量等级</th>
+                        <th>领域</th>
+                        <th>原始 Tokens</th>
+                        <th>清洗后 Tokens</th>
+                        <th>保留率</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-green">High</span></td>
+                        <td>Mathematics</td>
+                        <td>7B</td>
+                        <td>5B</td>
+                        <td>71.4%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-green">High</span></td>
+                        <td>Computer Science</td>
+                        <td>32B</td>
+                        <td>24B</td>
+                        <td>75.0%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-green">High</span></td>
+                        <td>Medicine</td>
+                        <td>52B</td>
+                        <td>29B</td>
+                        <td class="val-down">55.8%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-green">High</span></td>
+                        <td>Other STEM</td>
+                        <td>71B</td>
+                        <td>51B</td>
+                        <td>71.8%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-orange">Not-High</span></td>
+                        <td>Mathematics</td>
+                        <td>6B</td>
+                        <td>6B</td>
+                        <td class="val-up">100%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-orange">Not-High</span></td>
+                        <td>Computer Science</td>
+                        <td>107B</td>
+                        <td>78B</td>
+                        <td>72.9%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-orange">Not-High</span></td>
+                        <td>Medicine</td>
+                        <td>164B</td>
+                        <td>132B</td>
+                        <td>80.5%</td>
+                    </tr>
+                    <tr>
+                        <td>Academic</td>
+                        <td><span class="tag tag-orange">Not-High</span></td>
+                        <td>Other STEM</td>
+                        <td>233B</td>
+                        <td>179B</td>
+                        <td>76.8%</td>
+                    </tr>
+                    <tr style="background: rgba(108,99,255,0.08); font-weight: 600;">
+                        <td colspan="3" style="color:#fff;">总计</td>
+                        <td style="color:#fff;">672B</td>
+                        <td style="color:#fff;">504B</td>
+                        <td style="color:var(--accent-light);">75.0%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="callout callout-warn">
+        <span class="callout-icon">⚠️</span>
+        <div><strong>我的存疑 #2：数据分类范围极其狭窄</strong><br>
+        8 个类别全部限于 <strong>学术 (Academic) 内容</strong>，且仅覆盖 STEM 领域。真实的预训练语料库包含新闻、社交媒体、论坛、代码、文学、法律等几十种内容类型。论文标题暗示"AI can autonomously evolve pretraining data curation"（通用性），但实验只在一个极度受限的子集上验证。从 8 个学术类别 → "预训练数据策展的可行性和必要性" 这个结论的跳跃太大了。</div>
+    </div>
+
+    <div class="card">
+        <h3>🤖 模型与训练配置</h3>
+        <ul>
+            <li><strong>架构</strong>：Qwen2.5，3B 参数，从头训练</li>
+            <li><strong>训练量</strong>：500B tokens</li>
+            <li><strong>优化器</strong>：AdamW，学习率 3e-4，批次大小 1024</li>
+            <li><strong>评估</strong>：18 个 benchmark 的平均分</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ========== Section 4: 核心实验结果 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">4</div>
+        <h2>核心实验结果</h2>
+    </div>
+
+    <!-- 消融实验 -->
+    <div class="card">
+        <h3>🧪 消融实验：进化迭代的价值</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Benchmark</th>
+                        <th>原始数据</th>
+                        <th>次优策略</th>
+                        <th>最优策略 (Darwin-CC)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="val-highlight">
+                        <td style="color:#fff;font-weight:600;">MMLU</td>
+                        <td>27.49</td>
+                        <td>32.55 <span class="val-up">(+5.05)</span></td>
+                        <td><span class="val-best">46.13</span> <span class="val-up">(+18.64)</span></td>
+                    </tr>
+                    <tr class="val-highlight">
+                        <td style="color:#fff;font-weight:600;">CSQA</td>
+                        <td>20.31</td>
+                        <td>20.61 <span class="val-up">(+0.30)</span></td>
+                        <td><span class="val-best">39.12</span> <span class="val-up">(+18.80)</span></td>
+                    </tr>
+                    <tr class="val-highlight">
+                        <td style="color:#fff;font-weight:600;">MedQA</td>
+                        <td>26.77</td>
+                        <td>26.11 <span class="val-down">(-0.66)</span></td>
+                        <td><span class="val-best">40.25</span> <span class="val-up">(+13.48)</span></td>
+                    </tr>
+                    <tr class="val-highlight">
+                        <td style="color:#fff;font-weight:600;">MedMCQA</td>
+                        <td>28.86</td>
+                        <td>30.28 <span class="val-up">(+1.42)</span></td>
+                        <td><span class="val-best">40.97</span> <span class="val-up">(+12.10)</span></td>
+                    </tr>
+                    <tr>
+                        <td>ARC-E</td>
+                        <td>74.94</td>
+                        <td>77.55 <span class="val-up">(+2.61)</span></td>
+                        <td><span class="val-best">78.59</span> <span class="val-up">(+3.65)</span></td>
+                    </tr>
+                    <tr>
+                        <td>ARC-C</td>
+                        <td>43.52</td>
+                        <td>48.41 <span class="val-up">(+4.90)</span></td>
+                        <td><span class="val-best">49.32</span> <span class="val-up">(+5.80)</span></td>
+                    </tr>
+                    <tr>
+                        <td>HellaSwag</td>
+                        <td>65.32</td>
+                        <td>64.36 <span class="val-down">(-0.96)</span></td>
+                        <td>62.21 <span class="val-down">(-3.11)</span></td>
+                    </tr>
+                    <tr>
+                        <td>PIQA</td>
+                        <td>76.79</td>
+                        <td>76.80 <span class="val-up">(+0.01)</span></td>
+                        <td>76.15 <span class="val-down">(-0.64)</span></td>
+                    </tr>
+                    <tr>
+                        <td>DROP</td>
+                        <td>19.57</td>
+                        <td>19.48 <span class="val-down">(-0.09)</span></td>
+                        <td>18.49 <span class="val-down">(-1.08)</span></td>
+                    </tr>
+                    <tr>
+                        <td>BBH</td>
+                        <td>26.82</td>
+                        <td>26.69 <span class="val-down">(-0.12)</span></td>
+                        <td>26.16 <span class="val-down">(-0.65)</span></td>
+                    </tr>
+                    <tr style="background: rgba(108,99,255,0.08); font-weight: 600;">
+                        <td style="color:#fff;">平均 (18 benchmarks)</td>
+                        <td style="color:#fff;">40.17</td>
+                        <td style="color:#fff;">41.20 <span class="val-up">(+1.03)</span></td>
+                        <td style="color:#fff;"><span class="val-best">44.13</span> <span class="val-up">(+3.96)</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- vs Other datasets -->
+    <div class="card">
+        <h3>🏆 与其他预训练语料库对比</h3>
+        <p style="margin-bottom: 16px;">所有模型均为 3B 参数，训练 500B tokens。</p>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Benchmark</th>
+                        <th>FineWeb-Edu</th>
+                        <th>Ultra-FineWeb</th>
+                        <th>DCLM</th>
+                        <th>Darwin-CC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="val-highlight">
+                        <td style="color:#fff;font-weight:600;">MMLU</td>
+                        <td>28.38</td>
+                        <td>25.53</td>
+                        <td>28.54</td>
+                        <td><span class="val-best">46.13</span></td>
+                    </tr>
+                    <tr class="val-highlight">
+                        <td style="color:#fff;font-weight:600;">MedQA</td>
+                        <td>26.36</td>
+                        <td>24.84</td>
+                        <td>24.88</td>
+                        <td><span class="val-best">40.25</span></td>
+                    </tr>
+                    <tr>
+                        <td>HellaSwag</td>
+                        <td>64.33</td>
+                        <td>65.32</td>
+                        <td><span class="val-best">70.39</span></td>
+                        <td>62.21</td>
+                    </tr>
+                    <tr>
+                        <td>TriviaQA</td>
+                        <td>0.67</td>
+                        <td>0.42</td>
+                        <td><span class="val-best">42.85</span></td>
+                        <td>26.65</td>
+                    </tr>
+                    <tr>
+                        <td>DROP</td>
+                        <td>6.78</td>
+                        <td>7.78</td>
+                        <td><span class="val-best">24.31</span></td>
+                        <td>18.49</td>
+                    </tr>
+                    <tr>
+                        <td>WinoGrande</td>
+                        <td>61.02</td>
+                        <td>60.93</td>
+                        <td><span class="val-best">64.99</span></td>
+                        <td>58.09</td>
+                    </tr>
+                    <tr style="background: rgba(108,99,255,0.08); font-weight: 600;">
+                        <td style="color:#fff;">平均 (18 benchmarks)</td>
+                        <td>36.52</td>
+                        <td>36.29</td>
+                        <td>42.42</td>
+                        <td style="color:#fff;"><span class="val-best">44.13</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Impact visualization -->
+    <div class="card">
+        <h3>📊 任务类型影响分布</h3>
+        <p style="margin-bottom: 16px;">Darwin-CC 清洗对不同类型任务的影响差异巨大：</p>
+
+        <div style="margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--green);">📈 显著提升的任务</div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>MMLU (知识记忆)</span><span class="val-up">+18.64</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-green" style="width:100%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>CSQA (常识推理)</span><span class="val-up">+18.80</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-green" style="width:100%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>MedQA (医学知识)</span><span class="val-up">+13.48</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-green" style="width:72%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>MedMCQA (医学选择)</span><span class="val-up">+12.10</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-green" style="width:65%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>ARC-C (科学推理)</span><span class="val-up">+5.80</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-green" style="width:31%"></div></div>
+        </div>
+
+        <div style="margin: 16px 0 6px; font-size: 13px; font-weight: 600; color: var(--red);">📉 性能下降的任务</div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>HellaSwag (情境完成)</span><span class="val-down">-3.11</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-red" style="width:50%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>DROP (阅读+数值推理)</span><span class="val-down">-1.08</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-red" style="width:17%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>SIQA (社会常识)</span><span class="val-down">-0.79</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-red" style="width:13%"></div></div>
+        </div>
+
+        <div style="margin: 16px 0 6px; font-size: 13px; font-weight: 600; color: var(--text-dim);">➡️ 基本不变的任务</div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>BBH (逻辑推理)</span><span>-0.65</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-gray" style="width:10%"></div></div>
+        </div>
+        <div class="impact-bar-wrap">
+            <div class="impact-label"><span>RACE (阅读理解)</span><span>-0.76</span></div>
+            <div class="impact-bar"><div class="impact-fill fill-gray" style="width:12%"></div></div>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Section 5: 策略分析 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">5</div>
+        <h2>策略行为分析：学会清洗，而非转换</h2>
+    </div>
+
+    <div class="card positive-card">
+        <h3>✅ 核心发现：进化收敛于"清洗范式"</h3>
+        <p>跨 8 个类别独立进化的策略，不约而同地收敛到了相同的模式：</p>
+        <ul>
+            <li><strong>去噪</strong>：移除 HTML 标签、导航菜单、广告、重复句子、PII</li>
+            <li><strong>格式标准化</strong>：空白字符、标点、数字表达统一化</li>
+            <li><strong>领域感知保留</strong>：STEM 保留 LaTeX 公式、数学保留定理证明、医学保留临床术语、CS 保留代码块</li>
+        </ul>
+        <p style="margin-top: 12px;">这与此前流行的"将所有文本改写为教科书/QA风格"的方法形成鲜明对比。</p>
+    </div>
+
+    <div class="card">
+        <h3>🔑 有效策略的四大特征</h3>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 12px;">
+            <div style="padding: 16px; background: var(--surface2); border-radius: 10px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--cyan); margin-bottom: 6px;">① 具体标准</div>
+                <div style="font-size: 13px; color: var(--text-dim);">指定可量化阈值（如"重复>80%即去除"），而非模糊判断</div>
+            </div>
+            <div style="padding: 16px; background: var(--surface2); border-radius: 10px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--cyan); margin-bottom: 6px;">② 针对性删除</div>
+                <div style="font-size: 13px; color: var(--text-dim);">移除特定元素（HTML/PII/广告），而非整篇过滤</div>
+            </div>
+            <div style="padding: 16px; background: var(--surface2); border-radius: 10px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--cyan); margin-bottom: 6px;">③ 明确保留规则</div>
+                <div style="font-size: 13px; color: var(--text-dim);">在删除指令旁附带领域特定保护规则，防止过度清洗</div>
+            </div>
+            <div style="padding: 16px; background: var(--surface2); border-radius: 10px;">
+                <div style="font-size: 14px; font-weight: 600; color: var(--cyan); margin-bottom: 6px;">④ 保守操作</div>
+                <div style="font-size: 13px; color: var(--text-dim);">宁可删除不确定片段，也不做可能引入错误的激进转换</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <h3>📐 语义保留与多样性指标</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>指标</th>
+                        <th>DataEvolve 清洗</th>
+                        <th>Wiki 风格重写</th>
+                        <th>QA 格式转换</th>
+                        <th>随机基线</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>语义相似度 (均值)</td>
+                        <td class="val-best">0.958</td>
+                        <td>0.937</td>
+                        <td>0.882</td>
+                        <td>0.619</td>
+                    </tr>
+                    <tr>
+                        <td>Self-ROUGE-2</td>
+                        <td class="val-up">0.0116 (↓21.7%)</td>
+                        <td colspan="3" style="color:var(--text-dim);">未报告</td>
+                    </tr>
+                    <tr>
+                        <td>L2 距离 (多样性)</td>
+                        <td>1.374 (≈不变)</td>
+                        <td colspan="3" style="color:var(--text-dim);">未报告</td>
+                    </tr>
+                    <tr>
+                        <td>香农熵</td>
+                        <td>10.87 (↑0.3%)</td>
+                        <td colspan="3" style="color:var(--text-dim);">未报告</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ========== Section 6: 批判性分析 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">6</div>
+        <h2>批判性分析：存疑点与思考</h2>
+    </div>
+
+    <div class="critical-card card">
+        <h3>🔴 存疑 #1：MMLU 提升是否来自"数据泄露"？</h3>
+        <p>MMLU 从 27.49 飙升到 46.13 <strong>(+18.64)</strong>，这是一个异常巨大的跳跃。对比之下：</p>
+        <ul>
+            <li>HellaSwag、PIQA 等任务几乎不变甚至下降</li>
+            <li>BBH (逻辑推理) 也基本不变 (-0.65)</li>
+            <li>DCLM 在 MMLU 上只有 28.54，Darwin-CC 却达到 46.13</li>
+        </ul>
+        <p style="margin-top: 10px;">MMLU 是一个<strong>知识记忆型</strong>任务。当清洗策略专门针对学术内容（STEM 四大领域）优化时，被"保留"下来的内容很可能与 MMLU 的知识覆盖高度重合。这不是传统意义上的数据泄露，而是一种 <strong>"隐性选择偏差"</strong> —— 清洗过程可能无意中富集了与评测集知识域重叠的内容。论文没有做 decontamination 分析来排除这个可能性。</p>
+    </div>
+
+    <div class="critical-card card">
+        <h3>🔴 存疑 #2：对比实验的公平性值得商榷</h3>
+        <p>Darwin-CC 与 DCLM / FineWeb-Edu / Ultra-FineWeb 的对比存在严重的<strong>不对等问题</strong>：</p>
+        <ul>
+            <li><strong>数据来源不同</strong>：Darwin-CC 基于 Nemotron-CC（NVIDIA 高质量 CC 衍生），而对比数据集基于原版 Common Crawl。Nemotron-CC 本身就经过了 NVIDIA 的高质量过滤</li>
+            <li><strong>领域分布不同</strong>：Darwin-CC 100% 是学术内容，其他数据集是通用内容。在 MMLU/MedQA 这类知识型 benchmark 上天然有优势</li>
+            <li><strong>数据量不同</strong>：Darwin-CC 是 504B tokens 但仅覆盖学术领域；DCLM 等覆盖全领域。用相同的 500B 训练量，领域集中的数据在该领域的 benchmark 上自然占优</li>
+        </ul>
+        <p style="margin-top: 10px;">更公平的对比应该是：<strong>在相同的 Nemotron-CC 子集上</strong>，用原始数据 vs 其他清洗方法 vs DataEvolve。目前表2的消融是合理的，但表3的跨数据集对比说服力有限。</p>
+    </div>
+
+    <div class="critical-card card">
+        <h3>🔴 存疑 #3：仅 3B 模型 + 单次训练的泛化性</h3>
+        <p>论文仅在一个设置下验证：<strong>Qwen2.5-3B, 500B tokens, 单次训练</strong>。</p>
+        <ul>
+            <li>数据策展的效果是否随模型规模变化？在 7B/13B/70B 上结论可能完全不同</li>
+            <li>单次训练存在<strong>随机种子敏感性</strong>。差距仅 3.96 分，可能在误差范围内</li>
+            <li>没有报告多次训练的方差/置信区间</li>
+            <li>500B tokens 的训练预算下，3B 模型还远未收敛，在这个阶段的 benchmark 比较可能不反映长期趋势</li>
+        </ul>
+    </div>
+
+    <div class="critical-card card">
+        <h3>🟡 存疑 #4：进化搜索的效率与必要性</h3>
+        <p>每个类别 30 代进化，使用 4 个不同的 LLM（包括 GPT-4o-mini、o4-mini、gpt-oss-120b、gpt-5-mini）。</p>
+        <ul>
+            <li><strong>成本问题</strong>：论文没有报告 API 调用成本。8 个类别 × 30 代 × 4 个 LLM 角色，实际 token 消耗和美元成本是多少？</li>
+            <li><strong>消融不足</strong>：论文只对比了"最优策略 vs 次优策略 vs 原始数据"，但没有对比 <strong>"人类花 2 小时手写一个清洗 prompt" vs "DataEvolve 进化 30 代"</strong>。如果手写一个简单的"去除HTML标签和广告"的prompt就能达到80%的效果，那 30 代进化的边际收益可能不值得</li>
+            <li><strong>收敛分析缺失</strong>：进化过程中的适应度曲线（分数 vs 迭代数）没有展示。30 代是否足够？还是第 5 代就收敛了？</li>
+        </ul>
+    </div>
+
+    <div class="critical-card card">
+        <h3>🟡 存疑 #5：HellaSwag/TriviaQA 大幅落后 DCLM 的解释过于轻描淡写</h3>
+        <p>论文将 HellaSwag (-3.11) 和 TriviaQA (26.65 vs DCLM 42.85) 的下降归因于"清洗去除了口语化表达"。但：</p>
+        <ul>
+            <li>TriviaQA 差距达 <strong>16.2 分</strong>，这不是"微调"能解释的</li>
+            <li>WinoGrande (58.09 vs 64.99) 差距也有 <strong>6.9 分</strong></li>
+            <li>如果一个数据策展方法在知识型任务上大涨，在其他任务上大跌，它到底是"更好的数据"还是"更偏的数据"？</li>
+            <li>真正好的预训练数据应该是<strong>全面提升或至少不损害</strong>通用能力的</li>
+        </ul>
+    </div>
+
+    <div class="critical-card card">
+        <h3>🟡 存疑 #6："清洗而非转换"的结论可能是方法的副产品</h3>
+        <p>论文的一个核心 takeaway 是"进化收敛于清洗范式"。但这个结论可能是方法设计本身导致的：</p>
+        <ul>
+            <li><strong>Quality Judge 的评估偏好</strong>：如果评估器倾向于给保留原文语义的结果更高分（因为"清洗后还像原文" = 高分），那进化自然会收敛到最小化改动的策略</li>
+            <li><strong>50 个样本的评估集</strong>：每代只评估 50 对文档，采样噪声很大。保守的清洗策略在小样本上更稳定，可能只是因为方差更小而被选中</li>
+            <li>如果把评估器换成一个偏好"教科书风格"的 judge，进化结果可能完全不同</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ========== Section 7: 我的思考 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">7</div>
+        <h2>我的思考与延伸讨论</h2>
+    </div>
+
+    <div class="card positive-card">
+        <h3>✅ 论文的核心贡献是实在的</h3>
+        <p>尽管有上述存疑，我认为这篇论文有几个真正有价值的贡献：</p>
+        <ul>
+            <li><strong>元层级的自动化</strong>：不是用 LLM 做数据清洗（这已经被做烂了），而是用 LLM 进化清洗策略。这个抽象层级的提升是有意义的</li>
+            <li><strong>经验池 + 策略池的设计</strong>：跨代知识累积的机制设计得不错，有可复用价值</li>
+            <li><strong>"清洗 > 转换"的实证发现</strong>：即使存在方法论缺陷，这个方向性结论与工业界的实践经验一致 —— 过度改写反而会损害多样性</li>
+            <li><strong>表2 的消融实验</strong>：在相同数据源上的对比是说服力最强的部分，证明了迭代优化确实有效</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>🔮 延伸思考：这个方向的天花板在哪？</h3>
+        <ul>
+            <li><strong>Scaling 问题</strong>：当类别从 8 扩展到 200+ 时，API 成本线性增长。进化出的策略能否跨类别迁移？</li>
+            <li><strong>递归困境</strong>：用 GPT-5-mini 评估清洗质量 → 但 GPT-5 本身就是在类似数据上训练的。这是否是一个"用被试的老师来判卷"的循环？</li>
+            <li><strong>与规则方法的对比缺失</strong>：传统的 regex + 启发式规则在工业界已经非常成熟。论文没有与 <code>trafilatura</code>、<code>resiliparse</code> 等开源工具的组合做对比</li>
+            <li><strong>更好的实验设计</strong>：应该加入 (a) 多模型规模验证 (b) 多次训练方差报告 (c) decontamination 分析 (d) 与人类手写策略的对比</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>🎯 对从业者的实际启示</h3>
+        <ul>
+            <li><strong>数据清洗 > 数据转换</strong>：如果你在做预训练数据，优先投入在精细化的去噪和格式标准化上，不要急着把所有东西改写成教科书</li>
+            <li><strong>领域感知是关键</strong>：不同类型的内容需要不同的保留规则。"一刀切"的清洗策略一定会损失信息</li>
+            <li><strong>迭代验证很重要</strong>：不要假设你的第一版清洗策略就是最优的。构建快速验证循环（类似 DataEvolve 的思路但可以更轻量）</li>
+            <li><strong>关注非知识型 benchmark</strong>：只看 MMLU 会给你误导。HellaSwag/PIQA/SIQA 这类日常语言理解能力同样重要</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ========== 综合评价 ========== -->
+<div class="verdict-box">
+    <h3>📋 综合评价</h3>
+    <div class="verdict-score">
+        <span class="big">6.5</span>
+        <span class="small">/ 10</span>
+    </div>
+    <p style="color: var(--text-dim); margin-bottom: 20px;">一篇有趣的方向性工作，但实验设计的严谨性不足以支撑其宏大的声明。</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+        <div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--green); margin-bottom: 10px;">👍 优点</div>
+            <ul style="font-size: 14px; color: var(--text-dim); padding-left: 18px;">
+                <li>元层级自动化的思路新颖</li>
+                <li>闭环进化机制设计合理</li>
+                <li>消融实验（表2）有说服力</li>
+                <li>"清洗 > 转换"的方向性发现有价值</li>
+                <li>开源数据集和代码</li>
+                <li>语义保留分析做得不错</li>
+            </ul>
+        </div>
+        <div>
+            <div style="font-size: 14px; font-weight: 600; color: var(--red); margin-bottom: 10px;">👎 不足</div>
+            <ul style="font-size: 14px; color: var(--text-dim); padding-left: 18px;">
+                <li>跨数据集对比不公平（数据源/领域不同）</li>
+                <li>仅 3B 模型单次训练，无方差报告</li>
+                <li>8 个学术类别 → 通用结论的跳跃太大</li>
+                <li>MMLU 异常提升未排除数据泄露</li>
+                <li>缺少 API 成本分析和效率对比</li>
+                <li>非知识型任务大幅下降被低估</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- ========== 论文元数据 ========== -->
+<div class="section">
+    <div class="section-header">
+        <div class="section-num">📎</div>
+        <h2>论文元数据</h2>
+    </div>
+    <div class="card" style="font-size: 14px;">
+        <p><strong>标题：</strong>Data Darwinism Part II: DataEvolve — AI can Autonomously Evolve Pretraining Data Curation</p>
+        <p><strong>作者：</strong>Tiantian Mi, Dongming Shan, Zhen Huang, Yiwei Qin, Muhang Xie, Yuxuan Qiao, Yixiu Liu, Chenyang Zhou, Pengfei Liu</p>
+        <p><strong>机构：</strong>SII / FDU / SJTU / GAIR / KPS</p>
+        <p><strong>日期：</strong>2026-03-15</p>
+        <p><strong>arXiv：</strong><a href="https://arxiv.org/abs/2603.14420" style="color:var(--accent-light);">2603.14420</a></p>
+        <p><strong>代码：</strong><a href="https://github.com/GAIR-NLP/DataEvolve" style="color:var(--accent-light);">github.com/GAIR-NLP/DataEvolve</a></p>
+        <p><strong>数据集：</strong><a href="https://huggingface.co/datasets/GAIR/Darwin-CC" style="color:var(--accent-light);">huggingface.co/datasets/GAIR/Darwin-CC</a></p>
+    </div>
+</div>
+
+</div>
+
+<div class="footer">
+    <p>论文深度解读 · 由 WorkBuddy 生成 · 2026-03-24</p>
+    <p style="margin-top: 6px; font-size: 12px;">本解读包含主观分析和批判性观点，仅供学术讨论参考</p>
+</div>
+
+</body>
+</html>

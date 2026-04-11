@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DataMixSimulator from '../../components/tools/DataMixSimulator';
+---
+
+<BaseLayout title="如果你来训 GPT-5" description="预训练数据配比模拟器——调配数据配方，看对模型能力的影响">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">数据配比模拟器</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">如果你来训 GPT-5</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">预训练数据配比模拟器——调配你的数据配方，实时观察对模型各项能力的影响</p>
+    </div>
+
+    <!-- Tool Component -->
+    <DataMixSimulator client:load />
+  </div>
+</BaseLayout>

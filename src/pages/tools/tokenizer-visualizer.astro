@@ -1,0 +1,22 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TokenizerVisualizer from '../../components/tools/TokenizerVisualizer';
+---
+
+<BaseLayout title="Tokenizer 可视化" description="BPE 学习模式 + 6 种 Tokenizer 对比 + API 成本估算——GPT-4o/Llama 4/Qwen 3/DeepSeek V3/Gemini 3">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Page Header -->
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">Tokenizer 可视化</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">Tokenizer 可视化</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">BPE 合并过程动画 · 6 种主流模型 Tokenizer 对比 · API 成本估算</p>
+    </div>
+
+    <!-- Tool Component -->
+    <TokenizerVisualizer client:load />
+  </div>
+</BaseLayout>

@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原生多模态预训练数据建设：全景深度解析</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --bg-card: #1a1d2e;
+    --bg-card-alt: #161929;
+    --bg-highlight: #1e2235;
+    --text: #e2e8f0;
+    --text-dim: #94a3b8;
+    --text-bright: #f8fafc;
+    --accent-blue: #60a5fa;
+    --accent-cyan: #22d3ee;
+    --accent-violet: #a78bfa;
+    --accent-emerald: #34d399;
+    --accent-amber: #fbbf24;
+    --accent-rose: #fb7185;
+    --accent-orange: #fb923c;
+    --border: #2d3148;
+    --border-accent: #3b4168;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.8;
+    padding: 2rem 1rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    font-size: 15px;
+  }
+
+  /* Header */
+  .report-header {
+    text-align: center;
+    padding: 3rem 2rem;
+    margin-bottom: 3rem;
+    background: linear-gradient(135deg, rgba(96,165,250,0.08), rgba(167,139,250,0.08), rgba(34,211,238,0.05));
+    border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .report-header h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--accent-blue), var(--accent-violet), var(--accent-cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+  .report-header .subtitle {
+    font-size: 1rem;
+    color: var(--text-dim);
+    max-width: 800px;
+    margin: 0 auto 1.5rem;
+    line-height: 1.7;
+  }
+  .meta-tags {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 1rem;
+  }
+  .meta-tag {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 500;
+  }
+  .meta-tag.blue { background: rgba(96,165,250,0.15); color: var(--accent-blue); }
+  .meta-tag.violet { background: rgba(167,139,250,0.15); color: var(--accent-violet); }
+  .meta-tag.cyan { background: rgba(34,211,238,0.15); color: var(--accent-cyan); }
+  .meta-tag.emerald { background: rgba(34,211,199,0.15); color: var(--accent-emerald); }
+  .meta-tag.amber { background: rgba(251,191,36,0.12); color: var(--accent-amber); }
+  .meta-tag.rose { background: rgba(251,113,133,0.12); color: var(--accent-rose); }
+
+  /* TOC */
+  .toc {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    margin-bottom: 2.5rem;
+  }
+  .toc h3 { font-size: 1rem; color: var(--accent-blue); margin-bottom: 0.75rem; }
+  .toc ol { padding-left: 1.5rem; }
+  .toc li { margin-bottom: 0.35rem; color: var(--text-dim); font-size: 0.9rem; }
+  .toc a { color: var(--text-dim); text-decoration: none; transition: color 0.2s; }
+  .toc a:hover { color: var(--accent-cyan); }
+
+  /* Sections */
+  .section {
+    margin-bottom: 3rem;
+  }
+  .section h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-bright);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .section h2 .num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .num-blue { background: rgba(96,165,250,0.2); color: var(--accent-blue); }
+  .num-violet { background: rgba(167,139,250,0.2); color: var(--accent-violet); }
+  .num-cyan { background: rgba(34,211,238,0.2); color: var(--accent-cyan); }
+  .num-emerald { background: rgba(34,211,199,0.2); color: var(--accent-emerald); }
+  .num-amber { background: rgba(251,191,36,0.15); color: var(--accent-amber); }
+  .num-rose { background: rgba(251,113,133,0.15); color: var(--accent-rose); }
+  .num-orange { background: rgba(251,146,60,0.15); color: var(--accent-orange); }
+
+  h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin: 1.5rem 0 0.75rem;
+  }
+  h4 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-blue);
+    margin: 1.2rem 0 0.6rem;
+  }
+  p { margin-bottom: 0.9rem; }
+
+  /* Cards */
+  .card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1rem 0;
+  }
+  .card-accent {
+    border-left: 3px solid var(--accent-blue);
+  }
+  .card-violet { border-left-color: var(--accent-violet); }
+  .card-cyan { border-left-color: var(--accent-cyan); }
+  .card-emerald { border-left-color: var(--accent-emerald); }
+  .card-amber { border-left-color: var(--accent-amber); }
+  .card-rose { border-left-color: var(--accent-rose); }
+
+  .card h4 { margin-top: 0; }
+
+  /* Blockquote */
+  blockquote {
+    border-left: 3px solid var(--accent-violet);
+    padding: 1rem 1.25rem;
+    margin: 1.2rem 0;
+    background: rgba(167,139,250,0.05);
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: var(--text);
+  }
+
+  /* Tables */
+  .table-wrap {
+    overflow-x: auto;
+    margin: 1rem 0;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+  }
+  th {
+    background: var(--bg-highlight);
+    color: var(--accent-blue);
+    font-weight: 600;
+    text-align: left;
+    padding: 0.7rem 1rem;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  td {
+    padding: 0.6rem 1rem;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  tr:hover { background: rgba(96,165,250,0.03); }
+
+  /* Highlight box */
+  .highlight-box {
+    background: linear-gradient(135deg, rgba(96,165,250,0.08), rgba(34,211,238,0.05));
+    border: 1px solid rgba(96,165,250,0.2);
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
+    margin: 1.2rem 0;
+  }
+  .highlight-box.violet {
+    background: linear-gradient(135deg, rgba(167,139,250,0.08), rgba(96,165,250,0.05));
+    border-color: rgba(167,139,250,0.2);
+  }
+  .highlight-box.emerald {
+    background: linear-gradient(135deg, rgba(34,211,199,0.08), rgba(34,211,238,0.05));
+    border-color: rgba(34,211,199,0.2);
+  }
+  .highlight-box.amber {
+    background: linear-gradient(135deg, rgba(251,191,36,0.06), rgba(251,146,60,0.04));
+    border-color: rgba(251,191,36,0.2);
+  }
+  .highlight-box strong { color: var(--text-bright); }
+
+  /* Code blocks */
+  pre {
+    background: var(--bg-card-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.82rem;
+    line-height: 1.6;
+    margin: 1rem 0;
+  }
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+    font-size: 0.85em;
+  }
+  p code, li code {
+    background: rgba(96,165,250,0.1);
+    padding: 0.15rem 0.4rem;
+    border-radius: 4px;
+    color: var(--accent-cyan);
+  }
+
+  /* Stats grid */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.2rem 0;
+  }
+  .stat-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.25rem;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+  }
+  .stat-label {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+  }
+
+  /* Model comparison cards */
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .model-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.25rem;
+    transition: border-color 0.2s;
+  }
+  .model-card:hover { border-color: var(--border-accent); }
+  .model-card h4 {
+    margin: 0 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .model-card .team {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-bottom: 0.5rem;
+  }
+  .model-card .detail {
+    font-size: 0.85rem;
+    color: var(--text);
+    line-height: 1.7;
+  }
+  .model-card .detail strong { color: var(--accent-cyan); }
+
+  /* Lists */
+  ul, ol { padding-left: 1.5rem; margin-bottom: 0.9rem; }
+  li { margin-bottom: 0.4rem; }
+
+  /* Decision tree */
+  .decision-tree {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin: 1.5rem 0;
+  }
+  .decision-tree h4 { color: var(--accent-amber); margin-top: 0; }
+  .dt-option {
+    background: var(--bg-highlight);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    border-left: 3px solid var(--accent-blue);
+  }
+  .dt-option.violet { border-left-color: var(--accent-violet); }
+  .dt-option.emerald { border-left-color: var(--accent-emerald); }
+  .dt-option.amber { border-left-color: var(--accent-amber); }
+  .dt-option strong { color: var(--text-bright); }
+  .dt-option .detail { font-size: 0.85rem; color: var(--text-dim); margin-top: 0.3rem; }
+
+  /* Footer */
+  .report-footer {
+    text-align: center;
+    padding: 2rem;
+    margin-top: 3rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 0.8rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    body { padding: 1rem 0.75rem; font-size: 14px; }
+    .report-header { padding: 2rem 1rem; }
+    .report-header h1 { font-size: 1.5rem; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .model-grid { grid-template-columns: 1fr; }
+    th, td { padding: 0.5rem 0.6rem; font-size: 0.78rem; }
+  }
+</style>
+</head>
+<body>
+
+<div class="report-header">
+  <h1>原生多模态预训练数据建设<br>全景深度解析</h1>
+  <p class="subtitle">
+    系统性解析 Chameleon、Transfusion、Emu3/3.5、Janus-Pro、InternVL3、BAGEL 六大模型的数据方案<br>
+    覆盖 Tokenizer · 交错数据 · 配比策略 · Scaling Law · 质量工程 | 引用 30+ 篇核心论文
+  </p>
+  <div class="meta-tags">
+    <span class="meta-tag blue">原生多模态</span>
+    <span class="meta-tag violet">交错数据</span>
+    <span class="meta-tag cyan">Visual Tokenizer</span>
+    <span class="meta-tag emerald">Scaling Law</span>
+    <span class="meta-tag amber">数据质量</span>
+    <span class="meta-tag rose">2024-2026</span>
+  </div>
+</div>
+
+<!-- Key Stats -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-value" style="color:var(--accent-blue)">6</div>
+    <div class="stat-label">代表性模型深度解析</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="color:var(--accent-violet)">13T+</div>
+    <div class="stat-label">最大训练数据量 (tokens)</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="color:var(--accent-cyan)">457</div>
+    <div class="stat-label">Apple Scaling Law 实验模型数</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-value" style="color:var(--accent-emerald)">30+</div>
+    <div class="stat-label">核心参考论文</div>
+  </div>
+</div>
+
+<!-- Section 1: Paradigm Shift -->
+<div class="section" id="s1">
+  <h2><span class="num num-blue">1</span> 范式转移：为什么数据建设要推倒重来</h2>
+
+  <h3>旧范式的四个结构性缺陷</h3>
+
+  <div class="card card-accent">
+    <p><strong>传统三段式分离管线</strong>：纯文本语料 → LLM 预训练 → 冻结参数 → 图文配对 → Adapter 对齐 → MLLM → 独立扩散模型 → T2I</p>
+    <p style="color:var(--text-dim);font-size:0.9rem;">代表模型：LLaVA (NeurIPS 2023)、InternVL 1-2 (CVPR 2024)、QWen-VL (2023)</p>
+  </div>
+
+  <div class="model-grid">
+    <div class="model-card" style="border-left:3px solid var(--accent-rose)">
+      <h4 style="color:var(--accent-rose)">❶ 模态鸿沟不可消弭</h4>
+      <p class="detail">LLM 参数在视觉训练期间冻结或部分冻结，<strong>内部表示从未为视觉信息调整</strong> —— InternVL3 论文明确指出</p>
+    </div>
+    <div class="model-card" style="border-left:3px solid var(--accent-amber)">
+      <h4 style="color:var(--accent-amber)">❷ 数据利用率低下</h4>
+      <p class="detail">OmniCorpus 统计：互联网可提取交错文档 <strong>86 亿张图像 / 330 亿文档</strong>，传统方法只用到极小的配对子集</p>
+    </div>
+    <div class="model-card" style="border-left:3px solid var(--accent-violet)">
+      <h4 style="color:var(--accent-violet)">❸ 理解-生成天然割裂</h4>
+      <p class="detail">HKUST 综述系统梳理 <strong>50+ 统一模型</strong>，指出理解和生成的统一是当前最核心的技术挑战</p>
+    </div>
+    <div class="model-card" style="border-left:3px solid var(--accent-cyan)">
+      <h4 style="color:var(--accent-cyan)">❹ 桥接瓶颈</h4>
+      <p class="detail">桥接模块参数量仅占 1-5%，BAGEL 指出 External Diffuser 压缩 LLM 上下文为少量潜变量，<strong>导致不可逆信息损失</strong></p>
+    </div>
+  </div>
+
+  <h3>新范式的三个数据要求</h3>
+  <blockquote>模型从"出生"（第一个 token 的预训练）起就同时接触所有模态，在统一的序列空间中学习理解和生成。</blockquote>
+  <ol>
+    <li><strong>统一 Token 空间</strong>：所有模态转换为同一种序列表示</li>
+    <li><strong>交错数据为核心燃料</strong>：以文档级交错序列为基本单元</li>
+    <li><strong>动态多阶段配比</strong>：不同阶段不同模态配比</li>
+  </ol>
+
+  <h3>代表性模型规模对比</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>时间</th><th>模型</th><th>团队</th><th>参数量</th><th>预训练数据量</th><th>关键数据创新</th></tr>
+      <tr><td>2024.05</td><td><strong>Chameleon</strong></td><td>Meta FAIR</td><td>7B/34B</td><td style="color:var(--accent-blue)">~9.2T tokens</td><td>首个万亿级 Early-Fusion 交错预训练</td></tr>
+      <tr><td>2024.08</td><td><strong>Transfusion</strong></td><td>Meta/Waymo/USC</td><td>0.16B-7B</td><td style="color:var(--accent-blue)">2T tokens</td><td>AR+Diffusion 混合；图像压缩至 16 patches</td></tr>
+      <tr><td>2024.10</td><td><strong>Emu3</strong></td><td>BAAI</td><td>8B</td><td>未公开</td><td>纯 NTP 统一图文视频；Nature 发表</td></tr>
+      <tr><td>2025.01</td><td><strong>Janus-Pro</strong></td><td>DeepSeek</td><td>1B/7B</td><td style="color:var(--accent-blue)">10 亿样本</td><td>双编码器 + 7200 万合成美学数据</td></tr>
+      <tr><td>2025.04</td><td><strong>InternVL3</strong></td><td>OpenGVLab</td><td>1B-78B</td><td style="color:var(--accent-blue)">2000 亿 tokens</td><td>原生预训练反超纯语言基座</td></tr>
+      <tr><td>2025.05</td><td><strong>BAGEL</strong></td><td>ByteDance Seed</td><td>7B(14B)</td><td style="color:var(--accent-blue)">5.1T tokens</td><td>MoT 双专家 + 推理增强 + 世界建模</td></tr>
+      <tr><td>2025.10</td><td><strong>Emu3.5</strong></td><td>BAAI</td><td>未公开</td><td style="color:var(--accent-blue)">>10T tokens</td><td>IBQ 131K 码本 + 视频交错核心 + DiDA 20×</td></tr>
+    </table>
+  </div>
+
+  <div class="highlight-box">
+    <strong>趋势</strong>：数据规模在 18 个月内从 2T → 10T+；交错数据占比从 8%（Chameleon）→ 55%（Emu3.5）
+  </div>
+</div>
+
+<!-- Section 2: Tokenizer -->
+<div class="section" id="s2">
+  <h2><span class="num num-violet">2</span> Visual Tokenizer：统一表示空间的核心战场</h2>
+
+  <h3>三大路线深度对比</h3>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>指标</th><th>Chameleon (VQ-IMG)</th><th>Emu3</th><th>Emu3.5 (IBQ)</th><th>Transfusion</th><th>Janus-Pro</th><th>BAGEL</th></tr>
+      <tr><td>编码类型</td><td>离散 8K 码本</td><td>离散 8K</td><td style="color:var(--accent-emerald)"><strong>离散 131K</strong></td><td>连续 patch</td><td>双编码器</td><td>SigLIP2+VAE</td></tr>
+      <tr><td>512² 图像 token 数</td><td>1,024</td><td>1,024</td><td style="color:var(--accent-emerald)"><strong>~256</strong></td><td style="color:var(--accent-emerald)"><strong>16</strong></td><td>视情况</td><td>视情况</td></tr>
+      <tr><td>语义蒸馏</td><td>❌</td><td>❌</td><td style="color:var(--accent-emerald)">✅ SigLIP</td><td>原生连续</td><td>SigLIP(理解)</td><td>SigLIP2</td></tr>
+      <tr><td>OCR 能力</td><td>弱</td><td>一般</td><td>显著改善</td><td>取决于分辨率</td><td>好</td><td>好</td></tr>
+      <tr><td>数据效率（vs Chameleon）</td><td>1×</td><td>1×</td><td style="color:var(--accent-emerald)"><strong>~4×</strong></td><td style="color:var(--accent-emerald)"><strong>>60×</strong></td><td>—</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <div class="highlight-box violet">
+    <strong>关键 Insight</strong>：Tokenizer 选择对数据工程有三个直接影响：<br>
+    ❶ <strong>数据量需求</strong> — IBQ 节省 75% token 预算 &nbsp;
+    ❷ <strong>序列长度瓶颈</strong> — 高压缩率解锁长文档训练 &nbsp;
+    ❸ <strong>质量标准</strong> — 高压缩 tokenizer 倒逼更严格的数据过滤
+  </div>
+
+  <div class="highlight-box emerald">
+    <strong>行业趋势收敛方向</strong>：大码本（64K-131K）+ 高压缩（f=16+）+ 语义蒸馏（SigLIP/CLIP）+ 可选扩散解码器
+  </div>
+</div>
+
+<!-- Section 3: Interleaved Data -->
+<div class="section" id="s3">
+  <h2><span class="num num-cyan">3</span> 交错数据构建：核心燃料的工业级管线</h2>
+
+  <h3>交错数据提供的三种独特学习信号</h3>
+  <div class="model-grid">
+    <div class="model-card" style="border-left:3px solid var(--accent-blue)">
+      <h4 style="color:var(--accent-blue)">长程跨模态推理</h4>
+      <p class="detail">第 3 段文字解释第 1 张图片 → 模型必须跨越长距离理解图文逻辑。BAGEL 的涌现能力（自由编辑/帧预测/3D 操作）源于此</p>
+    </div>
+    <div class="model-card" style="border-left:3px solid var(--accent-violet)">
+      <h4 style="color:var(--accent-violet)">文档级理解</h4>
+      <p class="detail">论文有图表+公式+正文交错；产品手册有截图+步骤+注意事项。只有交错训练才能处理真实场景</p>
+    </div>
+    <div class="model-card" style="border-left:3px solid var(--accent-emerald)">
+      <h4 style="color:var(--accent-emerald)">时序因果性</h4>
+      <p class="detail">视频帧+ASR 的时序对应让模型学习物理因果 — Emu3.5 的"世界模型"能力来源</p>
+    </div>
+  </div>
+
+  <h3>主要交错数据集规模</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>数据集</th><th>来源</th><th>文档数</th><th>图像数</th><th>发布</th></tr>
+      <tr><td>OBELICS</td><td>Common Crawl</td><td>1.41 亿</td><td>3.53 亿</td><td>NeurIPS 2023</td></tr>
+      <tr><td>MMC4</td><td>Common Crawl</td><td>1.01 亿</td><td>5.71 亿</td><td>2023</td></tr>
+      <tr><td style="color:var(--accent-cyan)"><strong>OmniCorpus</strong></td><td>Common Crawl+</td><td style="color:var(--accent-cyan)"><strong>330 亿</strong></td><td style="color:var(--accent-cyan)"><strong>86 亿</strong></td><td>ICLR 2025</td></tr>
+    </table>
+  </div>
+
+  <h3>Emu3.5 视频交错数据构建管线</h3>
+  <div class="card card-accent card-cyan">
+    <p style="font-size:0.9rem;margin-bottom:0.5rem;color:var(--accent-cyan)"><strong>规模</strong>：6300 万视频 · 平均 6.5 分钟 · 等价 ~790 年连续影像</p>
+    <pre>
+原始视频（6300 万）
+  │
+  ├── 1. PySceneDetect 场景分割 → 语义连贯片段
+  ├── 2. 关键帧提取（~0.27 fps，每 3.7 秒取一帧）
+  ├── 3. Whisper-large-v2 ASR → 带时间戳转录
+  ├── 4. spaCy 文本后处理（分句/清洗/去噪）
+  ├── 5. 时间对齐：帧 ↔ 转录文本 → 交错序列
+  ├── 6. 基础过滤：时长/分辨率/说话人
+  └── 7. 高级过滤：DINO/CLIP 去重 + DeQA + LLM 评分</pre>
+  </div>
+
+  <h3>BAGEL 的"标题优先"策略</h3>
+  <div class="highlight-box">
+    <strong>核心 Trick</strong>：为 OmniCorpus 2000 万文档中的每张图像，用 VLM 生成简短描述插入图像前 → 作为"概念脚手架"<br>
+    <strong>消融验证</strong>：交错生成任务性能显著提升。<strong>本质上是在数据层面降低了跨模态对齐的学习难度</strong>
+  </div>
+
+  <h3>合成数据：高 ROI 杠杆</h3>
+  <div class="model-grid">
+    <div class="model-card" style="border-left:3px solid var(--accent-amber)">
+      <h4 style="color:var(--accent-amber)">Janus-Pro 合成美学数据</h4>
+      <p class="detail"><strong>7200 万</strong>合成图像，Midjourney prompt 来源<br>
+      真实:合成 = <strong>1:1</strong> 混合<br>
+      效果：收敛更快、生成更稳、GenEval <strong>0.78</strong></p>
+    </div>
+    <div class="model-card" style="border-left:3px solid var(--accent-violet)">
+      <h4 style="color:var(--accent-violet)">BAGEL 推理增强数据</h4>
+      <p class="detail"><strong>50 万条</strong>推理链：<br>
+      T2I 推理（~15 万）+ 编辑推理（~20 万）+ 概念推理（~15 万）<br>
+      效果：触发涌现能力（自由编辑/帧预测/3D）</p>
+    </div>
+  </div>
+</div>
+
+<!-- Section 4: Data Mixture -->
+<div class="section" id="s4">
+  <h2><span class="num num-emerald">4</span> 数据配比：Scaling Law 驱动的多阶段策略</h2>
+
+  <h3>Apple ICCV 2025：457 个模型的五大结论</h3>
+  <div class="card card-accent card-emerald">
+    <p><strong>研究规模</strong>：457 个模型，300M-3B 参数，250M-400B tokens</p>
+    <ol style="margin-top:0.5rem;">
+      <li><strong>NMM 遵循 C ≈ 6ND</strong> — 与 LLM Chinchilla 定律结构一致</li>
+      <li><strong>早期融合 ≥ 后期融合</strong> — 低参数区间早期融合更优；后期融合无固有优势</li>
+      <li><strong>数据配比具有"鲁棒性"</strong> — 不同混合比例展现相似缩放趋势，无唯一"黄金比例"</li>
+      <li><strong>MoE 下 token 数 > 参数量</strong> — 扩展 token 数比扩展参数更重要</li>
+      <li><strong>N 和 D 应等比例扩展</strong> — 翻倍参数时训练数据也应翻倍</li>
+    </ol>
+  </div>
+
+  <h3>各模型实际配比</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>模型</th><th>纯文本</th><th>图文配对</th><th>交错数据</th><th>视频</th><th>其他</th><th>总量</th></tr>
+      <tr><td><strong>Chameleon S1</strong></td><td>2.9T (60%)</td><td>1.5T (31%)</td><td>400B (8%)</td><td>—</td><td>—</td><td>~4.8T</td></tr>
+      <tr><td><strong>Emu3.5 S1</strong></td><td>20%</td><td>20%</td><td style="color:var(--accent-emerald)"><strong>55%</strong></td><td>5%</td><td>—</td><td style="color:var(--accent-blue)"><strong>10T</strong></td></tr>
+      <tr><td><strong>Emu3.5 S2</strong></td><td>18%</td><td>16%</td><td style="color:var(--accent-emerald)"><strong>55%</strong></td><td>8%↑</td><td>3% X2I</td><td>3.5T</td></tr>
+      <tr><td><strong>BAGEL PT</strong></td><td>400M样本</td><td>2100M对</td><td>20M文档</td><td>45M视频</td><td>—</td><td>~2.5T</td></tr>
+      <tr><td><strong>BAGEL CT</strong></td><td>↓</td><td>↓</td><td>↑比例提升</td><td>↑比例提升</td><td>推理增强50万</td><td>~2.6T</td></tr>
+      <tr><td><strong>InternVL3</strong></td><td>500亿 (25%)</td><td colspan="4">多模态 1500 亿 (75%)</td><td>2000亿</td></tr>
+      <tr><td><strong>Janus-Pro</strong></td><td>—</td><td>10亿样本</td><td>❌</td><td>—</td><td>7200万合成</td><td>—</td></tr>
+    </table>
+  </div>
+
+  <h3>InternVL3：反超纯语言基座</h3>
+  <div class="highlight-box violet">
+    <strong>反直觉发现</strong>：75% 多模态 + 25% 文本的原生预训练，在纯语言基准上<strong>始终优于</strong>初始化来源 Qwen2.5 Chat<br><br>
+    <table style="width:auto;font-size:0.85rem;">
+      <tr><th>对比</th><th>MMLU</th><th>GSM8K</th></tr>
+      <tr><td>InternVL3-8B vs Qwen2.5-7B</td><td style="color:var(--accent-emerald)"><strong>77.3</strong> vs 74.2</td><td style="color:var(--accent-emerald)"><strong>83.1</strong> vs 80.1</td></tr>
+      <tr><td>InternVL3-78B vs Qwen2.5-72B</td><td>Overall: <strong>80.5</strong> vs 78.9</td><td style="color:var(--accent-emerald)"><strong>89.7</strong> vs 88.2</td></tr>
+    </table>
+    <p style="margin-top:0.5rem;font-size:0.85rem;color:var(--text-dim)">多模态数据中的文本信号 + 视觉 grounding 对语言理解有正向迁移</p>
+  </div>
+
+  <h3>三阶段递进模式</h3>
+  <div class="card card-accent card-amber">
+    <pre style="border:none;background:transparent;padding:0;font-size:0.82rem;">
+阶段一（60-70% FLOPs）— 基础预训练
+ 交错 45-55% │ 文本 20-30% │ 配对 15-20% │ 视频 5-10%
+ → 低分辨率 512², 大规模, 建立跨模态基础对齐
+
+阶段二（25-30% FLOPs）— 质量退火
+ 交错 50-55% │ 文本 15-20% │ 配对 10-16% │ 视频 8%↑ │ 生成 3-5%
+ → 动态分辨率 512²-1024², 阶段一数据权重降低 50%
+
+阶段三（5-10% FLOPs）— SFT / 能力强化
+ 理解SFT 25% │ 生成SFT 30% │ 交错 25% │ 推理增强 10% │ 世界建模 10%
+ → 高分辨率, 高质量, 任务特化</pre>
+  </div>
+</div>
+
+<!-- Section 5: Model Comparison -->
+<div class="section" id="s5">
+  <h2><span class="num num-amber">5</span> 各模型方案深度对比</h2>
+
+  <div class="model-grid">
+    <div class="model-card" style="border-top:3px solid var(--accent-blue)">
+      <h4 style="color:var(--accent-blue)">Meta 路线</h4>
+      <p class="team">Chameleon → Transfusion</p>
+      <p class="detail">
+        <strong>贡献</strong>：证明万亿级 Early-Fusion 可行；连续表示扩展性优于离散量化<br>
+        <strong>Insight</strong>：交错数据（即使 8%）已能教会跨模态推理<br>
+        <strong>矛盾</strong>：Chameleon 追求统一 vs Transfusion 追求各模态最优解 → <strong>行业向 Transfusion 靠拢</strong>
+      </p>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--accent-emerald)">
+      <h4 style="color:var(--accent-emerald)">BAAI 路线</h4>
+      <p class="team">Emu3 → Emu3.5</p>
+      <p class="detail">
+        <strong>贡献</strong>：纯 NTP 登顶 Nature；IBQ 131K 让离散路线接近连续路线<br>
+        <strong>Insight</strong>：视频交错数据（55%/790 年影像）是世界模型关键；DiDA 20× 加速解决推理瓶颈<br>
+        <strong>核心</strong>：<strong>Tokenizer 质量决定整条管线效率上限</strong>
+      </p>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--accent-violet)">
+      <h4 style="color:var(--accent-violet)">DeepSeek 路线</h4>
+      <p class="team">Janus → Janus-Pro</p>
+      <p class="detail">
+        <strong>贡献</strong>：证明不做交错预训练也可竞争；合成美学数据 ROI 极高<br>
+        <strong>Insight</strong>：7200 万合成数据 + Midjourney prompt = 小成本大收益<br>
+        <strong>适用</strong>：资源有限但追求快速落地
+      </p>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--accent-amber)">
+      <h4 style="color:var(--accent-amber)">ByteDance 路线</h4>
+      <p class="team">BAGEL</p>
+      <p class="detail">
+        <strong>贡献</strong>：涌现能力的数据基础；标题优先 + 推理增强<br>
+        <strong>Insight</strong>：大规模交错(5.1T) + 推理数据(50 万) → 组合涌现<br>
+        <strong>核心</strong>：<strong>数据构建协议可复用</strong>
+      </p>
+    </div>
+    <div class="model-card" style="border-top:3px solid var(--accent-cyan)">
+      <h4 style="color:var(--accent-cyan)">OpenGVLab 路线</h4>
+      <p class="team">InternVL3</p>
+      <p class="detail">
+        <strong>贡献</strong>：原生预训练反超语言基座；V2PE 解锁长文档<br>
+        <strong>Insight</strong>：文本:多模态 = 1:3 最优；全参数联合更新（不冻结）<br>
+        <strong>适用</strong>：已有 VLM 管线，渐进升级
+      </p>
+    </div>
+  </div>
+
+  <h3>方案选择决策树</h3>
+  <div class="decision-tree">
+    <h4>🎯 你的场景是什么？</h4>
+    <div class="dt-option">
+      <strong>从零构建，追求极致统一</strong> → Emu3.5 路线
+      <div class="detail">纯 AR + IBQ + 大规模交错 | 10T+ tokens | ~2000 GPU-days (8B)</div>
+    </div>
+    <div class="dt-option violet">
+      <strong>追求生成质量最优</strong> → Transfusion / BAGEL 路线
+      <div class="detail">AR + Diffusion/Flow | 2-5T tokens | 需分别处理离散和连续管线</div>
+    </div>
+    <div class="dt-option emerald">
+      <strong>快速落地，资源有限</strong> → Janus-Pro 路线
+      <div class="detail">双编码器 + 合成数据 | 10 亿样本 + 7200 万合成 | ~200 GPU-days (7B)</div>
+    </div>
+    <div class="dt-option amber">
+      <strong>有现成 VLM，想渐进升级</strong> → InternVL3 路线
+      <div class="detail">原生预训练注入 | 2000 亿 tokens | 可复用现有管线</div>
+    </div>
+  </div>
+</div>
+
+<!-- Section 6: Quality -->
+<div class="section" id="s6">
+  <h2><span class="num num-rose">6</span> 数据质量工程：新维度的过滤与评估</h2>
+
+  <div class="table-wrap">
+    <table>
+      <tr><th>质量维度</th><th>说明</th><th>为什么重要</th><th>评估方法</th></tr>
+      <tr><td>交错连贯性</td><td>图文交替的逻辑连贯</td><td>不连贯 = 教模型"随机插图"</td><td>CoMM 策略；尚无统一指标</td></tr>
+      <tr><td>跨模态因果性</td><td>图片与上下文的因果关系</td><td>无因果 = 噪声</td><td>LLM 打分 + 人工抽检</td></tr>
+      <tr><td>时序一致性</td><td>视频帧间变化连贯</td><td>帧间跳变破坏时序学习</td><td>运动分数 + 场景检测</td></tr>
+      <tr><td>文档结构完整性</td><td>网页结构是否完整</td><td>截断网页丢失上下文</td><td>DOM 树分析</td></tr>
+      <tr><td>多模态推理质量</td><td>是否支持推理学习</td><td>低推理质量只教"记忆"</td><td>人工构建 + VLM 评估</td></tr>
+    </table>
+  </div>
+
+  <h3>UniFilter (EMNLP 2025)</h3>
+  <div class="highlight-box">
+    <strong>方法</strong>：半合成训练数据 → 4 等级质量分类器 → 同时评估 caption 和 interleaved document<br>
+    <strong>效果</strong>：从 OBELICS 筛出 OBELICS-HQ → 训练的 MLLM 显著优于全量 OBELICS<br>
+    <strong>结论</strong>：<strong>用更少的数据训出更好的模型 — 质量 > 数量</strong>
+  </div>
+
+  <h3>Chameleon 的安全数据工程</h3>
+  <div class="card card-accent card-rose">
+    <p><strong>95,300 条专用安全数据</strong>：暴力 / 受控物质 / 隐私 / 色情</p>
+    <p>来源：LLaMA-2-Chat 拒绝回复 + Rainbow Teaming 对抗文本 + Pick-A-Pic 安全测试 + 内部多模态提示</p>
+    <p><strong>效果</strong>：20,000 众包提示仅 <strong>0.1%</strong> 不安全；445 红队交互仅 <strong>1.6%</strong> 不安全</p>
+  </div>
+</div>
+
+<!-- Section 7: Conclusions -->
+<div class="section" id="s7">
+  <h2><span class="num num-orange">7</span> 核心结论与行动建议</h2>
+
+  <h3>五个核心结论</h3>
+  <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
+    <div class="stat-card" style="text-align:left;padding:1.25rem;">
+      <div style="color:var(--accent-blue);font-weight:700;margin-bottom:0.5rem;">❶ 交错数据是新石油</div>
+      <div style="font-size:0.85rem;">从 8% → 55%，构建高质量交错管线是第一性原理</div>
+    </div>
+    <div class="stat-card" style="text-align:left;padding:1.25rem;">
+      <div style="color:var(--accent-violet);font-weight:700;margin-bottom:0.5rem;">❷ Tokenizer 决定数据经济学</div>
+      <div style="font-size:0.85rem;">IBQ 将 token 数降至 1/4，投资 Tokenizer 的 ROI 最高</div>
+    </div>
+    <div class="stat-card" style="text-align:left;padding:1.25rem;">
+      <div style="color:var(--accent-emerald);font-weight:700;margin-bottom:0.5rem;">❸ 原生预训练增强语言能力</div>
+      <div style="font-size:0.85rem;">InternVL3 用 75% 多模态数据反超纯语言基座</div>
+    </div>
+    <div class="stat-card" style="text-align:left;padding:1.25rem;">
+      <div style="color:var(--accent-amber);font-weight:700;margin-bottom:0.5rem;">❹ 合成数据是高 ROI 杠杆</div>
+      <div style="font-size:0.85rem;">7200 万合成美学 + 50 万推理增强 = 极低成本显著提升</div>
+    </div>
+    <div class="stat-card" style="text-align:left;padding:1.25rem;grid-column:span 2;">
+      <div style="color:var(--accent-cyan);font-weight:700;margin-bottom:0.5rem;">❺ 动态配比是必需品</div>
+      <div style="font-size:0.85rem;">无固定"黄金比例" — 阶段一重多样性(55% 交错) → 阶段二重质量(退火) → 阶段三重特化(SFT+推理)</div>
+    </div>
+  </div>
+
+  <h3>行动优先级</h3>
+  <div class="table-wrap">
+    <table>
+      <tr><th>优先级</th><th>行动项</th><th>预期影响</th><th>投入</th></tr>
+      <tr style="color:var(--accent-rose)"><td><strong>P0</strong></td><td>构建高压缩率 Visual Tokenizer</td><td>决定管线效率上限</td><td>2-4 周</td></tr>
+      <tr style="color:var(--accent-rose)"><td><strong>P0</strong></td><td>网页交错数据管线 (OmniCorpus)</td><td>核心训练燃料</td><td>1-2 周</td></tr>
+      <tr style="color:var(--accent-amber)"><td><strong>P1</strong></td><td>视频交错数据管线</td><td>解锁世界模型能力</td><td>2-4 周</td></tr>
+      <tr style="color:var(--accent-amber)"><td><strong>P1</strong></td><td>合成美学数据构建</td><td>高 ROI 生成质量提升</td><td>1 周</td></tr>
+      <tr><td><strong>P2</strong></td><td>统一质量过滤器 (UniFilter)</td><td>自动化质量控制</td><td>2-3 周</td></tr>
+      <tr><td><strong>P2</strong></td><td>推理增强数据构建</td><td>解锁涌现能力</td><td>1-2 周</td></tr>
+    </table>
+  </div>
+</div>
+
+<div class="report-footer">
+  <p>Maxwell Research · 原生多模态预训练数据建设全景深度解析</p>
+  <p>引用 28+ 篇核心论文 · 覆盖 2024.05-2025.10 · 更新于 2026-03-27</p>
+</div>
+
+</body>
+</html>

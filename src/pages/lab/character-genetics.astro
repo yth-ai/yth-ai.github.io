@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import CharacterGenetics from '../../components/lab/CharacterGenetics';
+---
+
+<BaseLayout title="汉字基因工程" description="输入两个汉字，它们的偏旁部首会杂交重组，产生一个从未存在过的新文字">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">汉字基因工程</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">汉字基因工程</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">两个汉字杂交，偏旁部首像基因一样重组——创造一个从未存在过的新文字</p>
+    </div>
+    <CharacterGenetics client:load />
+  </div>
+</BaseLayout>

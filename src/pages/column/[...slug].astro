@@ -1,0 +1,36 @@
+---
+import ColumnLayout from '../../layouts/ColumnLayout.astro';
+import { getCollection } from 'astro:content';
+
+export async function getStaticPaths() {
+  const columns = (await getCollection('column'))
+    .filter((col) => !col.data.draft)
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf() || b.slug.localeCompare(a.slug));
+
+  return columns.map((col, index) => ({
+    params: { slug: col.slug },
+    props: {
+      col,
+      prevPost: index > 0 ? { slug: columns[index - 1].slug, title: columns[index - 1].data.title } : null,
+      nextPost: index < columns.length - 1 ? { slug: columns[index + 1].slug, title: columns[index + 1].data.title } : null,
+    },
+  }));
+}
+
+const { col, prevPost, nextPost } = Astro.props;
+const { Content, headings } = await col.render();
+---
+
+<ColumnLayout
+  title={col.data.title}
+  description={col.data.description}
+  date={col.data.date}
+  series={col.data.series}
+  volume={col.data.volume}
+  tags={col.data.tags}
+  headings={headings}
+  prevPost={prevPost}
+  nextPost={nextPost}
+>
+  <Content />
+</ColumnLayout>

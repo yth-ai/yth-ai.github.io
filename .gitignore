@@ -1,0 +1,41 @@
+# node_modules
+node_modules/
+
+# Build output
+dist/
+.astro/
+
+# Environment variables
+.env
+.env.local
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Lock files (keep pnpm-lock if using pnpm)
+package-lock.json
+OpenStudy
+
+# Pagefind search index (built artifacts)
+public/pagefind/
+
+# WorkBuddy local data
+.workbuddy/*
+!.workbuddy/skills/
+!.workbuddy/memory/
+
+# CodeBuddy / WorkBuddy runtime state (machine-local, not knowledge assets)
+.codebuddy/automations/*/memory.md
+.codebuddy/automations/playground*/
+.workbuddy/playground-evolution/
+.workbuddy/book-evolution/

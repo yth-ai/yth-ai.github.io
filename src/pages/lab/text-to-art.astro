@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import TextToArt from '../../components/lab/TextToArt';
+---
+
+<BaseLayout title="一句话变一幅画" description="不用 AI，纯数学映射——每句话都是一幅独一无二的抽象画">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="mb-8">
+      <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-4">
+        <a href="/playground" class="hover:text-primary-600 dark:hover:text-primary-400 transition-colors">探索</a>
+        <span>/</span>
+        <span class="text-slate-900 dark:text-white">一句话变一幅画</span>
+      </nav>
+      <h1 class="text-2xl font-bold text-slate-900 dark:text-white">一句话变一幅画</h1>
+      <p class="text-slate-600 dark:text-slate-400 mt-1">不用 AI，纯数学映射——情感决定色调，标点决定形状，每个字的编码决定位置</p>
+    </div>
+    <TextToArt client:load />
+  </div>
+</BaseLayout>
