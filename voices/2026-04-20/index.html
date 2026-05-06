@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/voices/2026-04-20/"><!-- Primary Meta Tags --><title>黄仁勋坦承错失 Anthropic / Opus 4.7 Tokenizer 引发成本风暴 / GPT-Rosalind 开启垂直模型时代 | 前沿声浪 | Maxwell</title><meta name="title" content="黄仁勋坦承错失 Anthropic / Opus 4.7 Tokenizer 引发成本风暴 / GPT-Rosalind 开启垂直模型时代 | 前沿声浪 | Maxwell"><meta name="description" content="Dwarkesh 对谈黄仁勋——NVIDIA CEO 罕见坦承战略失误并公开叫板 Google TPU；Opus 4.7 发布 48 小时社区分裂：最强与最贵并存的「模糊性税」争议；OpenAI 首款生命科学专用模型 GPT-Rosalind 标志垂直模型元年开启。"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-20/"><meta property="og:title" content="黄仁勋坦承错失 Anthropic / Opus 4.7 Tokenizer 引发成本风暴 / GPT-Rosalind 开启垂直模型时代 | 前沿声浪 | Maxwell"><meta property="og:description" content="Dwarkesh 对谈黄仁勋——NVIDIA CEO 罕见坦承战略失误并公开叫板 Google TPU；Opus 4.7 发布 48 小时社区分裂：最强与最贵并存的「模糊性税」争议；OpenAI 首款生命科学专用模型 GPT-Rosalind 标志垂直模型元年开启。"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-20/"><meta name="twitter:title" content="黄仁勋坦承错失 Anthropic / Opus 4.7 Tokenizer 引发成本风暴 / GPT-Rosalind 开启垂直模型时代 | 前沿声浪 | Maxwell"><meta name="twitter:description" content="Dwarkesh 对谈黄仁勋——NVIDIA CEO 罕见坦承战略失误并公开叫板 Google TPU；Opus 4.7 发布 48 小时社区分裂：最强与最贵并存的「模糊性税」争议；OpenAI 首款生命科学专用模型 GPT-Rosalind 标志垂直模型元年开启。"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架  </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12"> <!-- Main Content --> <article class="min-w-0"> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/voices" class="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">前沿声浪</a> <span>/</span> <span class="text-slate-900 dark:text-white">Vol.17</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"></path> </svg>
+前沿声浪 · Vol.17 </span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 黄仁勋坦承错失 Anthropic / Opus 4.7 Tokenizer 引发成本风暴 / GPT-Rosalind 开启垂直模型时代 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">Dwarkesh 对谈黄仁勋——NVIDIA CEO 罕见坦承战略失误并公开叫板 Google TPU；Opus 4.7 发布 48 小时社区分裂：最强与最贵并存的「模糊性税」争议；OpenAI 首款生命科学专用模型 GPT-Rosalind 标志垂直模型元年开启。</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-19T16:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 2026年4月20日 </time> <span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Jensen Huang </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Dwarkesh </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> NVIDIA </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Opus 4.7 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Tokenizer 争议 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> GPT-Rosalind </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 生命科学 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Qwen3.6 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Simon Willison </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Anthropic </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1C9BTv" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;voices&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Media Items Quick Access --> <div class="mb-10"> <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+本期内容 · 8 条
+</h2> <div class="space-y-3"> <a href="https://www.dwarkesh.com/p/jensen-huang-2" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">1:43:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Dwarkesh Podcast </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Jensen Huang – TPU Competition, Why We Should Sell Chips to China, &amp; Nvidia&#39;s Supply Chain Moat </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 黄仁勋罕见坦承错失 Anthropic，公开叫板 Google/Amazon 参加推理基准测试，并披露 Vera Rubin → Feynman 三代芯片路线图 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.bilibili.com/video/BV1Jcd5B5ER3/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-cyan-50 dark:bg-cyan-950/30"> <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-cyan-600 dark:text-cyan-400">18:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"> Bilibili </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· AI 评测频道 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Claude Opus 4.7 实测吊打全场——史上最强编程模型深度评测 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 中文视频实测 Opus 4.7 编程能力：SWE-bench Pro 64.3% 超越 GPT-5.4，但 tokenizer 变更导致实际成本暴涨 37% </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.bilibili.com/video/BV1n6d5BmE2t/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-cyan-50 dark:bg-cyan-950/30"> <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-cyan-600 dark:text-cyan-400">12:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"> Bilibili </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· BioTender </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> OpenAI 发布生命科学大模型 GPT-Rosalind——AI 制药新纪元 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 中文解读 OpenAI 首款垂直领域模型 GPT-Rosalind：针对 50 种生物学工作流调优，RNA 预测超 95% 人类专家 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.latent.space/p/notion-ai" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">1:17:17</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Latent Space (swyx &amp; Alessio) </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Notion&#39;s Token Town: 5 Rebuilds, 100+ Tools, MCP vs CLIs and the Software Factory Future </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Notion 联合创始人 Simon Last 深入拆解：Notion 五次推倒重来的 AI Agent 架构演进、100+ 工具编排、MCP 与 CLI 之争 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://80000hours.org/podcast/episodes/global-health-development-compilation/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">3:20:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· 80,000 Hours Podcast </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Village Gossip, Pesticide Bans, and Gene Drives: 17 Experts on the Future of Global Health </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 17 位全球健康专家圆桌合集：基因驱动灭蚊、农药禁令博弈、AI 加速疫苗研发——有效利他主义视角下的前沿实践 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://x.com/jeremyphoward/status/1912563719102394821" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800"> <svg class="w-5 h-5 text-slate-800 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"> X </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 讨论串 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· @jeremyphoward / r/ClaudeAI </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Opus 4.7 社区分裂：Jeremy Howard 盛赞 vs 2300+ 赞的「严重退步」帖——Tokenizer 税与模糊性税之争 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Jeremy Howard 称 Opus 4.7 是第一个「理解你在做什么」的模型；Reddit 热帖反驳称 token 成本涨 1.5-3x 是披着能力外衣的营收优化 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://simonwillison.net/2026/Apr/16/qwen-beats-opus/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-emerald-50 dark:bg-emerald-950/30"> <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400"> 博客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 文章 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Simon Willison </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Simon Willison 鹈鹕基准翻车：笔记本上的 Qwen3.6-35B 画得比 Opus 4.7 更好 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Alibaba 开源 Qwen3.6-35B-A3B（总参 350 亿 / 仅激活 30 亿）在 SVG 鹈鹕基准测试中击败 Opus 4.7——开源模型的效率革命 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://open-ia.org/introducing-gpt-rosalind-for-life-sciences-research/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-amber-50 dark:bg-amber-950/30"> <svg class="w-5 h-5 text-amber-600 dark:text-amber-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400"> 新闻 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 文章 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· OpenAI </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> GPT-Rosalind：OpenAI 首款生命科学专用模型，向 Moderna 和 Amgen 开放研究预览 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 以 DNA 结构发现者命名，针对 50 种生物学工作流调优，可整合 50+ 科研数据库——通用 AI 向垂直行业专用模型迈出第一步 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a> </div> </div> <!-- Full Content --> <div class="relative">   <div class="prose-custom">  <h2 id="jensen-huang--tpu-competition-why-we-should-sell-chips-to-china--nvidias-supply-chain-moat">Jensen Huang – TPU Competition, Why We Should Sell Chips to China, &#x26; Nvidia’s Supply Chain Moat</h2>
+<p>4 月 15 日，Dwarkesh Patel 与黄仁勋进行了一场近两小时的深度对谈。这可能是黄仁勋近年来最坦诚的一次公开访谈——他不仅承认了战略失误，还直接挑战了 Google 和 Amazon。</p>
+<ul>
+<li>坦承错失 Anthropic 是自己的「miss」——当 Google 和 AWS 用数十亿股权投资锁定 Anthropic 算力时，Nvidia 没有跟进</li>
+<li>断言「Anthropic 选 TPU 是个案不是趋势」，并称「没有 Anthropic，TPU 增长为零」</li>
+<li>点名 InferenceMAX 基准测试，公开喊话 Google TPU 和 Amazon Trainium 参加公开评测</li>
+<li>披露芯片路线图：Vera Rubin → Vera Rubin Ultra → Feynman，承诺每年一代、每代 token 成本降一个数量级</li>
+<li>对中国芯片管制发出警告：中国 7nm 芯片功能等同 Hopper，加上充裕能源，「认为中国无法获得有意义的 AI 算力是胡说八道」</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> 黄仁勋用一句话定义了 Nvidia 的护城河——「输入是电子，输出是 token，中间是 Nvidia」。但他对 Anthropic 的坦白暴露了另一个真相：在这场算力战争中，资本的流向有时比技术优势更具决定性。</p>
+</blockquote>
+<hr>
+<h2 id="claude-opus-47-实测吊打全场史上最强编程模型深度评测">Claude Opus 4.7 实测吊打全场——史上最强编程模型深度评测</h2>
+<p>4 月 16 日 Opus 4.7 发布后，B 站迅速涌现实测视频。这期视频从编程能力、视觉分辨率、tokenizer 变更三个维度进行了全面评测。</p>
+<ul>
+<li>SWE-bench Pro 达到 64.3%，超越 GPT-5.4（62.1%），编程基准提升约 13%</li>
+<li>视觉分辨率从 ~800px 跃升至 2576px（3 倍以上），图片处理能力质变</li>
+<li>新增 xhigh 推理档位和 /ultrareview 多代理代码审查命令</li>
+<li>关键隐患：新 tokenizer 导致相同输入多出高达 35% 的 token——名义价格不变，实际成本暴涨</li>
+<li>自适应思维成为唯一模式，用户无法再强制开启扩展思维</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> Opus 4.7 的编程能力确实是当前最强，但 tokenizer 变更本质上是一次隐性涨价。Anthropic 选择不调整标价而是改变计量方式，这是否算「暗涨」，社区意见已经分裂。</p>
+</blockquote>
+<hr>
+<h2 id="openai-发布生命科学大模型-gpt-rosalindai-制药新纪元">OpenAI 发布生命科学大模型 GPT-Rosalind——AI 制药新纪元</h2>
+<p>OpenAI 4 月 16 日推出 GPT-Rosalind，这是其首款垂直领域专用模型，标志着从通用 AI 向行业专用模型的战略转向。B 站这期视频以中文视角完整拆解了这一里程碑事件。</p>
+<ul>
+<li>以 DNA 双螺旋结构发现者罗莎琳德·富兰克林命名，针对生物化学、基因组学、药物发现推理专门调优</li>
+<li>针对 50 种生物学工作流深度优化，具备假设生成、实验设计和证据合成能力</li>
+<li>可整合 50+ 科研数据库，RNA 预测超越 95% 人类专家</li>
+<li>目前为研究预览阶段，向 Moderna、Amgen、Allen Institute、Thermo Fisher 开放</li>
+<li>OpenAI 同步发布配套播客，研究负责人 Joy Jiao 深入讨论了生物学模型的部署权衡</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> GPT-Rosalind 的意义不在于模型本身有多强，而在于它开启了一个新范式——前沿 AI 实验室正式从「一个模型打天下」转向「每个行业一个专属模型」。如果这条路走通，SaaS 公司的护城河将进一步被侵蚀。</p>
+</blockquote>
+<hr>
+<h2 id="notions-token-town-5-rebuilds-100-tools-mcp-vs-clis">Notion’s Token Town: 5 Rebuilds, 100+ Tools, MCP vs CLIs</h2>
+<p>Latent Space 本期邀请了 Notion 联合创始人 Simon Last 和 AI 负责人 Sarah Sachs，深度拆解 Notion 如何交付知识工作 AI Agent。对于所有在做 AI Agent 产品的团队，这期播客是必听。</p>
+<ul>
+<li>Notion 的 AI Agent 经历了 5 次推倒重来——从嵌入式搜索到全面的任务编排系统</li>
+<li>内部集成了 100+ 工具，面临 MCP（Model Context Protocol）与传统 CLI 工具调用的架构选择</li>
+<li>Token 经济学成为核心设计约束——如何在保证质量的前提下控制每次 Agent 调用的成本</li>
+<li>「Software Factory」愿景：AI 不仅辅助编写代码，而是编排整个软件生产流水线</li>
+<li>坦承 Agent 可靠性仍是最大挑战——用户容忍度在「有趣的错误」和「浪费时间的错误」之间有清晰界限</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> Notion 的 5 次重写证明了一件事：AI Agent 产品不存在一步到位的架构。在这个阶段，速度和迭代意愿比技术选型更重要。</p>
+</blockquote>
+<hr>
+<h2 id="village-gossip-pesticide-bans-and-gene-drives-17-experts-on-the-future-of-global-health">Village Gossip, Pesticide Bans, and Gene Drives: 17 Experts on the Future of Global Health</h2>
+<p>80,000 Hours 这期超长合集汇聚了 17 位全球健康专家的核心洞察，是有效利他主义视角下对「如何用有限资源拯救最多生命」的系统性回答。</p>
+<ul>
+<li>基因驱动技术灭蚊的伦理与生态争议——支持者称可每年拯救 60 万生命，反对者担忧生态连锁反应</li>
+<li>农药禁令在发展中国家的意外后果：欧盟标准直接适用于热带国家导致粮食减产</li>
+<li>AI 正在加速疫苗研发流程——从靶点筛选到临床试验设计，周期可缩短 30-50%</li>
+<li>「村庄八卦」效应：公共健康干预的社区传播路径比官方渠道更高效</li>
+<li>多位专家强调：全球健康领域的资金回报率远高于 AI 安全——每投入 1 美元可产生 60-80 美元的健康收益</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> 在 AI 吞噬一切注意力的当下，这期播客是一剂清醒剂。基因驱动和疫苗研发中的 AI 应用，可能比又一个编程基准的进步更值得关注。</p>
+</blockquote>
+<hr>
+<h2 id="opus-47-社区分裂jeremy-howard-盛赞-vs-2300-赞的严重退步帖">Opus 4.7 社区分裂：Jeremy Howard 盛赞 vs 2300+ 赞的「严重退步」帖</h2>
+<p>Opus 4.7 发布 48 小时后，社区反应出现了罕见的两极分化。一场关于「能力提升 vs 成本暴涨」的激烈辩论正在 X 和 Reddit 上展开。</p>
+<ul>
+<li>Jeremy Howard 经过 5 小时测试后称这是「第一个真正理解你在做什么的模型」，获数百次转发</li>
+<li>Ethan Mollick 用两句提示词生成可交互的 3D 巴别塔，展示了模型创造力的上限</li>
+<li>但 Reddit r/ClaudeAI 一篇标题为「Opus 4.7 is a serious regression」的帖子 24 小时内获 2300+ 赞</li>
+<li>核心争议：新 tokenizer 导致每任务实际成本涨 1.5-3 倍，GitHub Copilot 对 4.7 收取 7.5 倍溢价</li>
+<li>社区发明了「模糊性税」（ambiguity tax）一词——4.6 会默默修正糟糕的提示词，4.7 则要求你写得更精确或多付 token</li>
+<li>Anthropic 的 Boris Cherny 公开回应，宣布提高订阅用户的速率限制</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> 「模糊性税」这个概念值得深思。如果模型不再替你补全含糊的意图，而是要求你像写规格说明一样写提示词，那么「AI 降低使用门槛」的叙事就需要重新审视。高级用户欢呼，普通用户受伤。</p>
+</blockquote>
+<hr>
+<h2 id="simon-willison-鹈鹕基准翻车笔记本上的-qwen36-35b-画得比-opus-47-更好">Simon Willison 鹈鹕基准翻车：笔记本上的 Qwen3.6-35B 画得比 Opus 4.7 更好</h2>
+<p>4 月 16 日恰好是两款模型同天发布的日子——Opus 4.7 和阿里的 Qwen3.6-35B-A3B。Simon Willison 用他标志性的「鹈鹕骑自行车 SVG」基准测试了两者，结果出乎意料。</p>
+<ul>
+<li>Qwen3.6-35B-A3B 是稀疏混合专家模型：总参数 350 亿，每次推理仅激活 30 亿——可在笔记本上本地运行</li>
+<li>在 Simon 的 SVG 鹈鹕基准中，本地 Qwen 画出的鹈鹕比 Opus 4.7（API 调用、价格高出数十倍）更好</li>
+<li>Qwen 在多项视觉任务上匹配 Claude Sonnet 4.5，编码能力媲美 10 倍活跃参数量的模型</li>
+<li>已在 Hugging Face 开放权重，Apache 2.0 协议可商用</li>
+<li>Simon 本人补充说明：「任何把这个基准当真的人，都不应该把这个基准当真」——但它仍然是效率讨论的绝佳引子</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> 一个能在笔记本上跑的开源模型，在特定任务上打败最贵的闭源模型。这不是说 Opus 4.7 不好，而是说模型选择正在从「谁最强」转向「谁在特定场景下性价比最高」。</p>
+</blockquote>
+<hr>
+<h2 id="gpt-rosalindopenai-首款生命科学专用模型">GPT-Rosalind：OpenAI 首款生命科学专用模型</h2>
+<p>OpenAI 正式进军垂直行业模型，GPT-Rosalind 是第一步。这不仅是一个模型发布，更是一个战略信号。</p>
+<ul>
+<li>以 DNA 双螺旋结构关键发现者 Rosalind Franklin 命名，定位于生物化学、基因组学和药物发现推理</li>
+<li>针对蛋白质折叠、化学反应预测、基因组分析、实验设计等任务专门优化</li>
+<li>研究预览阶段面向 Moderna（mRNA 疫苗巨头）、Amgen（生物制药）、Allen Institute（生命科学研究）和 Thermo Fisher（科学仪器）</li>
+<li>与 Codex 深度集成——研究人员可以用自然语言描述实验需求，Rosalind 自动调用 50+ 科研工具执行</li>
+<li>同类竞品 Amazon Bio Discovery 已在路上，NVIDIA 此前也发布过生物相关的 AI 工具</li>
+</ul>
+<blockquote>
+<p><strong>编者评：</strong> 当 AI 实验室开始为每个行业定制模型时，传统行业软件公司面临的不再是「AI 增强」的威胁，而是「AI 替代」。药物研发 AI 的竞赛已从学术走向商业，速度超出预期。</p>
+</blockquote>
+<hr>
+<h2 id="编者按">编者按</h2>
+<p>本期的主线是「分化」——不是 AI 变弱了，而是 AI 正在同时向多个方向裂变。</p>
+<p>黄仁勋在 Dwarkesh 的访谈里画了一条清晰的线：算力的战争已经不只是芯片的战争，它是资本、能源和地缘政治的交叉点。他承认错失 Anthropic 的坦诚令人意外，但更值得注意的是他对中国算力能力的判断——「认为中国做不到是胡说八道」。</p>
+<p>Opus 4.7 的争议则揭示了另一种分化：模型越强，对使用者的要求越高。「模糊性税」这个概念精准地抓住了矛盾——AI 的能力天花板在提升，但使用门槛也在同步提升。Jeremy Howard 和 Reddit 上的 2300 赞不是在讨论同一个模型，他们是在使用两种完全不同的方式与同一个模型交互。</p>
+<p>而 GPT-Rosalind 的登场，标志着通用 AI 向垂直行业专用模型的正式转向。当 OpenAI 开始为生命科学定制专属模型时，下一个问题是：金融版、法律版、材料科学版还远吗？</p>
+<p>最后，Simon Willison 的鹈鹕提醒我们：在「最强」和「最合适」之间，正在出现一个越来越宽的光谱。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Post Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/voices/2026-04-25" class="group card p-4 hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">黄仁勋谈中国算力崛起 / AI视频生成泡沫破灭 / 开源模型效率革命</p> </a> <a href="/voices/2026-04-19" class="group card p-4 text-right hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">Opus 4.7 与 Codex 双发日 / AI 用 10 分钟削弱你的思考力 / Cursor 500 亿估值的 Tokenmaxxing 悖论</p> </a> </div> </nav> </article> <!-- Table of Contents (Desktop) --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本期目录
+</h4> <nav class="space-y-1"> <a href="#jensen-huang--tpu-competition-why-we-should-sell-chips-to-china--nvidias-supply-chain-moat" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Jensen Huang – TPU Competition, Why We Should Sell Chips to China, &amp; Nvidia’s Supply Chain Moat </a><a href="#claude-opus-47-实测吊打全场史上最强编程模型深度评测" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Claude Opus 4.7 实测吊打全场——史上最强编程模型深度评测 </a><a href="#openai-发布生命科学大模型-gpt-rosalindai-制药新纪元" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> OpenAI 发布生命科学大模型 GPT-Rosalind——AI 制药新纪元 </a><a href="#notions-token-town-5-rebuilds-100-tools-mcp-vs-clis" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Notion’s Token Town: 5 Rebuilds, 100+ Tools, MCP vs CLIs </a><a href="#village-gossip-pesticide-bans-and-gene-drives-17-experts-on-the-future-of-global-health" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Village Gossip, Pesticide Bans, and Gene Drives: 17 Experts on the Future of Global Health </a><a href="#opus-47-社区分裂jeremy-howard-盛赞-vs-2300-赞的严重退步帖" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Opus 4.7 社区分裂：Jeremy Howard 盛赞 vs 2300+ 赞的「严重退步」帖 </a><a href="#simon-willison-鹈鹕基准翻车笔记本上的-qwen36-35b-画得比-opus-47-更好" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Simon Willison 鹈鹕基准翻车：笔记本上的 Qwen3.6-35B 画得比 Opus 4.7 更好 </a><a href="#gpt-rosalindopenai-首款生命科学专用模型" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> GPT-Rosalind：OpenAI 首款生命科学专用模型 </a><a href="#编者按" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> 编者按 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

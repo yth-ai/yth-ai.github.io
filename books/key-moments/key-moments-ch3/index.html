@@ -1,0 +1,384 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/key-moments/key-moments-ch3/"><!-- Primary Meta Tags --><title>第三章：Scaling Laws 的发现与困境 | 大模型的关键时刻 | Maxwell</title><meta name="title" content="第三章：Scaling Laws 的发现与困境 | 大模型的关键时刻 | Maxwell"><meta name="description" content="从'大就是好'到'见顶了吗'的认知三部曲（2020-2025）"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/key-moments/key-moments-ch3/"><meta property="og:title" content="第三章：Scaling Laws 的发现与困境 | 大模型的关键时刻 | Maxwell"><meta property="og:description" content="从'大就是好'到'见顶了吗'的认知三部曲（2020-2025）"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/key-moments/key-moments-ch3/"><meta name="twitter:title" content="第三章：Scaling Laws 的发现与困境 | 大模型的关键时刻 | Maxwell"><meta name="twitter:description" content="从'大就是好'到'见顶了吗'的认知三部曲（2020-2025）"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/key-moments" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-indigo-500/25"> 键 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"> 大模型的关键时刻 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div>  <ul class="space-y-0.5"> <li> <a href="/books/key-moments/key-moments-preface" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">  <span class="line-clamp-1">前言：为什么写这本书</span> </a> </li><li> <a href="/books/key-moments/key-moments-index" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">  <span class="line-clamp-1">大模型的关键时刻</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch1" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">注意力就是一切</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch2" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">ChatGPT 时刻</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch3" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">Scaling Laws 的发现与困境</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch3b" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">架构暗战</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch4" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">开源觉醒</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch5" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">推理革命</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch6" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">从对话到行动</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch6b" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">创造力的释放</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch6c" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">龙虾革命</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch7" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">未完的战争</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 3 章 / 共 10 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/key-moments/key-moments-preface" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400">  前言：为什么写这本书 </a><a href="/books/key-moments/key-moments-index" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400">  大模型的关键时刻 </a><a href="/books/key-moments/key-moments-ch1" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 注意力就是一切 </a><a href="/books/key-moments/key-moments-ch2" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> ChatGPT 时刻 </a><a href="/books/key-moments/key-moments-ch3" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">3.</span> Scaling Laws 的发现与困境 </a><a href="/books/key-moments/key-moments-ch3b" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 架构暗战 </a><a href="/books/key-moments/key-moments-ch4" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> 开源觉醒 </a><a href="/books/key-moments/key-moments-ch5" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 推理革命 </a><a href="/books/key-moments/key-moments-ch6" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 从对话到行动 </a><a href="/books/key-moments/key-moments-ch6b" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 创造力的释放 </a><a href="/books/key-moments/key-moments-ch6c" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 龙虾革命 </a><a href="/books/key-moments/key-moments-ch7" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> 未完的战争 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">书架</a> <span>/</span> <a href="/books/key-moments" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">大模型的关键时刻</a> <span>/</span>  <span class="text-slate-900 dark:text-white">第 3 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800"> 第 3 章 </span>  </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 第三章：Scaling Laws 的发现与困境 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">从&#39;大就是好&#39;到&#39;见顶了吗&#39;的认知三部曲（2020-2025）</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-03-21T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 发布于：2026年3月21日 </time> <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> 大模型 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> AI历史 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> Scaling Laws </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> Chinchilla </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> 关键时刻 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <h1 id="第三章scaling-laws-的发现与困境">第三章：Scaling Laws 的发现与困境</h1>
+<p><em>大模型领域最重要的科学发现，以及它遇到的天花板（2020-2025）</em></p>
+<hr>
+<h2 id="31-kaplan-scaling-laws信仰的科学化">3.1 Kaplan Scaling Laws：信仰的科学化</h2>
+<p>2020 年 1 月，OpenAI 发表了一篇改变行业走向的论文：《Scaling Laws for Neural Language Models》。第一作者是 Jared Kaplan，一位理论物理学家——这不是巧合。</p>
+<p>论文的发现可以用三句话概括：</p>
+<ol>
+<li><strong>语言模型的性能（用交叉熵损失衡量）与三个变量呈幂律关系：模型参数量 N、数据量 D、训练计算量 C。</strong></li>
+<li><strong>这三个变量中，参数量的影响最大。</strong> 在计算预算固定的情况下，应该优先把模型做大，而不是用更多数据训练更多步。</li>
+<li><strong>这些关系是平滑的、可预测的幂律曲线，没有明显的拐点或饱和。</strong></li>
+</ol>
+<p>第三点是最震撼的。它意味着，<strong>只要你有更多的计算资源，你就能训练出更好的模型——而且这种关系是可量化预测的。</strong></p>
+<p>这不再是经验性的”模型越大越好”的模糊直觉。这是一个有精确数学公式的定量规律。你可以用小规模实验来预测大规模训练的结果。你可以用算力预算来计算能训出多好的模型。</p>
+<p>这对整个行业的影响是深远的。</p>
+<h3 id="从炼丹到工程">从”炼丹”到”工程”</h3>
+<p>在 Scaling Laws 之前，训练大模型在很大程度上是”炼丹”——你调各种超参数，尝试各种技巧，祈祷训练不崩溃，然后看结果好不好。没有人能提前预测结果。</p>
+<p>Scaling Laws 把这个过程变成了一门工程。你知道输入（算力、数据、参数）和输出（模型性能）之间的关系。你可以做规划。你可以做成本估算。你可以做投资决策。</p>
+<p>这直接解释了为什么 2020-2023 年间，数百亿美元涌入了 AI 算力建设。因为投资者第一次有了一个”科学依据”来判断投资回报：<strong>如果 Scaling Laws 成立，那么投入更多算力就一定能得到更好的模型。</strong> 这是一个极其强大的投资论点。</p>
+<blockquote>
+<p><strong>关键认知 #5：</strong> Scaling Laws 的真正意义不在于技术层面——它在于将 AI 研究从”科学探索”转变为”工程投资”。当你能用数学公式预测投入和产出的关系时，大规模投资就变得合理了。这一发现直接导致了后来数千亿美元级别的 AI 算力投入。</p>
+</blockquote>
+<hr>
+<h2 id="32-chinchilla第一次修正">3.2 Chinchilla：第一次修正</h2>
+<p>2022 年 3 月，DeepMind 发表了 Chinchilla 论文（《Training Compute-Optimal Large Language Models》），对 Kaplan 的结论做了一个重要修正。</p>
+<p>Kaplan 的建议是：在固定计算预算下，优先增加参数量。训练一个巨大的模型，用相对较少的数据训练较少的步数。</p>
+<p>Chinchilla 的发现完全不同：<strong>最优策略是让模型参数量和训练数据量同比例增长。</strong> 具体来说，每增加一倍参数，也应该增加大约一倍的训练数据。</p>
+<p>这意味着什么？以当时最大的模型 Gopher（2800 亿参数，3000 亿 token）为例，按照 Chinchilla 的最优比例，它应该用大约 5.6 万亿 token 的数据来训练——比实际使用的数据多了将近 20 倍。或者反过来说：如果你只有 3000 亿 token 的数据，你应该训练一个只有 70 亿参数的模型，而不是 2800 亿。</p>
+<p>DeepMind 用实验验证了这个结论：他们训练了一个 700 亿参数的模型 Chinchilla，使用了 1.4 万亿 token 的数据，结果在几乎所有 benchmark 上都超过了 2800 亿参数的 Gopher——<strong>用四分之一的参数达到了更好的性能。</strong></p>
+<h3 id="行业的集体啊哈时刻">行业的集体”啊哈时刻”</h3>
+<p>Chinchilla 论文引发了整个行业的集体反思。</p>
+<p>在 Chinchilla 之前，“大模型竞赛”的核心指标是参数量。谁的模型参数最多，谁就最强。PaLM 5400 亿参数，MT-NLG 5300 亿参数，Gopher 2800 亿参数——公司们争相堆参数。</p>
+<p>Chinchilla 表明：<strong>这些模型全都严重欠训练了。</strong> 它们有足够大的”胃”（参数），但吃的”食物”（数据）远远不够。</p>
+<p>这个发现产生了两个直接影响：</p>
+<ol>
+<li>
+<p><strong>数据成为瓶颈。</strong> 在 Chinchilla 之前，大家担心的是”GPU 不够”。在 Chinchilla 之后，大家开始担心”数据不够”。高质量文本数据到底有多少？互联网上的文本是不是快被用完了？这些问题从边缘走到了中心。</p>
+</li>
+<li>
+<p><strong>训练策略发生了转变。</strong> 后来的主要模型——Llama、Qwen、DeepSeek——都采用了远高于 Chinchilla 最优比例的数据量。Llama 2 70B 用了 2 万亿 token，Llama 3 70B 用了 15 万亿 token。这看似违反了 Chinchilla 的建议，但实际上反映了一个更深层的考虑：<strong>推理成本比训练成本更重要。</strong> 在部署阶段，一个小模型（用更多数据训练到极致）比一个大模型更经济。</p>
+</li>
+</ol>
+<hr>
+<h2 id="33-涌现能力的发现与争论">3.3 涌现能力的发现与争论</h2>
+<p>2022 年，Google 的研究团队发表了一篇引起巨大关注的论文：《Emergent Abilities of Large Language Models》。</p>
+<p>论文定义了”涌现能力”（Emergent Abilities）：<strong>在模型规模小的时候完全不存在，但当模型规模超过某个临界点时突然出现的能力。</strong> 论文展示了大量例子——多步算术、概念组合、类比推理等——这些能力在小模型上表现为随机猜测（接近零），但在模型超过一定规模后突然跳到了相当高的水平。</p>
+<p>这个发现极大地强化了”大就是好”的信仰。它暗示了一种令人兴奋的可能性：<strong>也许 AGI 只需要把模型继续做大就行了。</strong> 如果每一次规模的飞跃都能解锁新的涌现能力，那么足够大的模型是不是就能做任何事？</p>
+<h3 id="质疑声">质疑声</h3>
+<p>但到了 2023 年，这个叙事开始受到质疑。</p>
+<p>斯坦福的研究者在论文《Are Emergent Abilities of Large Language Models a Mirage?》中提出了一个令人不安的论点：<strong>涌现能力可能只是度量方式的假象。</strong> 当你用非连续的评估指标（如精确匹配率）来衡量模型表现时，你会看到”突然跳变”的假象。但如果你用连续的指标（如 token 级别的对数概率）来衡量，性能提升是平滑的——没有什么”涌现”。</p>
+<p>这场争论至今没有完全定论。但它揭示了一个重要事实：<strong>我们对大模型的理解仍然非常有限。</strong> 我们不完全理解它们为什么能工作，不完全理解 scaling 带来的能力提升是否有上限，也不完全理解”涌现”到底是一种真实的现象还是评估方法的伪影。</p>
+<hr>
+<h2 id="34-scaling-见顶了吗">3.4 “Scaling 见顶了吗？”</h2>
+<p>2024 年下半年，一个问题开始在行业中蔓延：<strong>预训练的 Scaling Laws 是不是要见顶了？</strong></p>
+<p>信号来自多个方向：</p>
+<p><strong>数据墙（Data Wall）。</strong> 高质量英文文本数据的总量是有限的。据估算，互联网上可用于训练的高质量英文文本大约在 10-20 万亿 token。到 2024 年，头部模型的训练数据量已经逼近甚至触及了这个上限。Llama 3 用了 15 万亿 token，已经需要对数据进行多次重复（epoch > 1）。</p>
+<p><strong>收益递减。</strong> 2024 年发布的新模型——GPT-4o、Claude 3.5 Sonnet、Gemini 1.5 Pro——在常规 benchmark 上的提升幅度明显放缓。从 GPT-3 到 GPT-4 的跳跃是惊人的，但从 GPT-4 到 GPT-4o 的提升就温和得多。</p>
+<p><strong>训练成本的指数增长。</strong> 按照 Scaling Laws，每提升一个”等级”的模型能力，需要大约 10 倍的计算量。GPT-4 的训练成本估计在 1 亿美元量级。下一代模型的训练成本可能需要 10 亿美元甚至更多。这种指数增长是否可持续？</p>
+<p><strong>Ilya Sutskever 的离开。</strong> 2024 年 5 月，OpenAI 联合创始人兼首席科学家 Ilya Sutskever 离开公司，创办了 Safe Superintelligence Inc.（SSI）。虽然离开的原因复杂，但一些分析认为这与 OpenAI 内部对”仅靠 scaling 能否通向 AGI”的分歧有关。</p>
+<h3 id="但-scaling-真的停了吗">但 Scaling 真的停了吗？</h3>
+<p>答案是否定的——<strong>它没有停止，而是换了一个方向。</strong></p>
+<p>2024 年 9 月，OpenAI 发布了 o1 模型。它证明了一个全新的 scaling 轴的存在：<strong>test-time compute（推理时计算）</strong>。</p>
+<p>传统的 Scaling Laws 关注的是 training compute——你在训练阶段投入多少算力。o1 开辟了另一个维度：不是训练时用更多算力，而是<strong>推理时让模型”想更久”</strong>。模型在回答问题之前，可以进行长时间的内部推理（chain-of-thought），这个推理过程可以消耗大量的 token 和计算。</p>
+<p>结果表明，增加推理时间的计算量，也能带来类似 Scaling Laws 的性能提升——在某些任务上，效果甚至比增加训练计算更好。</p>
+<p>这是一个范式级别的转变。它意味着 <strong>Scaling 不是见顶了——它只是从一个维度（训练）扩展到了两个维度（训练 + 推理）。</strong></p>
+<blockquote>
+<p><strong>关键认知 #6：</strong> Scaling Laws 可能是大模型领域最重要的科学发现。它把”做更好的 AI”从一个模糊的研究问题，变成了一个可量化、可规划、可投资的工程问题。它的每一次修正——Chinchilla 的数据比例修正、涌现能力的争论、预训练 scaling 放缓与 test-time compute scaling 的发现——都深刻地改变了行业的资源分配和技术方向。</p>
+</blockquote>
+<hr>
+<h2 id="35-认知演变时间线">3.5 认知演变时间线</h2>
+<p>回顾 Scaling Laws 相关认知的演变：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>2020 Kaplan Scaling Laws</span></span>
+<span class="line"><span>  → "只要加算力，模型就会更好，而且可以精确预测"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2022 Chinchilla</span></span>
+<span class="line"><span>  → "等等，参数和数据要平衡，很多模型严重欠训练了"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2022 涌现能力</span></span>
+<span class="line"><span>  → "模型大到一定程度会突然解锁新能力！AGI 可能只需要 scale"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2023 涌现能力质疑</span></span>
+<span class="line"><span>  → "涌现可能是度量方式的幻觉，实际提升可能是平滑的"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2024 H1 预训练 Scaling 放缓</span></span>
+<span class="line"><span>  → "数据墙、收益递减——Scaling 要见顶了？"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2024 H2 Test-time Compute Scaling</span></span>
+<span class="line"><span>  → "Scaling 没有见顶，它只是换了一个方向：从训练转向推理"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2025 多维度 Scaling</span></span>
+<span class="line"><span>  → "训练 compute + 推理 compute + 数据质量 + 架构效率</span></span>
+<span class="line"><span>     = 多维度联合 scaling，远未触顶"</span></span></code></pre>
+<hr>
+<h2 id="本章回顾三个不可逆的认知转变">本章回顾：三个不可逆的认知转变</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>事件</th><th>时间</th><th>认知转变</th></tr></thead><tbody><tr><td>Kaplan Scaling Laws</td><td>2020.01</td><td>AI 从”炼丹”变为”工程”——性能可以用算力精确预测</td></tr><tr><td>Chinchilla</td><td>2022.03</td><td>”参数为王”→“参数和数据要平衡”——数据成为新瓶颈</td></tr><tr><td>Test-time Compute Scaling</td><td>2024.09</td><td>预训练 Scaling 之外，推理时 Scaling 成为新维度</td></tr></tbody></table>
+<p><strong>如果这一章只需要记住一句话：</strong> Scaling Laws 是大模型领域的”牛顿定律”——它不完美，需要修正，但它第一次为 AI 研究提供了可量化的预测框架。而它的每一次修正本身，就是行业最重要的认知进步。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/key-moments/key-moments-ch2" class="group card p-4 hover:border-indigo-300 dark:hover:border-indigo-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.2</span> ChatGPT 时刻 </p> </a> <a href="/books/key-moments/key-moments-ch3b" class="group card p-4 text-right hover:border-indigo-300 dark:hover:border-indigo-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.4</span> 架构暗战 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#31-kaplan-scaling-laws信仰的科学化" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 3.1 Kaplan Scaling Laws：信仰的科学化 </a><a href="#从炼丹到工程" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 从”炼丹”到”工程” </a><a href="#32-chinchilla第一次修正" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 3.2 Chinchilla：第一次修正 </a><a href="#行业的集体啊哈时刻" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 行业的集体”啊哈时刻” </a><a href="#33-涌现能力的发现与争论" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 3.3 涌现能力的发现与争论 </a><a href="#质疑声" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 质疑声 </a><a href="#34-scaling-见顶了吗" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 3.4 “Scaling 见顶了吗？” </a><a href="#但-scaling-真的停了吗" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 但 Scaling 真的停了吗？ </a><a href="#35-认知演变时间线" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 3.5 认知演变时间线 </a><a href="#本章回顾三个不可逆的认知转变" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 本章回顾：三个不可逆的认知转变 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

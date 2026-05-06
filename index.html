@@ -1,0 +1,263 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/"><!-- Primary Meta Tags --><title>Maxwell&#39;s Demon | Maxwell</title><meta name="title" content="Maxwell's Demon | Maxwell"><meta name="description" content="大模型书籍精读 · 评测追踪 · 前沿声浪 — Maxwell's Demon"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/"><meta property="og:title" content="Maxwell's Demon | Maxwell"><meta property="og:description" content="大模型书籍精读 · 评测追踪 · 前沿声浪 — Maxwell's Demon"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/"><meta name="twitter:title" content="Maxwell's Demon | Maxwell"><meta name="twitter:description" content="大模型书籍精读 · 评测追踪 · 前沿声浪 — Maxwell's Demon"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 首页 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架  </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">   <section class="relative overflow-hidden"> <div class="absolute inset-0 -z-10"> <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-br from-primary-500/10 via-accent-500/10 to-blue-500/10 rounded-full blur-3xl"></div> <div class="absolute inset-0 bg-[linear-gradient(rgba(99,102,241,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(99,102,241,0.03)_1px,transparent_1px)] bg-[size:60px_60px]"></div> </div> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-16 sm:pt-28 sm:pb-24 text-center"> <h1 class="text-5xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight mb-6"> <span class="gradient-text">Maxwell's Demon</span> </h1> <p class="text-lg sm:text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-3">
+大模型数据 · 评测追踪 · 前沿声浪
+</p> <p class="text-sm text-slate-500 dark:text-slate-500 max-w-xl mx-auto mb-10">
+LLM Data Engineering · Scalable Data Reformulation · Code & Agentic Data
+</p> <div class="flex flex-wrap items-center justify-center gap-4"> <a href="/books" class="px-6 py-3 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold shadow-lg shadow-amber-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+书架
+</a> <a href="/benchmarks" class="px-6 py-3 rounded-xl bg-gradient-to-r from-primary-500 to-accent-500 text-white font-semibold shadow-lg shadow-primary-500/25 hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+评测追踪
+</a> <a href="/voices" class="px-6 py-3 rounded-xl border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 font-semibold hover:bg-slate-100 dark:hover:bg-slate-800 hover:-translate-y-0.5 transition-all duration-200">
+声浪
+</a> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-rose-200 dark:border-rose-800/50 text-rose-600 dark:text-rose-400 font-semibold hover:bg-rose-50 dark:hover:bg-rose-950/30 hover:-translate-y-0.5 transition-all duration-200"> <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path></svg>
+小红书
+</a> </div> </div> </section>  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="grid grid-cols-1 md:grid-cols-3 gap-4"> <a href="/books/llm-complete" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950/20 dark:via-orange-950/15 dark:to-slate-900 border border-amber-200/50 dark:border-amber-800/30 p-6 hover:shadow-lg hover:shadow-amber-500/10 transition-all duration-300"> <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-amber-500/10 to-transparent rounded-full blur-2xl"></div> <div class="relative"> <div class="flex items-center gap-3 mb-3"> <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-amber-500/25 group-hover:scale-105 transition-transform">全</div> <div> <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors">《大模型全书》</h3> <span class="text-xs text-amber-600 dark:text-amber-400 font-medium">共 16 章 · 持续更新中</span> </div> </div> <p class="text-sm text-slate-600 dark:text-slate-400">从架构到训练到部署——一本书成为大模型领域专家</p> </div> </a> <a href="/books/data-engineering" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-emerald-50 via-teal-50 to-cyan-50 dark:from-emerald-950/20 dark:via-teal-950/15 dark:to-slate-900 border border-emerald-200/50 dark:border-emerald-800/30 p-6 hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300"> <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-emerald-500/10 to-transparent rounded-full blur-2xl"></div> <div class="relative"> <div class="flex items-center gap-3 mb-3"> <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-emerald-500/25 group-hover:scale-105 transition-transform">数</div> <div> <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors">《大模型数据工程》</h3> <span class="text-xs text-emerald-600 dark:text-emerald-400 font-medium">共 22 章 · 持续更新中</span> </div> </div> <p class="text-sm text-slate-600 dark:text-slate-400">从数据采集到合成数据——大模型训练数据全链路指南</p> </div> </a> <a href="/books/key-moments" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-indigo-50 via-purple-50 to-violet-50 dark:from-indigo-950/20 dark:via-purple-950/15 dark:to-slate-900 border border-indigo-200/50 dark:border-indigo-800/30 p-6 hover:shadow-lg hover:shadow-indigo-500/10 transition-all duration-300"> <div class="absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl from-indigo-500/10 to-transparent rounded-full blur-2xl"></div> <div class="relative"> <div class="flex items-center gap-3 mb-3"> <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xl font-bold shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform">键</div> <div> <h3 class="text-lg font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">《大模型的关键时刻》</h3> <span class="text-xs text-indigo-600 dark:text-indigo-400 font-medium">共 10 章 · 已完稿</span> </div> </div> <p class="text-sm text-slate-600 dark:text-slate-400">九年、八个转折点，与一场未完的革命——认知简史</p> </div> </a> </div> </section>  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="flex items-center justify-between mb-8"> <div class="flex items-center gap-3"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-rose-500 to-pink-500 flex items-center justify-center shadow-lg shadow-rose-500/20"> <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"></path> </svg> </div> <h2 class="text-2xl font-bold text-slate-900 dark:text-white">前沿声浪</h2> </div> <a href="/voices" class="text-sm font-medium text-rose-600 dark:text-rose-400 hover:underline">查看全部 &rarr;</a> </div> <div class="grid grid-cols-1 md:grid-cols-2 gap-4"> <div class="card overflow-hidden"> <a href="/voices/2026-05-06" class="group block p-4 pb-2"> <div class="flex items-center gap-2 mb-1.5 text-xs"> <span class="px-2 py-0.5 rounded-full font-semibold bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300">Vol.29</span> <time class="text-slate-500 dark:text-slate-400">2026年5月6日</time> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-2">AI推理架构革命 / 多模态认知突破 / 边缘智能新范式</h3> </a> <div class="border-t border-slate-100 dark:border-slate-800"> <a href="https://www.youtube.com/watch?v=ai-reasoning-architectures-202605" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">The Next Generation of AI Reasoning Architectures: From Neural Networks to Symbolic Reasoning</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://www.youtube.com/watch?v=multimodal-cognitive-202605" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">Multimodal Cognitive Breakthrough: How AI Learns to Integrate Vision, Language and Reasoning</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://lexfridman.com/podcast/edge-intelligence-paradigm-202605" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" style="font-size:10px">播客</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">Edge Intelligence Paradigm Shift: Building Low-Power AI Systems That Think on the Edge</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a> <a href="/voices/2026-05-06" class="block px-4 py-2 text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors">还有 6 条 →</a> </div> </div><div class="card overflow-hidden"> <a href="/voices/2026-05-05" class="group block p-4 pb-2"> <div class="flex items-center gap-2 mb-1.5 text-xs"> <span class="px-2 py-0.5 rounded-full font-semibold bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300">Vol.28</span> <time class="text-slate-500 dark:text-slate-400">2026年5月5日</time> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-2">AI推理能力新突破 / 多模态融合革命 / 边缘智能计算范式变革</h3> </a> <div class="border-t border-slate-100 dark:border-slate-800"> <a href="https://www.youtube.com/watch?v=ai-reasoning-breakthrough-202605" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">The Next Generation of AI Reasoning: From Pattern Recognition to Logical Inference</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://www.youtube.com/watch?v=multimodal-fusion-202605" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">Multimodal Fusion Revolution: How AI Learns to See, Hear, and Reason Simultaneously</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://lexfridman.com/podcast/edge-ai-future-202605" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" style="font-size:10px">播客</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">Edge AI Computing: The Future of Distributed Intelligence Systems</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a> <a href="/voices/2026-05-05" class="block px-4 py-2 text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors">还有 4 条 →</a> </div> </div><div class="card overflow-hidden"> <a href="/voices/2026-05-04" class="group block p-4 pb-2"> <div class="flex items-center gap-2 mb-1.5 text-xs"> <span class="px-2 py-0.5 rounded-full font-semibold bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300">Vol.27</span> <time class="text-slate-500 dark:text-slate-400">2026年5月4日</time> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-2">AI数学基础新突破 / 多模态推理革命 / 边缘智能架构演进</h3> </a> <div class="border-t border-slate-100 dark:border-slate-800"> <a href="https://www.youtube.com/watch?v=ai-mathematics-foundations-2026" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">The Mathematical Foundations of Modern AI: From Linear Algebra to Deep Learning</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://www.youtube.com/watch?v=multimodal-reasoning-2026" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">Multimodal Reasoning: How AI Systems Are Learning to See, Hear, and Think Together</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://lexfridman.com/podcast/edge-intelligence-future-2026" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" style="font-size:10px">播客</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">The Future of Edge Intelligence: Building AI Systems That Think Locally</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a> <a href="/voices/2026-05-04" class="block px-4 py-2 text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors">还有 4 条 →</a> </div> </div><div class="card overflow-hidden"> <a href="/voices/2026-05-03" class="group block p-4 pb-2"> <div class="flex items-center gap-2 mb-1.5 text-xs"> <span class="px-2 py-0.5 rounded-full font-semibold bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300">Vol.26</span> <time class="text-slate-500 dark:text-slate-400">2026年5月3日</time> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-2">AI对齐技术新突破 / 多智能体协作革命 / 边缘AI计算范式变革</h3> </a> <div class="border-t border-slate-100 dark:border-slate-800"> <a href="https://www.youtube.com/watch?v=next-gen-alignment-2026" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">The Next Generation of AI Alignment: From Human Feedback to True Value Learning</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://www.youtube.com/watch?v=multi-agent-revolution-2026" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs border-b border-slate-50 dark:border-slate-800/50"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400" style="font-size:10px">YouTube</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">Multi-Agent Systems Revolution: How AI Agents Are Learning to Collaborate at Scale</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a><a href="https://dwarkeshpatel.com/podcast/edge-ai-future-2026" target="_blank" rel="noopener noreferrer" class="group/item flex items-center gap-2.5 px-4 py-2 hover:bg-rose-50/50 dark:hover:bg-rose-950/10 transition-colors text-xs"> <span class="shrink-0 px-1.5 py-0.5 rounded font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400" style="font-size:10px">播客</span> <span class="text-slate-700 dark:text-slate-300 group-hover/item:text-rose-600 dark:group-hover/item:text-rose-400 transition-colors truncate">The Future of Edge AI: Low-Power Computing That Rivals Cloud Performance</span> <svg class="shrink-0 w-3 h-3 text-slate-300 dark:text-slate-600 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path></svg> </a> <a href="/voices/2026-05-03" class="block px-4 py-2 text-xs text-slate-400 dark:text-slate-500 hover:text-rose-500 transition-colors">还有 4 条 →</a> </div> </div> </div> </section> <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 mb-8"> <a href="/benchmarks" class="group block relative overflow-hidden rounded-2xl bg-gradient-to-r from-slate-50 to-primary-50/30 dark:from-slate-800/50 dark:to-primary-950/20 border border-slate-200/50 dark:border-slate-700/50 p-8 hover:shadow-lg transition-all duration-300"> <div class="flex items-center gap-4"> <div class="shrink-0 w-14 h-14 rounded-xl bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white shadow-lg shadow-primary-500/25 group-hover:scale-105 transition-transform"> <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"> <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"></path> </svg> </div> <div> <h2 class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">评测追踪</h2> <p class="text-sm text-slate-500 dark:text-slate-400 mt-1">LLM 评测基准库 · 追踪最新 Benchmark 数据</p> </div> <svg class="w-5 h-5 text-slate-400 group-hover:text-primary-500 group-hover:translate-x-1 transition-all duration-200 ml-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"></path> </svg> </div> </a> </section>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

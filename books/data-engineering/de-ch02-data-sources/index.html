@@ -1,0 +1,849 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch02-data-sources/"><!-- Primary Meta Tags --><title>数据来源——互联网的宝藏与垃圾 | 大模型数据工程 | Maxwell</title><meta name="title" content="数据来源——互联网的宝藏与垃圾 | 大模型数据工程 | Maxwell"><meta name="description" content="Common Crawl、高质量语料源、多语言数据与法律合规的全面解析"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch02-data-sources/"><meta property="og:title" content="数据来源——互联网的宝藏与垃圾 | 大模型数据工程 | Maxwell"><meta property="og:description" content="Common Crawl、高质量语料源、多语言数据与法律合规的全面解析"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch02-data-sources/"><meta name="twitter:title" content="数据来源——互联网的宝藏与垃圾 | 大模型数据工程 | Maxwell"><meta name="twitter:description" content="Common Crawl、高质量语料源、多语言数据与法律合规的全面解析"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/data-engineering" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-emerald-500/25"> 数 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"> 大模型数据工程 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第零部分：引言 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">为什么数据是大模型的灵魂</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：预训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">数据来源——互联网的宝藏与垃圾</span> </a> </li><li> <a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">文本提取与清洗——魔鬼藏在细节里</span> </a> </li><li> <a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">去重——被低估的关键步骤</span> </a> </li><li> <a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">质量过滤——从规则到模型</span> </a> </li><li> <a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">数据配比——预训练的隐藏变量</span> </a> </li><li> <a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">预训练数据的评估与迭代</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：中训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">中训练概论——为什么需要这个阶段</span> </a> </li><li> <a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">中训练数据的构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">中训练的灾难性遗忘与稳定性</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：SFT 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">SFT 数据的本质——表面对齐假说</span> </a> </li><li> <a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">SFT 数据的构造方法</span> </a> </li><li> <a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">SFT 数据质量的精细控制</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：RL 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">偏好数据的本质与构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">奖励模型的数据需求</span> </a> </li><li> <a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">推理模型的 RL 数据——新范式</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：横切主题 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">17.</span> <span class="line-clamp-1">合成数据——银弹还是定时炸弹？</span> </a> </li><li> <a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">18.</span> <span class="line-clamp-1">数据标注的方法论</span> </a> </li><li> <a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">19.</span> <span class="line-clamp-1">数据安全、隐私与伦理</span> </a> </li><li> <a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">20.</span> <span class="line-clamp-1">数据工程的基础设施与工具链</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第六部分：实战与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">21.</span> <span class="line-clamp-1">端到端案例——从零构建一个 7B 模型的数据</span> </a> </li><li> <a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">22.</span> <span class="line-clamp-1">数据工程的未来</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 附录 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">100.</span> <span class="line-clamp-1">附录</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 2 章 / 共 23 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 为什么数据是大模型的灵魂 </a><a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">2.</span> 数据来源——互联网的宝藏与垃圾 </a><a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> 文本提取与清洗——魔鬼藏在细节里 </a><a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 去重——被低估的关键步骤 </a><a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> 质量过滤——从规则到模型 </a><a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 数据配比——预训练的隐藏变量 </a><a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 预训练数据的评估与迭代 </a><a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 中训练概论——为什么需要这个阶段 </a><a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 中训练数据的构造 </a><a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> 中训练的灾难性遗忘与稳定性 </a><a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> SFT 数据的本质——表面对齐假说 </a><a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> SFT 数据的构造方法 </a><a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> SFT 数据质量的精细控制 </a><a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 偏好数据的本质与构造 </a><a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 奖励模型的数据需求 </a><a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> 推理模型的 RL 数据——新范式 </a><a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">17.</span> 合成数据——银弹还是定时炸弹？ </a><a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">18.</span> 数据标注的方法论 </a><a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">19.</span> 数据安全、隐私与伦理 </a><a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">20.</span> 数据工程的基础设施与工具链 </a><a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">21.</span> 端到端案例——从零构建一个 7B 模型的数据 </a><a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">22.</span> 数据工程的未来 </a><a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">100.</span> 附录 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">书架</a> <span>/</span> <a href="/books/data-engineering" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">大模型数据工程</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第一部分：预训练数据</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 2 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"> 第 2 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第一部分：预训练数据</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 数据来源——互联网的宝藏与垃圾 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">Common Crawl、高质量语料源、多语言数据与法律合规的全面解析</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-03-26T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年3月26日 </time> <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> Common Crawl </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 数据来源 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 多语言 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 合规 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <blockquote>
+<p><em>“15 万亿 token 不是从天上掉下来的。它们来自互联网的每一个角落——有人类知识的精华，也有信息污染的沼泽。“</em></p>
+</blockquote>
+<hr>
+<h2 id="21-common-crawl大模型的基石">2.1 Common Crawl：大模型的基石</h2>
+<p>几乎所有主流大模型的预训练数据都有一个共同的底层来源：<strong>Common Crawl（CC）</strong>。</p>
+<h3 id="cc-是什么">CC 是什么</h3>
+<p>Common Crawl 是一个由非营利组织运营的开放网络爬虫项目。自 2008 年以来，它持续爬取互联网上的公开网页，并将爬取结果以 WARC（Web ARChive）格式免费开放。</p>
+<p><strong>规模</strong>：</p>
+<ul>
+<li>截至 2026 年，CC 存档了超过 <strong>250 PB</strong> 的原始网页数据</li>
+<li>每个月发布一个新的”快照”（crawl），最新的 CC-MAIN-2026-12（2026 年 3 月发布）包含约 <strong>19.6 亿个去重 URL</strong></li>
+<li>需要注意统计口径的差异：早期 CC 快照的”30-40 亿页面”是包含重复 URL 和重定向的原始页面计数，而去重 URL 数通常在 20 亿左右</li>
+<li>所有数据托管在 AWS S3 上，可以免费下载</li>
+</ul>
+<h3 id="cc-的数据格式">CC 的数据格式</h3>
+<p>CC 提供三种格式的数据：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">格式</th><th align="left">内容</th><th align="left">大小</th><th align="left">用途</th></tr></thead><tbody><tr><td align="left"><strong>WARC</strong></td><td align="left">完整的 HTTP 请求和响应（包含 HTML）</td><td align="left">最大</td><td align="left">需要自己做文本提取的场景</td></tr><tr><td align="left"><strong>WET</strong></td><td align="left">纯文本（已从 HTML 中提取）</td><td align="left">中等</td><td align="left">快速使用，但提取质量不高</td></tr><tr><td align="left"><strong>WAT</strong></td><td align="left">元数据（URL、HTTP header、链接等）</td><td align="left">最小</td><td align="left">做数据分析和过滤规划</td></tr></tbody></table>
+<p><strong>推荐</strong>：使用 WARC 格式 + 自选的文本提取工具（如 trafilatura）。CC 自带的 WET 提取质量一般——它使用的提取器比较老旧，经常包含导航栏、广告等噪声文本。FineWeb 的实验证实，用 trafilatura 从 WARC 重新提取可以显著提升数据质量。</p>
+<h3 id="cc-快照之间的质量差异">CC 快照之间的质量差异</h3>
+<p>一个很容易被忽视的事实是：<strong>不同时间的 CC 快照质量差异巨大。</strong></p>
+<p>原因包括：</p>
+<ul>
+<li><strong>爬虫策略变化</strong>：CC 的爬取策略在不同时期有调整，某些时期可能更偏向某类网站</li>
+<li><strong>互联网内容的变化</strong>：垃圾网站的占比在逐年上升，SEO 内容越来越多</li>
+<li><strong>JavaScript 渲染页面的增加</strong>：2020 年后，越来越多的网站使用 JavaScript 框架，CC 无法正确爬取这些页面</li>
+<li><strong>AI 生成内容的泛滥</strong>：2023 年后，大量 AI 生成的低质量内容充斥互联网</li>
+</ul>
+<p><strong>值得关注的趋势</strong>：2024 年之后的快照中，AI 生成内容的占比持续攀升。在 CC-MAIN-2026-12 的分析中，.com 域名占 41.46%，而 .cn 域名仅占 1.37%（约 2700 万 URL），这也反映了 CC 爬取的语言和地域偏差在最新快照中仍然显著。</p>
+<p><strong>实操建议</strong>：</p>
+<ul>
+<li>不要盲目使用最新的 CC 快照——新快照中的 AI 生成垃圾内容可能更多</li>
+<li>对不同时间段的快照分别评估质量</li>
+<li>早期快照（2013-2018）的网页质量可能更高（AI 生成内容少），但技术知识可能过时</li>
+<li><strong>混合使用多个时间段的快照</strong>，在时效性和质量之间取平衡</li>
+</ul>
+<h3 id="cc-的固有偏差">CC 的固有偏差</h3>
+<p><strong>语言偏差</strong>：英文内容占 CC 总量的 40-50%，中文约占 10-15%。很多低资源语言的占比 &#x3C; 1%。</p>
+<p><strong>地域偏差</strong>：美国、欧洲的网站爬取最充分，亚洲和非洲的很多网站覆盖不足。</p>
+<p><strong>类型偏差</strong>：新闻网站、商业网站被大量爬取，但很多高质量内容（如付费论文、书籍、私有知识库）不在 CC 中。</p>
+<p><strong>时效偏差</strong>：CC 的爬取频率对不同网站不同——热门网站可能每月被爬取多次，小众网站可能一年才被爬取一次。</p>
+<hr>
+<h2 id="22-高质量语料源">2.2 高质量语料源</h2>
+<p>CC 是”量”的保障，但”质”需要额外的高质量数据源来补充。</p>
+<h3 id="维基百科wikipedia">维基百科（Wikipedia）</h3>
+<p><strong>价值</strong>：</p>
+<ul>
+<li>知识密度极高——每篇文章都是由社区编辑审核的结构化知识</li>
+<li>覆盖面广——300+ 种语言，超过 6000 万篇文章</li>
+<li>格式规范——标题、段落、列表、引用的结构清晰</li>
+</ul>
+<p><strong>数量</strong>：</p>
+<ul>
+<li>英文维基约 40-50 亿 token</li>
+<li>中文维基约 10-15 亿 token</li>
+<li>在万亿 token 的训练集中，维基百科的占比通常 &#x3C; 1%</li>
+</ul>
+<p><strong>处理要点</strong>：</p>
+<ul>
+<li>去除维基标记语法（MediaWiki markup）</li>
+<li>保留文章正文，去掉编辑历史、讨论页面</li>
+<li>注意处理模板、信息框（infobox）——这些结构化内容是否保留取决于你的目标</li>
+<li>某些维基百科文章质量差（stub 文章只有几句话）——需要做长度过滤</li>
+</ul>
+<p><strong>局限</strong>：</p>
+<ul>
+<li>风格单一——“百科全书腔”</li>
+<li>知识有时效性——更新可能滞后</li>
+<li>中文维基的覆盖度远不如英文</li>
+</ul>
+<h3 id="书籍语料">书籍语料</h3>
+<p><strong>Books3 / Gutenberg / 自建书籍语料</strong></p>
+<p>书籍是最高质量的长文本来源之一。一本书通常有几万到几十万词，段落连贯，逻辑清晰，语言规范。</p>
+<p><strong>价值</strong>：</p>
+<ul>
+<li><strong>长上下文学习</strong>：书籍是训练模型处理长文本的天然数据</li>
+<li><strong>知识深度</strong>：书籍对一个主题的讲解通常比网页深入得多</li>
+<li><strong>写作质量</strong>：经过编辑和出版流程的文本，质量有保障</li>
+</ul>
+<p><strong>主要来源</strong>：</p>
+<ul>
+<li><strong>Project Gutenberg</strong>：公版（public domain）书籍，约 7 万本。主要是 1920 年代之前的英文文学作品。免费且无版权问题</li>
+<li><strong>Books3</strong>（争议中）：约 20 万本现代书籍，包含大量受版权保护的作品。因版权诉讼（如 NYT vs OpenAI）而引发争议</li>
+<li><strong>中文书籍</strong>：公开来源非常有限。可以考虑中文古典文学（二十四史、诸子百家等古籍已进入公版）和部分开放获取的现代作品</li>
+</ul>
+<p><strong>版权风险</strong>：</p>
+<ul>
+<li>Gutenberg 的内容是安全的——这些书的版权已经过期</li>
+<li>现代书籍的版权问题是当前最大的法律风险之一</li>
+<li>建议：在合规要求严格的场景下，只使用明确的公版或开放许可的书籍</li>
+</ul>
+<h3 id="学术论文">学术论文</h3>
+<p><strong>来源</strong>：</p>
+<ul>
+<li><strong>arXiv</strong>：预印本论文库，主要覆盖物理、数学、计算机科学、生物学等。约 250 万篇。</li>
+<li><strong>Semantic Scholar Open Research Corpus (S2ORC)</strong>：大规模学术论文语料，覆盖多个学科。约 1.36 亿篇论文的元数据，其中约 1200 万篇有全文。</li>
+<li><strong>PubMed / PMC</strong>：生物医学领域的论文。</li>
+<li><strong>中文学术论文</strong>：CNKI（知网）等来源，但多数有版权限制。</li>
+</ul>
+<p><strong>处理要点</strong>：</p>
+<ul>
+<li>PDF → 文本的转换质量是关键挑战。学术论文的排版复杂（双栏、公式、图表、参考文献），OCR 和 PDF 解析工具的效果差异很大</li>
+<li>LaTeX 公式的处理：保留 LaTeX 源码还是转换为文本？对于训练数学能力，保留 LaTeX 源码更有价值</li>
+<li>参考文献列表：通常应该被过滤掉（大量重复且信息密度低）</li>
+<li>作者信息和致谢：包含 PII，需要处理</li>
+</ul>
+<h3 id="代码数据">代码数据</h3>
+<p><strong>来源</strong>：</p>
+<ul>
+<li><strong>GitHub</strong>：最大的开源代码托管平台。The Stack 数据集从 GitHub 收集了 TB 级的代码</li>
+<li><strong>The Stack v2</strong>：覆盖 600+ 种编程语言的去重代码数据集</li>
+<li><strong>StarCoder Data</strong>：BigCode 项目整理的高质量代码数据</li>
+</ul>
+<p><strong>处理要点</strong>：</p>
+<ul>
+<li><strong>许可证过滤</strong>：只使用允许用于训练的开源许可证（如 MIT、Apache 2.0、BSD）。GPL 等 copyleft 许可证有争议</li>
+<li><strong>质量分层</strong>：
+<ul>
+<li>Tier 1：高 star、有完善文档和测试的项目</li>
+<li>Tier 2：中等 star、有基本文档</li>
+<li>Tier 3：低 star、无文档</li>
+<li>过滤掉：自动生成的代码、配置文件、数据 dump</li>
+</ul>
+</li>
+<li><strong>编程语言比例</strong>：Python 通常占比最大（与用户需求匹配），但也需要其他语言来保证多样性</li>
+<li><strong>代码上下文的价值</strong>：不只是代码本身——README、docstring、commit message、issue discussion 都是有价值的训练数据</li>
+</ul>
+<h3 id="百科问答类">百科/问答类</h3>
+<p><strong>来源</strong>：</p>
+<ul>
+<li><strong>StackOverflow / StackExchange</strong>：高质量的问答数据。问题-回答-投票的结构天然适合 SFT 数据</li>
+<li><strong>知乎</strong>：中文高质量问答平台（但使用需注意版权）</li>
+<li><strong>Quora</strong>：英文问答平台</li>
+</ul>
+<p><strong>价值</strong>：</p>
+<ul>
+<li>天然的”问题-回答”格式，对模型学习问答能力很有帮助</li>
+<li>社区投票机制提供了天然的质量信号</li>
+<li>覆盖极广的主题</li>
+</ul>
+<p><strong>处理要点</strong>：</p>
+<ul>
+<li>高赞回答 vs 低赞回答的质量差异很大——可以用投票数作为质量过滤的信号</li>
+<li>过时的回答（如 5 年前的编程问题回答）可能已经不准确</li>
+<li>需要处理问答的格式标记</li>
+</ul>
+<h3 id="开源清洗数据集一种新的数据获取范式">开源清洗数据集：一种新的数据获取范式</h3>
+<p>上述数据源都是”原始数据源”——你需要自己做提取、清洗、去重等一系列工作。但近年来，一种新的数据获取方式正在兴起：<strong>直接使用社区或机构构建的、已经过高质量清洗的即用数据集</strong>。</p>
+<p><strong>代表性数据集：FineWeb2（HuggingFace, 2026）</strong></p>
+<p>HuggingFace 发布的 <a href="https://arxiv.org/abs/2506.20920">FineWeb2</a>（ICLR 2026）是目前最大规模的开源多语言清洗数据集：</p>
+<ul>
+<li><strong>规模</strong>：20TB 文本，约 50 亿文档，基于近 100 个 CC 快照构建</li>
+<li><strong>语言覆盖</strong>：1000+ 种语言——这对低资源语言的预训练来说是一个里程碑</li>
+<li><strong>核心创新</strong>：
+<ul>
+<li>可自动适应任意语言的数据处理流水线（无需为每种语言手写规则）</li>
+<li>基于重复计数和质量信号的数据重平衡策略</li>
+<li>在 9 种语言上进行了完整的消融实验验证</li>
+</ul>
+</li>
+<li><strong>许可</strong>：ODC-By（开放数据许可），可自由用于训练</li>
+</ul>
+<p><strong>为什么这很重要？</strong> 传统做法是每个团队各自从 CC 出发，重复做提取→清洗→去重→质量过滤的全套流程。FineWeb2 这类数据集将社区的最佳实践固化为可直接使用的高质量数据，大幅降低了预训练数据工程的门槛——尤其对于缺乏大规模数据处理基础设施的团队。</p>
+<p><strong>需要注意的是</strong>：使用这类第三方清洗数据集意味着你的数据处理依赖于别人的质量判断。建议在使用时仍然进行采样抽检，确认其质量标准与你的需求一致。</p>
+<hr>
+<h2 id="23-多语言数据的特殊挑战">2.3 多语言数据的特殊挑战</h2>
+<h3 id="中文数据源的现状">中文数据源的现状</h3>
+<p>中文预训练数据面临的挑战比英文更严峻：</p>
+<p><strong>量的挑战</strong>：</p>
+<ul>
+<li>CC 中的中文数据约占 10-15%，远少于英文</li>
+<li>经过质量过滤后，可用的高质量中文数据可能只有 1-3T token</li>
+<li>中文维基百科的规模远小于英文版（约 130 万 vs 690 万篇文章）</li>
+<li>中文高质量书籍的数字化程度较低</li>
+</ul>
+<p><strong>质的挑战</strong>：</p>
+<ul>
+<li>中文互联网的 SEO 垃圾和营销内容比例较高</li>
+<li>“自媒体”时代大量标题党、低质量内容</li>
+<li>2023 年后 AI 生成的中文内容急剧增加</li>
+<li>中文简体/繁体的处理需要额外关注</li>
+</ul>
+<p><strong>主要中文数据源</strong>：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">来源</th><th align="center">估计量级</th><th align="center">质量</th><th align="left">特点</th></tr></thead><tbody><tr><td align="left">CC 中文部分</td><td align="center">5-10T tokens</td><td align="center">中</td><td align="left">量最大但质量参差</td></tr><tr><td align="left">中文维基百科</td><td align="center">~15 亿 tokens</td><td align="center">高</td><td align="left">量少但质量好</td></tr><tr><td align="left">中文书籍（古典）</td><td align="center">~50 亿 tokens</td><td align="center">高</td><td align="left">文言文为主</td></tr><tr><td align="left">百度百科</td><td align="center">~100 亿 tokens</td><td align="center">中-高</td><td align="left">质量不如维基但量更大</td></tr><tr><td align="left">知乎</td><td align="center">~200 亿 tokens</td><td align="center">中-高</td><td align="left">问答格式，需要授权</td></tr><tr><td align="left">中文新闻</td><td align="center">~500 亿 tokens</td><td align="center">中</td><td align="left">时效性强，模板化严重</td></tr><tr><td align="left">中文论坛/社区</td><td align="center">~1T tokens</td><td align="center">低-中</td><td align="left">多样性好但噪声大</td></tr><tr><td align="left"><a href="https://arxiv.org/abs/2410.18505">CCI3.0-HQ</a>（智源）</td><td align="center">~2500 亿 tokens</td><td align="center">高</td><td align="left">专用质量分类器筛选的中文互联网数据，总量 500GB</td></tr><tr><td align="left">Chinese FineWeb Edu（OpenCSG/清华）</td><td align="center">—</td><td align="center">高</td><td align="left">面向教育领域的高质量中文语料</td></tr></tbody></table>
+<p>后两个数据源是近年来中文预训练领域最重要的开源贡献。特别是 CCI3.0-HQ，其核心创新是训练了专用的中文质量分类器，在区分高质量中文内容方面显著优于通用开源分类器，为中文数据质量过滤提供了新的基准线。</p>
+<h3 id="低资源语言的数据增强策略">低资源语言的数据增强策略</h3>
+<p>对于训练数据极其稀少的语言（如很多东南亚语言、非洲语言），常见的增强策略：</p>
+<ol>
+<li><strong>翻译增强</strong>：将高质量英文数据翻译为目标语言。但机器翻译的质量限制了这个方法的上限。</li>
+<li><strong>跨语言迁移</strong>：利用相关语言的数据。如用普通话数据辅助粤语、用印尼语数据辅助马来语。</li>
+<li><strong>调整采样权重</strong>：在多语言训练中，对低资源语言做过采样（oversampling），使其在训练中被看到更多次。</li>
+<li><strong>利用开源多语言清洗数据集</strong>：如 FineWeb2 覆盖了 1000+ 种语言的高质量清洗数据，可以直接获取低资源语言的预训练语料，避免从零开始构建数据处理流水线。</li>
+</ol>
+<h3 id="跨语言平衡的策略差异">跨语言平衡的策略差异</h3>
+<p>不同模型在多语言策略上的选择差异很大，反映了不同的产品定位：</p>
+<p><strong>Llama 3（Meta）</strong>：英文为主（~85%），多语言支持有限</p>
+<ul>
+<li>定位：主要服务英文市场</li>
+<li>结果：英文能力极强，中文能力弱</li>
+</ul>
+<p><strong>Qwen 2.5（阿里）</strong>：中英平衡（各~40%），覆盖 29+ 种语言</p>
+<ul>
+<li>定位：全球化的多语言模型</li>
+<li>结果：中英文能力均衡</li>
+</ul>
+<p><strong>DeepSeek V3</strong>：代码和数学占比高，中英文均衡</p>
+<ul>
+<li>定位：技术能力导向</li>
+<li>结果：代码/数学能力突出，中英文均可</li>
+</ul>
+<p>这些差异不是技术能力的差异，而是<strong>产品策略和数据策略的差异</strong>。</p>
+<hr>
+<h2 id="24-数据许可与法律合规">2.4 数据许可与法律合规</h2>
+<p>这是一个不能回避的话题。训练数据的法律合规性正在成为大模型公司面临的最大风险之一。</p>
+<h3 id="当前的法律环境">当前的法律环境</h3>
+<p>AI 训练数据的法律环境在 2025-2026 年发生了剧烈变化，多起诉讼产生了实质性裁决，正在塑造行业的法律框架。</p>
+<p><strong>关键诉讼与裁决</strong>：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">案件</th><th align="left">状态</th><th align="left">关键法律原则</th></tr></thead><tbody><tr><td align="left"><strong>Bartz v. Anthropic</strong></td><td align="left">15 亿美元和解（2026）</td><td align="left">训练数据使用可能属合理使用，但<strong>存储盗版副本</strong>构成侵权</td></tr><tr><td align="left"><strong>Kadrey v. Meta</strong></td><td align="left">部分裁定（2025）</td><td align="left">即使底层数据来源非法，LLM 训练本身仍可能属合理使用（但分发行为不受保护）</td></tr><tr><td align="left"><strong>NYT vs OpenAI</strong></td><td align="left">多区合并诉讼，进入取证阶段</td><td align="left">法院要求 OpenAI 交出数千万条输出日志，预计 2026 年底或 2027 年初出判决</td></tr><tr><td align="left"><strong>Thaler v. Perlmutter</strong></td><td align="left">美国最高法院拒绝审理（2025）</td><td align="left">确认纯 AI 生成作品不受版权保护</td></tr></tbody></table>
+<p><strong>正在形成的法律共识</strong>：</p>
+<ul>
+<li><strong>“训练 vs 存储”的区分</strong>正在成为核心法律原则——使用数据训练模型（转化性使用）和直接存储/复制数据是不同的法律行为</li>
+<li>合理使用分析中，<strong>“市场损害”因素的权重在上升</strong>——如果模型输出直接替代了原作品的市场，侵权风险显著增加</li>
+<li><strong>许可交易模式正在兴起</strong>：越来越多的内容方选择与 AI 公司签署授权协议，而非走诉讼路线</li>
+</ul>
+<p><strong>监管框架</strong>：</p>
+<p><strong>欧盟 AI Act（2024 生效）</strong>：要求 AI 系统提供者披露训练数据的来源和使用的版权作品摘要。对”通用目的 AI 模型”有特别的数据透明度要求。</p>
+<p><strong>中国《生成式人工智能服务管理暂行办法》（2023）</strong>：要求训练数据合法、不侵犯知识产权、不含违法违规内容。</p>
+<p><strong>对从业者的实操建议</strong>：</p>
+<ul>
+<li>维护详细的数据溯源记录——一旦涉诉，“你知不知道数据来自哪里”将成为关键问题</li>
+<li>避免直接存储受版权保护的原始文本副本（Bartz 案的教训）</li>
+<li>关注训练数据是否会导致模型输出”实质性相似”的原作品片段</li>
+<li>在有条件的情况下，优先使用已获得许可或明确开源的数据</li>
+</ul>
+<h3 id="robotstxt-的实际约束">Robots.txt 的实际约束</h3>
+<p>网站通过 <code>robots.txt</code> 文件声明哪些内容不允许被爬虫访问。但：</p>
+<ul>
+<li>CC 在爬取时并不总是严格遵守 <code>robots.txt</code>（虽然它声称会）</li>
+<li><code>robots.txt</code> 的法律约束力在不同司法管辖区不同</li>
+<li>很多网站在 AI 时代之后才更新了 <code>robots.txt</code> 来排除 AI 训练爬虫——但历史快照中的数据已经存在</li>
+</ul>
+<h3 id="合规策略">合规策略</h3>
+<ol>
+<li><strong>数据溯源（Data Provenance）</strong>：记录每条训练数据的来源 URL、爬取时间、许可证信息</li>
+<li><strong>Opt-out 机制</strong>：提供渠道让内容所有者要求移除其数据</li>
+<li><strong>许可证过滤</strong>：对于代码数据，只使用宽松许可证（MIT、Apache 2.0、BSD）的内容</li>
+<li><strong>去标识化</strong>：移除可识别的个人信息和版权标记</li>
+<li><strong>审计日志</strong>：保留完整的数据处理日志，以备合规审查</li>
+</ol>
+<h3 id="合规数据集的实践common-corpus">合规数据集的实践：Common Corpus</h3>
+<p>“合规”是否意味着”只能用很少的数据”？<a href="https://openreview.net/forum?id=0wSlFpMsGb">Common Corpus</a>（ICLR 2026 Oral）给出了有力的反例。</p>
+<p>Pleias 联合多方发布的 Common Corpus 包含 <strong>2.27 万亿 token</strong>，是目前最大的完全合规开源文本数据集。它的所有内容均来自公有领域或宽松许可（Apache 2.0），数据来源覆盖六大类：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th align="left">来源类别</th><th align="left">内容</th><th align="left">示例</th></tr></thead><tbody><tr><td align="left"><strong>OpenCulture</strong></td><td align="left">公版书籍、报纸</td><td align="left">Project Gutenberg、数字化历史报纸</td></tr><tr><td align="left"><strong>OpenGovernment</strong></td><td align="left">法律、金融等政府文档</td><td align="left">法律文书、监管文件</td></tr><tr><td align="left"><strong>OpenSource</strong></td><td align="left">高质量开源代码</td><td align="left">GitHub 宽松许可项目</td></tr><tr><td align="left"><strong>OpenScience</strong></td><td align="left">开放获取学术论文</td><td align="left">PubMed OA、arXiv</td></tr><tr><td align="left"><strong>OpenWeb</strong></td><td align="left">开放知识平台</td><td align="left">维基百科、StackExchange</td></tr><tr><td align="left"><strong>OpenSemantic</strong></td><td align="left">语义结构化数据</td><td align="left">Wikidata</td></tr></tbody></table>
+<p>Common Corpus 当前覆盖 33 种语言（每种超过 10 亿 token），第三版计划扩展到中文、日文、韩文和阿拉伯语。它证明了：通过系统化地整合公有领域和宽松许可的数据源，完全可以在严格合规的前提下构建万亿级的预训练数据集。</p>
+<hr>
+<h2 id="25-新兴的数据来源与挑战">2.5 新兴的数据来源与挑战</h2>
+<h3 id="ai-生成内容的污染">AI 生成内容的污染</h3>
+<p>自 ChatGPT 发布（2022 年末）以来，互联网上的 AI 生成内容急剧增加。这对未来的预训练数据构成了一个严峻的挑战：</p>
+<ul>
+<li>如果你用 2024 年后的 CC 快照训练模型，数据中可能包含大量 GPT/Claude/Gemini 生成的内容</li>
+<li>用 AI 生成的内容训练 AI，可能导致”模型坍缩”（model collapse）——分布逐渐退化</li>
+</ul>
+<p><strong>实证数据</strong>：<a href="https://arxiv.org/abs/2601.12946">He et al. (2026)</a> 在医疗领域进行了大规模实验（80 万+合成数据点），量化了 AI 数据污染的实际危害：</p>
+<ul>
+<li>关键病理特征被”平均化”——罕见发现逐渐消失</li>
+<li>人口统计特征偏向中年男性（多样性丢失）</li>
+<li>虚假安抚率从约 13% 激增至 <strong>40%</strong></li>
+<li>仅经过<strong>两代训练</strong>，AI 文档即变得在临床上无用</li>
+</ul>
+<p>虽然这是医疗领域的实验，但其揭示的退化机制（多样性丢失、分布向”平均”坍缩）对通用文本场景同样具有警示意义。</p>
+<p><strong>应对策略</strong>：</p>
+<ul>
+<li>使用 2023 年之前的 CC 快照可以避免大部分 AI 生成内容</li>
+<li><strong>真实数据 + 质量感知过滤的组合</strong>是目前最有效的缓解方案——单纯增加合成数据量无法防止模型退化（He et al. 2026）</li>
+<li>AI 内容检测器的进展：<a href="https://arxiv.org/abs/2603.18750">Buttaro &#x26; Amerini (2026)</a> 的比较研究表明，监督学习检测器（如基于 Transformer 的分类器）在跨语言和跨领域场景下表现优于商业工具（ZeroGPT、GPTZero 等），展示出更好的稳定性。但大规模应用仍面临计算成本和误判率的挑战</li>
+<li>在混合使用时控制合成数据的比例，并监控训练过程中的多样性指标</li>
+</ul>
+<h3 id="多模态数据">多模态数据</h3>
+<p>虽然本书聚焦于文本数据，但需要指出：多模态数据（图文对、视频字幕等）正在成为预训练数据的重要补充。</p>
+<ul>
+<li><strong>图文对</strong>：LAION-5B、DataComp 等数据集提供了数十亿的图文对</li>
+<li><strong>视频字幕</strong>：YouTube 等平台的视频字幕提供了大量的口语化文本</li>
+<li><strong>科学图表</strong>：论文中的图表+描述是训练科学理解能力的宝贵数据</li>
+</ul>
+<hr>
+<h2 id="动手环节数据来源侦察与质量初判">动手环节：数据来源侦察与质量初判</h2>
+<p><strong>目标</strong>：像一个数据工程师一样，对不同来源的文本数据进行初步的质量评估和特征分析。</p>
+<h3 id="练习-1模拟-common-crawl-快照质量分析">练习 1：模拟 Common Crawl 快照质量分析</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">模拟分析不同年份 CC 快照的数据质量差异</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">真实场景中你会用 WAT 元数据做类似分析</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> collections </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Counter</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> simulate_cc_snapshot</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(year: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, n_pages: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">list</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """模拟不同年份 CC 快照的内容分布"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    content_types </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "高质量文章"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_decay"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.005</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "普通网页"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:   {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.35</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_decay"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.01</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "SEO垃圾"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:    {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_growth"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.02</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "AI生成内容"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"start_year"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2023</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_growth"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.08</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "导航/模板页"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.20</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_decay"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "论坛/社交"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:   {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_decay"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.005</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "JS渲染空页"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:  {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.05</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_growth"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.015</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    pages </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> _ </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n_pages):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        weights </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ctype, config </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> content_types.items():</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            base </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> config[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"base_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            delta </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (year </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2018</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "yearly_decay"</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> config:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, base </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> config[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_decay"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> delta)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            elif</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "yearly_growth"</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> config:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                start </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> config.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"start_year"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2018</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> year </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> start:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> base </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> config[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"yearly_growth"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (year </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> start)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                    ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> base</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">                ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> base</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            weights.append(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, ratio))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 归一化</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        total </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> sum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(weights)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        weights </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [w </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> total </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> w </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> weights]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ctype </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random.choices(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">list</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(content_types.keys()), </span><span style="color:#E36209;--shiki-dark:#FFAB70">weights</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">weights, </span><span style="color:#E36209;--shiki-dark:#FFAB70">k</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        pages.append(ctype)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> pages</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 分析不同年份</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'年份'</span><span style="color:#D73A49;--shiki-dark:#F97583">:&#x3C;6</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'高质量%'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>8</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'SEO垃圾%'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>9</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'AI生成%'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>8</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'JS空页%'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>8</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"-"</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 45</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> year </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#005CC5;--shiki-dark:#79B8FF">2018</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2020</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2022</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2024</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2026</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    pages </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> simulate_cc_snapshot(year)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    counts </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Counter(pages)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    total </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(pages)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">year</span><span style="color:#D73A49;--shiki-dark:#F97583">:&#x3C;6</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">counts.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'高质量文章'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8">total</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#D73A49;--shiki-dark:#F97583">:>7.1f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">% "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">counts.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'SEO垃圾'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8">total</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#D73A49;--shiki-dark:#F97583">:>8.1f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">% "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">counts.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'AI生成内容'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8">total</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#D73A49;--shiki-dark:#F97583">:>7.1f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">% "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">counts.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'JS渲染空页'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8">total</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#D73A49;--shiki-dark:#F97583">:>7.1f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">%"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 思考题：基于以上分析，如果你要构建一个中文预训练数据集，</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 你会选择哪些年份的 CC 快照？为什么？</span></span></code></pre>
+<h3 id="练习-2数据来源信息密度对比">练习 2：数据来源信息密度对比</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">对比不同来源文本的信息密度</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">用 type-token ratio (TTR) 和独特 n-gram 比例作为代理指标</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 模拟不同来源的文本样本</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">source_samples </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "维基百科"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"光合作用是植物利用光能将二氧化碳和水转化为有机物和氧气的过程。"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "光合作用主要发生在叶绿体中，分为光反应和暗反应两个阶段。"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "光反应在类囊体膜上进行，将光能转化为化学能。"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "新闻网站"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"据报道，该公司今日宣布了最新的季度财报。财报显示，"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "该公司营收同比增长百分之二十。该公司表示，未来将继续"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "加大研发投入，提升核心竞争力。"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "论坛帖子"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"楼主说得对啊，我也觉得是这样的。顶一下。"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "同意楼上的说法，确实有道理。楼主分析得很好。"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "前排支持，顶顶顶。"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "SEO垃圾"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:  </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"最好的减肥方法减肥秘诀如何快速减肥减肥食谱"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "减肥运动减肥药减肥茶减肥方法大全最有效的减肥方法"</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "快速减肥秘诀减肥食谱推荐"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> analyze_info_density</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(text: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    chars </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> list</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(text)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    unique_chars </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(chars)</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # Type-Token Ratio</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    ttr </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(unique_chars) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(chars), </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # Bigram 多样性</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    bigrams </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [(chars[i], chars[i</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]) </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(chars)</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    bigram_diversity </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(bigrams)) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(bigrams), </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 重复模式检测</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> collections </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Counter</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    char_freq </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Counter(chars)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    max_freq </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(char_freq.values()) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(chars), </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "TTR"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(ttr, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "bigram多样性"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(bigram_diversity, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "最高字符频率"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(max_freq, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'来源'</span><span style="color:#D73A49;--shiki-dark:#F97583">:&#x3C;10</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'TTR'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>6</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'bigram多样性'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>12</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'最高字符频率'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>12</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"-"</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 45</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> source, text </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> source_samples.items():</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    metrics </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> analyze_info_density(text)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">source</span><span style="color:#D73A49;--shiki-dark:#F97583">:&#x3C;10</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#24292E;--shiki-dark:#E1E4E8">metrics[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'TTR'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:>6.3f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#24292E;--shiki-dark:#E1E4E8">metrics[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'bigram多样性'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:>12.3f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">metrics[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'最高字符频率'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:>12.3f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 思考题：TTR 和 bigram 多样性可以作为质量过滤的指标吗？</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 它们各自的局限性是什么？</span></span></code></pre>
+<h3 id="练习-3设计一个中文数据源采集清单">练习 3：设计一个中文数据源采集清单</h3>
+<p>为一个假想的 7B 中文通用模型，设计一份数据来源清单（参考本章 2.3 节的中文数据源表格）：</p>
+<ul>
+<li>列出至少 8 个数据来源</li>
+<li>估算每个来源的 token 量级</li>
+<li>评估质量等级（高/中/低）</li>
+<li>标注版权风险等级</li>
+<li>计算：如果目标是 3T token 的中文预训练数据，你的来源是否足够？缺口有多大？</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>本章要点回顾</strong></p>
+<ol>
+<li><strong>Common Crawl 是预训练数据的基石</strong>，但不同快照质量差异大——不要盲目使用最新快照（CC-MAIN-2026-12 约 19.6 亿去重 URL，AI 内容占比持续攀升）</li>
+<li><strong>高质量数据源是”质”的保障</strong>：维基百科（知识密度）、书籍（长文本连贯性）、学术论文（专业知识）、代码（推理能力）、问答社区（交互格式）</li>
+<li>**开源清洗数据集（如 FineWeb2）**正在成为新的数据获取范式——降低数据工程门槛，尤其利好低资源语言</li>
+<li><strong>中文数据面临更严峻的量和质的双重挑战</strong>——CCI3.0-HQ、Chinese FineWeb Edu 等开源数据集正在改善这一局面</li>
+<li><strong>多语言配比反映产品策略</strong>——Llama 英文为主、Qwen 中英均衡、DeepSeek 技术导向</li>
+<li><strong>法律合规格局在 2025-2026 年发生剧变</strong>——“训练 vs 存储”的区分成为核心法律原则，Common Corpus 证明了合规与规模可以兼得</li>
+<li><strong>AI 生成内容的污染有了量化证据</strong>——两代训练即可导致模型退化，“真实数据 + 质量感知过滤”是最有效的缓解方案</li>
+</ol>
+</blockquote>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/data-engineering/de-ch01-why-data-matters" class="group card p-4 hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.1</span> 为什么数据是大模型的灵魂 </p> </a> <a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="group card p-4 text-right hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.3</span> 文本提取与清洗——魔鬼藏在细节里 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#21-common-crawl大模型的基石" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 2.1 Common Crawl：大模型的基石 </a><a href="#cc-是什么" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> CC 是什么 </a><a href="#cc-的数据格式" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> CC 的数据格式 </a><a href="#cc-快照之间的质量差异" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> CC 快照之间的质量差异 </a><a href="#cc-的固有偏差" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> CC 的固有偏差 </a><a href="#22-高质量语料源" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 2.2 高质量语料源 </a><a href="#维基百科wikipedia" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 维基百科（Wikipedia） </a><a href="#书籍语料" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 书籍语料 </a><a href="#学术论文" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 学术论文 </a><a href="#代码数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 代码数据 </a><a href="#百科问答类" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 百科/问答类 </a><a href="#开源清洗数据集一种新的数据获取范式" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 开源清洗数据集：一种新的数据获取范式 </a><a href="#23-多语言数据的特殊挑战" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 2.3 多语言数据的特殊挑战 </a><a href="#中文数据源的现状" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 中文数据源的现状 </a><a href="#低资源语言的数据增强策略" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 低资源语言的数据增强策略 </a><a href="#跨语言平衡的策略差异" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 跨语言平衡的策略差异 </a><a href="#24-数据许可与法律合规" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 2.4 数据许可与法律合规 </a><a href="#当前的法律环境" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 当前的法律环境 </a><a href="#robotstxt-的实际约束" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> Robots.txt 的实际约束 </a><a href="#合规策略" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 合规策略 </a><a href="#合规数据集的实践common-corpus" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 合规数据集的实践：Common Corpus </a><a href="#25-新兴的数据来源与挑战" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 2.5 新兴的数据来源与挑战 </a><a href="#ai-生成内容的污染" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> AI 生成内容的污染 </a><a href="#多模态数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 多模态数据 </a><a href="#动手环节数据来源侦察与质量初判" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 动手环节：数据来源侦察与质量初判 </a><a href="#练习-1模拟-common-crawl-快照质量分析" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 1：模拟 Common Crawl 快照质量分析 </a><a href="#练习-2数据来源信息密度对比" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 2：数据来源信息密度对比 </a><a href="#练习-3设计一个中文数据源采集清单" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 3：设计一个中文数据源采集清单 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

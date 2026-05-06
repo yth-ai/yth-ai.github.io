@@ -1,0 +1,1011 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch12-sft-construction/"><!-- Primary Meta Tags --><title>SFT 数据的构造方法 | 大模型数据工程 | Maxwell</title><meta name="title" content="SFT 数据的构造方法 | 大模型数据工程 | Maxwell"><meta name="description" content="人工标注、自动合成、拒绝采样与数据混合配比"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch12-sft-construction/"><meta property="og:title" content="SFT 数据的构造方法 | 大模型数据工程 | Maxwell"><meta property="og:description" content="人工标注、自动合成、拒绝采样与数据混合配比"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch12-sft-construction/"><meta name="twitter:title" content="SFT 数据的构造方法 | 大模型数据工程 | Maxwell"><meta name="twitter:description" content="人工标注、自动合成、拒绝采样与数据混合配比"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/data-engineering" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-emerald-500/25"> 数 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"> 大模型数据工程 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第零部分：引言 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">为什么数据是大模型的灵魂</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：预训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">数据来源——互联网的宝藏与垃圾</span> </a> </li><li> <a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">文本提取与清洗——魔鬼藏在细节里</span> </a> </li><li> <a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">去重——被低估的关键步骤</span> </a> </li><li> <a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">质量过滤——从规则到模型</span> </a> </li><li> <a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">数据配比——预训练的隐藏变量</span> </a> </li><li> <a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">预训练数据的评估与迭代</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：中训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">中训练概论——为什么需要这个阶段</span> </a> </li><li> <a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">中训练数据的构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">中训练的灾难性遗忘与稳定性</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：SFT 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">SFT 数据的本质——表面对齐假说</span> </a> </li><li> <a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">SFT 数据的构造方法</span> </a> </li><li> <a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">SFT 数据质量的精细控制</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：RL 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">偏好数据的本质与构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">奖励模型的数据需求</span> </a> </li><li> <a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">推理模型的 RL 数据——新范式</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：横切主题 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">17.</span> <span class="line-clamp-1">合成数据——银弹还是定时炸弹？</span> </a> </li><li> <a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">18.</span> <span class="line-clamp-1">数据标注的方法论</span> </a> </li><li> <a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">19.</span> <span class="line-clamp-1">数据安全、隐私与伦理</span> </a> </li><li> <a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">20.</span> <span class="line-clamp-1">数据工程的基础设施与工具链</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第六部分：实战与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">21.</span> <span class="line-clamp-1">端到端案例——从零构建一个 7B 模型的数据</span> </a> </li><li> <a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">22.</span> <span class="line-clamp-1">数据工程的未来</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 附录 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">100.</span> <span class="line-clamp-1">附录</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 12 章 / 共 23 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 为什么数据是大模型的灵魂 </a><a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> 数据来源——互联网的宝藏与垃圾 </a><a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> 文本提取与清洗——魔鬼藏在细节里 </a><a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 去重——被低估的关键步骤 </a><a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> 质量过滤——从规则到模型 </a><a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 数据配比——预训练的隐藏变量 </a><a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 预训练数据的评估与迭代 </a><a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 中训练概论——为什么需要这个阶段 </a><a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 中训练数据的构造 </a><a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> 中训练的灾难性遗忘与稳定性 </a><a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> SFT 数据的本质——表面对齐假说 </a><a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">12.</span> SFT 数据的构造方法 </a><a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> SFT 数据质量的精细控制 </a><a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 偏好数据的本质与构造 </a><a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 奖励模型的数据需求 </a><a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> 推理模型的 RL 数据——新范式 </a><a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">17.</span> 合成数据——银弹还是定时炸弹？ </a><a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">18.</span> 数据标注的方法论 </a><a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">19.</span> 数据安全、隐私与伦理 </a><a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">20.</span> 数据工程的基础设施与工具链 </a><a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">21.</span> 端到端案例——从零构建一个 7B 模型的数据 </a><a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">22.</span> 数据工程的未来 </a><a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">100.</span> 附录 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">书架</a> <span>/</span> <a href="/books/data-engineering" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">大模型数据工程</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第三部分：SFT 数据</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 12 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"> 第 12 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第三部分：SFT 数据</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> SFT 数据的构造方法 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">人工标注、自动合成、拒绝采样与数据混合配比</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-11T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年4月11日 </time> <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> SFT构造 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 合成数据 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 拒绝采样 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 标注 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <blockquote>
+<p><em>“给模型写 SFT 数据，就像给一个天才写演讲稿——他什么都懂，但你得告诉他什么时候该幽默、什么时候该严肃。“</em></p>
+</blockquote>
+<hr>
+<h2 id="121-人工标注">12.1 人工标注</h2>
+<h3 id="种子数据的重要性">种子数据的重要性</h3>
+<p>SFT 数据构造的第一步不是”大规模标注”，而是<strong>精心设计 100-500 条种子数据</strong>。</p>
+<p>种子数据的作用：</p>
+<ol>
+<li><strong>定义标准</strong>：什么样的回复是”好的”</li>
+<li><strong>指导风格</strong>：模型应该用什么语气和格式</li>
+<li><strong>覆盖核心场景</strong>：最重要的任务类型都有范例</li>
+</ol>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">种子数据设计框架</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">SEED_DATA_TEMPLATE</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "task_categories"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 每个类别至少 5-10 条种子数据</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "category"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"知识问答"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "count"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">20</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "difficulty_distribution"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"easy"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"hard"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "requirements"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "回答必须结构化（使用标题和列表）"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "涉及不确定的知识点时要说明"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "适当给出参考来源"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "category"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"代码生成"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "count"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">30</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "difficulty_distribution"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"easy"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"hard"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "requirements"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "代码必须包含注释"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "给出运行示例"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "说明时间/空间复杂度（如适用）"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "category"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"创意写作"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "count"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "difficulty_distribution"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"easy"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"hard"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "requirements"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "风格多样化"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "避免陈词滥调"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "根据用户要求调整语气"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "category"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"数学推理"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "count"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">20</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "difficulty_distribution"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"easy"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"hard"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "requirements"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "必须展示完整推理步骤"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "关键步骤要有解释"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "最终答案明确标出"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "category"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"拒绝与安全"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "count"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "requirements"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "有害请求要明确但礼貌地拒绝"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "说明拒绝的原因"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "如可能，提供替代建议"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<h3 id="标注指南的撰写">标注指南的撰写</h3>
+<p>标注指南（Annotation Guidelines）是 SFT 数据质量的基石。一份好的标注指南应该包含：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>标注指南结构（模板）：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>第 1 部分：总体原则</span></span>
+<span class="line"><span>  - 回答的核心价值观（有帮助、准确、无害）</span></span>
+<span class="line"><span>  - 回答的风格要求（专业但友好）</span></span>
+<span class="line"><span>  - 格式规范（何时用 markdown、何时用纯文本）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>第 2 部分：任务类型指南</span></span>
+<span class="line"><span>  - 知识问答：如何组织回答结构</span></span>
+<span class="line"><span>  - 代码：代码规范、注释要求、测试用例</span></span>
+<span class="line"><span>  - 创作：创意自由度、长度建议</span></span>
+<span class="line"><span>  - 推理：步骤展示要求</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>第 3 部分：质量标准</span></span>
+<span class="line"><span>  - 评分标准（1-5 分的定义）</span></span>
+<span class="line"><span>  - 好坏样本对比（至少 20 组）</span></span>
+<span class="line"><span>  - 常见错误清单</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>第 4 部分：边界情况处理</span></span>
+<span class="line"><span>  - 不确定时怎么办</span></span>
+<span class="line"><span>  - 主观问题如何回答</span></span>
+<span class="line"><span>  - 安全敏感话题的处理</span></span>
+<span class="line"><span>  - 多语言混合的处理</span></span></code></pre>
+<h3 id="标注一致性的保证">标注一致性的保证</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">标注一致性评估</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> typing </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> List, Dict</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> numpy </span><span style="color:#D73A49;--shiki-dark:#F97583">as</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> compute_inter_annotator_agreement</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    annotations: Dict[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, List[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]],  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># {annotator_name: [ratings]}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    method: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "cohens_kappa"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    计算标注员间一致性</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    annotations: 每个标注员对同一批样本的评分</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    annotators </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> list</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(annotations.keys())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> method </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "cohens_kappa"</span><span style="color:#D73A49;--shiki-dark:#F97583"> and</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(annotators) </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ratings_a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np.array(annotations[annotators[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ratings_b </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np.array(annotations[annotators[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 计算观察到的一致率</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        observed_agreement </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np.mean(ratings_a </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ratings_b)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 计算期望的偶然一致率</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        categories </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(ratings_a) </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(ratings_b)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        expected_agreement </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> cat </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> categories:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            p_a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np.mean(ratings_a </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> cat)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            p_b </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np.mean(ratings_b </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> cat)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            expected_agreement </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> p_a </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> p_b</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # Cohen's Kappa</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        kappa </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (observed_agreement </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> expected_agreement) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#D73A49;--shiki-dark:#F97583"> -</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> expected_agreement)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        interpretation </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "几乎完全一致"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> kappa </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.80</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "高度一致"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> kappa </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.60</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "中等一致"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> kappa </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.40</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "一致性不足"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> kappa </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.20</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "几乎没有一致性"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        )</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "kappa"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(kappa, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "observed_agreement"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(observed_agreement, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "interpretation"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: interpretation,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "sample_size"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(ratings_a),</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"error"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"method not implemented"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<p><strong>一致性不达标时的处理流程：</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Kappa &#x3C; 0.4（一致性不足）</span></span>
+<span class="line"><span>  → 暂停标注</span></span>
+<span class="line"><span>  → 分析分歧点：哪些类型的样本分歧最大？</span></span>
+<span class="line"><span>  → 修改标注指南，增加边界情况的说明</span></span>
+<span class="line"><span>  → 举办校准会议（calibration session）</span></span>
+<span class="line"><span>  → 重新标注试点样本</span></span>
+<span class="line"><span>  → Kappa > 0.6 后才能继续正式标注</span></span></code></pre>
+<h3 id="llm-辅助标注从纯人工到人机协同">LLM 辅助标注：从纯人工到人机协同</h3>
+<p>纯人工标注质量高但成本也高——标注一条高质量 SFT 数据的时间可能在 15-60 分钟。随着 LLM 能力的提升，一个自然的问题是：能否让 LLM 承担部分标注工作？</p>
+<p>直接使用 LLM 标注存在质量风险。<a href="https://openreview.net/forum?id=V1FlwrsseI">ACT（Annotation with Critical Thinking）</a>（NeurIPS 2025）的实验表明，纯 LLM 标注数据训练会导致最高 10.15% 的准确率下降。ACT 提出的解决方案是让 LLM 同时担任<strong>标注员和审查员</strong>——先标注，再批判性审查自己的标注，识别并修正潜在错误。这一”双角色”管线将性能差距缩小到不到 2%。</p>
+<p>一个可行的人机协同标注流程：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>阶段 1：人工标注种子数据（100-500 条）</span></span>
+<span class="line"><span>  → 建立质量标准和标注规范</span></span>
+<span class="line"><span>  → 这批数据是"标准答案"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>阶段 2：LLM + ACT 管线批量生成</span></span>
+<span class="line"><span>  → LLM 按标注指南生成回复</span></span>
+<span class="line"><span>  → 同一 LLM 或更强模型进行批判性审查</span></span>
+<span class="line"><span>  → 标记低置信度样本</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>阶段 3：人工抽样审核（10-20%）</span></span>
+<span class="line"><span>  → 重点检查低置信度样本</span></span>
+<span class="line"><span>  → 校正系统性偏差</span></span>
+<span class="line"><span>  → 更新标注指南</span></span></code></pre>
+<p>需要注意的是，ACT 的实验主要在多模态场景验证，文本 SFT 场景的迁移效果需要更多确认。但核心思路——“LLM 自我审查”比”LLM 直接标注”更可靠——具有普遍的指导意义。</p>
+<hr>
+<h2 id="122-自动合成synthetic-generation">12.2 自动合成（Synthetic Generation）</h2>
+<h3 id="self-instruct-范式">Self-Instruct 范式</h3>
+<p>Self-Instruct（2022）开创了用模型自身来生成 SFT 数据的范式：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Self-Instruct 流程：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  种子指令集（175 条人工编写）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  从种子集中随机采样 5 条作为示例</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  提示模型生成新指令</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  对每条新指令生成输入/输出对</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  过滤（去重、格式检查、质量筛选）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  加入指令池，循环迭代</span></span></code></pre>
+<p>传统 Self-Instruct 的一个局限是”随机采样→直接生成”的单步流程——从种子集中随机抽样示例，然后直接生成新指令，缺乏对已有指令覆盖范围的分析，导致生成的指令多样性受限。<a href="https://arxiv.org/abs/2507.23751">CoT-Self-Instruct</a>（Meta, 2025）在生成步骤前引入了一个<strong>推理与规划阶段</strong>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>CoT-Self-Instruct 升级流程：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  种子指令集</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  采样示例</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  【新增】CoT 推理：分析已有指令的特征、识别覆盖缺口</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  定向生成：填补缺口的新指令（而非随机生成）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  生成输入/输出对</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  过滤 + 迭代</span></span></code></pre>
+<p>核心思想是”先思考再出题”——让模型在生成新指令之前，先推理分析种子任务的能力维度和覆盖盲区，然后有针对性地生成填补空白的指令。实验表明，CoT-Self-Instruct 生成的数据在推理基准上达到 57.2% 的平均准确率，相比标准 Self-Instruct 的 42.7% 提升显著，说明指令生成阶段的”思考质量”直接决定了合成数据的多样性和有效性。</p>
+<h4 id="迭代合成的安全边界模型崩溃防护">迭代合成的安全边界：模型崩溃防护</h4>
+<p>Self-Instruct 的核心是<strong>迭代合成</strong>——用模型生成数据，再用这些数据训练模型（或其后继版本），再用训练后的模型生成新数据。这个闭环有一个系统性风险：<strong>模型崩溃（model collapse）</strong>——当合成数据在分布的尾部缺乏多样性时，迭代训练会导致模型逐步丧失对低频但重要模式的覆盖。</p>
+<p><a href="https://arxiv.org/abs/2510.16657">Escaping Model Collapse</a>（ICLR 2026）给出了一个重要的理论保证：<strong>通过外部验证器注入信息，合成数据迭代训练可以证明不会导致模型崩溃</strong>。关键定理的核心条件是验证器必须是”外部的”——不能由生成模型自身充当，必须引入独立的信息源（人类评审、更强的模型、或可执行验证器）。</p>
+<p>这对 Self-Instruct 的实践含义很直接：流程中的”过滤”步骤不只是质量优化——它是防止模型崩溃的数学必要条件。具体而言：</p>
+<ul>
+<li><strong>每轮迭代后应使用独立评估器</strong>验证数据质量，而非仅靠生成模型自身的去重和格式检查</li>
+<li><strong>可执行验证</strong>（代码通过测试、数学答案可验证）天然满足”外部信息注入”条件，因此代码和数学领域的迭代合成相对安全</li>
+<li><strong>开放域指令</strong>的迭代合成风险最高，建议限制迭代轮数或引入人类抽样审核</li>
+</ul>
+<h3 id="evol-instructwizardlm">Evol-Instruct（WizardLM）</h3>
+<p>Evol-Instruct 是 Self-Instruct 的重要进化，核心创新是<strong>渐进式复杂化</strong>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">Evol-Instruct 的演化策略</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">EVOLUTION_STRATEGIES</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 深度演化（增加复杂度）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "add_constraints"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请在以下指令中增加一个约束条件，使其更具挑战性：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "example"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"写一首诗 → 写一首藏头诗，首字连起来是'人工智能'"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "deepen_reasoning"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请增加推理步骤的要求，使回答需要更深入的分析：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "example"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"比较 A 和 B → 从性能、成本、可维护性三个维度比较 A 和 B，给出量化分析"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "concretize"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请将以下抽象指令具体化，增加具体的场景和参数：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "example"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"写排序算法 → 实现一个能处理百万级数据的外部排序算法"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "increase_steps"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请将以下指令扩展为一个多步骤任务：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "example"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"分析数据 → 先清洗数据，然后做 EDA，最后建模并评估"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 广度演化（增加多样性）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "topic_shift"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请创建一个类似但领域完全不同的指令：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "example"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"写 Python 排序 → 用 SQL 优化一个慢查询"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "format_change"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请改变回答的格式要求：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "example"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"解释概念（文字）→ 用表格对比来解释概念"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> evolve_instruction</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    instruction: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    strategy: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    model_api,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># LLM API</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    max_attempts: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    对一条指令进行演化</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    prompt_template </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> EVOLUTION_STRATEGIES</span><span style="color:#24292E;--shiki-dark:#E1E4E8">[strategy][</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"prompt"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    prompt </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> prompt_template.format(</span><span style="color:#E36209;--shiki-dark:#FFAB70">instruction</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> attempt </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(max_attempts):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        evolved </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> model_api.generate(prompt, </span><span style="color:#E36209;--shiki-dark:#FFAB70">temperature</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 质量检查</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(evolved) </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(instruction) </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 不能太短</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> evolved </span><span style="color:#D73A49;--shiki-dark:#F97583">!=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> instruction:  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 不能和原始一样</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> evolved</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 演化失败</span></span></code></pre>
+<h4 id="evol-instruct-的局限与下一代方法">Evol-Instruct 的局限与下一代方法</h4>
+<p>Evol-Instruct 有两个内在局限：<strong>单向合成</strong>（一次只能选择一个演化方向）和<strong>随机驱动</strong>（缺乏明确的优化目标来判断哪个方向最好）。当种子指令通过 <code>add_constraints</code> 演化后，如果效果不佳，无法回退尝试 <code>deepen_reasoning</code>——演化是不可逆的。</p>
+<p><a href="https://aclanthology.org/2025.acl-long.14/">Tree-of-Evolution</a>（ACL 2025）将指令演化从线性流程升级为<strong>树结构多路径探索</strong>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>线性 Evol-Instruct：</span></span>
+<span class="line"><span>  种子指令 → 约束 → 约束+深化 → ...（一条路走到底）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Tree-of-Evolution：</span></span>
+<span class="line"><span>  种子指令 ─┬─ 约束 ─┬─ 约束+深化 ★</span></span>
+<span class="line"><span>            │        └─ 约束+场景化</span></span>
+<span class="line"><span>            ├─ 深化 ─── 深化+多步 </span></span>
+<span class="line"><span>            └─ 场景化 ─ 场景化+约束</span></span>
+<span class="line"><span>  （★ = 优化函数选择的最优路径）</span></span></code></pre>
+<p>每个节点是一个指令变体，分支代表不同的演化方向，用目标函数（而非随机选择）评估并选择最优路径。这种方法在代码指令合成场景特别有效——因为代码有可执行验证的天然优势，可以用通过率作为优化目标。实验表明，仅用 75K 训练数据即可达到 SOTA 性能，说明结构化探索比大量随机演化更高效。</p>
+<h3 id="用强模型生成数据训练弱模型">用强模型生成数据训练弱模型</h3>
+<p>这是当前最主流的 SFT 数据生成方式：用 GPT-4 / Claude 级别的模型生成训练数据，然后用这些数据训练更小的开源模型。</p>
+<h4 id="离策略学习的内在挑战">离策略学习的内在挑战</h4>
+<p>这种方法有一个容易被忽略的理论问题。从强化学习的视角看，SFT 本质上是<strong>离策略（off-policy）学习</strong>——训练数据来自”行为策略”（GPT-4 等强模型），但优化目标是不同的”学习策略”（你的目标模型）。两者之间的分布差距越大，训练的方差越大、效果越不稳定。</p>
+<p><a href="https://arxiv.org/abs/2509.15157">Mind the Gap</a>（2025）将这一问题形式化：当行为策略和学习策略的分布差距较大时，标准 SFT 的梯度估计方差显著增加。论文提出的数据改写框架——主动将强模型生成的回复改写为更接近目标模型分布的版本——是缩小这一差距的可行方案。</p>
+<p>这一发现与 GRAPE（见 12.3 节）形成呼应：为什么”适合目标模型的数据”比”客观最优的数据”更重要？因为跨模型数据生成本身就引入了分布偏移，选择与目标模型分布匹配的回复本质上是在缓解离策略学习的方差问题。</p>
+<p><strong>实践建议</strong>：用强模型生成数据时，不应只关注 Prompt 设计来提升”绝对质量”，还应考虑生成回复与目标模型能力范围的匹配度。如果目标模型是 7B 规模，让 GPT-4 生成过于复杂的推理链可能适得其反。</p>
+<p><strong>关键细节——Prompt 设计对质量的巨大影响：</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">高质量 SFT 数据生成的 Prompt 设计</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># ❌ 差的 prompt（太简单，生成质量不可控）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">bad_prompt </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "请为以下指令生成一个高质量的回答：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># ✅ 好的 prompt（详细的质量要求）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">good_prompt </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> """你是一个专业的 AI 助手。请为以下用户指令生成一个高质量的回答。</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">用户指令：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{instruction}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">要求：</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">1. 回答必须准确、完整、有帮助</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">2. 使用清晰的结构（标题、列表、代码块等）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">3. 如果涉及代码，必须：</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">   - 包含注释</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">   - 给出完整的可运行示例</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">   - 说明关键设计决策</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">4. 如果涉及分析或推理，必须：</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">   - 展示推理过程</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">   - 考虑多个角度</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">   - 给出明确的结论</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">5. 长度：根据问题复杂度调整，简单问题简短回答，复杂问题详细展开</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">6. 如果你不确定某个事实，明确说明</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">7. 禁止编造不存在的工具、库或 API</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">请直接给出回答（不要加"好的，我来回答"之类的前缀）："""</span></span></code></pre>
+<hr>
+<h2 id="123-拒绝采样rejection-sampling">12.3 拒绝采样（Rejection Sampling）</h2>
+<h3 id="核心思路">核心思路</h3>
+<p>拒绝采样是提升 SFT 数据质量的最有效方法之一：<strong>对同一个指令生成多个回复，然后选择最好的。</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>指令 → 生成 N 个回复（通常 N=4-16）</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>对每个回复评分</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>选择得分最高的回复</span></span>
+<span class="line"><span>  ↓</span></span>
+<span class="line"><span>（指令, 最佳回复）作为训练数据</span></span></code></pre>
+<p>不过，“最好的回复”并非一个客观概念。<a href="https://arxiv.org/abs/2502.04194">GRAPE</a>（NeurIPS 2025）揭示了一个关键洞见：<strong>最佳回复不是绝对的——它取决于目标模型的预训练分布</strong>。对同一条指令的同一组候选回复，不同的基座模型有不同的最优选择。GRAPE 通过为每条指令选择与目标模型分布最匹配（而非人类评分最高）的回复，仅用 1/3 的数据和一半的训练 epoch，使 LLaMA-3.1-8B 超过 Tulu3-SFT 性能 3.5%，在平均性能上超出 4.5 倍数据量的基线 6.1%。</p>
+<p>这意味着拒绝采样的核心逻辑需要一个补充维度：除了”选最好的”，还要考虑”选最适合目标模型的”。</p>
+<h3 id="评分函数的选择">评分函数的选择</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>评分方法</th><th>优点</th><th>缺点</th><th>适用场景</th></tr></thead><tbody><tr><td>规则评分</td><td>快速、确定性</td><td>只能评表面质量</td><td>格式检查、长度控制</td></tr><tr><td>奖励模型</td><td>综合质量评估</td><td>有偏差</td><td>通用质量评分</td></tr><tr><td>LLM-as-Judge</td><td>灵活、可解释</td><td>慢、贵</td><td>复杂任务</td></tr><tr><td>自动验证</td><td>精确</td><td>只适用于可验证任务</td><td>代码、数学</td></tr><tr><td>分布匹配</td><td>模型定制化、数据高效</td><td>需要目标模型的推理成本</td><td>任何 SFT 数据选择场景</td></tr></tbody></table>
+<p>前四种方法隐含一个假设：存在一个”客观最优”的回复。分布匹配则打破这一假设——<strong>好回复是相对于目标模型而言的</strong>。这两种视角不矛盾：实践中可以先用前四种方法过滤掉明显低质量的候选，再在达标候选中用分布匹配选择最适合目标模型的回复。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">拒绝采样实现</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> typing </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> List, Tuple, Callable</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> rejection_sampling</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    instruction: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    generator,             </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 生成模型</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    scorer: Callable,      </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 评分函数</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    n_samples: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,    </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 采样数量</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    temperature: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    min_score_threshold: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 最低可接受分数</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> Tuple[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    拒绝采样生成最佳回复</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    candidates </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> _ </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n_samples):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        response </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> generator.generate(instruction, </span><span style="color:#E36209;--shiki-dark:#FFAB70">temperature</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">temperature)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> scorer(instruction, response)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        candidates.append((response, score))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 按分数排序</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    candidates.sort(</span><span style="color:#E36209;--shiki-dark:#FFAB70">key</span><span style="color:#D73A49;--shiki-dark:#F97583">=lambda</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> x: x[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#E36209;--shiki-dark:#FFAB70">reverse</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">True</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    best_response, best_score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> candidates[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> best_score </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> min_score_threshold:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, best_score  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 最佳候选也不达标</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> best_response, best_score</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> batch_rejection_sampling</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    instructions: List[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    generator,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    scorer: Callable,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    n_samples: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    temperature: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    min_score_threshold: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    批量拒绝采样</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    results </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stats </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"total"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(instructions), </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"passed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"failed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> inst </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> instructions:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        response, score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rejection_sampling(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            inst, generator, scorer,</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">            n_samples</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">n_samples,</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">            temperature</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">temperature,</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">            min_score_threshold</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">min_score_threshold,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        )</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> response </span><span style="color:#D73A49;--shiki-dark:#F97583">is</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            results.append({</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"instruction"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: inst, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"response"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: response, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score})</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            stats[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"passed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            stats[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"failed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stats[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass_rate"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stats[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"passed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(stats[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"total"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stats[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"avg_score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        sum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(r[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> results) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(results), </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    )</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"data"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: results, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"stats"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: stats}</span></span></code></pre>
+<h3 id="采样温度与数量的权衡">采样温度与数量的权衡</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>温度</th><th>多样性</th><th>最佳候选质量</th><th>推荐 N</th></tr></thead><tbody><tr><td>0.6</td><td>低</td><td>稳定但可能不够好</td><td>4-8</td></tr><tr><td>0.8</td><td>中</td><td>较好的平衡点</td><td>8-16</td></tr><tr><td>1.0</td><td>高</td><td>有机会出现出色回复</td><td>16-32</td></tr><tr><td>1.2</td><td>很高</td><td>有好有坏，需要更多采样</td><td>32+</td></tr></tbody></table>
+<h3 id="被拒绝的数据丢弃还是回收">被拒绝的数据：丢弃还是回收？</h3>
+<p>拒绝采样的 <code>min_score_threshold</code> 机制意味着不达标的候选会被完全丢弃。在传统范式中，这是理所当然的——质量不够，就不要。但 <a href="https://arxiv.org/abs/2510.23160">ENTP</a>（2025）提出了一个不同的视角：被丢弃的低质量数据中可能包含有价值的信号（任务覆盖、领域知识、推理骨架等），问题出在噪声而非内容本身。</p>
+<p>ENTP 的核心方法是<strong>符号净化 + 神经增强</strong>——先通过规则和符号操作去除回复中的噪声信息（冗余内容、格式混乱、逻辑跳跃），再将净化后的数据与高质量数据混合增强。实验表明，仅使用低质量数据经 ENTP 增强后，即可超越 13 种已有数据选择方法的表现。</p>
+<p>这一发现值得关注但需要审慎对待——该工作尚未在顶会正式发表，其结论的普适性有待更多验证。不过核心思路有实践参考价值：拒绝采样的”废品”不必直接丢弃，可以进入一个修复管线作为候选数据源，尤其在数据稀缺的领域场景下。</p>
+<hr>
+<h2 id="124-数据混合与配比">12.4 数据混合与配比</h2>
+<h3 id="任务类型配比">任务类型配比</h3>
+<p>一个通用助手模型的 SFT 数据配比参考：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>推荐配比（100K 条数据为例）：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>知识问答      : 15K (15%)</span></span>
+<span class="line"><span>代码生成/调试  : 20K (20%)  ← 代码通常需要较多样本</span></span>
+<span class="line"><span>数学推理      : 12K (12%)</span></span>
+<span class="line"><span>创意写作      : 8K  (8%)</span></span>
+<span class="line"><span>翻译/摘要     : 8K  (8%)</span></span>
+<span class="line"><span>对话/闲聊     : 10K (10%)</span></span>
+<span class="line"><span>工具调用      : 10K (10%)</span></span>
+<span class="line"><span>指令遵循      : 7K  (7%)   ← 格式约束、角色扮演等</span></span>
+<span class="line"><span>拒绝/安全     : 5K  (5%)</span></span>
+<span class="line"><span>多轮对话      : 5K  (5%)</span></span></code></pre>
+<h3 id="难度分布设计">难度分布设计</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>推荐的难度分布（倒金字塔形）：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Level 1 (简单): 30%</span></span>
+<span class="line"><span>    → 建立基础的指令遵循能力</span></span>
+<span class="line"><span>    → 让模型学会"按格式回答"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Level 2 (中等): 40%</span></span>
+<span class="line"><span>    → 主体能力训练</span></span>
+<span class="line"><span>    → 覆盖各类实际使用场景</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Level 3 (困难): 25%</span></span>
+<span class="line"><span>    → 挑战性任务，提升上限</span></span>
+<span class="line"><span>    → 多步骤推理、复杂分析</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  Level 4 (专家): 5%</span></span>
+<span class="line"><span>    → 少量极难样本</span></span>
+<span class="line"><span>    → 避免过多导致训练不稳定</span></span></code></pre>
+<blockquote>
+<p><strong>💡 反直觉发现</strong></p>
+<p>过多的难样本反而会降低模型表现。研究发现，当 Level 3+4 的比例超过 40% 时，模型在简单任务上的表现反而会退化。原因是模型学会了”过度思考”——即使简单问题也会给出冗长的分析。</p>
+</blockquote>
+<h3 id="长度分布设计">长度分布设计</h3>
+<p>SFT 数据的长度分布直接影响模型的输出长度偏好：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>如果训练数据的回复普遍很长：</span></span>
+<span class="line"><span>  → 模型倾向于给出冗长回复，即使问题很简单</span></span>
+<span class="line"><span>  </span></span>
+<span class="line"><span>如果训练数据的回复普遍很短：</span></span>
+<span class="line"><span>  → 模型回复不够详细，复杂问题回答不充分</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>推荐策略：</span></span>
+<span class="line"><span>  - 回复长度应该与问题复杂度相匹配</span></span>
+<span class="line"><span>  - 简单问题：50-200 tokens</span></span>
+<span class="line"><span>  - 中等问题：200-500 tokens</span></span>
+<span class="line"><span>  - 复杂问题：500-2000 tokens</span></span>
+<span class="line"><span>  - 不应该有统一的"目标长度"</span></span></code></pre>
+<hr>
+<h2 id="动手环节构建一个迷你-sft-数据合成流水线">动手环节：构建一个迷你 SFT 数据合成流水线</h2>
+<p><strong>目标</strong>：实现本章介绍的 Evol-Instruct + 拒绝采样的核心流程。</p>
+<h3 id="练习-1evol-instruct-指令演化">练习 1：Evol-Instruct 指令演化</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">实现 Evol-Instruct 的演化策略</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">不需要调用 LLM API，用规则模拟演化过程</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">EVOLUTION_RULES</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "add_constraint"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "description"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"增加约束条件"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "templates"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "在以下指令基础上，增加约束'</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{constraint}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n{instruction}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "constraints"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "用不超过 100 字回答"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "以表格形式呈现"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "从初学者角度解释"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "需要给出具体数字和来源"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "用类比的方式解释"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "deepen"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "description"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"增加深度"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "suffixes"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "，并深入分析其背后的原因"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "，包括常见的误区和反直觉发现"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "，给出具体的数据和案例支撑"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "，并与其他方法进行对比分析"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "add_steps"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "description"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"增加多步骤"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "templates"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "请分步骤完成以下任务：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">1. 先</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{step1}\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">2. 然后</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{step2}\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">3. 最后</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{step3}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> evolve_instruction</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(instruction: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, strategy: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """对指令进行一次演化"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    rule </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> EVOLUTION_RULES</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.get(strategy)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#D73A49;--shiki-dark:#F97583"> not</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rule:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> instruction</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> strategy </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "add_constraint"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        constraint </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random.choice(rule[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"constraints"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#D73A49;--shiki-dark:#F97583"> f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">（要求：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">constraint</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">）"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> strategy </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "deepen"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        suffix </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random.choice(rule[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"suffixes"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> instruction.rstrip(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"。？！"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> suffix</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> strategy </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "add_steps"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#D73A49;--shiki-dark:#F97583"> f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"请分步骤完成：首先理解问题，然后</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">，最后总结要点"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> instruction</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 种子指令集</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">seed_instructions </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "解释什么是 TCP 协议"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "用 Python 实现二分查找"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "对比 SQL 和 NoSQL 数据库"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "解释什么是微服务架构"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "写一个正则表达式匹配邮箱"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"=== 指令演化示例 ===</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> inst </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> seed_instructions[:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"原始: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">inst</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> strategy </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"add_constraint"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"deepen"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"add_steps"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        evolved </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> evolve_instruction(inst, strategy)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"  [</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">strategy</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">] → </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">evolved</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 批量演化</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"=== 批量演化（从 5 条种子生成 15 条）===</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">evolved_set </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> inst </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> seed_instructions:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> strategy </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"add_constraint"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"deepen"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"add_steps"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        evolved </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> evolve_instruction(inst, strategy)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        evolved_set.add(evolved)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i, inst </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> enumerate</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">sorted</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(evolved_set)[:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">i</span><span style="color:#D73A49;--shiki-dark:#F97583">:2d</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">. </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">inst</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre>
+<h3 id="练习-2模拟拒绝采样">练习 2：模拟拒绝采样</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">模拟拒绝采样流程</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">用启发式规则代替真实的评分模型</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> mock_generate</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(instruction: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, temperature: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """模拟 LLM 生成回复（用模板 + 随机变化）"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    templates </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "good"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"## 回答</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">关于「</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">」：</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"核心概念：这是一个重要的技术主题。</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"### 关键要点</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">1. 第一个要点的详细解释</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"2. 第二个要点及其应用</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">3. 第三个要点和注意事项"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "medium"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"好的，让我来解释一下。</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction.replace(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'解释'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">''</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">是一个"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"常见的概念，主要包括几个方面。首先是基本定义，"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"其次是应用场景，最后是注意事项。"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "bad"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"这个问题很好。嗯，让我想想。</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">的话，"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"就是那个意思啦，你可以去百度搜搜看。"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"好的好的！！！这个</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">instruction</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">真是太棒了！！！"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"让我来告诉你这个超级厉害的东西！！！"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 温度越高，越可能出现差的回复</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    rand </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random.random()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> temperature </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.6</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        quality </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "good"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rand </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.6</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "medium"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> temperature </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1.0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        quality </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "good"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rand </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.35</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rand </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.7</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "bad"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        quality </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "good"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rand </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.2</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rand </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.5</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "bad"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> random.choice(templates[quality])</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> score_response</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(instruction: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, response: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """启发式评分函数"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 结构加分</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "##"</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> response: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.15</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">1."</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> response </span><span style="color:#D73A49;--shiki-dark:#F97583">or</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">-"</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> response: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 长度适当加分</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 100</span><span style="color:#D73A49;--shiki-dark:#F97583"> &#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(response) </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.1</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 填充语扣分</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    fillers </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"好的"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"让我想想"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"嗯"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"啦"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"！！！"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    filler_count </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> sum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(response.count(f) </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> f </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> fillers)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    score </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> filler_count </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.05</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 空洞回复扣分</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "百度搜"</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> response </span><span style="color:#D73A49;--shiki-dark:#F97583">or</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "谷歌搜"</span><span style="color:#D73A49;--shiki-dark:#F97583"> in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> response:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        score </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.3</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">min</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, score))</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> rejection_sampling</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(instruction: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, n_samples: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """拒绝采样"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    candidates </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> _ </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n_samples):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        response </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> mock_generate(instruction, </span><span style="color:#E36209;--shiki-dark:#FFAB70">temperature</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> score_response(instruction, response)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        candidates.append({</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"response"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: response, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score})</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    candidates.sort(</span><span style="color:#E36209;--shiki-dark:#FFAB70">key</span><span style="color:#D73A49;--shiki-dark:#F97583">=lambda</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> x: x[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#E36209;--shiki-dark:#FFAB70">reverse</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">True</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    best </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> candidates[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    worst </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> candidates[</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "instruction"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: instruction,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "best_response"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: best[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"response"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">][:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">80</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "..."</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "best_score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(best[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "worst_score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(worst[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "margin"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(best[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> worst[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: best[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.6</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 批量拒绝采样</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">instructions </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "解释什么是 Docker 容器"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "用 Python 实现快速排序"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "对比 React 和 Vue 框架"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'指令'</span><span style="color:#D73A49;--shiki-dark:#F97583">:&#x3C;25</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'最佳分'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>6</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'最差分'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>6</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'Margin'</span><span style="color:#D73A49;--shiki-dark:#F97583">:>7</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'通过'</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"-"</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 55</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> inst </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> instructions:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    result </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> rejection_sampling(inst, </span><span style="color:#E36209;--shiki-dark:#FFAB70">n_samples</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    status </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "✅"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> result[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "❌"</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">inst</span><span style="color:#D73A49;--shiki-dark:#F97583">:&#x3C;25</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#24292E;--shiki-dark:#E1E4E8">result[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'best_score'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:>6.2f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">result[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'worst_score'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:>6.2f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#24292E;--shiki-dark:#E1E4E8">result[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'margin'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:>7.2f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> {</span><span style="color:#24292E;--shiki-dark:#E1E4E8">status</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre>
+<h3 id="练习-3标注指南草案">练习 3：标注指南草案</h3>
+<p>为一个中文编程助手写一份简短的 SFT 标注指南（不超过一页）。参考本章 12.1 节的标注指南模板，至少包含：</p>
+<ul>
+<li>总体原则（3 条）</li>
+<li>代码类回复的格式要求</li>
+<li>好坏样本对比（2 组）</li>
+<li>不确定时的处理原则</li>
+</ul>
+<hr>
+<blockquote>
+<p><strong>本章要点回顾</strong></p>
+<ol>
+<li><strong>种子数据先行</strong>：精心设计 100-500 条种子数据，定义质量标准</li>
+<li><strong>标注指南是基石</strong>：详细到边界情况，包含正反面示例</li>
+<li><strong>一致性 > 速度</strong>：Cohen’s Kappa 低于 0.4 时应暂停标注</li>
+<li><strong>人机协同标注</strong>：LLM + 批判性审查（ACT）可将成本降低一个数量级，性能差距控制在 2% 以内</li>
+<li><strong>指令合成需要”先思考再出题”</strong>：CoT-Self-Instruct 通过推理驱动生成，比随机采样多样性更高</li>
+<li><strong>迭代合成须防模型崩溃</strong>：外部验证器是迭代安全的数学必要条件</li>
+<li><strong>Evol-Instruct 从线性到树结构</strong>：Tree-of-Evolution 的多路径探索比单向随机演化更高效</li>
+<li><strong>跨模型数据生成是离策略学习</strong>：强模型生成的数据需匹配目标模型的能力范围</li>
+<li><strong>拒绝采样的”最佳”是相对的</strong>：GRAPE 证明与目标模型分布匹配的回复优于客观评分最高的回复</li>
+<li><strong>配比需要多维度设计</strong>：任务类型 × 难度 × 长度三个维度都需考量</li>
+</ol>
+</blockquote>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/data-engineering/de-ch11-sft-essence" class="group card p-4 hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.11</span> SFT 数据的本质——表面对齐假说 </p> </a> <a href="/books/data-engineering/de-ch13-sft-quality" class="group card p-4 text-right hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.13</span> SFT 数据质量的精细控制 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#121-人工标注" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 12.1 人工标注 </a><a href="#种子数据的重要性" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 种子数据的重要性 </a><a href="#标注指南的撰写" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 标注指南的撰写 </a><a href="#标注一致性的保证" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 标注一致性的保证 </a><a href="#llm-辅助标注从纯人工到人机协同" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> LLM 辅助标注：从纯人工到人机协同 </a><a href="#122-自动合成synthetic-generation" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 12.2 自动合成（Synthetic Generation） </a><a href="#self-instruct-范式" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> Self-Instruct 范式 </a><a href="#evol-instructwizardlm" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> Evol-Instruct（WizardLM） </a><a href="#用强模型生成数据训练弱模型" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 用强模型生成数据训练弱模型 </a><a href="#123-拒绝采样rejection-sampling" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 12.3 拒绝采样（Rejection Sampling） </a><a href="#核心思路" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 核心思路 </a><a href="#评分函数的选择" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 评分函数的选择 </a><a href="#采样温度与数量的权衡" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 采样温度与数量的权衡 </a><a href="#被拒绝的数据丢弃还是回收" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 被拒绝的数据：丢弃还是回收？ </a><a href="#124-数据混合与配比" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 12.4 数据混合与配比 </a><a href="#任务类型配比" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 任务类型配比 </a><a href="#难度分布设计" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 难度分布设计 </a><a href="#长度分布设计" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 长度分布设计 </a><a href="#动手环节构建一个迷你-sft-数据合成流水线" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 动手环节：构建一个迷你 SFT 数据合成流水线 </a><a href="#练习-1evol-instruct-指令演化" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 1：Evol-Instruct 指令演化 </a><a href="#练习-2模拟拒绝采样" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 2：模拟拒绝采样 </a><a href="#练习-3标注指南草案" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 3：标注指南草案 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

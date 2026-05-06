@@ -1,0 +1,1423 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/data-engineering/de-appendix/"><!-- Primary Meta Tags --><title>附录 | 大模型数据工程 | Maxwell</title><meta name="title" content="附录 | 大模型数据工程 | Maxwell"><meta name="description" content="主要数据集一览、工具速查表、质量评估 Checklist 与代码索引"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-appendix/"><meta property="og:title" content="附录 | 大模型数据工程 | Maxwell"><meta property="og:description" content="主要数据集一览、工具速查表、质量评估 Checklist 与代码索引"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-appendix/"><meta name="twitter:title" content="附录 | 大模型数据工程 | Maxwell"><meta name="twitter:description" content="主要数据集一览、工具速查表、质量评估 Checklist 与代码索引"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/data-engineering" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-emerald-500/25"> 数 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"> 大模型数据工程 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第零部分：引言 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">为什么数据是大模型的灵魂</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：预训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">数据来源——互联网的宝藏与垃圾</span> </a> </li><li> <a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">文本提取与清洗——魔鬼藏在细节里</span> </a> </li><li> <a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">去重——被低估的关键步骤</span> </a> </li><li> <a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">质量过滤——从规则到模型</span> </a> </li><li> <a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">数据配比——预训练的隐藏变量</span> </a> </li><li> <a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">预训练数据的评估与迭代</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：中训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">中训练概论——为什么需要这个阶段</span> </a> </li><li> <a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">中训练数据的构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">中训练的灾难性遗忘与稳定性</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：SFT 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">SFT 数据的本质——表面对齐假说</span> </a> </li><li> <a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">SFT 数据的构造方法</span> </a> </li><li> <a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">SFT 数据质量的精细控制</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：RL 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">偏好数据的本质与构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">奖励模型的数据需求</span> </a> </li><li> <a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">推理模型的 RL 数据——新范式</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：横切主题 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">17.</span> <span class="line-clamp-1">合成数据——银弹还是定时炸弹？</span> </a> </li><li> <a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">18.</span> <span class="line-clamp-1">数据标注的方法论</span> </a> </li><li> <a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">19.</span> <span class="line-clamp-1">数据安全、隐私与伦理</span> </a> </li><li> <a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">20.</span> <span class="line-clamp-1">数据工程的基础设施与工具链</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第六部分：实战与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">21.</span> <span class="line-clamp-1">端到端案例——从零构建一个 7B 模型的数据</span> </a> </li><li> <a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">22.</span> <span class="line-clamp-1">数据工程的未来</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 附录 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">100.</span> <span class="line-clamp-1">附录</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 100 章 / 共 23 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 为什么数据是大模型的灵魂 </a><a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> 数据来源——互联网的宝藏与垃圾 </a><a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> 文本提取与清洗——魔鬼藏在细节里 </a><a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 去重——被低估的关键步骤 </a><a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> 质量过滤——从规则到模型 </a><a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 数据配比——预训练的隐藏变量 </a><a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 预训练数据的评估与迭代 </a><a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 中训练概论——为什么需要这个阶段 </a><a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 中训练数据的构造 </a><a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> 中训练的灾难性遗忘与稳定性 </a><a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> SFT 数据的本质——表面对齐假说 </a><a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> SFT 数据的构造方法 </a><a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> SFT 数据质量的精细控制 </a><a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 偏好数据的本质与构造 </a><a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 奖励模型的数据需求 </a><a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> 推理模型的 RL 数据——新范式 </a><a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">17.</span> 合成数据——银弹还是定时炸弹？ </a><a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">18.</span> 数据标注的方法论 </a><a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">19.</span> 数据安全、隐私与伦理 </a><a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">20.</span> 数据工程的基础设施与工具链 </a><a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">21.</span> 端到端案例——从零构建一个 7B 模型的数据 </a><a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">22.</span> 数据工程的未来 </a><a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">100.</span> 附录 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">书架</a> <span>/</span> <a href="/books/data-engineering" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">大模型数据工程</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">附录</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 100 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"> 第 100 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">附录</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 附录 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">主要数据集一览、工具速查表、质量评估 Checklist 与代码索引</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-03-21T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 发布于：2026年3月21日 </time> <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 附录 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 数据集 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 工具 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <hr>
+<h2 id="附录-a主要开源预训练数据集一览表">附录 A：主要开源预训练数据集一览表</h2>
+<h3 id="a1-英文通用语料">A.1 英文通用语料</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>许可</th><th>发布时间</th><th>特点</th><th>链接</th></tr></thead><tbody><tr><td><strong>FineWeb</strong></td><td>15T tokens</td><td>ODC-BY</td><td>2024.05</td><td>HuggingFace 出品，源自 96 个 CC 快照，多级过滤</td><td><a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb">HuggingFace</a></td></tr><tr><td><strong>FineWeb-Edu</strong></td><td>1.3T tokens</td><td>ODC-BY</td><td>2024.05</td><td>FineWeb 的教育价值子集，分类器过滤</td><td><a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-edu">HuggingFace</a></td></tr><tr><td><strong>FineWeb-2</strong></td><td>15T tokens</td><td>ODC-BY</td><td>2025.02</td><td>多语言版 FineWeb，覆盖 1000+ 语言</td><td><a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb-2">HuggingFace</a></td></tr><tr><td><strong>DCLM-Baseline</strong></td><td>3.8T tokens</td><td>CC-BY-4.0</td><td>2024.06</td><td>DataComp-LM 竞赛基线，模型过滤</td><td><a href="https://github.com/mlfoundations/dclm">GitHub</a></td></tr><tr><td><strong>RedPajama-V2</strong></td><td>30T tokens</td><td>Apache-2.0</td><td>2023.10</td><td>Together AI 出品，含质量信号</td><td><a href="https://huggingface.co/datasets/togethercomputer/RedPajama-Data-V2">HuggingFace</a></td></tr><tr><td><strong>Dolma</strong></td><td>3T tokens</td><td>AI2 ImpACT</td><td>2024.01</td><td>Allen AI OLMo 训练数据，完全可复现</td><td><a href="https://huggingface.co/datasets/allenai/dolma">HuggingFace</a></td></tr><tr><td><strong>Dolma v1.7</strong></td><td>4.3T tokens</td><td>AI2 ImpACT</td><td>2024.10</td><td>OLMo 2 训练数据，含 DCLM 过滤</td><td><a href="https://huggingface.co/datasets/allenai/dolma">HuggingFace</a></td></tr><tr><td><strong>The Pile</strong></td><td>825 GB</td><td>MIT</td><td>2020.12</td><td>EleutherAI 经典数据集，22 个子集</td><td><a href="https://github.com/EleutherAI/the-pile">GitHub</a></td></tr><tr><td><strong>C4</strong></td><td>305 GB</td><td>ODC-BY</td><td>2019.10</td><td>Google T5 训练数据，历史意义</td><td><a href="https://www.tensorflow.org/datasets/catalog/c4">TensorFlow</a></td></tr><tr><td><strong>RefinedWeb</strong></td><td>5T tokens</td><td>ODC-BY</td><td>2023.06</td><td>Falcon 训练数据，CC 精细清洗</td><td><a href="https://huggingface.co/datasets/tiiuae/falcon-refinedweb">HuggingFace</a></td></tr><tr><td><strong>SlimPajama</strong></td><td>627B tokens</td><td>Apache-2.0</td><td>2023.06</td><td>RedPajama 去重精简版</td><td><a href="https://huggingface.co/datasets/cerebras/SlimPajama-627B">HuggingFace</a></td></tr><tr><td><strong>CulturaX</strong></td><td>6.3T tokens</td><td>CC-BY-4.0</td><td>2023.09</td><td>多语言清洗数据，167 语言</td><td><a href="https://huggingface.co/datasets/uonlp/CulturaX">HuggingFace</a></td></tr></tbody></table>
+<h3 id="a2-中文语料">A.2 中文语料</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>许可</th><th>特点</th></tr></thead><tbody><tr><td><strong>WanJuan 1.0</strong></td><td>600B tokens</td><td>Apache-2.0</td><td>智源出品，中英双语</td></tr><tr><td><strong>ChineseWebText 2.0</strong></td><td>6TB</td><td>研究用</td><td>CC 中文子集，质量评分</td></tr><tr><td><strong>SkyPile</strong></td><td>150B tokens</td><td>Apache-2.0</td><td>天工 MiniMax 中文数据</td></tr><tr><td><strong>MNBVC</strong></td><td>数 TB</td><td>多种</td><td>社区众包中文语料，覆盖广泛</td></tr><tr><td><strong>WuDaoCorpus</strong></td><td>200GB</td><td>研究用</td><td>智源悟道中文语料</td></tr><tr><td><strong>CLUECorpus2020</strong></td><td>100GB</td><td>Apache-2.0</td><td>CLUE 中文语言理解评估语料</td></tr></tbody></table>
+<h3 id="a3-代码数据">A.3 代码数据</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>许可</th><th>特点</th></tr></thead><tbody><tr><td><strong>The Stack v2</strong></td><td>67.5 TB</td><td>混合</td><td>HuggingFace + SWH，619 语言</td></tr><tr><td><strong>StarCoder Data</strong></td><td>35B tokens</td><td>混合</td><td>StarCoder 系列训练数据</td></tr><tr><td><strong>CodeParrot</strong></td><td>180 GB</td><td>Apache-2.0</td><td>GitHub Python 代码</td></tr><tr><td><strong>MBPP / HumanEval</strong></td><td>题库</td><td>MIT</td><td>代码评测基准（非训练用）</td></tr></tbody></table>
+<h3 id="a4-数学数据">A.4 数学数据</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>许可</th><th>特点</th></tr></thead><tbody><tr><td><strong>OpenWebMath</strong></td><td>14.7B tokens</td><td>ODC-BY</td><td>CC 中的数学内容，LaTeX 解析</td></tr><tr><td><strong>Proof-Pile-2</strong></td><td>55B tokens</td><td>混合</td><td>数学证明语料</td></tr><tr><td><strong>MathPile</strong></td><td>9.5B tokens</td><td>CC-BY-SA</td><td>数学综合语料</td></tr><tr><td><strong>AutoMathText</strong></td><td>200 GB</td><td>Apache-2.0</td><td>自动标注的数学文本</td></tr></tbody></table>
+<h3 id="a5-学术论文">A.5 学术论文</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>许可</th><th>特点</th></tr></thead><tbody><tr><td><strong>S2ORC</strong></td><td>81M 篇</td><td>ODC-BY</td><td>Semantic Scholar 论文全文</td></tr><tr><td><strong>PeS2o</strong></td><td>40M 篇</td><td>ODC-BY</td><td>S2ORC 精选子集，Dolma 使用</td></tr><tr><td><strong>arXiv bulk</strong></td><td>~2.5M 篇</td><td>CC 混合</td><td>arXiv 论文 LaTeX 源码</td></tr><tr><td><strong>PubMed</strong></td><td>36M 篇</td><td>公共领域</td><td>生物医学文献</td></tr></tbody></table>
+<hr>
+<h2 id="附录-b主要-sft-与偏好数据集一览表">附录 B：主要 SFT 与偏好数据集一览表</h2>
+<h3 id="b1-sft-指令数据">B.1 SFT 指令数据</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>许可</th><th>特点</th></tr></thead><tbody><tr><td><strong>OpenAssistant Conversations (OASST)</strong></td><td>161K 条</td><td>Apache-2.0</td><td>人工标注多轮对话，35 语言</td></tr><tr><td><strong>ShareGPT</strong></td><td>~90K 条</td><td>非商用</td><td>用户分享的 GPT 对话</td></tr><tr><td><strong>Alpaca</strong></td><td>52K 条</td><td>CC-BY-NC</td><td>斯坦福，Self-Instruct 合成</td></tr><tr><td><strong>WizardLM-Evol</strong></td><td>250K 条</td><td>非商用</td><td>Evol-Instruct 进化方法</td></tr><tr><td><strong>UltraChat</strong></td><td>1.5M 条</td><td>MIT</td><td>大规模多轮对话合成</td></tr><tr><td><strong>SlimOrca</strong></td><td>518K 条</td><td>MIT</td><td>去噪后的 OpenOrca 子集</td></tr><tr><td><strong>LIMA</strong></td><td>1K 条</td><td>CC-BY-NC</td><td>精选高质量样本</td></tr><tr><td><strong>Magpie</strong></td><td>1M+ 条</td><td>Apache-2.0</td><td>从 Llama 3 自然生成</td></tr><tr><td><strong>Tulu Mix</strong></td><td>混合</td><td>Apache-2.0</td><td>Allen AI Tulu 系列训练数据</td></tr><tr><td><strong>Open-Hermes-2.5</strong></td><td>1M 条</td><td>Apache-2.0</td><td>多源混合 SFT 数据</td></tr></tbody></table>
+<h3 id="b2-偏好对齐数据">B.2 偏好/对齐数据</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>格式</th><th>特点</th></tr></thead><tbody><tr><td><strong>UltraFeedback</strong></td><td>64K 条</td><td>DPO pairs</td><td>GPT-4 评判生成的偏好数据</td></tr><tr><td><strong>HH-RLHF</strong></td><td>170K 条</td><td>Chosen/Rejected</td><td>Anthropic 人工标注偏好</td></tr><tr><td><strong>OpenAssistant-2</strong></td><td>91K 条</td><td>Ranking</td><td>人工排序偏好</td></tr><tr><td><strong>Nectar</strong></td><td>182K 条</td><td>Ranking (1-7)</td><td>多模型多维度排序</td></tr><tr><td><strong>Argilla DPO Mix</strong></td><td>混合</td><td>DPO</td><td>多数据集混合 DPO 格式</td></tr><tr><td><strong>PRM800K</strong></td><td>800K 步</td><td>Step-level</td><td>OpenAI 过程奖励数据</td></tr><tr><td><strong>Math-Shepherd</strong></td><td>-</td><td>Step-level</td><td>自动步骤级标注</td></tr></tbody></table>
+<h3 id="b3-安全红队数据">B.3 安全/红队数据</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>用途</th></tr></thead><tbody><tr><td><strong>SafeRLHF</strong></td><td>30K 条</td><td>安全偏好标注</td></tr><tr><td><strong>CValues</strong></td><td>145K 条</td><td>中文安全与价值观</td></tr><tr><td><strong>BeaverTails</strong></td><td>330K 条</td><td>安全分类标注</td></tr><tr><td><strong>HarmBench</strong></td><td>评测集</td><td>安全评测基准</td></tr></tbody></table>
+<hr>
+<h2 id="附录-c数据处理工具速查表">附录 C：数据处理工具速查表</h2>
+<h3 id="c1-数据处理框架">C.1 数据处理框架</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工具</th><th>开发者</th><th>语言</th><th>特点</th><th>适用场景</th></tr></thead><tbody><tr><td><strong>datatrove</strong></td><td>HuggingFace</td><td>Python</td><td>FineWeb 同款，模块化管线</td><td>中大规模通用处理</td></tr><tr><td><strong>NeMo-Curator</strong></td><td>NVIDIA</td><td>Python</td><td>GPU 加速，企业级</td><td>大规模高性能处理</td></tr><tr><td><strong>dolma</strong></td><td>Allen AI</td><td>Rust+Python</td><td>OLMo 同款，高性能</td><td>大规模去重和过滤</td></tr><tr><td><strong>RedPajama toolkit</strong></td><td>Together AI</td><td>Python</td><td>RedPajama 同款</td><td>中等规模处理</td></tr><tr><td><strong>text-dedup</strong></td><td>ChenghaoMou</td><td>Python</td><td>专注去重</td><td>去重任务</td></tr><tr><td><strong>CCNet</strong></td><td>Meta</td><td>Python</td><td>CC 数据处理</td><td>Common Crawl 处理</td></tr></tbody></table>
+<h3 id="c2-文本提取">C.2 文本提取</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工具</th><th>语言</th><th>速度</th><th>质量</th><th>推荐场景</th></tr></thead><tbody><tr><td><strong>trafilatura</strong></td><td>Python</td><td>中</td><td>高</td><td>通用网页提取（首选）</td></tr><tr><td><strong>Resiliparse</strong></td><td>C++/Python</td><td>快</td><td>中高</td><td>大规模处理</td></tr><tr><td><strong>jusText</strong></td><td>Python</td><td>中</td><td>中</td><td>段落级提取</td></tr><tr><td><strong>readability</strong></td><td>JS/Python</td><td>中</td><td>中高</td><td>文章类页面</td></tr><tr><td><strong>beautifulsoup</strong></td><td>Python</td><td>慢</td><td>可控</td><td>自定义提取规则</td></tr></tbody></table>
+<h3 id="c3-语言识别">C.3 语言识别</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工具</th><th>模型</th><th>语言数</th><th>速度</th><th>推荐</th></tr></thead><tbody><tr><td><strong>fastText lid</strong></td><td>lid.176.bin</td><td>176</td><td>极快</td><td>首选</td></tr><tr><td><strong>CLD3</strong></td><td>Neural</td><td>107</td><td>快</td><td>备选</td></tr><tr><td><strong>lingua</strong></td><td>统计+规则</td><td>75</td><td>中</td><td>短文本</td></tr><tr><td><strong>langdetect</strong></td><td>统计</td><td>55</td><td>快</td><td>轻量场景</td></tr></tbody></table>
+<h3 id="c4-质量评估">C.4 质量评估</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工具/方法</th><th>类型</th><th>速度</th><th>用途</th></tr></thead><tbody><tr><td><strong>KenLM</strong></td><td>PPL 过滤</td><td>极快</td><td>困惑度过滤</td></tr><tr><td><strong>fastText 分类器</strong></td><td>二分类</td><td>极快</td><td>质量二分类</td></tr><tr><td><strong>FineWeb-Edu 分类器</strong></td><td>回归</td><td>中</td><td>教育价值评分</td></tr><tr><td><strong>DCLM 过滤器</strong></td><td>LLM 打分</td><td>慢</td><td>高质量过滤</td></tr><tr><td><strong>GPT-4/Claude 评分</strong></td><td>LLM-as-Judge</td><td>很慢</td><td>精细评估（采样）</td></tr></tbody></table>
+<h3 id="c5-去重工具">C.5 去重工具</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工具</th><th>方法</th><th>规模适用</th><th>特点</th></tr></thead><tbody><tr><td><strong>datasketch</strong></td><td>MinHash+LSH</td><td>TB 级</td><td>Python 库，灵活</td></tr><tr><td><strong>datatrove dedup</strong></td><td>MinHash</td><td>PB 级</td><td>分布式，与 datatrove 集成</td></tr><tr><td><strong>text-dedup</strong></td><td>MinHash/SimHash/Suffix</td><td>TB 级</td><td>多方法集成</td></tr><tr><td><strong>dolma dedup</strong></td><td>Bloom filter + MinHash</td><td>PB 级</td><td>Rust 实现，高性能</td></tr><tr><td><strong>Google deduplicate-text</strong></td><td>Suffix array</td><td>TB 级</td><td>子串级精确去重</td></tr></tbody></table>
+<h3 id="c6-数据版本管理">C.6 数据版本管理</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>工具</th><th>类型</th><th>特点</th><th>适用</th></tr></thead><tbody><tr><td><strong>DVC</strong></td><td>Git 扩展</td><td>类 Git 操作，简单</td><td>中小规模</td></tr><tr><td><strong>lakeFS</strong></td><td>Git-like 对象存储</td><td>S3 兼容，分支/合并</td><td>大规模</td></tr><tr><td><strong>Delta Lake</strong></td><td>表格式版本</td><td>事务性，时间旅行</td><td>结构化数据</td></tr><tr><td><strong>Hugging Face Hub</strong></td><td>托管平台</td><td>社区生态，易分享</td><td>开源数据集</td></tr><tr><td><strong>Manifest 文件</strong></td><td>自定义</td><td>灵活，无依赖</td><td>任何场景</td></tr></tbody></table>
+<hr>
+<h2 id="附录-d数据质量评估-checklist">附录 D：数据质量评估 Checklist</h2>
+<h3 id="d1-预训练数据-checklist">D.1 预训练数据 Checklist</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>□ 数据来源</span></span>
+<span class="line"><span>  □ 数据来源是否明确记录？</span></span>
+<span class="line"><span>  □ 是否有适当的使用许可？</span></span>
+<span class="line"><span>  □ 是否遵守了 robots.txt 和 ToS？</span></span>
+<span class="line"><span>  □ 是否有数据溯源机制？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 文本提取</span></span>
+<span class="line"><span>  □ 提取器的选择是否经过对比测试？</span></span>
+<span class="line"><span>  □ 是否验证了提取质量（抽样检查）？</span></span>
+<span class="line"><span>  □ 非 HTML 格式（PDF、Word）是否正确处理？</span></span>
+<span class="line"><span>  □ 表格和列表是否合理保留？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 语言识别</span></span>
+<span class="line"><span>  □ 语言识别模型是否适合目标语言？</span></span>
+<span class="line"><span>  □ 置信度阈值是否经过调优？</span></span>
+<span class="line"><span>  □ 混合语言文本的处理策略是否合理？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 清洗与过滤</span></span>
+<span class="line"><span>  □ 过滤规则是否有文档记录？</span></span>
+<span class="line"><span>  □ 每条规则的过滤量是否统计？</span></span>
+<span class="line"><span>  □ 是否检查了过滤规则的误杀率？</span></span>
+<span class="line"><span>  □ 是否经过"过度过滤"测试？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 去重</span></span>
+<span class="line"><span>  □ 精确去重是否完成？</span></span>
+<span class="line"><span>  □ 模糊去重的阈值是否合理？</span></span>
+<span class="line"><span>  □ 去重的粒度（文档/段落/行）是否合适？</span></span>
+<span class="line"><span>  □ 是否做了跨数据源去重？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 质量评估</span></span>
+<span class="line"><span>  □ 是否使用了质量分类器？</span></span>
+<span class="line"><span>  □ 质量阈值的选择是否有消融实验支持？</span></span>
+<span class="line"><span>  □ 是否人工抽样检查了过滤后的数据？</span></span>
+<span class="line"><span>  □ 质量评分的分布是否合理？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ PII 与安全</span></span>
+<span class="line"><span>  □ PII 检测覆盖了哪些类型？</span></span>
+<span class="line"><span>  □ PII 处理方式（替换/删除/掩码）是否合理？</span></span>
+<span class="line"><span>  □ 敏感内容过滤是否到位？</span></span>
+<span class="line"><span>  □ 是否有安全审计日志？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 数据配比</span></span>
+<span class="line"><span>  □ 各域数据的配比是否有实验依据？</span></span>
+<span class="line"><span>  □ 是否做了配比消融实验？</span></span>
+<span class="line"><span>  □ 语言配比是否符合目标？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 评估与验证</span></span>
+<span class="line"><span>  □ 是否做了 Benchmark 污染检测？</span></span>
+<span class="line"><span>  □ 是否有小模型代理验证？</span></span>
+<span class="line"><span>  □ 数据统计 dashboard 是否建立？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 版本管理</span></span>
+<span class="line"><span>  □ 数据是否有版本号？</span></span>
+<span class="line"><span>  □ 版本间的差异是否有记录？</span></span>
+<span class="line"><span>  □ 数据是否可以回溯到任意版本？</span></span></code></pre>
+<h3 id="d2-sft-数据-checklist">D.2 SFT 数据 Checklist</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>□ 数据构造</span></span>
+<span class="line"><span>  □ 种子数据是否经过精心设计和审核？</span></span>
+<span class="line"><span>  □ 合成方法是否有质量保证机制？</span></span>
+<span class="line"><span>  □ 是否使用了拒绝采样或类似方法？</span></span>
+<span class="line"><span>  □ 数据是否覆盖了所有目标能力？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 质量控制</span></span>
+<span class="line"><span>  □ 每条样本是否检查了格式正确性？</span></span>
+<span class="line"><span>  □ 代码样本是否可执行/可编译？</span></span>
+<span class="line"><span>  □ 数学样本的答案是否经过验证？</span></span>
+<span class="line"><span>  □ 事实性内容是否准确？</span></span>
+<span class="line"><span>  □ 是否做了重复检测？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 多样性</span></span>
+<span class="line"><span>  □ 任务类型分布是否合理？</span></span>
+<span class="line"><span>  □ 难度分布是否覆盖了各级别？</span></span>
+<span class="line"><span>  □ 长度分布是否避免了偏向？</span></span>
+<span class="line"><span>  □ 是否使用 embedding 做了多样性分析？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 一致性</span></span>
+<span class="line"><span>  □ 回复风格是否统一？</span></span>
+<span class="line"><span>  □ 多轮对话的上下文是否一致？</span></span>
+<span class="line"><span>  □ 安全策略是否一致？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 安全</span></span>
+<span class="line"><span>  □ 是否包含安全拒答样本？</span></span>
+<span class="line"><span>  □ 有害内容是否被过滤？</span></span>
+<span class="line"><span>  □ 是否做了红队测试？</span></span></code></pre>
+<h3 id="d3-rl偏好数据-checklist">D.3 RL/偏好数据 Checklist</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>□ 偏好数据</span></span>
+<span class="line"><span>  □ Chosen 和 Rejected 的质量差异是否真实？</span></span>
+<span class="line"><span>  □ Margin 分布是否合理？</span></span>
+<span class="line"><span>  □ 是否消除了长度偏好和格式偏好？</span></span>
+<span class="line"><span>  □ LLM-as-Judge 的偏差是否校正？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 可验证奖励数据</span></span>
+<span class="line"><span>  □ 数学题答案是否经过符号计算验证？</span></span>
+<span class="line"><span>  □ 代码题测试用例是否充分？</span></span>
+<span class="line"><span>  □ 难度分布是否在最佳学习区（20-50% solve rate）？</span></span>
+<span class="line"><span>  □ 是否做了 Benchmark 去污染？</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>□ 安全对齐</span></span>
+<span class="line"><span>  □ 安全相关的偏好标注是否准确？</span></span>
+<span class="line"><span>  □ 边界案例（helpful vs harmless 冲突）是否有清晰的处理策略？</span></span>
+<span class="line"><span>  □ 是否考虑了 Reward Hacking 的风险？</span></span></code></pre>
+<hr>
+<h2 id="附录-e各章代码索引与运行环境">附录 E：各章代码索引与运行环境</h2>
+<h3 id="e1-运行环境">E.1 运行环境</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 推荐环境</span></span>
+<span class="line"><span>Python >= 3.10</span></span>
+<span class="line"><span>PyTorch >= 2.1 (如需 GPU 加速)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># 核心依赖</span></span>
+<span class="line"><span>pip install \</span></span>
+<span class="line"><span>    trafilatura \      # 文本提取 (第 3 章)</span></span>
+<span class="line"><span>    fasttext \         # 语言识别与分类 (第 3, 5 章)</span></span>
+<span class="line"><span>    datasketch \       # MinHash 去重 (第 4, 21 章)</span></span>
+<span class="line"><span>    transformers \     # 模型推理 (第 5, 7, 13 章)</span></span>
+<span class="line"><span>    datasets \         # 数据加载 (通用)</span></span>
+<span class="line"><span>    numpy pandas \     # 数据分析 (通用)</span></span>
+<span class="line"><span>    scikit-learn \     # 聚类和分析 (第 13 章)</span></span>
+<span class="line"><span>    sympy \            # 数学验证 (第 9, 16 章)</span></span>
+<span class="line"><span>    kenlm \            # 困惑度过滤 (第 5 章)</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span># 可选依赖</span></span>
+<span class="line"><span>pip install \</span></span>
+<span class="line"><span>    datatrove \        # 数据处理框架 (第 20 章)</span></span>
+<span class="line"><span>    nemo-curator \     # NVIDIA 数据处理 (第 20 章)</span></span>
+<span class="line"><span>    dvc \              # 数据版本管理 (第 20 章)</span></span></code></pre>
+<h3 id="e2-代码索引">E.2 代码索引</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>章节</th><th>代码标题</th><th>功能</th></tr></thead><tbody><tr><td><strong>第 3 章</strong></td><td>文本提取对比</td><td>trafilatura/resiliparse/jusText 效果对比</td></tr><tr><td><strong>第 3 章</strong></td><td>语言识别管线</td><td>fastText lid + 置信度过滤</td></tr><tr><td><strong>第 3 章</strong></td><td>启发式过滤器</td><td>多维度规则过滤框架</td></tr><tr><td><strong>第 3 章</strong></td><td>PII 检测器</td><td>中英文 PII 正则检测</td></tr><tr><td><strong>第 3 章</strong></td><td>敏感内容过滤</td><td>多级安全过滤管线</td></tr><tr><td><strong>第 4 章</strong></td><td>MinHash 去重</td><td>完整的 MinHash+LSH 去重实现</td></tr><tr><td><strong>第 4 章</strong></td><td>Bloom Filter</td><td>精确去重的 Bloom Filter 方案</td></tr><tr><td><strong>第 4 章</strong></td><td>去污染检测</td><td>N-gram 重叠检测 Benchmark 污染</td></tr><tr><td><strong>第 5 章</strong></td><td>质量分类器</td><td>fastText 质量二分类训练</td></tr><tr><td><strong>第 5 章</strong></td><td>PPL 过滤</td><td>KenLM 困惑度过滤管线</td></tr><tr><td><strong>第 5 章</strong></td><td>多维度评分</td><td>综合质量评分框架</td></tr><tr><td><strong>第 6 章</strong></td><td>配比优化</td><td>数据配比实验设计和可视化</td></tr><tr><td><strong>第 6 章</strong></td><td>DoReMi 简化版</td><td>参考模型引导配比优化</td></tr><tr><td><strong>第 6 章</strong></td><td>课程学习调度</td><td>基于能力评估的数据排课</td></tr><tr><td><strong>第 7 章</strong></td><td>代理验证</td><td>400M 小模型快速验证数据质量</td></tr><tr><td><strong>第 7 章</strong></td><td>数据 Dashboard</td><td>数据统计和可视化监控</td></tr><tr><td><strong>第 7 章</strong></td><td>污染检测器</td><td>13-gram 重叠 Benchmark 检测</td></tr><tr><td><strong>第 9 章</strong></td><td>长上下文构造</td><td>渐进式长文档数据管线</td></tr><tr><td><strong>第 9 章</strong></td><td>代码质量分层</td><td>四级代码质量评分系统</td></tr><tr><td><strong>第 9 章</strong></td><td>数学数据处理</td><td>LaTeX 处理 + 难度评估</td></tr><tr><td><strong>第 9 章</strong></td><td>领域配比</td><td>中训练数据配比框架</td></tr><tr><td><strong>第 10 章</strong></td><td>回放策略</td><td>遗忘防控的数据回放方案</td></tr><tr><td><strong>第 10 章</strong></td><td>权重平均</td><td>模型平均 + Alpha 搜索</td></tr><tr><td><strong>第 10 章</strong></td><td>遗忘监控</td><td>ForgettingMetrics 实时监控</td></tr><tr><td><strong>第 12 章</strong></td><td>种子数据框架</td><td>SFT 种子数据设计模板</td></tr><tr><td><strong>第 12 章</strong></td><td>Evol-Instruct</td><td>指令进化合成方法</td></tr><tr><td><strong>第 12 章</strong></td><td>拒绝采样</td><td>Best-of-N 采样实现</td></tr><tr><td><strong>第 13 章</strong></td><td>质量检查管线</td><td>SFT 样本多维度质量检查</td></tr><tr><td><strong>第 13 章</strong></td><td>IFD 计算</td><td>Instruction-Following Difficulty</td></tr><tr><td><strong>第 13 章</strong></td><td>多样性分析</td><td>Embedding 聚类 + 覆盖度分析</td></tr><tr><td><strong>第 14 章</strong></td><td>LLM-as-Judge</td><td>偏好数据自动评分（含消偏）</td></tr><tr><td><strong>第 15 章</strong></td><td>PRM 构造</td><td>Monte Carlo 步骤级标注</td></tr><tr><td><strong>第 16 章</strong></td><td>GRPO 数据流</td><td>简化版 GRPO 算法数据处理</td></tr><tr><td><strong>第 16 章</strong></td><td>动态难度</td><td>基于 solve rate 的难度调整</td></tr><tr><td><strong>第 19 章</strong></td><td>PII 检测器</td><td>PIIDetector 类完整实现</td></tr><tr><td><strong>第 19 章</strong></td><td>偏见检测</td><td>数据集偏见分析工具</td></tr><tr><td><strong>第 20 章</strong></td><td>分布式去重</td><td>MinHash 分布式方案</td></tr><tr><td><strong>第 21 章</strong></td><td>完整管线</td><td>端到端预训练数据处理管线</td></tr><tr><td><strong>第 21 章</strong></td><td>Token 预算</td><td>各阶段 token 预算估算</td></tr><tr><td><strong>第 21 章</strong></td><td>配比实验</td><td>代理实验框架和配比方案</td></tr><tr><td><strong>第 21 章</strong></td><td>SFT 工厂</td><td>SFT 数据合成与过滤管线</td></tr><tr><td><strong>第 21 章</strong></td><td>偏好构造</td><td>DPO 偏好数据构造管线</td></tr></tbody></table>
+<h3 id="e3-数据处理性能参考">E.3 数据处理性能参考</h3>
+<p>以下是各处理阶段在典型硬件上的性能参考值：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>处理阶段</th><th>硬件</th><th>吞吐量</th><th>内存需求</th></tr></thead><tbody><tr><td>HTML 提取 (trafilatura)</td><td>8 核 CPU</td><td>~1,000 页/秒</td><td>4 GB</td></tr><tr><td>语言识别 (fastText)</td><td>8 核 CPU</td><td>~50,000 文档/秒</td><td>2 GB</td></tr><tr><td>启发式过滤</td><td>8 核 CPU</td><td>~30,000 文档/秒</td><td>2 GB</td></tr><tr><td>MinHash 计算 (128 perm)</td><td>8 核 CPU</td><td>~5,000 文档/秒</td><td>依数据量</td></tr><tr><td>MinHash LSH 查询</td><td>8 核 CPU</td><td>~2,000 查询/秒</td><td>依索引量</td></tr><tr><td>质量分类器 (fastText)</td><td>8 核 CPU</td><td>~20,000 文档/秒</td><td>2 GB</td></tr><tr><td>质量分类器 (BERT-based)</td><td>1 × A100</td><td>~3,000 文档/秒</td><td>8 GB</td></tr><tr><td>LLM 评分 (7B)</td><td>1 × A100</td><td>~100 文档/秒</td><td>40 GB</td></tr><tr><td>PII 检测 (正则)</td><td>8 核 CPU</td><td>~30,000 文档/秒</td><td>1 GB</td></tr></tbody></table>
+<p><strong>估算提示</strong>：处理 1TB 原始文本（约 5 亿个文档）的完整管线，使用 32 核 CPU 服务器约需 3-5 天。加入 GPU 质量分类器约需额外 1-2 天（取决于 GPU 数量）。</p>
+<h3 id="e4-推荐阅读">E.4 推荐阅读</h3>
+<p><strong>核心论文</strong>：</p>
+<ol>
+<li>Penedo et al. “The FineWeb Datasets: Decanting the Web for the Finest Text Data at Scale” (2024)</li>
+<li>Li et al. “DataComp-LM: In Search of the Next Generation of Training Sets for Language Models” (2024)</li>
+<li>Soldaini et al. “Dolma: an Open Corpus of Three Trillion Tokens” (2024)</li>
+<li>Longpre et al. “A Pretrainer’s Guide to Training Data” (2023)</li>
+<li>Zhou et al. “LIMA: Less Is More for Alignment” (2023)</li>
+<li>Shumailov et al. “AI models collapse when trained on recursively generated data” (Nature, 2024)</li>
+<li>Liu et al. “Best Practices and Lessons Learned on Synthetic Data for Language Models” (2024)</li>
+<li>Ye et al. “Data Mixing Laws: Optimizing Data Mixtures by Predicting Language Modeling Performance” (2024)</li>
+<li>DeepSeek Team. “DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning” (2025)</li>
+<li>Wang et al. “Towards Next-Generation LLM Training: From the Data Perspective” (arXiv 2603.14712, 2026)</li>
+</ol>
+<p><strong>技术博客</strong>：</p>
+<ol>
+<li>HuggingFace FineWeb Blog: <a href="https://huggingface.co/spaces/HuggingFaceFW/blogpost-fineweb-v1">https://huggingface.co/spaces/HuggingFaceFW/blogpost-fineweb-v1</a></li>
+<li>Allen AI Dolma Blog: <a href="https://blog.allenai.org/dolma-3-trillion-tokens-open-llm-corpus">https://blog.allenai.org/dolma-3-trillion-tokens-open-llm-corpus</a></li>
+<li>Microsoft SynthLLM: <a href="https://www.microsoft.com/en-us/research/articles/synthllm/">https://www.microsoft.com/en-us/research/articles/synthllm/</a></li>
+<li>Together AI RedPajama: <a href="https://www.together.ai/blog/redpajama-data-v2">https://www.together.ai/blog/redpajama-data-v2</a></li>
+</ol>
+<p><strong>书籍</strong>（按推荐顺序）：</p>
+<ol>
+<li>本书 :)</li>
+<li>Jurafsky &#x26; Martin, “Speech and Language Processing” (3rd ed., draft)</li>
+<li>Lilian Weng’s Blog 系列 (lilianweng.github.io) — 严格来说是博客，但质量堪比书籍</li>
+</ol>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/data-engineering/de-ch22-future" class="group card p-4 hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.22</span> 数据工程的未来 </p> </a> <div></div> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#附录-a主要开源预训练数据集一览表" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 附录 A：主要开源预训练数据集一览表 </a><a href="#a1-英文通用语料" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> A.1 英文通用语料 </a><a href="#a2-中文语料" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> A.2 中文语料 </a><a href="#a3-代码数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> A.3 代码数据 </a><a href="#a4-数学数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> A.4 数学数据 </a><a href="#a5-学术论文" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> A.5 学术论文 </a><a href="#附录-b主要-sft-与偏好数据集一览表" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 附录 B：主要 SFT 与偏好数据集一览表 </a><a href="#b1-sft-指令数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> B.1 SFT 指令数据 </a><a href="#b2-偏好对齐数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> B.2 偏好/对齐数据 </a><a href="#b3-安全红队数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> B.3 安全/红队数据 </a><a href="#附录-c数据处理工具速查表" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 附录 C：数据处理工具速查表 </a><a href="#c1-数据处理框架" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> C.1 数据处理框架 </a><a href="#c2-文本提取" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> C.2 文本提取 </a><a href="#c3-语言识别" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> C.3 语言识别 </a><a href="#c4-质量评估" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> C.4 质量评估 </a><a href="#c5-去重工具" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> C.5 去重工具 </a><a href="#c6-数据版本管理" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> C.6 数据版本管理 </a><a href="#附录-d数据质量评估-checklist" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 附录 D：数据质量评估 Checklist </a><a href="#d1-预训练数据-checklist" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> D.1 预训练数据 Checklist </a><a href="#d2-sft-数据-checklist" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> D.2 SFT 数据 Checklist </a><a href="#d3-rl偏好数据-checklist" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> D.3 RL/偏好数据 Checklist </a><a href="#附录-e各章代码索引与运行环境" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 附录 E：各章代码索引与运行环境 </a><a href="#e1-运行环境" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> E.1 运行环境 </a><a href="#e2-代码索引" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> E.2 代码索引 </a><a href="#e3-数据处理性能参考" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> E.3 数据处理性能参考 </a><a href="#e4-推荐阅读" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> E.4 推荐阅读 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

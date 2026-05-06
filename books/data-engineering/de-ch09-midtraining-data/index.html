@@ -1,0 +1,1316 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch09-midtraining-data/"><!-- Primary Meta Tags --><title>中训练数据的构造 | 大模型数据工程 | Maxwell</title><meta name="title" content="中训练数据的构造 | 大模型数据工程 | Maxwell"><meta name="description" content="能力增强、知识注入与合成数据在中训练中的应用"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch09-midtraining-data/"><meta property="og:title" content="中训练数据的构造 | 大模型数据工程 | Maxwell"><meta property="og:description" content="能力增强、知识注入与合成数据在中训练中的应用"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/data-engineering/de-ch09-midtraining-data/"><meta name="twitter:title" content="中训练数据的构造 | 大模型数据工程 | Maxwell"><meta name="twitter:description" content="能力增强、知识注入与合成数据在中训练中的应用"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/data-engineering" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-emerald-500 to-teal-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-emerald-500/25"> 数 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 transition-colors"> 大模型数据工程 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第零部分：引言 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">为什么数据是大模型的灵魂</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：预训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">数据来源——互联网的宝藏与垃圾</span> </a> </li><li> <a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">文本提取与清洗——魔鬼藏在细节里</span> </a> </li><li> <a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">去重——被低估的关键步骤</span> </a> </li><li> <a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">质量过滤——从规则到模型</span> </a> </li><li> <a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">数据配比——预训练的隐藏变量</span> </a> </li><li> <a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">预训练数据的评估与迭代</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：中训练数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">中训练概论——为什么需要这个阶段</span> </a> </li><li> <a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">中训练数据的构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">中训练的灾难性遗忘与稳定性</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：SFT 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">SFT 数据的本质——表面对齐假说</span> </a> </li><li> <a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">SFT 数据的构造方法</span> </a> </li><li> <a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">SFT 数据质量的精细控制</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：RL 数据 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">偏好数据的本质与构造</span> </a> </li><li> <a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">奖励模型的数据需求</span> </a> </li><li> <a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">推理模型的 RL 数据——新范式</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：横切主题 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">17.</span> <span class="line-clamp-1">合成数据——银弹还是定时炸弹？</span> </a> </li><li> <a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">18.</span> <span class="line-clamp-1">数据标注的方法论</span> </a> </li><li> <a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">19.</span> <span class="line-clamp-1">数据安全、隐私与伦理</span> </a> </li><li> <a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">20.</span> <span class="line-clamp-1">数据工程的基础设施与工具链</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第六部分：实战与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">21.</span> <span class="line-clamp-1">端到端案例——从零构建一个 7B 模型的数据</span> </a> </li><li> <a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">22.</span> <span class="line-clamp-1">数据工程的未来</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 附录 </h5> <ul class="space-y-0.5"> <li> <a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">100.</span> <span class="line-clamp-1">附录</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 9 章 / 共 23 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/data-engineering/de-ch01-why-data-matters" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 为什么数据是大模型的灵魂 </a><a href="/books/data-engineering/de-ch02-data-sources" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> 数据来源——互联网的宝藏与垃圾 </a><a href="/books/data-engineering/de-ch03-text-extraction-cleaning" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> 文本提取与清洗——魔鬼藏在细节里 </a><a href="/books/data-engineering/de-ch04-deduplication" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 去重——被低估的关键步骤 </a><a href="/books/data-engineering/de-ch05-quality-filtering" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> 质量过滤——从规则到模型 </a><a href="/books/data-engineering/de-ch06-data-mixing" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 数据配比——预训练的隐藏变量 </a><a href="/books/data-engineering/de-ch07-evaluation-iteration" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 预训练数据的评估与迭代 </a><a href="/books/data-engineering/de-ch08-midtraining-overview" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 中训练概论——为什么需要这个阶段 </a><a href="/books/data-engineering/de-ch09-midtraining-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">9.</span> 中训练数据的构造 </a><a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> 中训练的灾难性遗忘与稳定性 </a><a href="/books/data-engineering/de-ch11-sft-essence" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> SFT 数据的本质——表面对齐假说 </a><a href="/books/data-engineering/de-ch12-sft-construction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> SFT 数据的构造方法 </a><a href="/books/data-engineering/de-ch13-sft-quality" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> SFT 数据质量的精细控制 </a><a href="/books/data-engineering/de-ch14-preference-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 偏好数据的本质与构造 </a><a href="/books/data-engineering/de-ch15-reward-model-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 奖励模型的数据需求 </a><a href="/books/data-engineering/de-ch16-reasoning-rl-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> 推理模型的 RL 数据——新范式 </a><a href="/books/data-engineering/de-ch17-synthetic-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">17.</span> 合成数据——银弹还是定时炸弹？ </a><a href="/books/data-engineering/de-ch18-annotation-methodology" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">18.</span> 数据标注的方法论 </a><a href="/books/data-engineering/de-ch19-safety-privacy-ethics" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">19.</span> 数据安全、隐私与伦理 </a><a href="/books/data-engineering/de-ch20-infrastructure-toolchain" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">20.</span> 数据工程的基础设施与工具链 </a><a href="/books/data-engineering/de-ch21-end-to-end-case" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">21.</span> 端到端案例——从零构建一个 7B 模型的数据 </a><a href="/books/data-engineering/de-ch22-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">22.</span> 数据工程的未来 </a><a href="/books/data-engineering/de-appendix" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">100.</span> 附录 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">书架</a> <span>/</span> <a href="/books/data-engineering" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">大模型数据工程</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第二部分：中训练数据</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 9 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800"> 第 9 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第二部分：中训练数据</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 中训练数据的构造 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">能力增强、知识注入与合成数据在中训练中的应用</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-02T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年4月2日 </time> <span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 中训练数据 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 长上下文 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 代码增强 </span><span class="px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 font-medium text-xs"> 合成数据 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <blockquote>
+<p><em>“The data you use for mid-training determines whether you’re sharpening a blade or dulling it.”</em></p>
+<p>中训练的数据不是”更多预训练数据”。它是精心设计的、针对特定目标的战略性资源。</p>
+</blockquote>
+<hr>
+<h2 id="91-能力增强型数据">9.1 能力增强型数据</h2>
+<h3 id="911-长上下文数据">9.1.1 长上下文数据</h3>
+<h4 id="长文档的来源">长文档的来源</h4>
+<p>构建长上下文训练数据的第一步是找到<strong>自然存在的长文档</strong>。以下是经过实践验证的主要来源：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据来源</th><th>典型长度</th><th>质量</th><th>获取难度</th><th>适用场景</th></tr></thead><tbody><tr><td>书籍（Gutenberg等）</td><td>50K-500K token</td><td>高</td><td>低</td><td>通用长文本理解</td></tr><tr><td>法律文书</td><td>10K-200K token</td><td>高</td><td>中</td><td>专业长文本，逻辑严密</td></tr><tr><td>学术论文（含引用）</td><td>5K-30K token</td><td>高</td><td>低</td><td>知识密集型</td></tr><tr><td>代码仓库（repo 级）</td><td>10K-500K token</td><td>变化大</td><td>低</td><td>跨文件理解</td></tr><tr><td>维基百科+链接文章</td><td>10K-100K token</td><td>高</td><td>低</td><td>知识关联</td></tr><tr><td>专利文档</td><td>5K-50K token</td><td>中</td><td>中</td><td>技术描述</td></tr><tr><td>政府报告</td><td>10K-200K token</td><td>高</td><td>低</td><td>长篇分析</td></tr></tbody></table>
+<p>2024 年的一项重要研究《How to Train Long-Context Language Models (Effectively)》（发表于 ACL 2025）发现了两个关键结论：</p>
+<ol>
+<li><strong>代码仓库和书籍是最佳的长上下文数据源</strong>——它们的内部结构天然具有长距离依赖</li>
+<li><strong>长数据必须与高质量的短数据混合</strong>——单独使用长数据会导致短上下文能力退化</li>
+</ol>
+<h4 id="长度分布设计">长度分布设计</h4>
+<p>长上下文训练不是简单地”把文档拼长”。你需要精心设计训练数据的长度分布。</p>
+<p>截至 2026 年初，128K 上下文已成为主流模型的<strong>基线能力</strong>而非”目标上限”。<a href="https://arxiv.org/abs/2504.06214">UltraLong-8B</a> 在 Llama-3.1-8B-Instruct 上实现了 128K→4M 的上下文扩展，RULER 1M 评测从 0 提升到 77.2。一个关键发现是：<strong>超长样本（>1M）在训练数据中的比例可以低至 &#x3C;5%，大部分样本仍应在 8K-128K 范围</strong>。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">长上下文训练数据的长度分布设计</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">注：128K 已是基线，目标上限可设到 1M-4M</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> numpy </span><span style="color:#D73A49;--shiki-dark:#F97583">as</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> typing </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> List, Tuple</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> design_length_curriculum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    target_max_length: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4_194_304</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 4M（当前前沿水平）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    num_stages: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tokens_per_stage: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 50_000_000_000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 50B per stage</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> List[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    设计渐进式长度课程</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    关键原则：</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    1. 每个阶段的最大长度逐步增加</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    2. 短文档在每个阶段都保持一定比例（≥30%）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    3. 目标长度的文档占比逐步增加</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    4. 超长样本（>1M）比例可以很低（&#x3C;5%）——UltraLong 的发现</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stages </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> []</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    lengths </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> np.geomspace(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">4096</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, target_max_length, num_stages </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">).astype(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(num_stages):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        stage_min </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> lengths[i]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        stage_max </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> lengths[i </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 超长阶段的超长样本比例控制在较低水平</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        long_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> min</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.40</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.05</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.06</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        short_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.30</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.65</span><span style="color:#D73A49;--shiki-dark:#F97583"> -</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.06</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        stage </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "stage"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: i </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "max_context_length"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: stage_max,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "tokens"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: tokens_per_stage,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "length_distribution"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "short (&#x3C; 8K)"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: short_ratio,</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium (8K-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">stage_min</span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1024}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">K)"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#D73A49;--shiki-dark:#F97583"> -</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> short_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> long_ratio, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"long (</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">stage_min</span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1024}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">K-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">stage_max</span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1024}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">K)"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: long_ratio,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "rope_scaling"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"YaRN"</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stage_max </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 131072</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "base_adjustment"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            "rope_base"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">500000</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#D73A49;--shiki-dark:#F97583"> **</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i)),</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        stages.append(stage)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stages</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 设计从 8K 到 4M 的课程</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">stages </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> design_length_curriculum(</span><span style="color:#E36209;--shiki-dark:#FFAB70">target_max_length</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">4_194_304</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">num_stages</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> s </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> stages:</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"阶段 </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">s[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'stage'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">: max_len=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">s[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'max_context_length'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1024}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">K, "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"RoPE=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">s[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'rope_scaling'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">, base=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">s[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'rope_base'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">:,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre>
+<blockquote>
+<p><strong>位置编码扩展的演进</strong>：早期的做法是直接调整 RoPE base frequency，但这在超过 128K 时效果衰减。更先进的方法包括 YaRN（Yet another RoPE extensioN）和 NTK-aware 插值，它们能在保持短上下文性能的同时支持百万级上下文。UltraLong 的实践表明，两阶段策略（持续预训练 + 对齐微调）是当前最可靠的超长上下文训练配方。</p>
+</blockquote>
+<h4 id="长上下文数据的质量要求">长上下文数据的质量要求</h4>
+<p>不是所有”长”的文本都适合用来训练长上下文。<strong>关键标准是文本的内部连贯性和长距离依赖</strong>。</p>
+<p><strong>好的长上下文数据：</strong></p>
+<ul>
+<li>一本小说（角色在 50 页前出现，在最后一章被提到）</li>
+<li>一个代码仓库（函数定义在文件 A，调用在文件 B）</li>
+<li>一篇法律文书（第 1 条的定义在第 37 条被引用）</li>
+</ul>
+<p><strong>差的长上下文数据：</strong></p>
+<ul>
+<li>把 10 篇不相关的短文章拼在一起——模型学不到跨段落的依赖关系</li>
+<li>模板化的超长列表（如产品目录）——长度大但信息密度低</li>
+<li>重复性很高的文本——模型可以用局部模式预测，不需要长距离注意力</li>
+</ul>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> filter_long_context_quality</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    doc: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    min_length: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 32768</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 32K tokens minimum</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    长上下文数据质量检查</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tokens </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> doc.split()  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 简化的 tokenization</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    length </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(tokens)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> length </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> min_length:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">False</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"reason"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"too_short"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 检查 1：内部重复度</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 把文档分成 1K 的块，检查块间相似度</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    chunk_size </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1000</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    chunks </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">" "</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.join(tokens[i:i</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">chunk_size])</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">              for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, length, chunk_size)]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(chunks) </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">False</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"reason"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"not_enough_chunks"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 简单的重复度检测：用前后半段的 n-gram 重叠</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    first_half </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">" "</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.join(tokens[:length</span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]).split())</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    second_half </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">" "</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.join(tokens[length</span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:]).split())</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    overlap </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(first_half </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x26;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> second_half) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(first_half </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> second_half), </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> overlap </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.95</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">False</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"reason"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"too_repetitive"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "overlap"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(overlap, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 检查 2：信息密度（通过 unique n-gram 比例估计）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    trigrams </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> range</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(tokens) </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        trigrams.add(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">tuple</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(tokens[i:i</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    unique_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(trigrams) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(tokens) </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> unique_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">False</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"reason"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"low_information_density"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                "unique_trigram_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(unique_ratio, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "pass"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">True</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "length_tokens"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: length,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "overlap_score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(overlap, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "unique_trigram_ratio"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(unique_ratio, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span></code></pre>
+<h3 id="912-代码数据">9.1.2 代码数据</h3>
+<p>代码是中训练中最重要的数据类型之一——不仅因为它直接提升编程能力，更因为它对推理能力有显著的溢出效应。</p>
+<h4 id="代码质量分层">代码质量分层</h4>
+<p>不是所有代码都值得用来训练。代码数据需要严格的质量分层：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>层级 1（最高质量）：知名开源项目的核心代码</span></span>
+<span class="line"><span>  - 特征：高 star 数、活跃维护、完善的文档</span></span>
+<span class="line"><span>  - 来源：GitHub top 1000 项目、知名框架（PyTorch, React, Linux kernel）</span></span>
+<span class="line"><span>  - 用途：中训练的核心代码数据</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 2（高质量）：质量良好的开源代码</span></span>
+<span class="line"><span>  - 特征：有测试、有文档、lint 通过率高</span></span>
+<span class="line"><span>  - 筛选标准：star > 10, 有 CI/CD, docstring 覆盖率 > 50%</span></span>
+<span class="line"><span>  - 用途：中训练的主体代码数据</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 3（中等质量）：一般的开源代码</span></span>
+<span class="line"><span>  - 特征：功能性代码，但缺少文档和测试</span></span>
+<span class="line"><span>  - 筛选标准：star > 1, 非 fork, 有 README</span></span>
+<span class="line"><span>  - 用途：预训练可用，中训练需谨慎</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 4（低质量）：学习/练习/低质量代码</span></span>
+<span class="line"><span>  - 特征：作业代码、教程复制品、无意义的代码</span></span>
+<span class="line"><span>  - 筛选标准：自动检测（重复度高、文件数少、无 commit 历史）</span></span>
+<span class="line"><span>  - 用途：通常不用于训练</span></span></code></pre>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">代码数据质量评分</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> dataclasses </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> dataclass</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> typing </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> List, Optional</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">@dataclass</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> RepoMetrics</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """仓库级指标"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stars: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    forks: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    has_tests: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    has_ci: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    has_readme: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    has_license: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    last_commit_days_ago: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 999</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    num_contributors: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    primary_language: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">@dataclass</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> FileMetrics</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """文件级指标"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    lines_of_code: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    comment_ratio: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.0</span><span style="color:#6A737D;--shiki-dark:#6A737D">       # 注释行占比</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    docstring_coverage: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.0</span><span style="color:#6A737D;--shiki-dark:#6A737D">   # 函数/类的 docstring 覆盖率</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    avg_function_length: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#6A737D;--shiki-dark:#6A737D">      # 平均函数长度</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    has_type_hints: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span><span style="color:#6A737D;--shiki-dark:#6A737D">      # 是否有类型注解 (Python)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    lint_errors: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#6A737D;--shiki-dark:#6A737D">              # lint 错误数</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    import_count: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#6A737D;--shiki-dark:#6A737D">             # 导入数量</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> score_code_quality</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    repo: RepoMetrics,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    file: FileMetrics</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    综合评分（0-100）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 仓库级评分 (0-50)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.stars </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 100</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 15</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.stars </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.stars </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.has_tests: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.has_ci: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.has_readme: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.has_license: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.num_contributors </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.num_contributors </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> repo.last_commit_days_ago </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 365</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 7</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 文件级评分 (0-50)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.comment_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.15</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.comment_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.05</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.docstring_coverage </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 15</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.docstring_coverage </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 8</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.has_type_hints: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.lint_errors </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.lint_errors </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 50</span><span style="color:#D73A49;--shiki-dark:#F97583"> &#x3C;</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.lines_of_code </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 10</span><span style="color:#D73A49;--shiki-dark:#F97583"> &#x3C;</span><span style="color:#E36209;--shiki-dark:#FFAB70"> file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.lines_of_code </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 50</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: score </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 5</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 质量层级映射</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tier </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "tier_4"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> score </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 70</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: tier </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "tier_1"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> score </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 50</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: tier </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "tier_2"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> score </span><span style="color:#D73A49;--shiki-dark:#F97583">>=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 30</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: tier </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "tier_3"</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"score"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">min</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(score, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#24292E;--shiki-dark:#E1E4E8">), </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"tier"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: tier}</span></span></code></pre>
+<h4 id="从过滤到改写transform-and-retain-范式">从过滤到改写：Transform-and-Retain 范式</h4>
+<p>传统的代码质量策略是”分层过滤”——低质量代码直接丢弃。但 2025 年出现的一项重要工作提出了截然不同的思路：<strong>低质量代码不必丢弃，可以通过 LLM 驱动的改写升级为高质量训练数据</strong>。</p>
+<p><a href="https://arxiv.org/abs/2505.02881">SwallowCode</a>（ICLR 2026）在 The Stack v2 的 Python 代码上设计了四阶段改写管线：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Transform-and-Retain 管线（SwallowCode）:</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  原始低质量代码（Tier 3-4）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  阶段 1: 语法验证 — 过滤无法解析的代码</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  阶段 2: pylint 风格过滤 — 去除严重违规</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  阶段 3: SGCR（Style-Guided Code Rewriting）</span></span>
+<span class="line"><span>          — 用 LLM 按风格指南改写代码结构和命名</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  阶段 4: SCOR（Self-Contained Optimization Rewriting）</span></span>
+<span class="line"><span>          — 将代码改写为自包含、可独立理解的形式</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  改写后的高质量代码（提升至 Tier 2 级别）</span></span></code></pre>
+<p>关键结果：在 Llama-3.1-8B 上用 50B token 持续预训练后，HumanEval 提升 +17.0 pp，GSM8K 提升 +7.2 pp。SwallowMath 用类似方法处理数学文本（~2.3B token），也取得了显著收益。</p>
+<p>这一范式的意义在于<strong>从”排除法”转向”提升法”</strong>：前面定义的 Tier 3-4 代码不再是废料，而是可以通过改写管线回收利用的资源。对于代码数据总量有限的场景，这种方法可以将可用训练数据量提升 2-3 倍。</p>
+<h4 id="repo-级代码-vs-文件级代码">Repo 级代码 vs 文件级代码</h4>
+<p>这是中训练代码数据的一个关键决策：<strong>是把代码按文件级处理，还是保留仓库的完整结构？</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>文件级代码：</span></span>
+<span class="line"><span>  ├── 优点：处理简单，可以大规模高效处理</span></span>
+<span class="line"><span>  ├── 缺点：丢失了跨文件的依赖关系</span></span>
+<span class="line"><span>  └── 适用：预训练（量大质参差）</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>仓库级代码：</span></span>
+<span class="line"><span>  ├── 优点：保留跨文件依赖、模块结构、导入关系</span></span>
+<span class="line"><span>  ├── 缺点：处理复杂，需要设计序列化格式</span></span>
+<span class="line"><span>  └── 适用：中训练（精选高质量仓库）</span></span></code></pre>
+<p><strong>仓库级代码的序列化方案：</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> serialize_repository</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    repo_path: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    max_tokens: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 65536</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    file_order: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "dependency"</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # "dependency" | "alphabetical" | "random"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    将代码仓库序列化为训练文本</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    关键：保留文件间的引用关系</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 1. 收集所有源代码文件</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 2. 分析依赖关系（import 图）</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 3. 按依赖顺序排列文件</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 4. 用特殊标记分隔</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 示例输出格式</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    output </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">&#x3C;|repo_start|></span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">&#x3C;|repo_name|>pytorch/pytorch&#x3C;|repo_name_end|></span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">&#x3C;|file_start|>torch/nn/modules/linear.py&#x3C;|file_end|></span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">import torch</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">from torch import Tensor</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">from ..module import Module</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">...</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">&#x3C;|file_start|>torch/nn/modules/activation.py&#x3C;|file_end|></span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">from .linear import Linear</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">...</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">&#x3C;|repo_end|></span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> output</span></span></code></pre>
+<p><strong>2024 年的 CodeChain 数据集</strong>采用了一种创新的”随机游走”方法来捕获仓库内的跨文件依赖：从一个入口文件开始，沿着导入关系随机游走，构建出一条有意义的代码路径。这种方法比简单拼接更好地保留了代码的语义结构。</p>
+<h4 id="代码相关的自然语言">代码相关的自然语言</h4>
+<p>容易被忽视但极其重要的数据类型：</p>
+<ul>
+<li><strong>文档</strong>：README、API 文档、技术博客</li>
+<li><strong>Issue 讨论</strong>：bug 报告、feature request 中的技术讨论</li>
+<li><strong>PR Review</strong>：代码审查中的反馈和讨论</li>
+<li><strong>Commit Message</strong>：变更描述</li>
+</ul>
+<p>这些数据建立了”代码 ↔ 自然语言”的映射关系，对模型理解和生成代码至关重要。</p>
+<h3 id="913-数学数据">9.1.3 数学数据</h3>
+<p>数学是中训练的另一个重点领域，难度在于数学数据的处理有很多独特的挑战。</p>
+<h4 id="数学数据的特殊处理">数学数据的特殊处理</h4>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">数学数据的预处理</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> re</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> process_latex_math</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(text: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    处理数学文本中的 LaTeX</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    核心原则：保留数学表达式的完整性</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 1. 检查 LaTeX 公式的完整性</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 确保 $ 成对出现</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    inline_math_count </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> text.count(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'$'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> text.count(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\\</span><span style="color:#032F62;--shiki-dark:#9ECBFF">$'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> inline_math_count </span><span style="color:#D73A49;--shiki-dark:#F97583">%</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#D73A49;--shiki-dark:#F97583"> !=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # LaTeX 不完整，丢弃</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 2. 检查 \begin{} 和 \end{} 的配对</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    begins </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> re.findall(</span><span style="color:#D73A49;--shiki-dark:#F97583">r</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\\</span><span style="color:#032F62;--shiki-dark:#DBEDFF">begin</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\{</span><span style="color:#005CC5;--shiki-dark:#79B8FF">(\w</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF">)</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, text)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    ends </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> re.findall(</span><span style="color:#D73A49;--shiki-dark:#F97583">r</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\\</span><span style="color:#032F62;--shiki-dark:#DBEDFF">end</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\{</span><span style="color:#005CC5;--shiki-dark:#79B8FF">(\w</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF">)</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, text)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> begins </span><span style="color:#D73A49;--shiki-dark:#F97583">!=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ends:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 环境不匹配，丢弃</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 3. 标准化数学表示</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 统一使用 \frac 而非 a/b（在数学上下文中）</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 统一使用 \cdot 而非 *</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 这些标准化有助于模型学习一致的数学表示</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 4. 保留推理步骤</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 确保解题过程的步骤完整</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 检查是否有 "因此"、"所以"、"Therefore"、"Q.E.D." 等结论标志</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> text</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> assess_math_difficulty</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(problem: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, solution: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    评估数学题的难度级别</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 简单启发式</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    indicators </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "elementary"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"加"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"减"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"乘"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"除"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"计算"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"addition"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"subtract"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "intermediate"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"方程"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"函数"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"概率"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"equation"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"function"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"probability"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "advanced"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"积分"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"微分"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"群论"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"integral"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"differential"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"topology"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "competition"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"证明"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"充分必要"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"当且仅当"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"prove"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"if and only if"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    solution_length </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(solution.split())</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> level, keywords </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> indicators.items():</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> any</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(kw </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> problem.lower() </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> kw </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> keywords):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> level</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 根据解答长度估计</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> solution_length </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 500</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#D73A49;--shiki-dark:#F97583">return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "advanced"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> solution_length </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 200</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#D73A49;--shiki-dark:#F97583">return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "intermediate"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "elementary"</span></span></code></pre>
+<h4 id="合成数学题的策略">合成数学题的策略</h4>
+<p>自然存在的高质量数学数据非常有限。合成数学数据是必要的补充。</p>
+<p><strong>常见策略：</strong></p>
+<ol>
+<li>
+<p><strong>数值替换</strong>：取一道经典题，替换其中的数值</p>
+<ul>
+<li>风险：模型可能只学会了模板，而非推理过程</li>
+<li>适用：基础算术和简单应用题</li>
+</ul>
+</li>
+<li>
+<p><strong>条件变换</strong>：修改题目的约束条件</p>
+<ul>
+<li>更好：迫使模型理解条件之间的关系</li>
+<li>适用：代数和几何题</li>
+</ul>
+</li>
+<li>
+<p><strong>强模型生成</strong>：用 GPT-4 级别的模型生成新题</p>
+<ul>
+<li>最好：多样性高，但需要严格的质量验证</li>
+<li>必须检查：答案正确性、推理步骤的逻辑性</li>
+</ul>
+</li>
+<li>
+<p><strong>形式化验证</strong>：用 Lean/Isabelle 等证明助手验证数学推理</p>
+<ul>
+<li>曾被认为”成本高，适用范围有限”，但这一判断已经过时</li>
+<li><a href="https://www.nature.com/articles/s41586-025-09833-y">AlphaProof</a>（Nature 2025）用 RL + Lean 形式化验证达到 IMO 银牌水平，证明了形式化验证可以规模化</li>
+<li><a href="https://arxiv.org/abs/2504.21801">DeepSeek-Prover-V2</a> 通过子目标分解 + RL + Lean 验证构建递归定理证明数据循环</li>
+<li>核心模式：RL 在形式化环境中自动生成候选证明 → Lean 自动验证 → 正确的证明作为训练数据 → 形成<strong>数据生产飞轮</strong></li>
+<li>当前定位：正在从”验证工具”升级为<strong>可规模化的数学数据生产引擎</strong></li>
+</ul>
+</li>
+<li>
+<p><strong>格式转换</strong>：将数学知识改写为不同的表达格式</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2410.12881">MIND</a> 将数学知识改写为对话式格式（师生对话、逐步推理对话）</li>
+<li>同一数学内容用对话式格式表达，GSM8K/MATH 等基准上额外提升 3-5%</li>
+<li>本质：数学数据增强不仅是”内容增强”（新题目），还可以是”格式增强”（同一知识的不同表达）</li>
+</ul>
+</li>
+</ol>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>合成数学数据的质量控制流程：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>  强模型生成题目+解答</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  自动格式检查（LaTeX 完整性、步骤结构）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  答案验证（数值计算验证、交叉检验）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  难度评估和分层</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  多样性检查（与已有数据去重）</span></span>
+<span class="line"><span>         ↓</span></span>
+<span class="line"><span>  人工抽检（每 1000 条抽检 50 条）</span></span></code></pre>
+<h3 id="914-多语言数据">9.1.4 多语言数据</h3>
+<p>对于需要中文能力的模型，中训练阶段的多语言数据策略尤为关键。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>中文数据的质量层级：</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 1: 高质量原创中文内容</span></span>
+<span class="line"><span>  - 来源：百度百科（非用户编辑版）、知乎优质回答、中文维基百科</span></span>
+<span class="line"><span>  - 特征：语言规范、信息准确、内容原创</span></span>
+<span class="line"><span>  - 用途：中训练的核心中文数据</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 2: 专业领域中文内容</span></span>
+<span class="line"><span>  - 来源：中文学术论文、专业书籍、法律法规文本</span></span>
+<span class="line"><span>  - 特征：领域知识密集、表述规范</span></span>
+<span class="line"><span>  - 用途：领域知识注入</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 3: 高质量翻译内容</span></span>
+<span class="line"><span>  - 来源：优质英中翻译内容（平行语料）</span></span>
+<span class="line"><span>  - 特征：翻译质量高、内容有价值</span></span>
+<span class="line"><span>  - 用途：跨语言对齐</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>层级 4: 一般网页中文内容</span></span>
+<span class="line"><span>  - 来源：经过清洗的中文网页数据</span></span>
+<span class="line"><span>  - 特征：质量参差，但覆盖面广</span></span>
+<span class="line"><span>  - 用途：语言多样性和知识覆盖</span></span></code></pre>
+<hr>
+<h2 id="92-知识注入型数据">9.2 知识注入型数据</h2>
+<h3 id="领域语料的收集与清洗">领域语料的收集与清洗</h3>
+<p>当你要构建一个垂直领域的模型（如医学、法律、金融），中训练数据的构造需要额外的考量。</p>
+<p><strong>领域数据构建流程：</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Step 1: 领域语料收集</span></span>
+<span class="line"><span>  ├── 专业数据库：PubMed (医学), SEC EDGAR (金融), 裁判文书网 (法律)</span></span>
+<span class="line"><span>  ├── 专业书籍：教材、专著</span></span>
+<span class="line"><span>  ├── 行业报告：券商研报、行业白皮书</span></span>
+<span class="line"><span>  └── 专业社区：丁香园 (医学), 雪球 (金融)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Step 2: 领域特定清洗</span></span>
+<span class="line"><span>  ├── 专业术语保留：不把专业术语当做"生僻词"过滤掉</span></span>
+<span class="line"><span>  ├── 格式处理：医学文献的结构化信息、法律条款的编号</span></span>
+<span class="line"><span>  ├── 时效性检查：医学指南版本、法律条文的修订版本</span></span>
+<span class="line"><span>  └── 准确性初筛：交叉验证关键事实</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Step 3: 领域配比</span></span>
+<span class="line"><span>  └── 关键决策：领域数据与通用数据的比例</span></span></code></pre>
+<h4 id="有限数据场景从-cpt-到指令式注入">有限数据场景：从 CPT 到指令式注入</h4>
+<p>上面的流程假设领域语料量足够大（数十亿 token 级别）。但在实际企业场景中，专有知识库往往只有几百 MB 到几 GB。对于这种<strong>数据量有限的领域</strong>，传统的持续预训练（CPT）路径可能效率不高——数据不够多，模型难以通过 next-token prediction 充分吸收知识。</p>
+<p><a href="https://arxiv.org/abs/2504.05571">Knowledge-Instruct</a> 提出了一种替代思路：将领域文档转化为信息密集的 QA/指令格式，然后用指令微调而非传统 CPT 来注入知识。在 &#x3C;1B token 的小数据场景下，这种方法显著优于传统 CPT，且由于指令格式的学习效率更高，对通用能力的遗忘也更少。</p>
+<p>两种路径的适用边界：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th></th><th>传统 CPT 路径</th><th>指令式知识注入</th></tr></thead><tbody><tr><td><strong>数据规模</strong></td><td>>10B token</td><td>&#x3C;1B token</td></tr><tr><td><strong>知识密度</strong></td><td>原始文档即可</td><td>需转化为 QA/指令格式</td></tr><tr><td><strong>遗忘风险</strong></td><td>较高，需大比例回放</td><td>较低</td></tr><tr><td><strong>前期成本</strong></td><td>低（直接用原始语料）</td><td>中（需要语料→指令转化）</td></tr><tr><td><strong>适用场景</strong></td><td>大规模公开领域数据</td><td>企业专有知识库</td></tr></tbody></table>
+<h3 id="领域数据与通用数据的配比">领域数据与通用数据的配比</h3>
+<p>这是领域中训练最关键的决策之一。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">领域中训练的配比框架</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> design_domain_midtraining_mix</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    domain: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    domain_data_size: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,         </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 领域数据总量</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    target_training_tokens: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,   </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 计划训练的 token 数</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    forgetting_tolerance: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "low"</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 对遗忘的容忍度</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    设计领域中训练的数据配比</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    核心原则：</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    1. 领域数据占比不宜超过 60%（遗忘风险）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    2. 通用回放数据至少 20%（保持基础能力）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    3. 代码和数学数据保留 10-15%（保持推理能力）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tolerance_to_domain_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "low"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.30</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,     </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 低容忍遗忘 → 领域数据占比较低</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "medium"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.45</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 中等</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "high"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.60</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,    </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 高容忍遗忘 → 领域数据占比较高</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    domain_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> tolerance_to_domain_ratio.get(forgetting_tolerance, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.45</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    mix </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "domain_data"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: domain_ratio,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "general_replay"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.20</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#D73A49;--shiki-dark:#F97583"> -</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> domain_ratio </span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.25</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "code"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "math"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.05</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "high_quality_web"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.10</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 归一化</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    total </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> sum</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(mix.values())</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    mix </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {k: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">round</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(v </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> total, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> k, v </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> mix.items()}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "domain"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: domain,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "data_mix"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: mix,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "target_tokens"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: target_training_tokens,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "note"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"领域数据占比 </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">mix[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'domain_data'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#D73A49;--shiki-dark:#F97583">:.0f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">%, "</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">                f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"通用回放 </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">mix[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'general_replay'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#D73A49;--shiki-dark:#F97583">:.0f</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">%"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 示例：医学领域中训练</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">medical_mix </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> design_domain_midtraining_mix(</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">    domain</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medical"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">    domain_data_size</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"50B tokens"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">    target_training_tokens</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"200B tokens"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">    forgetting_tolerance</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"medium"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(medical_mix)</span></span></code></pre>
+<p>上面的硬编码配比方法是快速起步的”经验法则”，但近期的研究提供了更精确和更自动化的替代方案。</p>
+<h4 id="从经验法则到数学模型遗忘的-scaling-laws">从经验法则到数学模型：遗忘的 Scaling Laws</h4>
+<p>Apple 团队在 <a href="https://arxiv.org/abs/2502.06042">Scaling Laws for Forgetting</a>（ICLR 2026）中推导出遗忘的定量数学框架，将三个关键变量纳入统一公式：</p>
+<ul>
+<li><strong>模型规模</strong>：模型越大，遗忘越少（幂律关系）</li>
+<li><strong>目标域数据量</strong>：领域数据越多，遗忘风险越大</li>
+<li><strong>预训练数据注入比例</strong>：注入仅 <strong>1% 的预训练数据</strong>到微调数据中就能显著防止遗忘</li>
+</ul>
+<p>这一发现的实践意义很大：上面代码中的 <code>forgetting_tolerance</code> 映射到固定的 30%/45%/60% 比例，是粗粒度的近似。Apple 的框架允许你根据模型规模和领域数据量精确计算最优的回放比例，而不是依赖经验猜测。对于 7B 以上的模型，预训练回放的实际需求量可能远低于经验法则建议的 20-30%。</p>
+<h4 id="从人工调参到自动学习data-mixing-agent">从人工调参到自动学习：Data Mixing Agent</h4>
+<p>更进一步，<a href="https://arxiv.org/abs/2507.15640">Data Mixing Agent</a> 提出了端到端的自动化方案：训练一个专门的 Agent 来动态学习不同域的数据权重，而非人工设定固定配比。在多个目标域上的实验表明，自动学习的配比持续优于手动调优的最优固定比例。</p>
+<p>三个层次的配比策略总结：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方法</th><th>精确度</th><th>成本</th><th>适用场景</th></tr></thead><tbody><tr><td>经验法则（上面的代码）</td><td>低</td><td>零</td><td>快速原型、资源有限</td></tr><tr><td>Scaling Laws 计算</td><td>高</td><td>低（只需小规模实验标定参数）</td><td>生产级领域适配</td></tr><tr><td>Data Mixing Agent</td><td>最高</td><td>高（需要额外训练 Agent）</td><td>大规模、多域并行</td></tr></tbody></table>
+<h3 id="知识密度knowledge-density">知识密度（Knowledge Density）</h3>
+<p>不是所有领域文本都具有相同的知识含量。<strong>知识密度</strong>是衡量一段文本中有多少”可学习的新知识”的概念。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>文本类型</th><th>知识密度</th><th>适用阶段</th></tr></thead><tbody><tr><td>教科书（定义、定理、解释）</td><td>极高</td><td>中训练首选</td></tr><tr><td>综述论文（系统梳理）</td><td>高</td><td>中训练</td></tr><tr><td>原始研究论文</td><td>中高</td><td>中训练</td></tr><tr><td>专业问答</td><td>中</td><td>中训练 + SFT</td></tr><tr><td>新闻报道</td><td>中低</td><td>预训练</td></tr><tr><td>社交媒体讨论</td><td>低</td><td>预训练（覆盖面）</td></tr></tbody></table>
+<p><strong>实战案例：构建医学领域中训练数据集</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>目标：将通用模型增强为医学领域模型</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>数据构成（200B token）：</span></span>
+<span class="line"><span>1. 医学教科书 &#x26; 指南：30B token（15%）</span></span>
+<span class="line"><span>   - 来源：公开医学教材 PDF、WHO 指南、诊疗规范</span></span>
+<span class="line"><span>   - 处理：PDF 提取 + LaTeX 公式保留 + 表格结构化</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>2. 医学论文：40B token（20%）</span></span>
+<span class="line"><span>   - 来源：PubMed Open Access、中文医学期刊</span></span>
+<span class="line"><span>   - 处理：保留摘要+方法+结论，去除参考文献列表</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>3. 医学问答：10B token（5%）</span></span>
+<span class="line"><span>   - 来源：丁香园、MedQA 数据集</span></span>
+<span class="line"><span>   - 处理：保留高质量回答，去除广告</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>4. 通用高质量数据（回放）：60B token（30%）</span></span>
+<span class="line"><span>   - 来源：预训练数据的高质量子集</span></span>
+<span class="line"><span>   - 目的：防止遗忘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>5. 代码 + 数学：30B token（15%）</span></span>
+<span class="line"><span>   - 目的：保持推理能力</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>6. 一般中文数据：30B token（15%）</span></span>
+<span class="line"><span>   - 目的：保持中文能力的多样性</span></span></code></pre>
+<hr>
+<h2 id="93-合成数据在中训练中的应用">9.3 合成数据在中训练中的应用</h2>
+<h3 id="合成数据的角色">合成数据的角色</h3>
+<p>合成数据在中训练中可以扮演多种角色：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>角色</th><th>方法</th><th>效果</th><th>风险</th></tr></thead><tbody><tr><td><strong>改写</strong></td><td>将原始文本改写为更清晰的版本</td><td>提高数据质量</td><td>信息损失</td></tr><tr><td><strong>教科书化</strong></td><td>将散乱知识重写为教材格式</td><td>提高知识密度</td><td>幻觉</td></tr><tr><td><strong>翻译</strong></td><td>将高质量英文内容翻译为中文</td><td>增加中文数据</td><td>翻译质量</td></tr><tr><td><strong>增强</strong></td><td>为已有内容添加解释和示例</td><td>提高信息丰富度</td><td>注入错误</td></tr><tr><td><strong>知识蒸馏</strong></td><td>用强模型生成弱模型的训练数据</td><td>高效知识传递</td><td>多样性不足</td></tr></tbody></table>
+<h3 id="phi-系列的启示教科书风格合成数据">Phi 系列的启示：教科书风格合成数据</h3>
+<p>微软的 Phi 系列模型是合成数据在训练中应用的标杆案例。</p>
+<p><strong>核心思路</strong>：用 GPT-4 生成”教科书风格”的训练数据——结构清晰、概念准确、循序渐进。</p>
+<p><strong>关键发现</strong>：</p>
+<ul>
+<li>仅用 1.3B 参数 + 精心构造的合成数据，Phi-1 在代码生成上超越了许多更大的模型</li>
+<li>Phi-2（2.7B）在多个 benchmark 上接近或超越 Llama-2 70B</li>
+<li>证明了<strong>数据质量可以在很大程度上弥补模型规模的不足</strong></li>
+</ul>
+<p><strong>但要注意</strong>：Phi 的成功不能简单地复制。后续研究发现：</p>
+<ol>
+<li><strong>教科书风格数据在某些领域表现差</strong>：特别是在需要口语化、创意性表达的任务上</li>
+<li><strong>多样性不足</strong>：合成数据的模式单一，长期训练可能导致模型”风格僵化”</li>
+<li><strong>难度天花板</strong>：强模型生成的数据难度受限于强模型自身的能力</li>
+</ol>
+<h3 id="认知变化从银弹到谨慎使用">认知变化：从”银弹”到”谨慎使用”</h3>
+<blockquote>
+<p><strong>合成数据在中训练中的认知演变</strong></p>
+<ul>
+<li>2023：“Phi 证明了合成数据是银弹！”</li>
+<li>2024：“等等，100% 合成数据会导致 model collapse（Nature 论文）”</li>
+<li>2024：“Meta 发现约 30% 的合成数据混合比例是最优的”</li>
+<li>2025(Q2)：“SwallowCode 证明改写优于过滤——transform-and-retain 成为新范式”</li>
+<li>2025(Q4)：“AlphaProof 在 Nature 发表——形式化验证 + RL 实现 IMO 银牌级数学数据生成”</li>
+<li>2025：“合成数据有自己的 Scaling Law，边际收益递减显著”</li>
+<li>2026(Q1)：“ICLR 发现 0.1% 合成数据即可引发 collapse——安全阈值概念被挑战”</li>
+<li>2026(Q1)：“Apple 推导出遗忘的 Scaling Laws——领域配比从经验走向数学”</li>
+<li>2026：“合成数据是有价值的工具，但必须搭配验证机制和数据溯源”</li>
+</ul>
+</blockquote>
+<h3 id="model-collapse-的风险">Model Collapse 的风险</h3>
+<p>2024 年发表在 Nature 上的一篇重要论文系统研究了”递归训练”的风险：当模型 A 生成数据训练模型 B，模型 B 再生成数据训练模型 C……经过多轮迭代后，模型的多样性会严重退化。</p>
+<p><strong>数学直觉</strong>：</p>
+<ul>
+<li>每一轮合成都是对原始分布的一次近似</li>
+<li>近似过程中，低概率但有价值的模式（长尾分布）会逐渐消失</li>
+<li>经过 N 轮，输出分布趋向于退化的高峰分布</li>
+</ul>
+<p><strong>在中训练中的实践意义</strong>：</p>
+<ul>
+<li><strong>永远不要用 100% 合成数据做中训练</strong></li>
+<li><strong>混入真实数据是必要条件，但不是充分条件</strong>——ICLR 2025 的研究发现，即使混入 99.9% 真实数据 + 仅 0.1% 合成数据，model collapse 仍可能在多轮迭代后发生。这意味着没有简单的”安全比例阈值”</li>
+<li><strong>验证机制是关键</strong>：2026 年的研究表明，打破 collapse 循环的有效手段不是调整混合比例，而是对合成数据做自动质量验证——只有通过验证的合成样本才能进入训练集</li>
+<li><strong>数据溯源</strong>：水印技术正在成为 collapse 预防的重要工具——标记合成数据的来源和代次，使得多轮迭代中的”数据血统”可追踪</li>
+</ul>
+<blockquote>
+<p><strong>Model Collapse 认知的三次修正</strong></p>
+<ul>
+<li>2024 Nature：发现了 collapse 现象，结论是”混入真实数据维持多样性”</li>
+<li>2025 ICLR：发现即使 0.1% 合成数据也可能引发 collapse——问题比预想的更严重</li>
+<li>2026 ICML：验证驱动的逃逸方案——对合成数据做自动验证（而非单纯混合真实数据）可以打破 collapse 循环</li>
+</ul>
+</blockquote>
+<p><strong>更新后的建议</strong>：不再给出固定的”安全合成比例”。取而代之的原则是——合成数据可以使用，但<strong>每一条合成样本都必须通过独立的质量验证</strong>（自动或人工），且在多轮迭代场景下需要数据溯源机制。</p>
+<h3 id="合成数据的质量控制">合成数据的质量控制</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">中训练合成数据的质量控制管线</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">"""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> typing </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> List, Optional</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> dataclasses </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> dataclass</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">@dataclass</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> SyntheticQualityCheck</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """合成数据质量检查结果"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    factuality_score: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.0</span><span style="color:#6A737D;--shiki-dark:#6A737D">    # 事实性 (0-1)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    coherence_score: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.0</span><span style="color:#6A737D;--shiki-dark:#6A737D">     # 连贯性 (0-1)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    diversity_score: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.0</span><span style="color:#6A737D;--shiki-dark:#6A737D">     # 与已有数据的差异度 (0-1)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    difficulty_level: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span><span style="color:#6A737D;--shiki-dark:#6A737D">       # 难度级别</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    pass_all: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">bool</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> False</span><span style="color:#6A737D;--shiki-dark:#6A737D">           # 是否通过全部检查</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> quality_control_pipeline</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    synthetic_docs: List[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    reference_docs: List[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],       </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 对比用的真实文档</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    batch_size: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 100</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    factuality_threshold: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.8</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    coherence_threshold: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.7</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    diversity_threshold: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">dict</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    合成数据质量控制管线</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    三层过滤：</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    1. 自动检查（格式、长度、语言）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    2. 模型打分（事实性、连贯性）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    3. 多样性检查（与已有数据的差异）</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    results </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "total"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(synthetic_docs),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "passed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "failed_factuality"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "failed_coherence"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "failed_diversity"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "passed_docs"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> doc </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> synthetic_docs:</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 层 1：格式检查</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc.split()) </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 50</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            continue</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 太短</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 层 2：事实性和连贯性</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # （实际中会调用 LLM 打分或专门的分类器）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        factuality </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> estimate_factuality(doc)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        coherence </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> estimate_coherence(doc)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> factuality </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> factuality_threshold:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"failed_factuality"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            continue</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> coherence </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> coherence_threshold:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"failed_coherence"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            continue</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # 层 3：多样性（与已有数据的差异度）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        diversity </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> estimate_diversity(doc, reference_docs)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> diversity </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> diversity_threshold:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"failed_diversity"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            continue</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"passed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"passed_docs"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">].append(doc)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"pass_rate"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"passed"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(results[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"total"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">], </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> results</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> estimate_factuality</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """事实性评估（简化版，实际应调用 LLM 或专用模型）"""</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 检查常见的幻觉信号</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    hallucination_signals </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "据研究表明"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 没有具体引用</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        "众所周知"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,     </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 可能是错误的"常识"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    ]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    score </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1.0</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> signal </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> hallucination_signals:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> signal </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> doc:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">            score </span><span style="color:#D73A49;--shiki-dark:#F97583">-=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.1</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(score, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">0.0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> estimate_coherence</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """连贯性评估（简化版）"""</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    sentences </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> doc.split(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"。"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(sentences) </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.5</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> min</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1.0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(sentences) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 50</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 简化的占位逻辑</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> estimate_diversity</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, reference_docs: List[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]) -> </span><span style="color:#005CC5;--shiki-dark:#79B8FF">float</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    """多样性评估（与参考文档的差异度）"""</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # 简化：使用 n-gram 重叠率</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    doc_ngrams </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc.split()[:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 取前 100 个词</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    max_overlap </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ref </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> reference_docs[:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]:  </span><span style="color:#6A737D;--shiki-dark:#6A737D"># 采样对比</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        ref_ngrams </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(ref.split()[:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">100</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        overlap </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc_ngrams </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x26;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ref_ngrams) </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(doc_ngrams), </span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        max_overlap </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> max</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(max_overlap, overlap)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#D73A49;--shiki-dark:#F97583"> -</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> max_overlap</span></span></code></pre>
+<hr>
+<h2 id="94-中训练数据的实战案例">9.4 中训练数据的实战案例</h2>
+<h3 id="案例从通用模型到强代码数学模型">案例：从通用模型到强代码+数学模型</h3>
+<p><strong>目标</strong>：在一个 13B 通用模型上，通过中训练显著提升代码和数学能力，同时保持通用能力。</p>
+<p><strong>约束</strong>：</p>
+<ul>
+<li>预训练模型：13B 参数，在 5T token 上预训练</li>
+<li>可用 GPU：256 × A100 80G</li>
+<li>时间约束：3 周</li>
+</ul>
+<p><strong>数据策略设计：</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Step 1: 数据预算计算</span></span>
+<span class="line"><span>  - 可训练 token 数 ≈ 256 GPU × 3 周 × ~500M token/GPU/天</span></span>
+<span class="line"><span>  - 总计约 260B token</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Step 2: 数据配比设计（260B token）</span></span>
+<span class="line"><span>  ┌───────────────────────────────────────┐</span></span>
+<span class="line"><span>  │  代码数据 (Tier 1+2)    : 90B (35%)  │</span></span>
+<span class="line"><span>  │  数学数据              : 40B (15%)   │</span></span>
+<span class="line"><span>  │  合成数学题            : 15B (6%)    │</span></span>
+<span class="line"><span>  │  高质量网页（回放）      : 60B (23%)   │</span></span>
+<span class="line"><span>  │  书籍 + 学术论文       : 25B (10%)   │</span></span>
+<span class="line"><span>  │  中文高质量数据         : 20B (8%)    │</span></span>
+<span class="line"><span>  │  代码相关自然语言       : 10B (4%)    │</span></span>
+<span class="line"><span>  └───────────────────────────────────────┘</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Step 3: 训练配置</span></span>
+<span class="line"><span>  - 起始学习率：1.5e-5（预训练峰值的约 1/5）</span></span>
+<span class="line"><span>  - 退火策略：余弦退火到 1e-6</span></span>
+<span class="line"><span>  - Batch size：4M token</span></span>
+<span class="line"><span>  - 上下文长度：前 200B 用 8K，后 60B 扩展到 32K</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Step 4: 监控与评估</span></span>
+<span class="line"><span>  - 每 20B token 在 proxy benchmark 上评估</span></span>
+<span class="line"><span>  - 重点关注：HumanEval (代码), GSM8K (数学), HellaSwag (通用)</span></span>
+<span class="line"><span>  - 遗忘监控：C-Eval (中文), MMLU (英文)</span></span></code></pre>
+<p><strong>预期效果（基于类似实践的估计）：</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Benchmark</th><th>中训练前</th><th>中训练后</th><th>变化</th></tr></thead><tbody><tr><td>HumanEval (pass@1)</td><td>28%</td><td>52%</td><td>+24%</td></tr><tr><td>GSM8K</td><td>40%</td><td>62%</td><td>+22%</td></tr><tr><td>MATH</td><td>12%</td><td>24%</td><td>+12%</td></tr><tr><td>HellaSwag</td><td>72%</td><td>71%</td><td>-1%</td></tr><tr><td>MMLU</td><td>55%</td><td>54%</td><td>-1%</td></tr><tr><td>C-Eval</td><td>48%</td><td>47%</td><td>-1%</td></tr></tbody></table>
+<p>关键观察：代码和数学能力大幅提升，通用能力轻微退化（在可接受范围内）。</p>
+<hr>
+<blockquote>
+<p><strong>本章要点回顾</strong></p>
+<ol>
+<li><strong>长上下文数据</strong>：代码仓库和书籍是最佳来源；必须与短文档混合；128K 已是基线，4M 级别已经可行，超长样本比例可低至 &#x3C;5%</li>
+<li><strong>代码数据</strong>：质量分层是基础（Tier 1-4）；低质量代码可通过 Transform-and-Retain 改写管线升级而非直接丢弃；仓库级代码优于文件级</li>
+<li><strong>数学数据</strong>：合成策略包括数值替换、条件变换、强模型生成、形式化验证（已从”成本高”升级为”可规模化引擎”）、格式转换五种</li>
+<li><strong>领域数据</strong>：知识密度是核心指标；配比方法从经验法则演进到 Scaling Laws 数学模型再到 Data Mixing Agent 自动学习</li>
+<li><strong>有限数据场景</strong>：&#x3C;1B token 时，指令式知识注入可能优于传统 CPT</li>
+<li><strong>合成数据</strong>：是有价值的工具但不是银弹；Model Collapse 比预想更严重（0.1% 合成即可引发），关键在于验证机制而非固定比例</li>
+<li><strong>质量控制</strong>：三层过滤（格式→模型打分→多样性）；人工抽检不可省略；合成数据需数据溯源</li>
+</ol>
+</blockquote>
+<hr>
+<h2 id="-动手环节">🛠 动手环节</h2>
+<h3 id="练习-1代码质量评分器">练习 1：代码质量评分器</h3>
+<p>从 The Stack v2 数据集中随机采样 100 个 Python 文件，为每个文件计算质量分数。分析：</p>
+<ul>
+<li>各质量层级的文件分布</li>
+<li>哪些指标最能区分高低质量代码</li>
+</ul>
+<h3 id="练习-2设计一个长上下文训练课程">练习 2：设计一个长上下文训练课程</h3>
+<p>假设你要将一个 8K 上下文的模型扩展到 128K。设计一个 5 阶段的训练课程，包括：</p>
+<ul>
+<li>每个阶段的上下文长度、训练量、数据来源</li>
+<li>RoPE base frequency 的调整方案</li>
+<li>每个阶段的评估标准</li>
+</ul>
+<h3 id="练习-3合成数学数据">练习 3：合成数学数据</h3>
+<p>使用一个可用的 LLM API，生成 100 道中等难度的数学题（含解答步骤）。然后：</p>
+<ul>
+<li>手动验证每道题的答案正确性</li>
+<li>评估解题步骤的逻辑性</li>
+<li>统计错误率和错误类型</li>
+</ul>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/data-engineering/de-ch08-midtraining-overview" class="group card p-4 hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.8</span> 中训练概论——为什么需要这个阶段 </p> </a> <a href="/books/data-engineering/de-ch10-catastrophic-forgetting" class="group card p-4 text-right hover:border-emerald-300 dark:hover:border-emerald-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-emerald-600 dark:group-hover:text-emerald-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.10</span> 中训练的灾难性遗忘与稳定性 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#91-能力增强型数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 9.1 能力增强型数据 </a><a href="#911-长上下文数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 9.1.1 长上下文数据 </a><a href="#912-代码数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 9.1.2 代码数据 </a><a href="#913-数学数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 9.1.3 数学数据 </a><a href="#914-多语言数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 9.1.4 多语言数据 </a><a href="#92-知识注入型数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 9.2 知识注入型数据 </a><a href="#领域语料的收集与清洗" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 领域语料的收集与清洗 </a><a href="#领域数据与通用数据的配比" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 领域数据与通用数据的配比 </a><a href="#知识密度knowledge-density" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 知识密度（Knowledge Density） </a><a href="#93-合成数据在中训练中的应用" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 9.3 合成数据在中训练中的应用 </a><a href="#合成数据的角色" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 合成数据的角色 </a><a href="#phi-系列的启示教科书风格合成数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> Phi 系列的启示：教科书风格合成数据 </a><a href="#认知变化从银弹到谨慎使用" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 认知变化：从”银弹”到”谨慎使用” </a><a href="#model-collapse-的风险" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> Model Collapse 的风险 </a><a href="#合成数据的质量控制" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 合成数据的质量控制 </a><a href="#94-中训练数据的实战案例" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 9.4 中训练数据的实战案例 </a><a href="#案例从通用模型到强代码数学模型" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 案例：从通用模型到强代码+数学模型 </a><a href="#-动手环节" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-600 dark:text-slate-400 font-medium"> 🛠 动手环节 </a><a href="#练习-1代码质量评分器" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 1：代码质量评分器 </a><a href="#练习-2设计一个长上下文训练课程" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 2：设计一个长上下文训练课程 </a><a href="#练习-3合成数学数据" class="block text-sm transition-colors duration-200 hover:text-emerald-600 dark:hover:text-emerald-400 text-slate-500 dark:text-slate-500 pl-4"> 练习 3：合成数学数据 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

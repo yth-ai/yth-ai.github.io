@@ -1,0 +1,482 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-01-introduction/"><!-- Primary Meta Tags --><title>走进大语言模型 | 大模型全书 | Maxwell</title><meta name="title" content="走进大语言模型 | 大模型全书 | Maxwell"><meta name="description" content="从 GPT 到 DeepSeek——大模型的发展脉络、核心概念与技术全景图"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-01-introduction/"><meta property="og:title" content="走进大语言模型 | 大模型全书 | Maxwell"><meta property="og:description" content="从 GPT 到 DeepSeek——大模型的发展脉络、核心概念与技术全景图"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-01-introduction/"><meta name="twitter:title" content="走进大语言模型 | 大模型全书 | Maxwell"><meta name="twitter:description" content="从 GPT 到 DeepSeek——大模型的发展脉络、核心概念与技术全景图"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/llm-complete" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-amber-500/25"> 全 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"> 大模型全书 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：基础篇 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">走进大语言模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">Transformer 架构详解</span> </a> </li><li> <a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">Tokenizer 设计哲学</span> </a> </li><li> <a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">预训练数据工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：预训练 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">Scaling Laws：大模型的第一性原理</span> </a> </li><li> <a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">预训练配方</span> </a> </li><li> <a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">中训练（Mid-training）</span> </a> </li><li> <a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">分布式训练工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：后训练与对齐 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">监督微调（SFT）</span> </a> </li><li> <a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">RLHF 与偏好对齐</span> </a> </li><li> <a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">评估与 Benchmark</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：推理与部署 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">推理优化</span> </a> </li><li> <a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">量化与模型压缩</span> </a> </li><li> <a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">服务部署与系统架构</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：前沿与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">多模态大模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">Agent、工具使用与未来展望</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 1 章 / 共 16 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">1.</span> 走进大语言模型 </a><a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> Transformer 架构详解 </a><a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> Tokenizer 设计哲学 </a><a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 预训练数据工程 </a><a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> Scaling Laws：大模型的第一性原理 </a><a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 预训练配方 </a><a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 中训练（Mid-training） </a><a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 分布式训练工程 </a><a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 监督微调（SFT） </a><a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> RLHF 与偏好对齐 </a><a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> 评估与 Benchmark </a><a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> 推理优化 </a><a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> 量化与模型压缩 </a><a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 服务部署与系统架构 </a><a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 多模态大模型 </a><a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> Agent、工具使用与未来展望 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">书架</a> <span>/</span> <a href="/books/llm-complete" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">大模型全书</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第一部分：基础篇</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 1 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"> 第 1 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第一部分：基础篇</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 走进大语言模型 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">从 GPT 到 DeepSeek——大模型的发展脉络、核心概念与技术全景图</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-12T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年4月12日 </time> <span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> LLM </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 概述 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 发展史 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <h2 id="为什么需要这本书">为什么需要这本书</h2>
+<p>大语言模型（Large Language Model, LLM）正在重塑整个 AI 领域。从 GPT-3 在 2020 年引爆”大模型时代”，到如今 GPT-5、Claude 4、Gemini 3、DeepSeek V4 等模型的百花齐放，LLM 已经从学术研究走向工业生产，深刻影响着搜索、编程、教育、医疗等几乎所有行业。</p>
+<p>然而，<strong>理解 LLM 的门槛正在快速升高</strong>。这不是一个看完一篇论文就能掌握的领域——它涉及数据工程、模型架构、训练工程、对齐技术、推理优化、系统部署等多个交叉学科。现有的教材要么过于学术（缺乏工业实战视角），要么过于碎片化（只覆盖某一个子领域），要么已经过时（LLM 领域半年就是一个时代）。</p>
+<p>本书的目标是：<strong>让你通过一本书，系统性地掌握 LLM 全链路的核心知识，达到能够独立设计、训练、优化和部署大模型的专家水平。</strong></p>
+<h2 id="本书的独特之处">本书的独特之处</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>特性</th><th>本书</th><th>传统教材</th><th>博客/论文</th></tr></thead><tbody><tr><td>全栈覆盖</td><td>数据→训练→对齐→推理→部署→Agent</td><td>通常只覆盖 2-3 个主题</td><td>单点深入</td></tr><tr><td>实战视角</td><td>基于一线工业经验</td><td>偏学术理论</td><td>质量参差不齐</td></tr><tr><td>持续更新</td><td>定期吸收最新进展</td><td>出版后固定</td><td>时效性不稳定</td></tr><tr><td>深度</td><td>从原理到数学到工程</td><td>要么太浅要么太深</td><td>取决于作者</td></tr></tbody></table>
+<h2 id="大模型发展简史">大模型发展简史</h2>
+<h3 id="预训练语言模型的诞生">预训练语言模型的诞生</h3>
+<p>大模型的故事要从 <strong>预训练（pre-training）</strong> 范式讲起。</p>
+<p>2018 年是分水岭。在此之前，NLP 领域的主流方法是为每个任务训练专门的模型——情感分析一个模型、机器翻译一个模型、文本摘要又一个模型。<a href="https://arxiv.org/abs/1802.05365">ELMo</a>（Peters et al., 2018）首次证明了”在大规模语料上预训练，然后在下游任务上微调”的两阶段范式的威力。</p>
+<p>紧接着，两个里程碑式的工作同年发布：</p>
+<ul>
+<li><strong><a href="https://cdn.openai.com/research-covers/language-unsupervised/language_understanding_paper.pdf">GPT</a>（2018.6）</strong>：OpenAI 提出用 Transformer Decoder 做自回归语言建模预训练，然后微调到下游任务。模型只有 117M 参数，但展示了 generative pre-training 的潜力。</li>
+<li><strong><a href="https://arxiv.org/abs/1810.04805">BERT</a>（2018.10）</strong>：Google 提出用 Transformer Encoder 做双向掩码语言建模（MLM）预训练。在 11 个 NLP 任务上取得 SOTA，彻底改变了 NLP 的研究范式。</li>
+</ul>
+<blockquote>
+<p><strong>关键洞察</strong>：GPT 和 BERT 的成功说明了一个深刻的道理——<strong>语言本身就包含了世界知识</strong>。在足够多的文本上训练语言模型，模型就能学到语法、语义、常识甚至推理能力。</p>
+</blockquote>
+<h3 id="规模化时代从-gpt-2-到-gpt-3">规模化时代：从 GPT-2 到 GPT-3</h3>
+<p><a href="https://cdn.openai.com/better-language-models/language_models_are_unsupervised_multitask_learners.pdf">GPT-2</a>（Radford et al., 2019, 1.5B 参数）首次展示了”大力出奇迹”——不需要微调，只需要给一些示例（few-shot），模型就能完成各种 NLP 任务。OpenAI 当时以”太危险”为由延迟发布，引发了关于 AI 安全的早期讨论。</p>
+<p><strong><a href="https://arxiv.org/abs/2005.14165">GPT-3</a>（Brown et al., 2020, 175B 参数）</strong> 是真正的转折点。论文 <em>“Language Models are Few-Shot Learners”</em> 中系统验证了 <strong>in-context learning</strong>（上下文学习）能力：给模型几个示例，模型就能”理解”任务并给出合理的回答，<strong>完全不需要更新任何参数</strong>。这种 emergent ability（涌现能力）是小模型所不具备的，它暗示了一个令人震撼的可能性：<strong>也许我们不需要为每个任务训练专门的模型，一个足够大的通用模型就够了。</strong></p>
+<h3 id="scaling-laws-的发现">Scaling Laws 的发现</h3>
+<p>2020 年，Kaplan et al. 发表了划时代的论文 <a href="https://arxiv.org/abs/2001.08361"><em>“Scaling Laws for Neural Language Models”</em></a>，揭示了一组优美的幂律关系：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo stretchy="false">(</mo><mi>N</mi><mo stretchy="false">)</mo><mo>=</mo><msup><mrow><mo fence="true">(</mo><mfrac><msub><mi>N</mi><mi>c</mi></msub><mi>N</mi></mfrac><mo fence="true">)</mo></mrow><msub><mi>α</mi><mi>N</mi></msub></msup></mrow><annotation encoding="application/x-tex">L(N) = \left(\frac{N_c}{N}\right)^{\alpha_N}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal">L</span><span class="mopen">(</span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2927em;vertical-align:-0.35em;"></span><span class="minner"><span class="minner"><span class="mopen delimcenter" style="top:0em;"><span class="delimsizing size1">(</span></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.8884em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.4101em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.1645em;"><span style="top:-2.357em;margin-left:-0.109em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight">c</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.345em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mclose delimcenter" style="top:0em;"><span class="delimsizing size1">)</span></span></span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.9427em;"><span style="top:-3.3413em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3448em;"><span style="top:-2.3567em;margin-left:-0.0037em;margin-right:0.0714em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1433em;"><span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 是 loss，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 是参数量，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>α</mi><mi>N</mi></msub><mo>≈</mo><mn>0.076</mn></mrow><annotation encoding="application/x-tex">\alpha_N \approx 0.076</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6331em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.0037em;">α</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.0037em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.10903em;">N</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6444em;"></span><span class="mord">0.076</span></span></span></span>。这意味着<strong>每增加 10 倍参数量，loss 下降约 0.95 倍</strong>——而且这个关系在多个数量级上都成立。</p>
+<p>2022 年，Hoffmann et al.（<a href="https://arxiv.org/abs/2203.15556">Chinchilla 论文</a>）进一步修正了这个关系，证明 <strong>参数量和训练数据量应该同步扩展</strong>。具体来说，对于计算预算 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>C</mi></mrow><annotation encoding="application/x-tex">C</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">C</span></span></span></span>，最优的参数量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi></mrow><annotation encoding="application/x-tex">N</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.10903em;">N</span></span></span></span> 和数据量 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>D</mi></mrow><annotation encoding="application/x-tex">D</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">D</span></span></span></span> 满足：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>N</mi><mrow><mi>o</mi><mi>p</mi><mi>t</mi></mrow></msub><mo>∝</mo><msup><mi>C</mi><mn>0.5</mn></msup><mo separator="true">,</mo><mspace width="1em"></mspace><msub><mi>D</mi><mrow><mi>o</mi><mi>p</mi><mi>t</mi></mrow></msub><mo>∝</mo><msup><mi>C</mi><mn>0.5</mn></msup></mrow><annotation encoding="application/x-tex">N_{opt} \propto C^{0.5}, \quad D_{opt} \propto C^{0.5}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.10903em;">N</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.109em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">pt</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.1002em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0.5</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.02778em;">D</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0278em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">o</span><span class="mord mathnormal mtight">pt</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∝</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8141em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.07153em;">C</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8141em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">0.5</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p>这意味着之前的很多模型（包括 GPT-3）都是”参数过多，数据不足”的。Chinchilla 只有 70B 参数，但用了 1.4T tokens 训练，在多个 benchmark 上超越了 4 倍大的 Gopher（280B）。</p>
+<blockquote>
+<p><strong>实战启示</strong>：Scaling Laws 不是学术游戏。它直接指导着工业界的资源分配决策——给定算力预算，应该训多大的模型、用多少数据、训练多少步。后面第五章我们会深入讨论。</p>
+</blockquote>
+<h3 id="对齐革命从-instructgpt-到-chatgpt">对齐革命：从 InstructGPT 到 ChatGPT</h3>
+<p>2022 年 3 月，OpenAI 发布 <a href="https://arxiv.org/abs/2203.02155">InstructGPT 论文</a>，首次系统地展示了 <strong>RLHF（Reinforcement Learning from Human Feedback）</strong> 的威力：通过人类偏好标注训练奖励模型，再用 PPO 算法优化语言模型，使模型输出更符合人类意图。</p>
+<p>InstructGPT 的核心贡献不在于模型更大或更强，而在于<strong>范式转变</strong>：</p>
+<ol>
+<li><strong>SFT（Supervised Fine-Tuning）</strong>：用高质量的指令-回复对做监督微调</li>
+<li><strong>RM（Reward Modeling）</strong>：训练奖励模型来预测人类偏好</li>
+<li><strong>RLHF</strong>：用奖励模型的信号通过 PPO 优化策略模型</li>
+</ol>
+<p>2022 年 11 月，ChatGPT 横空出世，把这套技术推向了大众。它不是技术突破，而是<strong>工程和产品层面的集大成者</strong>——证明了经过对齐训练的 LLM 可以作为通用的对话助手，为所有人所用。</p>
+<h3 id="当前格局2024-2026">当前格局（2024-2026）</h3>
+<p>如今，LLM 领域呈现几个关键趋势：</p>
+<p><strong>1. 模型能力持续提升，但增长曲线在变</strong></p>
+<ul>
+<li>GPT-4 (2023) → GPT-4o (2024) → GPT-5 (2025) → GPT-5.4 (2026)：OpenAI 持续推动 frontier</li>
+<li>Claude 3.5 Sonnet → Claude 4 Opus → Claude 4.6：Anthropic 在安全、长上下文和编程方面领先</li>
+<li>Gemini 1.5 → Gemini 2.5 → Gemini 3 Pro：Google 在多模态和原生图像生成方面发力</li>
+<li>DeepSeek V2 → V3 → V3.2 → V4：中国团队在 MoE 架构、MLA 和训练效率上持续突破</li>
+</ul>
+<p>一个重要的范式转移是<strong>推理模型（reasoning model）的崛起</strong>：OpenAI o1/o3/o4、DeepSeek R1、Claude 4 thinking mode 等模型通过在推理时生成详细的思考过程（reasoning tokens），在数学、代码和复杂推理任务上取得了质的飞跃。</p>
+<p><strong>2. 开源生态繁荣</strong></p>
+<ul>
+<li><a href="https://arxiv.org/abs/2302.13971">LLaMA</a> 系列推动了开源 LLM 生态，Llama 4 引入 MoE 架构和 10M 上下文</li>
+<li><a href="https://arxiv.org/abs/2401.04088">Mistral</a>、<a href="https://arxiv.org/abs/2309.16609">Qwen 3</a>、DeepSeek V3 等模型在多个规模段达到或接近闭源 SOTA</li>
+<li>开源数据集（<a href="https://huggingface.co/datasets/HuggingFaceFW/fineweb">FineWeb</a>、<a href="https://www.datacomp.ai/">DCLM</a>）和工具链日趋成熟</li>
+<li>开源推理框架（vLLM、SGLang）性能逼近商业方案</li>
+</ul>
+<p><strong>3. 后训练技术多样化</strong></p>
+<ul>
+<li>从 RLHF → <a href="https://arxiv.org/abs/2305.18290">DPO</a> → <a href="https://arxiv.org/abs/2402.03300">GRPO</a>，对齐算法不断简化</li>
+<li><strong>基于可验证奖励的强化学习（RL with Verifiable Rewards）</strong> 成为推理模型训练的核心范式——DeepSeek R1 证明 RL 可以在数学和代码等有客观答案的领域直接提升推理能力</li>
+<li>合成数据在 SFT 和对齐中扮演越来越重要的角色</li>
+<li>中训练（mid-training）作为新阶段被广泛采用，且被证明是 RL 成功的关键前置条件（<a href="https://arxiv.org/abs/2603.17074">PRISM</a>）</li>
+</ul>
+<p><strong>4. 推理时计算成为新前沿（Test-Time Compute Scaling）</strong></p>
+<p>Scaling Laws 正从”训练时堆算力”走向”推理时堆算力”：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2201.11903">Chain-of-Thought</a> 推理、<a href="https://arxiv.org/abs/2203.11171">Self-Consistency</a>、<a href="https://arxiv.org/abs/2305.10601">Tree-of-Thought</a> 等方法</li>
+<li><strong>推理模型的 scaling law</strong>：生成更多的 reasoning tokens → 更高的准确率，且这种提升是可预测的（<a href="https://arxiv.org/abs/2604.01411">Train-to-Test scaling laws</a>）</li>
+<li><a href="https://arxiv.org/abs/2211.17192">推测解码（Speculative Decoding）</a> 大幅提升推理速度，已成为生产标配</li>
+<li>一个反直觉的发现：过度训练的小模型 + 推理时多采样，可能优于刚好训练的大模型（T2 Scaling Laws，2026）</li>
+</ul>
+<p><strong>5. Agent 与工具使用</strong></p>
+<ul>
+<li>LLM 作为”大脑”驱动 Agent 系统，从单步问答走向多步规划和执行</li>
+<li><a href="https://modelcontextprotocol.io/">MCP (Model Context Protocol)</a> 等标准化协议推动 Agent 生态</li>
+<li>Computer Use（操作计算机）和 Coding Agent（编程助手）成为 LLM 的杀手级应用</li>
+<li>多 Agent 协作框架日趋成熟</li>
+</ul>
+<p><strong>6. 原生多模态（Native Multimodal）</strong></p>
+<ul>
+<li>从”视觉编码器 + LLM”的拼接方案，走向原生多模态的统一架构</li>
+<li>GPT-4o、Gemini、Emu3 等模型实现了理解与生成的统一——一个模型同时做文本理解、图像生成、语音对话</li>
+<li>视频理解和 3D 理解成为新赛道</li>
+</ul>
+<h2 id="核心概念速览">核心概念速览</h2>
+<p>在深入后续章节之前，我们先建立一些关键概念的直觉。</p>
+<h3 id="语言模型的本质">语言模型的本质</h3>
+<p>语言模型的核心任务是<strong>预测下一个 token</strong>：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>x</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>x</mi><mrow><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(x_t | x_1, x_2, \ldots, x_{t-1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+<p>整个序列的概率可以分解为：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mn>1</mn></msub><mo separator="true">,</mo><msub><mi>x</mi><mn>2</mn></msub><mo separator="true">,</mo><mo>…</mo><mo separator="true">,</mo><msub><mi>x</mi><mi>T</mi></msub><mo stretchy="false">)</mo><mo>=</mo><msubsup><mo>∏</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mi>T</mi></msubsup><mi>P</mi><mo stretchy="false">(</mo><msub><mi>x</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><msub><mi>x</mi><mrow><mn>1</mn><mo>:</mo><mi>t</mi><mo>−</mo><mn>1</mn></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">P(x_1, x_2, \ldots, x_T) = \prod_{t=1}^{T} P(x_t | x_{1:t-1})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">1</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight">2</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="minner">…</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mclose">)</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2809em;vertical-align:-0.2997em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∏</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9812em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.13889em;">T</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord"><span class="mord mathnormal">x</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3011em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">1</span><span class="mrel mtight">:</span><span class="mord mathnormal mtight">t</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2083em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+<p>这看起来简单得令人难以置信——就是”猜下一个词”。但正是这个简单的目标，在足够大的数据和模型上训练后，产生了惊人的能力。</p>
+<h3 id="token-与-tokenization">Token 与 Tokenization</h3>
+<p>LLM 不直接处理文字，而是处理 <strong>token</strong>——文本的基本单元。Tokenizer 负责将文本切分为 token 序列。现代 LLM 普遍使用 <strong>BPE（Byte Pair Encoding）</strong> 及其变体：</p>
+<ul>
+<li>GPT 系列使用 tiktoken（BPE 变体）</li>
+<li>LLaMA 使用 SentencePiece（Unigram/BPE）</li>
+<li>中文场景下，一个汉字通常被编码为 1-3 个 token</li>
+</ul>
+<p>Tokenizer 的设计直接影响模型的效率和多语言能力，我们在第三章详细讨论。</p>
+<h3 id="训练流程的三个阶段">训练流程的三个阶段</h3>
+<p>现代 LLM 的训练通常分为三个（或四个）阶段：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>预训练 (Pre-training)</span></span>
+<span class="line"><span>  ↓ 万亿 tokens，基础能力</span></span>
+<span class="line"><span>中训练 (Mid-training)  [可选但越来越常见]</span></span>
+<span class="line"><span>  ↓ 数百亿 tokens，领域增强</span></span>
+<span class="line"><span>监督微调 (SFT)</span></span>
+<span class="line"><span>  ↓ 数万-数十万条，指令遵循</span></span>
+<span class="line"><span>对齐训练 (RLHF/DPO)</span></span>
+<span class="line"><span>  ↓ 数千-数万条偏好数据</span></span>
+<span class="line"><span>最终模型</span></span></code></pre>
+<p>每个阶段的数据质量和配比都极其关键，这将是本书用大量篇幅讨论的主题。</p>
+<h3 id="模型架构的核心">模型架构的核心</h3>
+<p>几乎所有现代 LLM 都基于 <strong>Transformer 架构</strong>，具体来说是 <strong>Decoder-only</strong> 变体。核心组件包括：</p>
+<ul>
+<li><strong>Multi-Head Self-Attention (MHA)</strong>：捕捉 token 间的关系</li>
+<li><strong>Feed-Forward Network (FFN)</strong>：非线性变换和知识存储</li>
+<li><strong>位置编码 (Positional Encoding)</strong>：注入序列位置信息</li>
+</ul>
+<p>近年的重要架构创新包括：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>技术</th><th>作用</th><th>代表模型</th></tr></thead><tbody><tr><td>GQA/MQA</td><td>减少 KV Cache，加速推理</td><td>LLaMA 2, Gemini</td></tr><tr><td>MLA</td><td>低秩压缩 KV Cache，KV Cache 大幅缩小</td><td>DeepSeek V2/V3/V4</td></tr><tr><td>NSA</td><td>原生可训练稀疏注意力，长序列效率</td><td>DeepSeek V3.2</td></tr><tr><td>RoPE/iRoPE</td><td>旋转位置编码，支持长度外推至 10M</td><td>LLaMA 4, Qwen</td></tr><tr><td>MoE</td><td>稀疏激活，扩大参数量不增加推理成本</td><td>Mixtral, DeepSeek, Llama 4</td></tr><tr><td>MTP</td><td>多 Token 预测，提升训练效率</td><td>DeepSeek V3</td></tr><tr><td>SwiGLU</td><td>替代 ReLU 的激活函数</td><td>LLaMA, PaLM</td></tr></tbody></table>
+<h2 id="本书结构">本书结构</h2>
+<p>本书分为五个部分：</p>
+<h3 id="第一部分基础篇第-1-4-章">第一部分：基础篇（第 1-4 章）</h3>
+<p>建立必要的基础知识：本章的全景概述、Transformer 架构详解、Tokenizer 设计、以及预训练数据工程。</p>
+<h3 id="第二部分预训练第-5-8-章">第二部分：预训练（第 5-8 章）</h3>
+<p>深入预训练的方方面面：Scaling Laws 的理论与实践、预训练配方设计、中训练（Mid-training）技术、以及分布式训练工程。</p>
+<h3 id="第三部分后训练与对齐第-9-11-章">第三部分：后训练与对齐（第 9-11 章）</h3>
+<p>从 SFT 到 RLHF 到 DPO/GRPO，系统讲解如何让模型”对齐”人类意图，包括数据构造、训练技巧和评估方法。</p>
+<h3 id="第四部分推理与部署第-12-14-章">第四部分：推理与部署（第 12-14 章）</h3>
+<p>覆盖推理优化（量化、蒸馏、推测解码）、服务化部署（vLLM、TensorRT-LLM）、以及评估体系设计。</p>
+<h3 id="第五部分前沿与展望第-15-16-章">第五部分：前沿与展望（第 15-16 章）</h3>
+<p>多模态 LLM、Agent 系统、长上下文处理等前沿方向，以及对未来的展望。</p>
+<hr>
+<blockquote>
+<p><strong>下一章预告</strong>：第二章我们将深入 Transformer 架构的每一个细节——从 Attention 的数学推导到现代架构变体（GQA、MoE、MLA），配合代码和可视化帮助你建立扎实的直觉。</p>
+</blockquote>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <div></div> <a href="/books/llm-complete/chapter-02-transformer" class="group card p-4 text-right hover:border-amber-300 dark:hover:border-amber-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.2</span> Transformer 架构详解 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#为什么需要这本书" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 为什么需要这本书 </a><a href="#本书的独特之处" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 本书的独特之处 </a><a href="#大模型发展简史" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 大模型发展简史 </a><a href="#预训练语言模型的诞生" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 预训练语言模型的诞生 </a><a href="#规模化时代从-gpt-2-到-gpt-3" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 规模化时代：从 GPT-2 到 GPT-3 </a><a href="#scaling-laws-的发现" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Scaling Laws 的发现 </a><a href="#对齐革命从-instructgpt-到-chatgpt" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 对齐革命：从 InstructGPT 到 ChatGPT </a><a href="#当前格局2024-2026" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 当前格局（2024-2026） </a><a href="#核心概念速览" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 核心概念速览 </a><a href="#语言模型的本质" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 语言模型的本质 </a><a href="#token-与-tokenization" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Token 与 Tokenization </a><a href="#训练流程的三个阶段" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 训练流程的三个阶段 </a><a href="#模型架构的核心" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 模型架构的核心 </a><a href="#本书结构" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 本书结构 </a><a href="#第一部分基础篇第-1-4-章" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 第一部分：基础篇（第 1-4 章） </a><a href="#第二部分预训练第-5-8-章" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 第二部分：预训练（第 5-8 章） </a><a href="#第三部分后训练与对齐第-9-11-章" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 第三部分：后训练与对齐（第 9-11 章） </a><a href="#第四部分推理与部署第-12-14-章" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 第四部分：推理与部署（第 12-14 章） </a><a href="#第五部分前沿与展望第-15-16-章" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 第五部分：前沿与展望（第 15-16 章） </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

@@ -1,0 +1,380 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/voices/2026-04-11/"><!-- Primary Meta Tags --><title>阿里「欢乐马」匿名屠榜视频生成、OpenAI Spud 超级应用倒计时 3 天、字节 Seeduplex 全双工语音革命 | 前沿声浪 | Maxwell</title><meta name="title" content="阿里「欢乐马」匿名屠榜视频生成、OpenAI Spud 超级应用倒计时 3 天、字节 Seeduplex 全双工语音革命 | 前沿声浪 | Maxwell"><meta name="description" content="本期精选 ThursdAI 伦敦 AI Engineer Europe 大会现场 5 人圆桌（Swyx/VB/Peter Gostev/Omar/Vincent Koc）深入 Mythos 算力争议与 OpenClaw /dreaming、Two Minute Papers 拆解阿里 HappyHorse 匿名屠榜事件、Latent Space Claude Code 一周年特辑、字节 Seeduplex 全双工语音大模型发布，以及 Swyx 警示 AI 供应链安全的 fork-not-install 策略"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-11/"><meta property="og:title" content="阿里「欢乐马」匿名屠榜视频生成、OpenAI Spud 超级应用倒计时 3 天、字节 Seeduplex 全双工语音革命 | 前沿声浪 | Maxwell"><meta property="og:description" content="本期精选 ThursdAI 伦敦 AI Engineer Europe 大会现场 5 人圆桌（Swyx/VB/Peter Gostev/Omar/Vincent Koc）深入 Mythos 算力争议与 OpenClaw /dreaming、Two Minute Papers 拆解阿里 HappyHorse 匿名屠榜事件、Latent Space Claude Code 一周年特辑、字节 Seeduplex 全双工语音大模型发布，以及 Swyx 警示 AI 供应链安全的 fork-not-install 策略"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-11/"><meta name="twitter:title" content="阿里「欢乐马」匿名屠榜视频生成、OpenAI Spud 超级应用倒计时 3 天、字节 Seeduplex 全双工语音革命 | 前沿声浪 | Maxwell"><meta name="twitter:description" content="本期精选 ThursdAI 伦敦 AI Engineer Europe 大会现场 5 人圆桌（Swyx/VB/Peter Gostev/Omar/Vincent Koc）深入 Mythos 算力争议与 OpenClaw /dreaming、Two Minute Papers 拆解阿里 HappyHorse 匿名屠榜事件、Latent Space Claude Code 一周年特辑、字节 Seeduplex 全双工语音大模型发布，以及 Swyx 警示 AI 供应链安全的 fork-not-install 策略"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架  </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12"> <!-- Main Content --> <article class="min-w-0"> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/voices" class="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">前沿声浪</a> <span>/</span> <span class="text-slate-900 dark:text-white">Vol.10</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"></path> </svg>
+前沿声浪 · Vol.10 </span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 阿里「欢乐马」匿名屠榜视频生成、OpenAI Spud 超级应用倒计时 3 天、字节 Seeduplex 全双工语音革命 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">本期精选 ThursdAI 伦敦 AI Engineer Europe 大会现场 5 人圆桌（Swyx/VB/Peter Gostev/Omar/Vincent Koc）深入 Mythos 算力争议与 OpenClaw /dreaming、Two Minute Papers 拆解阿里 HappyHorse 匿名屠榜事件、Latent Space Claude Code 一周年特辑、字节 Seeduplex 全双工语音大模型发布，以及 Swyx 警示 AI 供应链安全的 fork-not-install 策略</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-10T16:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 2026年4月11日 </time> <span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> HappyHorse </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 阿里 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Seeduplex </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 字节跳动 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> GPT-6 Spud </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Sweet Pea </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> AI Engineer Europe </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> OpenClaw </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Codex </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Claude Code </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 供应链安全 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Compute Wars </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> W&amp;B </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1C9BTv" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;voices&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Media Items Quick Access --> <div class="mb-10"> <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+本期内容 · 9 条
+</h2> <div class="space-y-3"> <a href="https://www.youtube.com/watch?v=twominutepapers-happyhorse-arena" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">6:38</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Two Minute Papers </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Two Minute Papers：阿里「欢乐马」匿名空降屠榜——15B 参数如何碾压 Seedance 2.0 和 Kling 3.0 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Two Minute Papers 详解 HappyHorse-1.0 如何以匿名身份空降 Artificial Analysis Video Arena 榜首，ELO 1365 大幅领先 Seedance 2.0，阿里 ATH 事业群郑波团队 48 小时后正式认领 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.youtube.com/watch?v=fireship-openai-spud-superapp" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">9:22</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Fireship </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Fireship：OpenAI Spud 不只是 GPT-6——从耳机到汽车的环境计算超级应用全拆解 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Fireship 拆解 OpenAI 围绕 Spud 构建的六层超级应用生态：GPT-6 核心智能层、Codex 300 万周活、File Library 跨会话记忆、Apple CarPlay 1 亿辆车、Sweet Pea 耳机 9 月发布目标 5000 万台 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.youtube.com/watch?v=theaigrid-bytedance-seeduplex" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">18:45</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· TheAIGRID </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> TheAIGRID：字节跳动 Seeduplex——全双工「边听边说」语音大模型如何终结 AI 回合制对话 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> TheAIGRID 深度解析字节跳动 Seed 团队 Seeduplex 模型的全双工架构：实时双向语音交互、嘈杂环境精准抗干扰、已在豆包 App 全量上线，标志 AI 语音从半双工回合制迈向真正自然对话 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://sub.thursdai.news/p/thursdai-ai-engineer-europe-mythos" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">2:05:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Alex Volkov (ThursdAI) </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> ThursdAI × Swyx × VB × Peter Gostev × Omar：AI Engineer Europe 伦敦特辑——Mythos 算力困局、Codex 300 万用户与 OpenClaw /dreaming </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 首届欧洲 AI Engineer 大会现场录制：Peter Gostev 质疑 Mythos 不发布真因是算力不足而非安全、VB 透露 Codex 周活突破 300 万并展示自动晨会简报、Vincent Koc 发布 OpenClaw /dreaming 记忆整合功能 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.latent.space/p/claude-code-anniversary" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">1:38:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· swyx &amp; Alessio </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Latent Space：Claude Code 一周年——回顾自主编程代理从原型到日均百万会话的演进 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Latent Space 双期特辑纪念 Claude Code 发布一年：从最初的命令行原型到如今 Kairos 后台代理架构，嘉宾认为它将在 2026 年底前编写 25-50% 的所有代码 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://wandb.ai/site/resources/podcast/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">52:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Lukas Biewald (Weights &amp; Biases) </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Gradient Dissent × Lukas Biewald：W&amp;B Automations 发布——从训练运行到部署的全自动化工作流 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Gradient Dissent 最新一期详解 W&amp;B Automations：训练运行完成后自动触发评估、通知团队、启动部署流水线，以及 Wolfram 近期博文「更多推理不总是更好」引发的讨论 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://x.com/swaborting/status/2043201847139184640" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800"> <svg class="w-5 h-5 text-slate-800 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"> X </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 讨论串 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· swyx (@swaborting) </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Swyx 在 X 警示 AI 供应链攻击：开发者应该 fork 依赖包而不是 install——从 light LLM 和 Axios 事件说起 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> AI Engineer 创始人 Swyx 在 AI Engineer Europe 大会后发推总结供应链安全教训：light LLM 和 Axios 接连爆出供应链注入，Agent 工具链依赖深度远超传统 web 应用，建议团队 fork 核心依赖而非直接 npm install </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://x.com/petergostev/status/2043156782044372992" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800"> <svg class="w-5 h-5 text-slate-800 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"> X </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 讨论串 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Peter Gostev (@petergostev) </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Peter Gostev（Arena）发布 Compute Wars 算力军备竞赛图表：OpenAI 遥遥领先，Anthropic 靠 Google TPU 交易追赶 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Arena 联合创始人 Peter Gostev 发布 2026 Q2 算力分布图：OpenAI 在推理算力上遥遥领先，Anthropic 宣称不发布 Mythos 是因安全考量但可能是算力不足，Google TPU 交易成为 Anthropic 的生命线 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.bilibili.com/video/BV1qSQcB8EVG/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-cyan-50 dark:bg-cyan-950/30"> <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-cyan-600 dark:text-cyan-400">8:24</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"> Bilibili </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· AI 日报 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> B站 AI 日报 2026-04-10：字节 Seeduplex 全双工语音 × HappyHorse 屠榜 × 腾讯云 AI 算力涨价 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 15 条精选资讯速览：字节 Seeduplex 实现边听边说、阿里 HappyHorse 匿名屠榜后被认领、腾讯云宣布 5 月起上调 AI 算力及容器服务价格、豆包日耗 1.6 万亿 Token </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a> </div> </div> <!-- Full Content --> <div class="relative">   <div class="prose-custom">  <h2 id="阿里欢乐马匿名空降屠榜">阿里「欢乐马」匿名空降屠榜</h2>
+<p><strong>Two Minute Papers 拆解 HappyHorse-1.0 匿名屠榜事件</strong></p>
+<p>4 月 8 日，一个没有发布会、没有技术博客、甚至没有公司背书的匿名视频模型 HappyHorse-1.0 突然空降 Artificial Analysis Video Arena 榜首，ELO 1365 大幅碾压第二名 Seedance 2.0 和 Kling 3.0。Two Minute Papers 从多个盲测案例切入，展示了这匹「快乐马」在画面真实感、物理一致性和细节保留方面的惊人表现。</p>
+<ul>
+<li>文本转视频和图像转视频两项赛道均登顶，15B 参数规模在效率上令人惊讶</li>
+<li>48 小时内从「全网竞猜」到阿里 ATH 事业群前千问负责人林俊旸团队正式认领</li>
+<li>开源策略——预计一周后公开模型权重，延续阿里「调用量全球领跑」的开源路线</li>
+<li>背后或基于 daVinci-MagiHuman 优化，统一框架处理文本/图像/视频三种输入</li>
+</ul>
+<p><strong>编者评论</strong>：匿名先屠榜再认领，这是阿里继通义千问之后又一次精心策划的开源攻势——用实力说话，先让数据替品牌发声。</p>
+<hr>
+<h2 id="openai-spud-六层超级应用生态">OpenAI Spud 六层超级应用生态</h2>
+<p><strong>Fireship 全面拆解 Spud 不止于模型本身</strong></p>
+<p>距 GPT-6「土豆」传闻的 4 月 14 日发布日仅剩 3 天，Polymarket 给出 78% 的概率。Fireship 这期不聚焦模型参数，而是拆解 OpenAI 围绕 Spud 构建的完整超级应用生态——从桌面到汽车再到耳机的全场景环境计算。</p>
+<ul>
+<li>六层架构：Spud（核心智能）→ Codex CLI（多 Agent 开发）→ File Library（跨会话记忆）→ Apple CarPlay（1 亿辆车）→ TBPN 收购（内容分发）→ Sweet Pea 耳机（9 月发布，首年目标 4-5 千万台）</li>
+<li>Codex 周活突破 300 万（上月 200 万），VB 在 ThursdAI 透露自动化早晨简报工作流</li>
+<li>Greg Brockman 播客原话：「两年研究，大模型的感觉，不是增量改进」——强烈暗示这是 GPT-6 而非 GPT-5.5</li>
+<li>8520 亿美元估值压力下，Spud 必须是突破性产品，不能重蹈 GPT-4.5「令人失望」的覆辙</li>
+</ul>
+<p><strong>编者评论</strong>：OpenAI 的野心已经从「做最好的模型」升级为「做最好的生态」。Sweet Pea 耳机如果成功，这将是 AI-first 硬件的真正起点。</p>
+<hr>
+<h2 id="字节-seeduplex-全双工语音革命">字节 Seeduplex 全双工语音革命</h2>
+<p><strong>TheAIGRID 解析「边听边说」如何终结回合制</strong></p>
+<p>4 月 9 日，字节跳动 Seed 团队发布原生全双工语音大模型 Seeduplex，已在豆包 App 全量上线。TheAIGRID 从技术架构到用户体验全面解析这一突破。</p>
+<ul>
+<li>核心创新：从半双工「你说我听、我说你听」升级为「边听边说」——AI 在生成回复的同时持续监听用户输入</li>
+<li>嘈杂环境精准抗干扰：车内、咖啡厅等复杂声学场景下依然精准锁定用户语音</li>
+<li>情绪感知与自然打断：能识别用户语气变化并自然响应打断，对话体验接近人类</li>
+<li>豆包日耗 1.6 万亿 Token 的底座上部署，国产语音交互进入新阶段</li>
+</ul>
+<p><strong>编者评论</strong>：全双工是语音 AI 从「工具」到「伙伴」的分水岭。当 AI 能像人一样边听边想边说，回合制对话将成为历史。</p>
+<hr>
+<h2 id="thursdai-伦敦-ai-engineer-europe-圆桌">ThursdAI 伦敦 AI Engineer Europe 圆桌</h2>
+<p><strong>5 位行业核心人物的 2 小时深度交锋</strong></p>
+<p>ThursdAI 4 月 10 日在伦敦 AI Engineer Europe 大会现场录制特辑，邀请 Swyx、VB（OpenAI/Codex）、Peter Gostev（Arena）、Omar（Google DeepMind）、Vincent Koc（OpenClaw）五人同台。</p>
+<ul>
+<li>Peter Gostev 抛出炸弹：Mythos 不发布的真正原因可能是 Anthropic 算力不足以大规模部署，而非「太危险」——OpenAI 推理算力遥遥领先</li>
+<li>VB 透露 Codex 日常工作流：每天 9 点自动读取 Slack/Gmail/Calendar，生成 5 分钟会议简报</li>
+<li>Vincent Koc 发布 OpenClaw 2026.4.5 版本的 <code>/dreaming</code> GA：Light/Deep/REM 三阶段记忆整合，生成人类可读的「梦境日记」</li>
+<li>Omar 庆祝 Gemma 4 下载量突破 1000 万，系列总下载达 5 亿</li>
+<li>大会主题共识：行业收益已从模型权重转向「Harness Engineering」——工程化整合才是护城河</li>
+</ul>
+<p><strong>编者评论</strong>：Peter Gostev 对 Mythos 的质疑值得深思。安全叙事和算力瓶颈之间，往往只隔一层公关话术。</p>
+<hr>
+<h2 id="claude-code-一周年回顾">Claude Code 一周年回顾</h2>
+<p><strong>Latent Space 双期特辑：从原型到日均百万会话</strong></p>
+<p>Latent Space 推出 Claude Code 发布一周年双期特辑，邀请其最忠实用户回顾这款自主编程代理的演进历程。</p>
+<ul>
+<li>从最初的命令行原型到 Kairos 后台自主代理架构，再到 Claude Code 源码泄露事件引发的生态震荡</li>
+<li>嘉宾预测：2026 年底前 Claude Code 将编写 25-50% 的所有代码</li>
+<li>讨论了 4 月 4 日 Anthropic 切断第三方工具访问（OpenClaw 断供）对开发者生态的冲击</li>
+<li>Agent 编程的下一步：不是写更多代码，而是让 Agent 理解「为什么写这段代码」</li>
+</ul>
+<p><strong>编者评论</strong>：一年前 Claude Code 还是个实验品，今天它已经改变了数百万开发者的日常工作流。Agent 编程的速度比所有人预想的都快。</p>
+<hr>
+<h2 id="wb-automations训练到部署全自动化">W&#x26;B Automations：训练到部署全自动化</h2>
+<p><strong>Gradient Dissent 详解 Weights &#x26; Biases 自动化工作流</strong></p>
+<p>Gradient Dissent 最新一期聚焦 W&#x26;B 新发布的 Automations 功能，以及 Wolfram 近期博文「更多推理不总是更好」引发的思考。</p>
+<ul>
+<li>W&#x26;B Automations：训练 run 完成后自动触发评估 pipeline、Slack 通知团队、启动 staging 部署</li>
+<li>从实验跟踪平台到 MLOps 全链路自动化，W&#x26;B 正在成为 ML 工程的「CI/CD」</li>
+<li>Wolfram 的反直觉观点：在某些任务上，增加推理 token 预算反而降低准确率</li>
+<li>Lukas Biewald 对 AI 工程化趋势的判断：2026 年下半年的竞争将围绕工具链成熟度而非模型性能</li>
+</ul>
+<p><strong>编者评论</strong>：W&#x26;B 从实验记录工具到 MLOps 自动化中枢的转型，映射了整个行业从「炼模型」到「做工程」的重心迁移。</p>
+<hr>
+<h2 id="ai-供应链安全警钟">AI 供应链安全警钟</h2>
+<p><strong>Swyx 在 X 发起的 fork-not-install 讨论</strong></p>
+<p>AI Engineer 创始人 Swyx 在伦敦大会后发推总结 Agent 生态的供应链安全隐患，引发广泛讨论。</p>
+<ul>
+<li>light LLM 和 Axios 接连爆出供应链注入漏洞，Agent 工具链的依赖深度远超传统 web 应用</li>
+<li>OWASP 2026 年版 Agentic Applications Top 10 将供应链攻击列为核心威胁</li>
+<li>建议：fork 核心依赖包而非直接 npm install，尤其是 Agent 框架的 MCP 桥接层</li>
+<li>The Register 4 月 10 日长文梳理：AI 安全已从「实验阶段」进入「代理时代」</li>
+</ul>
+<p><strong>编者评论</strong>：当 Agent 能自主调用工具链时，一个被污染的依赖包不再只是代码漏洞——它是 AI 的「被操纵入口」。</p>
+<hr>
+<h2 id="compute-wars-算力军备竞赛">Compute Wars 算力军备竞赛</h2>
+<p><strong>Peter Gostev 发布 2026 Q2 算力分布图</strong></p>
+<p>Arena 联合创始人 Peter Gostev 在 AI Engineer Europe 大会上展示了各大 AI 实验室的推理算力对比图，随后在 X 上引发激烈讨论。</p>
+<ul>
+<li>OpenAI 在推理算力上遥遥领先，与第二名差距超过一个数量级</li>
+<li>Anthropic 与 Google 达成 TPU 交易，试图弥补算力差距</li>
+<li>Arena 同时公开了 3 年历史排行榜数据和提示词数据集</li>
+<li>算力格局决定模型格局：Mythos 不发布、Muse Spark 从零建基础设施，本质都是算力约束的产物</li>
+</ul>
+<p><strong>编者评论</strong>：算力是这场 AI 竞赛的「石油」。Peter Gostev 的图表比任何基准测试都更能说明各家实验室的真实实力排序。</p>
+<hr>
+<h2 id="b站-ai-日报-410-速览">B站 AI 日报 4/10 速览</h2>
+<p><strong>15 条精选资讯 8 分钟速览</strong></p>
+<p>B站 AI 日报 4 月 10 日期精选本周最密集的 AI 动态，中文视角快速消化全球信息。</p>
+<ul>
+<li>字节跳动 Seeduplex 全双工语音大模型发布，豆包 App 全量上线</li>
+<li>阿里 HappyHorse 视频模型匿名屠榜后被认领，预计一周后开源</li>
+<li>腾讯云宣布 5 月起上调 AI 算力及容器服务价格</li>
+<li>豆包日耗 1.6 万亿 Token，国产大模型调用量连续五周全球领跑</li>
+<li>Happy Horse 视频模型在 Video Arena 超越 Seedance 2.0 登顶盲测榜</li>
+</ul>
+<p><strong>编者评论</strong>：国产 AI 的日耗 Token 量已经是天文数字，但算力成本上涨正在倒逼整个行业重新审视「价格战」的可持续性。</p>
+<hr>
+<h2 id="编者按">编者按</h2>
+<p>本期前沿声浪的主线是一个词：<strong>生态</strong>。</p>
+<p>OpenAI 不再满足于做最好的模型，它要用 Spud 串联起从桌面到汽车到耳机的全场景环境计算；阿里用 HappyHorse 的匿名屠榜证明开源生态的杀伤力——先让产品说话，再让品牌收割；字节的 Seeduplex 把语音 AI 从回合制推进到全双工，豆包的日耗 Token 量已经是全球之最。</p>
+<p>而在这些光鲜的产品背后，ThursdAI 伦敦圆桌揭示了一个更深层的真相：<strong>算力决定一切</strong>。Peter Gostev 的 Compute Wars 图表说明了为什么 Anthropic「不敢」发布 Mythos，为什么 Meta 要从零建 Muse Spark 的基础设施。模型之争的本质是算力之争，算力之争的本质是资本之争。</p>
+<p>同时，Swyx 的供应链安全警钟提醒我们：当 Agent 变得越来越强大、工具链越来越深，安全问题也从「模型对齐」扩展到了「生态安全」。一个被污染的 npm 包，在 Agent 时代可能比一个未对齐的模型更危险。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Post Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/voices/2026-04-12" class="group card p-4 hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">Karpathy 警告 AI 认知鸿沟 / NVIDIA Nemotron 3 开源颠覆 / GPT-6 倒计时 48 小时</p> </a> <a href="/voices/2026-04-10" class="group card p-4 text-right hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">GPT-6「土豆」4 月 14 日登场、Meta 闭源转身 Muse Spark、三巨头联手反蒸馏</p> </a> </div> </nav> </article> <!-- Table of Contents (Desktop) --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本期目录
+</h4> <nav class="space-y-1"> <a href="#阿里欢乐马匿名空降屠榜" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> 阿里「欢乐马」匿名空降屠榜 </a><a href="#openai-spud-六层超级应用生态" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> OpenAI Spud 六层超级应用生态 </a><a href="#字节-seeduplex-全双工语音革命" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> 字节 Seeduplex 全双工语音革命 </a><a href="#thursdai-伦敦-ai-engineer-europe-圆桌" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> ThursdAI 伦敦 AI Engineer Europe 圆桌 </a><a href="#claude-code-一周年回顾" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Claude Code 一周年回顾 </a><a href="#wb-automations训练到部署全自动化" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> W&amp;B Automations：训练到部署全自动化 </a><a href="#ai-供应链安全警钟" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> AI 供应链安全警钟 </a><a href="#compute-wars-算力军备竞赛" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Compute Wars 算力军备竞赛 </a><a href="#b站-ai-日报-410-速览" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> B站 AI 日报 4/10 速览 </a><a href="#编者按" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> 编者按 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

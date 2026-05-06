@@ -1,0 +1,656 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-09-sft/"><!-- Primary Meta Tags --><title>监督微调（SFT） | 大模型全书 | Maxwell</title><meta name="title" content="监督微调（SFT） | 大模型全书 | Maxwell"><meta name="description" content="从数据构造到训练策略——把预训练模型调教成有用的助手"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-09-sft/"><meta property="og:title" content="监督微调（SFT） | 大模型全书 | Maxwell"><meta property="og:description" content="从数据构造到训练策略——把预训练模型调教成有用的助手"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-09-sft/"><meta name="twitter:title" content="监督微调（SFT） | 大模型全书 | Maxwell"><meta name="twitter:description" content="从数据构造到训练策略——把预训练模型调教成有用的助手"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/llm-complete" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-amber-500/25"> 全 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"> 大模型全书 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：基础篇 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">走进大语言模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">Transformer 架构详解</span> </a> </li><li> <a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">Tokenizer 设计哲学</span> </a> </li><li> <a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">预训练数据工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：预训练 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">Scaling Laws：大模型的第一性原理</span> </a> </li><li> <a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">预训练配方</span> </a> </li><li> <a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">中训练（Mid-training）</span> </a> </li><li> <a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">分布式训练工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：后训练与对齐 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">监督微调（SFT）</span> </a> </li><li> <a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">RLHF 与偏好对齐</span> </a> </li><li> <a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">评估与 Benchmark</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：推理与部署 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">推理优化</span> </a> </li><li> <a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">量化与模型压缩</span> </a> </li><li> <a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">服务部署与系统架构</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：前沿与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">多模态大模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">Agent、工具使用与未来展望</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 9 章 / 共 16 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 走进大语言模型 </a><a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> Transformer 架构详解 </a><a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> Tokenizer 设计哲学 </a><a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 预训练数据工程 </a><a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> Scaling Laws：大模型的第一性原理 </a><a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 预训练配方 </a><a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 中训练（Mid-training） </a><a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 分布式训练工程 </a><a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">9.</span> 监督微调（SFT） </a><a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> RLHF 与偏好对齐 </a><a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> 评估与 Benchmark </a><a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> 推理优化 </a><a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> 量化与模型压缩 </a><a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 服务部署与系统架构 </a><a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 多模态大模型 </a><a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> Agent、工具使用与未来展望 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">书架</a> <span>/</span> <a href="/books/llm-complete" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">大模型全书</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第三部分：后训练与对齐</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 9 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"> 第 9 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第三部分：后训练与对齐</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 监督微调（SFT） </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">从数据构造到训练策略——把预训练模型调教成有用的助手</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-17T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年4月17日 </time> <span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> SFT </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 微调 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 指令跟随 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 对话 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 数据构造 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <h2 id="从补全机器到智能助手">从”补全机器”到”智能助手”</h2>
+<p>预训练模型本质上是一个<strong>自回归文本补全器</strong>——给定前文，预测下一个 token。它能写出流畅的文本，但不会”听话”：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>用户：请把下面的句子翻译成英文："今天天气很好"</span></span>
+<span class="line"><span>预训练模型：请把下面的句子翻译成法文："明天会下雨"</span></span>
+<span class="line"><span>            请把下面的句子翻译成德文...</span></span></code></pre>
+<p>预训练模型会把你的指令当作”待续的文本模式”来补全，而不是当作需要执行的任务。<strong>SFT（Supervised Fine-Tuning）</strong> 的目标就是教会模型理解并执行人类指令。</p>
+<h2 id="sft-的核心原理">SFT 的核心原理</h2>
+<h3 id="训练目标">训练目标</h3>
+<p>SFT 的训练目标与预训练相同——下一个 token 预测——但有一个关键区别：<strong>只在 response 部分计算 loss</strong>。</p>
+<p>对于一个 instruction-response 对 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>x</mi><mo separator="true">,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(x, y)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mopen">(</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="mclose">)</span></span></span></span>：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi mathvariant="script">L</mi><mtext>SFT</mtext></msub><mo>=</mo><mo>−</mo><msubsup><mo>∑</mo><mrow><mi>t</mi><mo>=</mo><mn>1</mn></mrow><mrow><mi mathvariant="normal">∣</mi><mi>y</mi><mi mathvariant="normal">∣</mi></mrow></msubsup><mi>log</mi><mo>⁡</mo><msub><mi>P</mi><mi>θ</mi></msub><mo stretchy="false">(</mo><msub><mi>y</mi><mi>t</mi></msub><mi mathvariant="normal">∣</mi><mi>x</mi><mo separator="true">,</mo><msub><mi>y</mi><mrow><mo>&#x3C;</mo><mi>t</mi></mrow></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\mathcal{L}_{\text{SFT}} = -\sum_{t=1}^{|y|} \log P_\theta(y_t | x, y_{&#x3C;t})</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathcal">L</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">SFT</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.3276em;vertical-align:-0.2997em;"></span><span class="mord">−</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.0279em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">t</span><span class="mrel mtight">=</span><span class="mord mtight">1</span></span></span></span><span style="top:-3.2029em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mtight">∣</span><span class="mord mathnormal mtight" style="margin-right:0.03588em;">y</span><span class="mord mtight">∣</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2997em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mop">lo<span style="margin-right:0.01389em;">g</span></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">P</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">θ</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">t</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mord">∣</span><span class="mord mathnormal">x</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.03588em;">y</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2806em;"><span style="top:-2.55em;margin-left:-0.0359em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mrel mtight">&#x3C;</span><span class="mord mathnormal mtight">t</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1774em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> 是指令（instruction），<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi></mrow><annotation encoding="application/x-tex">y</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.03588em;">y</span></span></span></span> 是期望的回复（response）。注意 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi></mrow><annotation encoding="application/x-tex">x</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal">x</span></span></span></span> 部分不参与 loss 计算——这告诉模型”你需要根据指令生成回复”，而不是”你需要预测指令本身”。</p>
+<h3 id="为什么不在-instruction-部分算-loss">为什么不在 instruction 部分算 loss？</h3>
+<p>实验表明，只在 response 部分计算 loss（masked loss）效果优于全文计算 loss（unmasked loss）：</p>
+<ol>
+<li><strong>避免学习”生成指令”的能力</strong>——我们要的是回答能力，不是出题能力</li>
+<li><strong>更高效地利用梯度信号</strong>——将学习信号集中在回复质量上</li>
+<li><strong>避免过拟合到特定的指令格式</strong>——模型应该关注语义，而不是格式</li>
+</ol>
+<blockquote>
+<p><a href="https://arxiv.org/abs/2307.09288">LLaMA 2</a> 的技术报告中明确提到使用 masked loss 进行 SFT，并观察到优于 unmasked loss 的效果。</p>
+</blockquote>
+<h2 id="sft-数据构造">SFT 数据构造</h2>
+<p>SFT 的核心壁垒在数据，而非算法。一个好的 SFT 数据集需要满足：</p>
+<h3 id="数据质量--数据数量">数据质量 > 数据数量</h3>
+<p><a href="https://arxiv.org/abs/2305.11206">LIMA</a>（Zhou et al., 2023）是一篇里程碑式的论文，标题就是 <em>“Less Is More for Alignment”</em>。他们仅用 1,000 条精选数据就训练出了和 GPT-4 可比的对话能力，揭示了一个深刻的道理：</p>
+<blockquote>
+<p><strong>对齐不需要教模型新知识——它只需要教模型用正确的方式展示已有的知识。</strong></p>
+</blockquote>
+<p>具体来说，LIMA 的数据来源：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>来源</th><th>数量</th><th>特点</th></tr></thead><tbody><tr><td>Stack Exchange</td><td>200</td><td>高票回答，信息密度高</td></tr><tr><td>wikiHow</td><td>200</td><td>结构化步骤指南</td></tr><tr><td>Reddit</td><td>200</td><td>自然对话风格</td></tr><tr><td>人工撰写</td><td>250</td><td>覆盖长尾能力</td></tr><tr><td>Seed prompts</td><td>150</td><td>引导式对话</td></tr></tbody></table>
+<h3 id="数据格式">数据格式</h3>
+<p>现代 SFT 数据通常使用<strong>对话格式</strong>（chat format）：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  "messages"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    {</span><span style="color:#005CC5;--shiki-dark:#79B8FF">"role"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"system"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">"content"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"你是一个有帮助的助手..."</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    {</span><span style="color:#005CC5;--shiki-dark:#79B8FF">"role"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"user"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">"content"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"解释量子计算的基本原理"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    {</span><span style="color:#005CC5;--shiki-dark:#79B8FF">"role"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"assistant"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">"content"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"量子计算利用量子力学的两个核心特性..."</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<p>每个模型使用特定的 <strong>chat template</strong> 将对话格式化为 token 序列。比如 <a href="https://github.com/openai/openai-python/blob/main/chatml.md">ChatML</a>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;|im_start|>system</span></span>
+<span class="line"><span>你是一个有帮助的助手&#x3C;|im_end|></span></span>
+<span class="line"><span>&#x3C;|im_start|>user</span></span>
+<span class="line"><span>解释量子计算&#x3C;|im_end|></span></span>
+<span class="line"><span>&#x3C;|im_start|>assistant</span></span>
+<span class="line"><span>量子计算利用...&#x3C;|im_end|></span></span></code></pre>
+<h3 id="数据多样性">数据多样性</h3>
+<p>好的 SFT 数据需要覆盖多种能力维度：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>能力维度</span></span>
+<span class="line"><span>├── 指令跟随：按要求完成特定任务</span></span>
+<span class="line"><span>├── 知识问答：事实性问题、推理问题</span></span>
+<span class="line"><span>├── 创意写作：故事、诗歌、营销文案</span></span>
+<span class="line"><span>├── 代码生成：编程任务、调试</span></span>
+<span class="line"><span>├── 数学推理：数学证明、计算题</span></span>
+<span class="line"><span>├── 多轮对话：上下文理解、指代消解</span></span>
+<span class="line"><span>├── 安全拒绝：识别并拒绝有害请求</span></span>
+<span class="line"><span>├── 格式遵循：JSON、Markdown、表格等输出格式</span></span>
+<span class="line"><span>└── 长文本：摘要、翻译、分析长文档</span></span></code></pre>
+<h3 id="主要的开源-sft-数据集">主要的开源 SFT 数据集</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>数据集</th><th>规模</th><th>特点</th></tr></thead><tbody><tr><td><a href="https://huggingface.co/datasets/OpenAssistant/oasst1">OpenAssistant</a></td><td>161K</td><td>众包多轮对话，35 种语言</td></tr><tr><td><a href="https://github.com/tatsu-lab/stanford_alpaca">Alpaca</a></td><td>52K</td><td>GPT-3.5 生成，Self-Instruct 方法</td></tr><tr><td><a href="https://huggingface.co/datasets/anon8231489123/ShareGPT_Vicuna_unfiltered">ShareGPT</a></td><td>70K+</td><td>用户真实对话分享</td></tr><tr><td><a href="https://github.com/google-research/FLAN">FLAN Collection</a></td><td>15M+</td><td>1800+ NLP 任务的指令化</td></tr><tr><td><a href="https://github.com/thunlp/UltraChat">UltraChat</a></td><td>1.5M</td><td>多轮对话，GPT-3.5 生成</td></tr><tr><td><a href="https://arxiv.org/abs/2406.08464">Magpie</a></td><td>可变</td><td>自动从模型内部提取指令</td></tr><tr><td><a href="https://huggingface.co/datasets/argilla/magpie-ultra-v1.0">Magpie-Ultra</a></td><td>~1M（filtered ~620K）</td><td>从 Llama 3.1 405B 提取的超高质量指令，远超原版 Magpie</td></tr><tr><td><a href="https://arxiv.org/abs/2405.01470">WildChat</a></td><td>1M+</td><td>真实用户对话记录</td></tr><tr><td><a href="https://huggingface.co/datasets/allenai/tulu-3-sft-mixture">Tulu 3 SFT Mix</a></td><td>~940K</td><td>OLMo 3 使用的混合 SFT 数据，含合成推理</td></tr><tr><td><a href="https://huggingface.co/datasets/AI-MO/NuminaMath-CoT">NuminaMath-CoT</a></td><td>~860K</td><td>IMO 级数学推理数据，含详细 CoT</td></tr><tr><td><a href="https://huggingface.co/datasets/nvidia/OpenMathInstruct-2">OpenMathInstruct-2</a></td><td>~14M</td><td>NVIDIA 合成的数学 SFT 数据</td></tr></tbody></table>
+<h3 id="self-instruct用模型生成训练数据">Self-Instruct：用模型生成训练数据</h3>
+<p><a href="https://arxiv.org/abs/2212.10560">Self-Instruct</a>（Wang et al., 2022）提出了一种优雅的方法——<strong>让 LLM 自己生成 SFT 训练数据</strong>：</p>
+<ol>
+<li>从少量种子指令（175 条）出发</li>
+<li>让模型生成新的指令</li>
+<li>让模型根据指令生成回复</li>
+<li>过滤掉低质量数据</li>
+<li>加入种子集，重复</li>
+</ol>
+<p>这个方法后来演化为 <a href="https://arxiv.org/abs/2304.12244">Evol-Instruct</a>（WizardLM 使用的方法），通过”指令进化”生成更复杂的训练数据：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>简单指令: "写一首关于春天的诗"</span></span>
+<span class="line"><span>                ↓ 深化</span></span>
+<span class="line"><span>进化指令: "写一首关于春天的十四行诗，用拟人手法描述花朵的绽放，</span></span>
+<span class="line"><span>          每行不超过10个音节，且包含至少3个暗喻"</span></span></code></pre>
+<h2 id="sft-训练策略">SFT 训练策略</h2>
+<h3 id="学习率">学习率</h3>
+<p>SFT 的学习率通常比预训练小 1-2 个数量级：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>阶段</th><th>典型学习率</th><th>原因</th></tr></thead><tbody><tr><td>预训练</td><td>1e-4 ~ 3e-4</td><td>从随机初始化学习</td></tr><tr><td>SFT</td><td>1e-5 ~ 2e-5</td><td>微调已有知识</td></tr><tr><td>DPO/RLHF</td><td>1e-6 ~ 5e-7</td><td>精细调整偏好</td></tr></tbody></table>
+<p>过高的学习率会导致<strong>灾难性遗忘</strong>（catastrophic forgetting）——模型在学会指令跟随的同时丢失预训练积累的知识。</p>
+<h3 id="训练轮数">训练轮数</h3>
+<p>通常 SFT 只需要 <strong>1-3 个 epoch</strong>。过多的 epoch 会导致：</p>
+<ul>
+<li><strong>过拟合</strong>：模型记住训练数据的特定模式，泛化能力下降</li>
+<li><strong>“鹦鹉学舌”效应</strong>：回复变得模板化，缺乏灵活性</li>
+<li><strong>多样性下降</strong>：同样的问题总是得到几乎一样的回答</li>
+</ul>
+<blockquote>
+<p><a href="https://arxiv.org/abs/2204.05862">Anthropic 的研究</a> 表明，SFT 过拟合是”对齐税”（alignment tax）的主要来源之一——过度的 SFT 会损害模型的基础能力。</p>
+</blockquote>
+<h3 id="sft-的层级效应">SFT 的层级效应</h3>
+<p>一个容易被忽视的问题：SFT 到底改变了模型的哪些层？</p>
+<p><a href="https://arxiv.org/abs/2506.14681">Massive SFT Experiments</a>（EMNLP 2025）通过数百个 SFT 实验得到了一幅清晰的画面：</p>
+<ul>
+<li><strong>底层</strong>（前 20% 的层）：几乎不变。这些层编码通用的语言特征（语法、词法），SFT 对它们的影响微乎其微。</li>
+<li><strong>中间层</strong>：适度调整。语义理解和任务抽象能力在这些层发生温和的适配。</li>
+<li><strong>顶层</strong>（最后 20% 的层）：变化最大。任务特定的行为模式、输出风格和指令跟随能力集中在这些层塑造。</li>
+</ul>
+<p>这个发现解释了几个经验现象：</p>
+<ol>
+<li><strong>LoRA 通常只作用于 Q/V 投影就够了</strong>——因为主要变化发生在高层的注意力模块</li>
+<li><strong>冻结底层不影响 SFT 效果</strong>——底层本来就不怎么变</li>
+<li><strong>PPL 不是难度指标而是兼容性信号</strong>——数据的 PPL 反映的是基座模型与该数据的”适配度”，而非绝对难度</li>
+</ol>
+<h3 id="full-fine-tuning-vs-lora">Full Fine-Tuning vs. LoRA</h3>
+<p><strong>Full Fine-Tuning</strong> 更新所有参数，效果通常更好但成本高：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>W</mi><mo>=</mo><msub><mi>W</mi><mtext>SFT</mtext></msub><mo>−</mo><msub><mi>W</mi><mtext>pretrained</mtext></msub><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>d</mi><mo>×</mo><mi>d</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\Delta W = W_{\text{SFT}} - W_{\text{pretrained}} \in \mathbb{R}^{d \times d}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3283em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">SFT</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">−</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.9694em;vertical-align:-0.2861em;"></span><span class="mord"><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361em;"><span style="top:-2.55em;margin-left:-0.1389em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">pretrained</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.2861em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8491em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span></span></span></span></span></p>
+<p><strong><a href="https://arxiv.org/abs/2106.09685">LoRA</a></strong>（Hu et al., 2021）用低秩分解大幅降低可训练参数量：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>W</mi><mo>=</mo><mi>B</mi><mi>A</mi><mo separator="true">,</mo><mspace width="1em"></mspace><mi>B</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>d</mi><mo>×</mo><mi>r</mi></mrow></msup><mo separator="true">,</mo><mspace width="1em"></mspace><mi>A</mi><mo>∈</mo><msup><mi mathvariant="double-struck">R</mi><mrow><mi>r</mi><mo>×</mo><mi>d</mi></mrow></msup><mo separator="true">,</mo><mspace width="1em"></mspace><mi>r</mi><mo>≪</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">\Delta W = BA, \quad B \in \mathbb{R}^{d \times r}, \quad A \in \mathbb{R}^{r \times d}, \quad r \ll d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">Δ</span><span class="mord mathnormal" style="margin-right:0.13889em;">W</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.8778em;vertical-align:-0.1944em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mord mathnormal">A</span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.05017em;">B</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0435em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight">d</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal">A</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∈</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.0435em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathbb">R</span><span class="msupsub"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.8491em;"><span style="top:-3.063em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mbin mtight">×</span><span class="mord mathnormal mtight">d</span></span></span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord mathnormal" style="margin-right:0.02778em;">r</span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">≪</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span></p>
+<p>典型配置下，LoRA 只需要训练原始参数量的 <strong>0.1%-1%</strong>：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方法</th><th>可训练参数（7B 模型）</th><th>GPU 显存</th><th>效果</th></tr></thead><tbody><tr><td>Full FT</td><td>7B (100%)</td><td>~60GB</td><td>最佳</td></tr><tr><td>LoRA (r=16)</td><td>~8M (0.1%)</td><td>~18GB</td><td>接近 Full FT</td></tr><tr><td>LoRA (r=64)</td><td>~33M (0.5%)</td><td>~22GB</td><td>非常接近</td></tr><tr><td>QLoRA</td><td>~8M (0.1%)</td><td>~10GB</td><td>略有损失</td></tr></tbody></table>
+<p><a href="https://arxiv.org/abs/2305.14314">QLoRA</a>（Dettmers et al., 2023）进一步将基础模型量化为 4-bit，在 LoRA 之上叠加量化，让 <strong>单张 24GB 消费级 GPU</strong> 就能微调 65B 模型。</p>
+<h3 id="多轮对话训练">多轮对话训练</h3>
+<p>处理多轮对话时，loss 计算需要特别注意：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[System] 你是一个助手</span></span>
+<span class="line"><span>[User] 什么是机器学习？            → 不算 loss</span></span>
+<span class="line"><span>[Assistant] 机器学习是...           → 算 loss ✓</span></span>
+<span class="line"><span>[User] 能举个例子吗？              → 不算 loss</span></span>
+<span class="line"><span>[Assistant] 当然，比如推荐系统...    → 算 loss ✓</span></span></code></pre>
+<p>每一轮的 assistant 回复都独立计算 loss，所有 user 和 system 消息被 mask 掉。这种方式被称为 <strong>per-turn masking</strong>。</p>
+<h2 id="高级-sft-技术">高级 SFT 技术</h2>
+<h3 id="rejection-sampling拒绝采样">Rejection Sampling（拒绝采样）</h3>
+<p><a href="https://arxiv.org/abs/2307.09288">LLaMA 2</a> 使用了 rejection sampling 来提升 SFT 数据质量：</p>
+<ol>
+<li>对每个 prompt，让模型生成 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi></mrow><annotation encoding="application/x-tex">K</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal" style="margin-right:0.07153em;">K</span></span></span></span> 个候选回复</li>
+<li>用奖励模型为每个回复打分</li>
+<li>只保留得分最高的回复作为训练数据</li>
+</ol>
+<p>这本质上是<strong>用 RL 的信号来增强 SFT 数据</strong>——不需要完整的 RLHF 流程，但能获得部分收益。</p>
+<h3 id="neftune">NEFTune</h3>
+<p><a href="https://arxiv.org/abs/2310.05914">NEFTune</a>（Jain et al., 2023）发现了一个反直觉的技巧：<strong>在 SFT 训练时向 embedding 层添加均匀噪声，能显著提升对话质量</strong>。</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mover accent="true"><mi>e</mi><mo>~</mo></mover><mi>i</mi></msub><mo>=</mo><msub><mi>e</mi><mi>i</mi></msub><mo>+</mo><mfrac><mi>α</mi><msqrt><mrow><mi>L</mi><mi>d</mi></mrow></msqrt></mfrac><mo>⋅</mo><msub><mi>u</mi><mi>i</mi></msub><mo separator="true">,</mo><mspace width="1em"></mspace><msub><mi>u</mi><mi>i</mi></msub><mo>∼</mo><mtext>Uniform</mtext><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo separator="true">,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\tilde{e}_i = e_i + \frac{\alpha}{\sqrt{Ld}} \cdot u_i, \quad u_i \sim \text{Uniform}(-1, 1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8179em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord accent"><span class="vlist-t"><span class="vlist-r"><span class="vlist" style="height:0.6679em;"><span style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mathnormal">e</span></span><span style="top:-3.35em;"><span class="pstrut" style="height:3em;"></span><span class="accent-body" style="left:-0.1944em;"><span class="mord">~</span></span></span></span></span></span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:0.7333em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord mathnormal">e</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.2334em;vertical-align:-0.538em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.6954em;"><span style="top:-2.5335em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord sqrt mtight"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.9378em;"><span class="svg-align" style="top:-3em;"><span class="pstrut" style="height:3em;"></span><span class="mord mtight" style="padding-left:0.833em;"><span class="mord mathnormal mtight">L</span><span class="mord mathnormal mtight">d</span></span></span><span style="top:-2.8978em;"><span class="pstrut" style="height:3em;"></span><span class="hide-tail mtight" style="min-width:0.853em;height:1.08em;"><svg xmlns="http://www.w3.org/2000/svg" width="400em" height="1.08em" viewBox="0 0 400000 1080" preserveAspectRatio="xMinYMin slice"><path d="M95,702
+c-2.7,0,-7.17,-2.7,-13.5,-8c-5.8,-5.3,-9.5,-10,-9.5,-14
+c0,-2,0.3,-3.3,1,-4c1.3,-2.7,23.83,-20.7,67.5,-54
+c44.2,-33.3,65.8,-50.3,66.5,-51c1.3,-1.3,3,-2,5,-2c4.7,0,8.7,3.3,12,10
+s173,378,173,378c0.7,0,35.3,-71,104,-213c68.7,-142,137.5,-285,206.5,-429
+c69,-144,104.5,-217.7,106.5,-221
+l0 -0
+c5.3,-9.3,12,-14,20,-14
+H400000v40H845.2724
+s-225.272,467,-225.272,467s-235,486,-235,486c-2.7,4.7,-9,7,-19,7
+c-6,0,-10,-1,-12,-3s-194,-422,-194,-422s-65,47,-65,47z
+M834 80h400000v40h-400000z"></path></svg></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.1022em;"><span></span></span></span></span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.394em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.0037em;">α</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.538em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">⋅</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:0.625em;vertical-align:-0.1944em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mpunct">,</span><span class="mspace" style="margin-right:1em;"></span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord"><span class="mord mathnormal">u</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">∼</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord text"><span class="mord">Uniform</span></span><span class="mopen">(</span><span class="mord">−</span><span class="mord">1</span><span class="mpunct">,</span><span class="mspace" style="margin-right:0.1667em;"></span><span class="mord">1</span><span class="mclose">)</span></span></span></span></p>
+<p>其中 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi></mrow><annotation encoding="application/x-tex">\alpha</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.4306em;"></span><span class="mord mathnormal" style="margin-right:0.0037em;">α</span></span></span></span> 是噪声强度（通常 5-15），<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi></mrow><annotation encoding="application/x-tex">L</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord mathnormal">L</span></span></span></span> 是序列长度，<span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi></mrow><annotation encoding="application/x-tex">d</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord mathnormal">d</span></span></span></span> 是 embedding 维度。</p>
+<p>直觉解释：噪声起到了<strong>正则化</strong>的作用，防止模型过拟合到 SFT 数据的特定表面模式，鼓励模型学习更鲁棒的表示。</p>
+<h3 id="packing序列拼接">Packing（序列拼接）</h3>
+<p>SFT 数据长度差异很大（从几十 token 到上千 token）。简单的 padding 会浪费大量计算。<strong>Packing</strong> 将多个短样本拼接到同一个序列中：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Before packing (大量 padding 浪费):</span></span>
+<span class="line"><span>[样本A][PAD PAD PAD PAD PAD]</span></span>
+<span class="line"><span>[样本B B B B B B][PAD PAD]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>After packing (高效利用):</span></span>
+<span class="line"><span>[样本A][样本B B B B B B][样本C]</span></span></code></pre>
+<p>需要配合 <strong>attention mask</strong> 确保不同样本之间不会互相 attend。</p>
+<h2 id="sft-质量评估">SFT 质量评估</h2>
+<h3 id="自动评估">自动评估</h3>
+<ul>
+<li><strong><a href="https://arxiv.org/abs/2306.05685">MT-Bench</a></strong>：80 道多轮题，GPT-4 评分 1-10</li>
+<li><strong><a href="https://github.com/tatsu-lab/alpaca_eval">AlpacaEval</a></strong>：805 条指令，GPT-4 对比评估</li>
+<li><strong><a href="https://lmsys.org/blog/2024-04-19-arena-hard/">Arena-Hard</a></strong>：500 条高难度问题</li>
+</ul>
+<h3 id="人工评估">人工评估</h3>
+<p>自动评估有偏差，关键决策仍需人工评估。常见维度：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>维度</th><th>评估标准</th></tr></thead><tbody><tr><td>有用性</td><td>回答是否真正解决了用户问题</td></tr><tr><td>真实性</td><td>是否有事实错误或幻觉</td></tr><tr><td>无害性</td><td>是否包含有害、偏见或不当内容</td></tr><tr><td>格式</td><td>是否遵循要求的格式</td></tr><tr><td>简洁性</td><td>是否冗长啰嗦</td></tr></tbody></table>
+<h2 id="常见陷阱与经验">常见陷阱与经验</h2>
+<h3 id="1-数据污染">1. 数据污染</h3>
+<p>SFT 数据可能包含评估集的问题和答案，导致评估结果虚高。<strong>务必对 SFT 数据做去污染检测</strong>。</p>
+<h3 id="2-sycophancy谄媚">2. Sycophancy（谄媚）</h3>
+<p>过度优化”用户满意度”会导致模型变得谄媚——即使用户说的是错的，模型也会表示同意。需要在数据中包含”礼貌拒绝”和”纠正用户”的样本。</p>
+<h3 id="3-verbosity冗长">3. Verbosity（冗长）</h3>
+<p>模型倾向于输出更长的回复（因为更长的回复通常被标注员评为”更好”）。需要在数据中包含简洁回复的样本，或在评估时控制长度偏差。</p>
+<h3 id="4-格式过拟合">4. 格式过拟合</h3>
+<p>如果 SFT 数据过度使用 Markdown 列表或特定格式，模型会在不需要的时候也使用这些格式。数据格式应该多样化。</p>
+<h2 id="sft-与-rl-的关系">SFT 与 RL 的关系</h2>
+<h3 id="推理路径视角rl-squeezes-sft-expands">推理路径视角：“RL Squeezes, SFT Expands”</h3>
+<p>SFT 和 RL 在后训练流水线中扮演什么角色？为什么”先 SFT 后 RL”是最优顺序？</p>
+<p><a href="https://openreview.net/forum?id=N2lMNqJsBw">“RL Squeezes, SFT Expands”</a>（ICLR 2026）从推理路径多样性的角度给出了一个优雅的解释：</p>
+<ul>
+<li><strong>SFT 扩展策略空间</strong>：通过学习多样化的训练数据，模型掌握了多种解题思路和表达方式。SFT 是在”播种”——将各种可能的推理路径植入模型。</li>
+<li><strong>RL 压缩到高奖励路径</strong>：强化学习通过奖励信号筛选出最优的推理路径，抑制低质量的路径。RL 是在”修剪”——只留下最好的那些。</li>
+</ul>
+<p>这解释了为什么反过来（先 RL 后 SFT）效果很差——如果先压缩，策略空间就被过早收窄了，后续的 SFT 很难再扩展回来。</p>
+<h3 id="srft当-sft-和-rl-不再分家">SRFT：当 SFT 和 RL 不再分家</h3>
+<p>如果 SFT 和 RL 的角色互补，能不能把它们统一到一个训练阶段？</p>
+<p><a href="https://arxiv.org/abs/2506.19767">SRFT（Supervised Reinforcement Fine-Tuning）</a>（ICLR 2026）做到了这一点。核心机制是用<strong>熵</strong>作为动态指示器：</p>
+<ul>
+<li>当模型输出的<strong>熵低</strong>（对某个答案非常确定），SRFT 加强 RL 探索——打破过度自信，尝试其他可能性</li>
+<li>当模型输出的<strong>熵高</strong>（对答案不确定），SRFT 加强 SFT 模仿——从高质量数据中学习确定性</li>
+</ul>
+<p>在 5 个数学推理基准上，SRFT 比 zero-RL 方法平均提升约 9 个百分点，在分布外基准上提升更达 10.9 个百分点。单阶段训练还带来一个工程优势——不再需要两个独立的训练流程和两套超参数。</p>
+<h3 id="sft-在推理模型中的角色重定位">SFT 在推理模型中的角色重定位</h3>
+<p>在推理模型（如 DeepSeek R1、Qwen3-Think）的训练中，SFT 的角色正在从”格式对齐工具”转变为”推理路径播种器”。传统 SFT 教模型”怎么说话”——语气、格式、安全边界。而推理模型的 SFT 更多是在教模型”怎么思考”——展示多步推理的拆解方式、回溯和自我纠错的模式。</p>
+<p>这是一个微妙但重要的转变。它意味着推理模型的 SFT 数据质量要求从”回复质量”转向”推理过程质量”——答案对不对不是最重要的，推理链是否完整、是否展示了多样的思维方式才是关键。</p>
+<h2 id="章节小结">章节小结</h2>
+<p>SFT 是从预训练模型到实用助手的桥梁。核心要点：</p>
+<ol>
+<li><strong>数据质量 >> 数据数量</strong>：1000 条优质数据可能胜过 100 万条平庸数据</li>
+<li><strong>只在 response 部分计算 loss</strong></li>
+<li><strong>学习率要小</strong>：1e-5 量级，避免灾难性遗忘</li>
+<li><strong>1-3 个 epoch 足矣</strong>：过拟合是 SFT 最大的敌人</li>
+<li><strong>LoRA/QLoRA 让微调平民化</strong>：消费级 GPU 就能微调大模型</li>
+<li><strong>SFT 是必要但不充分的</strong>——它教会模型”怎么说话”，但不能教会模型”什么该说什么不该说”。后者需要 RLHF/DPO，这是下一章的内容。</li>
+</ol>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/llm-complete/chapter-08-distributed-training" class="group card p-4 hover:border-amber-300 dark:hover:border-amber-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.8</span> 分布式训练工程 </p> </a> <a href="/books/llm-complete/chapter-10-alignment" class="group card p-4 text-right hover:border-amber-300 dark:hover:border-amber-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.10</span> RLHF 与偏好对齐 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#从补全机器到智能助手" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 从”补全机器”到”智能助手” </a><a href="#sft-的核心原理" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> SFT 的核心原理 </a><a href="#训练目标" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 训练目标 </a><a href="#为什么不在-instruction-部分算-loss" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 为什么不在 instruction 部分算 loss？ </a><a href="#sft-数据构造" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> SFT 数据构造 </a><a href="#数据质量--数据数量" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 数据质量 &gt; 数据数量 </a><a href="#数据格式" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 数据格式 </a><a href="#数据多样性" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 数据多样性 </a><a href="#主要的开源-sft-数据集" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 主要的开源 SFT 数据集 </a><a href="#self-instruct用模型生成训练数据" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Self-Instruct：用模型生成训练数据 </a><a href="#sft-训练策略" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> SFT 训练策略 </a><a href="#学习率" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 学习率 </a><a href="#训练轮数" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 训练轮数 </a><a href="#sft-的层级效应" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> SFT 的层级效应 </a><a href="#full-fine-tuning-vs-lora" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Full Fine-Tuning vs. LoRA </a><a href="#多轮对话训练" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 多轮对话训练 </a><a href="#高级-sft-技术" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 高级 SFT 技术 </a><a href="#rejection-sampling拒绝采样" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Rejection Sampling（拒绝采样） </a><a href="#neftune" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> NEFTune </a><a href="#packing序列拼接" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Packing（序列拼接） </a><a href="#sft-质量评估" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> SFT 质量评估 </a><a href="#自动评估" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 自动评估 </a><a href="#人工评估" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 人工评估 </a><a href="#常见陷阱与经验" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 常见陷阱与经验 </a><a href="#1-数据污染" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 1. 数据污染 </a><a href="#2-sycophancy谄媚" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 2. Sycophancy（谄媚） </a><a href="#3-verbosity冗长" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 3. Verbosity（冗长） </a><a href="#4-格式过拟合" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 4. 格式过拟合 </a><a href="#sft-与-rl-的关系" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> SFT 与 RL 的关系 </a><a href="#推理路径视角rl-squeezes-sft-expands" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 推理路径视角：“RL Squeezes, SFT Expands” </a><a href="#srft当-sft-和-rl-不再分家" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> SRFT：当 SFT 和 RL 不再分家 </a><a href="#sft-在推理模型中的角色重定位" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> SFT 在推理模型中的角色重定位 </a><a href="#章节小结" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 章节小结 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

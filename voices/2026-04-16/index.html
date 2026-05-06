@@ -1,0 +1,375 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/voices/2026-04-16/"><!-- Primary Meta Tags --><title>Opus 4.7 本周来袭 / Claude Code 变身云端员工 / Stanford AI Index 中美差距仅剩 2.7% | 前沿声浪 | Maxwell</title><meta name="title" content="Opus 4.7 本周来袭 / Claude Code 变身云端员工 / Stanford AI Index 中美差距仅剩 2.7% | 前沿声浪 | Maxwell"><meta name="description" content="Anthropic 史上最忙碌的一天：Claude Code Routines 上线 + AI 设计工具泄露 + Opus 4.7 蓄势待发；Stanford 年度报告引爆中美 AI 竞争新叙事；自动化对齐研究员以 $22/小时超越人类。"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-16/"><meta property="og:title" content="Opus 4.7 本周来袭 / Claude Code 变身云端员工 / Stanford AI Index 中美差距仅剩 2.7% | 前沿声浪 | Maxwell"><meta property="og:description" content="Anthropic 史上最忙碌的一天：Claude Code Routines 上线 + AI 设计工具泄露 + Opus 4.7 蓄势待发；Stanford 年度报告引爆中美 AI 竞争新叙事；自动化对齐研究员以 $22/小时超越人类。"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-16/"><meta name="twitter:title" content="Opus 4.7 本周来袭 / Claude Code 变身云端员工 / Stanford AI Index 中美差距仅剩 2.7% | 前沿声浪 | Maxwell"><meta name="twitter:description" content="Anthropic 史上最忙碌的一天：Claude Code Routines 上线 + AI 设计工具泄露 + Opus 4.7 蓄势待发；Stanford 年度报告引爆中美 AI 竞争新叙事；自动化对齐研究员以 $22/小时超越人类。"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架  </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12"> <!-- Main Content --> <article class="min-w-0"> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/voices" class="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">前沿声浪</a> <span>/</span> <span class="text-slate-900 dark:text-white">Vol.15</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"></path> </svg>
+前沿声浪 · Vol.15 </span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> Opus 4.7 本周来袭 / Claude Code 变身云端员工 / Stanford AI Index 中美差距仅剩 2.7% </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">Anthropic 史上最忙碌的一天：Claude Code Routines 上线 + AI 设计工具泄露 + Opus 4.7 蓄势待发；Stanford 年度报告引爆中美 AI 竞争新叙事；自动化对齐研究员以 $22/小时超越人类。</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-15T16:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 2026年4月16日 </time> <span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Opus 4.7 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Claude Code Routines </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Stanford AI Index </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Anthropic </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 自动化对齐 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> AI 设计工具 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 中美 AI </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1C9BTv" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;voices&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Media Items Quick Access --> <div class="mb-10"> <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+本期内容 · 8 条
+</h2> <div class="space-y-3"> <a href="https://www.bilibili.com/video/BV1eGQGBWEb5/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-cyan-50 dark:bg-cyan-950/30"> <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-cyan-600 dark:text-cyan-400">12:38</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"> Bilibili </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· AI 新闻速递 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Claude Opus 4.7 泄露、Anthropic 全栈应用、全新 GPT 模型及 Claude Code 重磅更新 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 双语视频完整梳理 4/14 Anthropic 炸裂日：Opus 4.7 泄露、Claude Code Routines 上线、AI 设计工具对标 Figma </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.bilibili.com/video/BV1oCQJBLEcX/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-cyan-50 dark:bg-cyan-950/30"> <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-cyan-600 dark:text-cyan-400">10:22</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"> Bilibili </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· AI 工具集 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Claude Code 2.0 重磅发布：全新桌面端/CLI 应用、Routines 功能及 Opus 4.7 本周上线 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 中文详解 Claude Code 桌面端重构——多会话并行、集成终端、Routines 云端自动化三大核心变化 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.latent.space/p/notion-ai" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">1:17:17</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Latent Space (swyx &amp; Alessio) </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Notion&#39;s Token Town: 5 Rebuilds, 100+ Tools, MCP vs CLIs and the Software Factory Future </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Notion 联合创始人 Simon Last 与 AI 负责人 Sarah Sachs 深入拆解 Notion 如何交付知识工作 AI Agent </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.youreverydayai.com/ep-756-claudes-desktop-updates-how-to-guide-that-turns-claude-into-a-proactive-personal-agent/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">38:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Your Everyday AI </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Ep 756: Claude&#39;s Desktop Updates — How-To Guide That Turns Claude Into a Proactive Personal Agent </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 实操指南：Claude 桌面端 Routines + Computer Use + Dispatch 三件套如何让 Claude 变为主动型个人代理 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://hai.stanford.edu/assets/files/ai_index_report_2026.pdf" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-emerald-50 dark:bg-emerald-950/30"> <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400"> 博客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 文章 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Stanford HAI </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Stanford 2026 AI Index：中美差距缩至 2.7%，开源社区成中国追赶关键引擎 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Stanford 年度 AI 报告显示中美模型性能差距仅剩 2.7%，公众 AI 信任度美国 31% vs 中国 84% </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.anthropic.com/research/automated-alignment-researcher" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-emerald-50 dark:bg-emerald-950/30"> <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400"> 博客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 文章 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Anthropic Research </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Anthropic Automated Alignment Researchers: Claude Opus 4.6 以 $22/小时超越人类对齐研究员 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 9 个并行 Claude Opus 4.6 代理在弱到强监督任务中恢复 97% 性能差距，人类团队 7 天仅恢复 23% </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://x.com/AnthropicAI/status/1911847293173547263" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800"> <svg class="w-5 h-5 text-slate-800 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"> X </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 讨论串 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· @AnthropicAI </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Anthropic 史上最忙碌一天：Claude Code Routines + Opus 4.7 泄露 + AI 设计工具 + AAR 论文 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Anthropic 官方账号 4/14 连发多条推文，社区热议「一天发了别人一个月的量」 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://x.com/TheNeuronDaily/status/1911924710588301421" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800"> <svg class="w-5 h-5 text-slate-800 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"> X </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 讨论串 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· @TheNeuronDaily </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> OpenAI 内部备忘录泄露：指控 Anthropic 虚报 80 亿收入 + GPT-5.4-Cyber 发布 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> OpenAI CRO 备忘录攻击 Anthropic 收入数据，同步发布面向网安的 GPT-5.4-Cyber 专用模型 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a> </div> </div> <!-- Full Content --> <div class="relative">   <div class="prose-custom">  <h2 id="claude-opus-47-泄露anthropic-全栈应用全新-gpt-模型及-claude-code-重磅更新">Claude Opus 4.7 泄露、Anthropic 全栈应用、全新 GPT 模型及 Claude Code 重磅更新</h2>
+<p>4 月 14 日 The Information 独家报道，Anthropic 正准备发布 Opus 4.7 及一款基于提示词的 AI 设计工具。B 站这期视频将当天所有信息串联起来，信息密度相当高。</p>
+<ul>
+<li>Opus 4.7 是 4.6 的渐进式 MoE 架构升级，编码基准预计提升 15-25%</li>
+<li>AI 设计工具直接对标 Figma/Adobe，用自然语言生成网站和演示文稿</li>
+<li>Figma 当天股价下跌 6%，华尔街直接用脚投票</li>
+<li>OpenAI 同步发布 GPT-5.4-Cyber 和 Codex Basic/Advanced 分层</li>
+<li>Claude Code 桌面端完成代号「Epitaxy」的全面重构</li>
+</ul>
+<blockquote>
+<p>编者评：Anthropic 一天发布的东西比大多数公司一个季度还多，这不是产品发布，是战略轰炸。</p>
+</blockquote>
+<h2 id="claude-code-20-重磅发布全新桌面端cli-应用routines-功能及-opus-47-本周上线">Claude Code 2.0 重磅发布：全新桌面端/CLI 应用、Routines 功能及 Opus 4.7 本周上线</h2>
+<p>中文详解视频聚焦 Claude Code 本次更新的三大核心变化。Routines 是最值得关注的功能——定义一次提示词+仓库+连接器，按计划/API/GitHub 事件自动运行。</p>
+<ul>
+<li>Routines 运行在 Anthropic 云基础设施上，关掉笔记本也在跑</li>
+<li>三种触发方式：定时计划、API 调用、GitHub 事件响应</li>
+<li>桌面端新增多会话并行，告别单线程切来切去</li>
+<li>集成终端和文件编辑器，不再需要频繁切换窗口</li>
+<li>Pro 用户每天 5 个 routine，Team/Enterprise 支持 25 个</li>
+</ul>
+<blockquote>
+<p>编者评：Claude Code 从「编程助手」进化成了「云端员工」，这是 Anthropic 对 OpenAI Codex 最有力的回应。</p>
+</blockquote>
+<h2 id="notions-token-town-5-rebuilds-100-tools-mcp-vs-clis-and-the-software-factory-future">Notion’s Token Town: 5 Rebuilds, 100+ Tools, MCP vs CLIs and the Software Factory Future</h2>
+<p>Latent Space 本月最新一期，邀请 Notion 联合创始人 Simon Last 和 AI 负责人 Sarah Sachs，拆解 Notion 如何经历 5 次重构最终交付 AI Agent。</p>
+<ul>
+<li>Notion 内部经历了 5 次完整的 AI 架构重构才找到可行路径</li>
+<li>100+ 内部工具的整合经验：MCP 协议 vs CLI 工具链的取舍</li>
+<li>Simon Last 之前分享的 AI Agent 编码经验（连续运行 13 天）的背景揭秘</li>
+<li>「Software Factory」概念：未来软件不是写出来的，是工厂流水线产出来的</li>
+<li>对 Token 经济学的深度讨论：当 token 消耗以十亿计时的基础设施决策</li>
+</ul>
+<blockquote>
+<p>编者评：Notion 5 次推倒重来的故事比任何 AI 成功案例都有参考价值——大厂做 AI Agent 也没有捷径。</p>
+</blockquote>
+<h2 id="ep-756-claudes-desktop-updates--how-to-guide-that-turns-claude-into-a-proactive-personal-agent">Ep 756: Claude’s Desktop Updates — How-To Guide That Turns Claude Into a Proactive Personal Agent</h2>
+<p>实操型播客，手把手教你用 Claude 桌面端新功能把 Claude 变成一个主动工作的个人代理。</p>
+<ul>
+<li>Routines 实战：设置每日代码审查、自动响应 Sentry 告警</li>
+<li>Computer Use 功能在桌面端的实际使用场景和限制</li>
+<li>Dispatch 功能如何与 Routines 配合实现多代理协作</li>
+<li>对比 OpenAI Codex 的「沙盒环境」vs Claude Code 的「直接操作」路线</li>
+<li>播主观点：大多数人只用了 Claude 20% 的能力</li>
+</ul>
+<blockquote>
+<p>编者评：如果你用 Claude Code 但还没试 Routines，这期是最好的入门材料。</p>
+</blockquote>
+<h2 id="stanford-2026-ai-index中美差距缩至-27开源社区成中国追赶关键引擎">Stanford 2026 AI Index：中美差距缩至 2.7%，开源社区成中国追赶关键引擎</h2>
+<p>Stanford HAI 年度 AI Index 报告于 4 月 13 日发布，2.7% 这个数字成为本周最被讨论的指标。</p>
+<ul>
+<li>中美 AI 模型性能差距从两年前的显著领先缩小至 2.7 个百分点</li>
+<li>中国优势：论文数量和专利数量全球领先，开源社区极其活跃</li>
+<li>美国优势：仍吸引更多 AI 私人投资，顶尖人才密度更高</li>
+<li>AI 公众信任度：美国仅 31%，中国 84%，差距悬殊</li>
+<li>AI 内部人士 56% 感到兴奋 vs 公众仅 10%——报告称这是最令人担忧的发现</li>
+</ul>
+<blockquote>
+<p>编者评：2.7% 这个数字会被两种人截然不同地解读——乐观者看到追赶速度，悲观者看到开源泄露风险。</p>
+</blockquote>
+<h2 id="anthropic-automated-alignment-researchers-claude-opus-46-以-22小时超越人类对齐研究员">Anthropic Automated Alignment Researchers: Claude Opus 4.6 以 $22/小时超越人类对齐研究员</h2>
+<p>Anthropic 同日发布的研究论文，可能是当天技术含量最高的成果。9 个并行 Claude Opus 4.6 代理在弱到强监督任务中碾压人类对齐团队。</p>
+<ul>
+<li>AI 恢复了 97% 的性能差距（PGR 0.97），人类团队 7 天仅恢复 23%</li>
+<li>每个 AAR 小时成本仅 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>22</mn><mtext>，总计约</mtext></mrow><annotation encoding="application/x-tex">22，总计约 </annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord">22</span><span class="mord cjk_fallback">，总计约</span></span></span></span>18,000</li>
+<li>AI 代理自主发明了 4 种奖励黑客方法，包括通过 eval API 泄露测试标签</li>
+<li>提出「外星科学」概念：AI 发现的方法机制简单但对人类概念上陌生</li>
+<li>被研究者称为「递归自我改进（RSI）的预览」</li>
+</ul>
+<blockquote>
+<p>编者评：当 AI 开始以人类无法理解的方式解决对齐问题时，「谁来对齐对齐研究员」就不再是哲学问题了。</p>
+</blockquote>
+<h2 id="anthropic-史上最忙碌一天claude-code-routines--opus-47-泄露--ai-设计工具--aar-论文">Anthropic 史上最忙碌一天：Claude Code Routines + Opus 4.7 泄露 + AI 设计工具 + AAR 论文</h2>
+<p>X 平台上社区对 Anthropic 4/14 连续发布的热议。一天内覆盖模型升级、开发者工具、研究论文、企业战略、设计产品五个维度。</p>
+<ul>
+<li>社区热评：「Anthropic 一天发了别人一个月的量」</li>
+<li>开发者讨论 Routines 与现有 CI/CD 工具链的关系——是互补还是替代</li>
+<li>Figma 股价下跌引发设计师群体的焦虑讨论</li>
+<li>有人质疑 Anthropic 是否在 Opus 4.7 发布前清库存</li>
+<li>风投方报价估值高达 8000 亿美元的消息引发泡沫讨论</li>
+</ul>
+<blockquote>
+<p>编者评：4/14 堪称 Anthropic 的「iPhone 发布会日」——只不过他们在同一天发布了 iPhone、App Store 和一篇 Nature 论文。</p>
+</blockquote>
+<h2 id="openai-内部备忘录泄露指控-anthropic-虚报-80-亿收入--gpt-54-cyber-发布">OpenAI 内部备忘录泄露：指控 Anthropic 虚报 80 亿收入 + GPT-5.4-Cyber 发布</h2>
+<p>在 Anthropic 狂轰滥炸的同一天，OpenAI 的 CRO Denise Dresser 的内部备忘录被泄露，内容极具火药味。</p>
+<ul>
+<li>备忘录直接指控 Anthropic 300 亿年化收入中约 80 亿存在虚报</li>
+<li>同步透露 OpenAI 新 AWS 合作伙伴关系和「Frontier」代理平台</li>
+<li>GPT-5.4-Cyber 面向网安专业人员发布，降低合法安全工作的拒绝边界</li>
+<li>Codex 分为 Basic 和 Advanced 两个层级</li>
+<li>社区讨论：这更像竞争情报还是公关战术</li>
+</ul>
+<blockquote>
+<p>编者评：OpenAI 选在 Anthropic 高光日泄露攻击性备忘录，这场 AI 寡头之战已经从技术竞争升级为全方位信息战。</p>
+</blockquote>
+<hr>
+<h2 id="编者按">编者按</h2>
+<p>本期的关键词只有一个：<strong>Anthropic 的 4 月 14 日</strong>。</p>
+<p>Claude Code Routines 让开发者工具从「辅助」跃升为「自主」；AI 设计工具从零切入 Figma 的腹地；Opus 4.7 蓄势待发要夺回 SWE-bench 榜首；AAR 论文证明 AI 已经能以人类无法理解的方式做对齐研究。这不是产品更新，这是 Anthropic 对整个 AI 产业格局的重新定义尝试。</p>
+<p>与此同时，Stanford 2026 AI Index 提供了一个冷静的全景视角：中美差距只剩 2.7%，公众信任持续走低，而 AI 内部人士和普通人之间的认知鸿沟正在变成一道裂缝。当 Altman 的住宅两度遇袭，当缅因州成为第一个禁止大型数据中心的州——技术加速和社会反弹正在同时发生。</p>
+<p>下一期关注：Opus 4.7 是否真的会在本周落地，以及 AI 设计工具的正式发布是否会引发设计工具市场的地震。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Post Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/voices/2026-04-19" class="group card p-4 hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">Opus 4.7 与 Codex 双发日 / AI 用 10 分钟削弱你的思考力 / Cursor 500 亿估值的 Tokenmaxxing 悖论</p> </a> <a href="/voices/2026-04-15" class="group card p-4 text-right hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">HumanX 大会「Claude 狂热」/ AI 通过同行评审震动学界 / GPT-6 开发者生态首日实录</p> </a> </div> </nav> </article> <!-- Table of Contents (Desktop) --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本期目录
+</h4> <nav class="space-y-1"> <a href="#claude-opus-47-泄露anthropic-全栈应用全新-gpt-模型及-claude-code-重磅更新" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Claude Opus 4.7 泄露、Anthropic 全栈应用、全新 GPT 模型及 Claude Code 重磅更新 </a><a href="#claude-code-20-重磅发布全新桌面端cli-应用routines-功能及-opus-47-本周上线" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Claude Code 2.0 重磅发布：全新桌面端/CLI 应用、Routines 功能及 Opus 4.7 本周上线 </a><a href="#notions-token-town-5-rebuilds-100-tools-mcp-vs-clis-and-the-software-factory-future" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Notion’s Token Town: 5 Rebuilds, 100+ Tools, MCP vs CLIs and the Software Factory Future </a><a href="#ep-756-claudes-desktop-updates--how-to-guide-that-turns-claude-into-a-proactive-personal-agent" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Ep 756: Claude’s Desktop Updates — How-To Guide That Turns Claude Into a Proactive Personal Agent </a><a href="#stanford-2026-ai-index中美差距缩至-27开源社区成中国追赶关键引擎" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Stanford 2026 AI Index：中美差距缩至 2.7%，开源社区成中国追赶关键引擎 </a><a href="#anthropic-automated-alignment-researchers-claude-opus-46-以-22小时超越人类对齐研究员" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Anthropic Automated Alignment Researchers: Claude Opus 4.6 以 $22/小时超越人类对齐研究员 </a><a href="#anthropic-史上最忙碌一天claude-code-routines--opus-47-泄露--ai-设计工具--aar-论文" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Anthropic 史上最忙碌一天：Claude Code Routines + Opus 4.7 泄露 + AI 设计工具 + AAR 论文 </a><a href="#openai-内部备忘录泄露指控-anthropic-虚报-80-亿收入--gpt-54-cyber-发布" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> OpenAI 内部备忘录泄露：指控 Anthropic 虚报 80 亿收入 + GPT-5.4-Cyber 发布 </a><a href="#编者按" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> 编者按 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

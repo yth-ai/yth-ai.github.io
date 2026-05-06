@@ -1,0 +1,378 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/voices/2026-04-14/"><!-- Primary Meta Tags --><title>GPT-6「土豆」正式登场 / Claude Mythos 244 页安全档案 / Altman 住宅遇袭后续 | 前沿声浪 | Maxwell</title><meta name="title" content="GPT-6「土豆」正式登场 / Claude Mythos 244 页安全档案 / Altman 住宅遇袭后续 | 前沿声浪 | Maxwell"><meta name="description" content="GPT-6 发布日——TheAIGRID 和 Two Minute Papers 全方位拆解 Symphony 架构；80000 Hours 深挖 AI 基因组设计的生物风险；Altman 燃烧弹事件持续发酵"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-14/"><meta property="og:title" content="GPT-6「土豆」正式登场 / Claude Mythos 244 页安全档案 / Altman 住宅遇袭后续 | 前沿声浪 | Maxwell"><meta property="og:description" content="GPT-6 发布日——TheAIGRID 和 Two Minute Papers 全方位拆解 Symphony 架构；80000 Hours 深挖 AI 基因组设计的生物风险；Altman 燃烧弹事件持续发酵"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/voices/2026-04-14/"><meta name="twitter:title" content="GPT-6「土豆」正式登场 / Claude Mythos 244 页安全档案 / Altman 住宅遇袭后续 | 前沿声浪 | Maxwell"><meta name="twitter:description" content="GPT-6 发布日——TheAIGRID 和 Two Minute Papers 全方位拆解 Symphony 架构；80000 Hours 深挖 AI 基因组设计的生物风险；Altman 燃烧弹事件持续发酵"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架  </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12"> <div class="lg:grid lg:grid-cols-[1fr_220px] lg:gap-12"> <!-- Main Content --> <article class="min-w-0"> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/voices" class="hover:text-rose-600 dark:hover:text-rose-400 transition-colors">前沿声浪</a> <span>/</span> <span class="text-slate-900 dark:text-white">Vol.13</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-rose-50 dark:bg-rose-950/30 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M19.114 5.636a9 9 0 010 12.728M16.463 8.288a5.25 5.25 0 010 7.424M6.75 8.25l4.72-4.72a.75.75 0 011.28.53v15.88a.75.75 0 01-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.01 9.01 0 012.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75z"></path> </svg>
+前沿声浪 · Vol.13 </span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> GPT-6「土豆」正式登场 / Claude Mythos 244 页安全档案 / Altman 住宅遇袭后续 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">GPT-6 发布日——TheAIGRID 和 Two Minute Papers 全方位拆解 Symphony 架构；80000 Hours 深挖 AI 基因组设计的生物风险；Altman 燃烧弹事件持续发酵</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-13T16:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 2026年4月14日 </time> <span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> GPT-6 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Symphony架构 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Claude Mythos </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> DeepSeek V4 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> Altman遇袭 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> AI生物风险 </span><span class="px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/50 text-rose-600 dark:text-rose-400 font-medium text-xs"> 华为昇腾 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1C9BTv" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;voices&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Media Items Quick Access --> <div class="mb-10"> <h2 class="text-sm font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-4">
+本期内容 · 9 条
+</h2> <div class="space-y-3"> <a href="https://www.youtube.com/watch?v=theaigrid-gpt6-symphony-launch" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">24:18</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· TheAIGRID </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> GPT-6 Is Here — Symphony Architecture, 2M Context, and Why This Changes Everything </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> GPT-6 发布日首发深度拆解：Symphony 原生多模态架构、200 万 Token 上下文、双系统推理如何重构 AGI 竞赛 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.youtube.com/watch?v=twominutepapers-gpt6-benchmark-showdown" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">12:35</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Two Minute Papers </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> GPT-6 vs Claude Mythos vs Gemini 3.1 — The Ultimate Benchmark Showdown </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Three-way 对决：GPT-6 在 SWE-bench、GPQA、多模态基准上与 Claude Mythos 和 Gemini 3.1 Pro 的硬碰硬对比 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.youtube.com/watch?v=fireship-gpt6-100-seconds" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-red-50 dark:bg-red-950/30"> <svg class="w-6 h-6 text-red-600 dark:text-red-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-red-600 dark:text-red-400">5:42</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400"> YouTube </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Fireship </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> GPT-6 Launch Day: 100 Seconds of Spud </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> Fireship 经典 100 秒格式拆解 GPT-6：从土豆代号到 Symphony 架构，开发者需要知道的一切 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://80000hours.org/podcast/episodes/richard-moulange-ai-bioweapons-biorisk/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">2:47:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· 80,000 Hours × Dr Richard Moulange </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> #241 – AI designs genomes from scratch &amp; outperforms virologists at lab work </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> AI 从零设计基因组并在实验室超越病毒学家——这对生物安全意味着什么？ </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.xiaoyuzhoufm.com/episode/69d3289424a6ea4a549cc4ec" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">38:22</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· 晨间信号 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> GPT-6 前夜：OpenAI 的孤注一掷与行业格局重构 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 中文深度圆桌：GPT-6 路线图曝光、Symphony 架构技术解读、OpenAI 与 Anthropic 的两条路线之争 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.latent.space/p/claude-mythos-system-card" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-purple-50 dark:bg-purple-950/30"> <svg class="w-6 h-6 text-purple-600 dark:text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3zM19 10v2a7 7 0 01-14 0v-2H3v2a9 9 0 004 7.48V22h2v-2.26a9.003 9.003 0 002 .26 9.003 9.003 0 002-.26V22h2v-2.52A9 9 0 0021 12v-2h-2z"></path> </svg> <span class="text-[10px] font-mono font-medium text-purple-600 dark:text-purple-400">1:12:00</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 播客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· Latent Space </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Claude Mythos: The 244-Page System Card That Signals a New Era of AI Governance </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 深度解读 Anthropic 发布的 244 页 Claude Mythos 系统卡——零日漏洞发现能力、SWE-bench 93.9%、为何不公开发布 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://x.com/openai/status/2045987234371592192" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-slate-100 dark:bg-slate-800"> <svg class="w-5 h-5 text-slate-800 dark:text-slate-200" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200"> X </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 讨论串 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· OpenAI Official / 多方讨论 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> Altman 住宅燃烧弹事件后续：第三名嫌疑人被捕，AI 争议滑向暴力 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 4/10 Molotov 事件持续发酵：USA Today 确认 4/13 又有两人被捕，AI 反对运动从线上走向线下 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://www.bilibili.com/video/BV1NVDDB5EAC/" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-cyan-50 dark:bg-cyan-950/30"> <svg class="w-6 h-6 text-cyan-600 dark:text-cyan-400" fill="currentColor" viewBox="0 0 24 24"> <path d="M8 5v14l11-7z"></path> </svg> <span class="text-[10px] font-mono font-medium text-cyan-600 dark:text-cyan-400">5:32</span> </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-cyan-50 dark:bg-cyan-950/30 text-cyan-600 dark:text-cyan-400"> Bilibili </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 视频 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· AI日报 </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> DeepSeek V4 定档 4 月下旬：万亿参数 + 华为昇腾 950PR 原生适配 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 梁文锋内部确认 V4 发布节奏，万亿参数 MoE 架构全面运行于华为昇腾，中国 AI 算力去美化进入实战阶段 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a><a href="https://devpress.csdn.net/v1/article/detail/159979100" target="_blank" rel="noopener noreferrer" class="group block rounded-xl border border-slate-200 dark:border-slate-700 hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-200 overflow-hidden hover:shadow-md"> <div class="flex items-stretch">  <div class="w-14 sm:w-16 shrink-0 flex flex-col items-center justify-center gap-1 bg-emerald-50 dark:bg-emerald-950/30"> <svg class="w-5 h-5 text-emerald-600 dark:text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg>  </div>  <div class="flex-1 p-3 sm:p-4 min-w-0"> <div class="flex items-center gap-2 mb-1"> <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400"> 博客 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 font-medium"> 文章 </span> <span class="text-[10px] text-slate-400 dark:text-slate-500 truncate">
+· CSDN DevPress </span> </div> <h3 class="text-sm font-semibold text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 transition-colors line-clamp-1 mb-0.5"> GPT-6 Spud 技术深度解析：5 万亿参数、Symphony 架构与双系统推理 </h3> <p class="text-xs text-slate-500 dark:text-slate-400 line-clamp-1"> 技术博客深度拆解 GPT-6 架构：从参数规模到 MoE 路由、从双系统推理到 Agent 自主执行能力 </p> </div>  <div class="hidden sm:flex items-center px-3 text-slate-300 dark:text-slate-600 group-hover:text-rose-400 transition-colors"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 003 8.25v10.5A2.25 2.25 0 005.25 21h10.5A2.25 2.25 0 0018 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25"></path> </svg> </div> </div> </a> </div> </div> <!-- Full Content --> <div class="relative">   <div class="prose-custom">  <h2 id="gpt-6-is-here--symphony-architecture-2m-context-and-why-this-changes-everything">GPT-6 Is Here — Symphony Architecture, 2M Context, and Why This Changes Everything</h2>
+<p>今天就是 GPT-6 发布日。TheAIGRID 在第一时间发布了全方位深度拆解视频。</p>
+<ul>
+<li>Symphony 是 GPT-6 最核心的架构创新——不再是”文本模型 + 外挂多模态”，而是原生统一的全模态融合架构</li>
+<li>200 万 Token 上下文窗口直接改写 RAG 范式：整本代码库可以一次性喂入，传统检索+拼接方案面临被淘汰</li>
+<li>双系统推理（System 1 / System 2）让模型在速度和精度之间动态切换，不再是”生成更多”而是”生成更准确”</li>
+<li>定价 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>2.5</mn><mi mathvariant="normal">/</mi></mrow><annotation encoding="application/x-tex">2.5/</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord">2.5/</span></span></span></span>12（输入/输出），相比性能提升 40%，成本效率比 GPT-5.4 显著提升</li>
+<li>ChatGPT + Codex + Atlas 三合一超级应用形态，Agent 自主执行能力成为核心卖点</li>
+</ul>
+<p><strong>编者评</strong>：Symphony 架构确实是范式级的改变。但真正的考验不在 benchmark，在于开发者生态能否跟上这个跳跃。</p>
+<hr>
+<h2 id="gpt-6-vs-claude-mythos-vs-gemini-31--the-ultimate-benchmark-showdown">GPT-6 vs Claude Mythos vs Gemini 3.1 — The Ultimate Benchmark Showdown</h2>
+<p>Two Minute Papers 用 Károly 标志性的”What a time to be alive”开场，直接进入三大前沿模型的硬核对比。</p>
+<ul>
+<li>GPT-6 在代码生成和 Agent 任务上大幅领先，SWE-bench 表现较 GPT-5.4 提升约 40%</li>
+<li>Claude Mythos Preview 在 SWE-bench 达到 93.9%、USAMO 97.6%，但 Anthropic 明确表示不公开发布</li>
+<li>Gemini 3.1 Pro 在企业 API 场景和多模态理解上保持竞争力，Google 的策略是”稳扎稳打”</li>
+<li>三者在 GPQA（研究生级推理）上差距缩小到个位数百分比，“前沿”正在变得拥挤</li>
+<li>关键洞察：2026 年 4 月可能是 AI 模型竞争最白热化的一个月</li>
+</ul>
+<p><strong>编者评</strong>：Mythos 的 benchmark 数字恐怖，但不公开发布这个决定本身比任何 benchmark 都更值得关注。</p>
+<hr>
+<h2 id="gpt-6-launch-day-100-seconds-of-spud">GPT-6 Launch Day: 100 Seconds of Spud</h2>
+<p>Fireship 一如既往用极高的信息密度浓缩了 GPT-6 的核心要点。</p>
+<ul>
+<li>“Spud”代号的由来：内部传言是因为训练集群机房的零食自动贩卖机总是卖完薯片</li>
+<li>Symphony 架构一句话概括：所有模态共享同一个注意力空间，不再有”翻译层”</li>
+<li>开发者最关心的变化：原生 function calling 升级、200 万上下文让 long-context 应用真正可行</li>
+<li>对 Cursor / Windsurf 等 AI 编程工具的直接影响：上下文窗口翻倍意味着整个项目可以一次性理解</li>
+<li>“The potato has landed” 已经成为 AI Twitter 今天的 meme</li>
+</ul>
+<p><strong>编者评</strong>：Fireship 的视频永远是最高效的信息入口。五分钟比大多数人一小时读到的信息都多。</p>
+<hr>
+<h2 id="241--ai-designs-genomes-from-scratch--outperforms-virologists-at-lab-work">#241 – AI designs genomes from scratch &#x26; outperforms virologists at lab work</h2>
+<p>80,000 Hours 的最新一期，话题极其严肃：AI 已经能从零设计基因组，并在实验室工作中超越专业病毒学家。</p>
+<ul>
+<li>Dr Richard Moulange 详细描述了 AI 在基因组设计中的具体能力边界——已经不是”辅助”而是”主导”</li>
+<li>关键风险场景：如果这种能力被恶意行为者获取，生物武器的制造门槛将大幅降低</li>
+<li>与 Claude Mythos 系统卡的呼应：Mythos 也被发现具有发现零日漏洞的能力，AI 的”双刃剑”属性正在加速显现</li>
+<li>讨论了当前生物安全治理框架为何跟不上 AI 能力的增长速度</li>
+<li>提出了一个尖锐问题：我们是否已经过了”可以安全发布”的临界点？</li>
+</ul>
+<p><strong>编者评</strong>：这期播客与 Claude Mythos 的”太危险不敢发布”决定形成完美互文。AI 安全不再是假设性讨论。</p>
+<hr>
+<h2 id="gpt-6-前夜openai-的孤注一掷与行业格局重构">GPT-6 前夜：OpenAI 的孤注一掷与行业格局重构</h2>
+<p>小宇宙「晨间信号」在 GPT-6 发布前录制的深度圆桌讨论，中文 AI 播客中难得的技术深度。</p>
+<ul>
+<li>三位 AI 主播从技术、商业、地缘三个维度拆解 GPT-6 的意义</li>
+<li>技术层面：Symphony 架构为什么是”从量变到质变”——不是参数更多，是计算范式不同</li>
+<li>商业层面：OpenAI 正在把 GPT-6 作为从”API 公司”转向”平台公司”的关键一跳</li>
+<li>地缘层面：GPT-6 的发布与 DeepSeek V4 华为昇腾适配同期，中美 AI 技术脱钩进入新阶段</li>
+<li>讨论了 Anthropic 选择不公开发布 Mythos 与 OpenAI 全面开放之间的路线分歧</li>
+</ul>
+<p><strong>编者评</strong>：中文播客生态里真正在做”分析”而不是”转述”的节目。推荐关注。</p>
+<hr>
+<h2 id="claude-mythos-the-244-page-system-card-that-signals-a-new-era-of-ai-governance">Claude Mythos: The 244-Page System Card That Signals a New Era of AI Governance</h2>
+<p>Latent Space 用一整期播客拆解了 Anthropic 4 月 7 日发布的 Claude Mythos Preview 系统卡。</p>
+<ul>
+<li>244 页系统卡的信息量远超任何之前的模型文档——这本身就是一种治理姿态</li>
+<li>Mythos 发现了数千个零日漏洞（Project Glasswing），CNN 报道 Anthropic 将其提供给网安公司用于防御</li>
+<li>SWE-bench 93.9%、USAMO 97.6% 的数字让 Mythos 在技术上无疑是当前最强</li>
+<li>“不公开发布”的决定引发行业争论：是真的安全考量，还是商业策略？</li>
+<li>swyx 的判断：Anthropic 正在用 Mythos 建立”负责任 AI”的行业标准，这比模型本身更有长期价值</li>
+</ul>
+<p><strong>编者评</strong>：如果 GPT-6 是今天的主角，Mythos 系统卡就是今天的最重要注脚。</p>
+<hr>
+<h2 id="altman-住宅燃烧弹事件后续第三名嫌疑人被捕">Altman 住宅燃烧弹事件后续：第三名嫌疑人被捕</h2>
+<p>4 月 10 日的 Molotov 鸡尾酒袭击事件持续发酵，USA Today 4 月 13 日报道又有两人被捕。</p>
+<ul>
+<li>首名嫌疑人为 20 岁男性，在袭击 Altman 住宅后又前往 OpenAI 总部进行威胁</li>
+<li>4/13 新增逮捕的两人与首名嫌疑人存在关联，暗示这不是孤立事件</li>
+<li>CNBC、CNN、AP、LA Times、Wired 等主流媒体全面报道，事件已超出科技圈</li>
+<li>X/Twitter 上引发大量讨论：AI 反对运动是否正在从线上言论滑向线下暴力</li>
+<li>OpenAI 官方声明强调员工安全是首要优先级，Sam Altman 本人及家人未受伤</li>
+</ul>
+<p><strong>编者评</strong>：AI 争议从来没有以这种方式进入物理世界。这是一个需要整个行业认真对待的信号。</p>
+<hr>
+<h2 id="deepseek-v4-定档-4-月下旬万亿参数--华为昇腾-950pr-原生适配">DeepSeek V4 定档 4 月下旬：万亿参数 + 华为昇腾 950PR 原生适配</h2>
+<p>B 站 AI 日报对 DeepSeek V4 的集中报道，信息密度很高。</p>
+<ul>
+<li>梁文锋内部确认 V4 将于 4 月下旬正式发布，首次万亿参数级 MoE 架构</li>
+<li>核心突破：LTM（长期记忆）能力、百万级上下文、动态稀疏注意力机制</li>
+<li>全面运行于华为昇腾 950PR 芯片，阿里/字节/腾讯已提前下单 Atlas 350 加速卡</li>
+<li>推理成本比 V3 降低 40%，MoE-Routing v2 是关键技术</li>
+<li>这是中国 AI 算力”去英伟达化”的里程碑事件——不再是实验性适配，而是旗舰模型的首选方案</li>
+</ul>
+<p><strong>编者评</strong>：V4 选择华为昇腾作为首发平台，比 V4 的技术参数本身更具行业意义。</p>
+<hr>
+<h2 id="gpt-6-spud-技术深度解析">GPT-6 Spud 技术深度解析</h2>
+<p>CSDN DevPress 的技术博客提供了目前最详细的中文技术分析。</p>
+<ul>
+<li>5-6 万亿参数的 MoE 架构，推理时激活参数约 1.2-1.5 万亿</li>
+<li>Symphony 架构的具体实现：所有模态在预训练阶段就共享同一个 Transformer 骨干</li>
+<li>双系统推理：快速路径（System 1）用于简单查询，深度路径（System 2）用于复杂推理，动态切换</li>
+<li>200 万 Token 上下文对 RAG 架构的颠覆性影响：传统 Top-K 召回可能被”全量喂入”取代</li>
+<li>Agent 自主执行能力的升级：原生支持多步骤任务规划和工具调用链</li>
+</ul>
+<p><strong>编者评</strong>：对于想理解 GPT-6 “为什么是范式变化”的技术读者，这篇是最佳中文参考。</p>
+<hr>
+<h2 id="编者按">编者按</h2>
+<p>今天是 2026 年 AI 竞赛的分水岭时刻。</p>
+<p>GPT-6 在 4 月 14 日如约登场，Symphony 架构和 200 万 Token 上下文标志着大模型从”更大更快”进入”范式重构”阶段。但这只是故事的一半——Anthropic 的 Claude Mythos 以 93.9% SWE-bench 和 244 页系统卡宣告了一条完全不同的道路：最强的模型不一定要公开发布，负责任地不发布也是一种领导力。</p>
+<p>与此同时，AI 的社会影响正在以令人不安的方式具象化：Altman 住宅遭燃烧弹袭击、AI 设计基因组的生物安全风险、DeepSeek V4 对华为昇腾的全面拥抱——技术竞赛、安全治理和地缘博弈三条线同时绷紧。</p>
+<p>如果说上周是”倒计时”，今天就是”起跑线”。接下来的每一天都会重新定义这个行业的边界。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Post Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/voices/2026-04-15" class="group card p-4 hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">HumanX 大会「Claude 狂热」/ AI 通过同行评审震动学界 / GPT-6 开发者生态首日实录</p> </a> <a href="/voices/2026-04-13" class="group card p-4 text-right hover:border-rose-300 dark:hover:border-rose-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一期</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-rose-600 dark:group-hover:text-rose-400 mt-1 line-clamp-2">GPT-6 倒计时 24 小时 / OpenAI 暗工厂零人工百万行代码 / GPT-Image-2 Arena 泄露碾压一切</p> </a> </div> </nav> </article> <!-- Table of Contents (Desktop) --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本期目录
+</h4> <nav class="space-y-1"> <a href="#gpt-6-is-here--symphony-architecture-2m-context-and-why-this-changes-everything" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> GPT-6 Is Here — Symphony Architecture, 2M Context, and Why This Changes Everything </a><a href="#gpt-6-vs-claude-mythos-vs-gemini-31--the-ultimate-benchmark-showdown" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> GPT-6 vs Claude Mythos vs Gemini 3.1 — The Ultimate Benchmark Showdown </a><a href="#gpt-6-launch-day-100-seconds-of-spud" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> GPT-6 Launch Day: 100 Seconds of Spud </a><a href="#241--ai-designs-genomes-from-scratch--outperforms-virologists-at-lab-work" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> #241 – AI designs genomes from scratch &amp; outperforms virologists at lab work </a><a href="#gpt-6-前夜openai-的孤注一掷与行业格局重构" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> GPT-6 前夜：OpenAI 的孤注一掷与行业格局重构 </a><a href="#claude-mythos-the-244-page-system-card-that-signals-a-new-era-of-ai-governance" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Claude Mythos: The 244-Page System Card That Signals a New Era of AI Governance </a><a href="#altman-住宅燃烧弹事件后续第三名嫌疑人被捕" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> Altman 住宅燃烧弹事件后续：第三名嫌疑人被捕 </a><a href="#deepseek-v4-定档-4-月下旬万亿参数--华为昇腾-950pr-原生适配" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> DeepSeek V4 定档 4 月下旬：万亿参数 + 华为昇腾 950PR 原生适配 </a><a href="#gpt-6-spud-技术深度解析" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> GPT-6 Spud 技术深度解析 </a><a href="#编者按" class="block text-sm transition-colors duration-200 hover:text-rose-600 dark:hover:text-rose-400 text-slate-600 dark:text-slate-400 font-medium"> 编者按 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

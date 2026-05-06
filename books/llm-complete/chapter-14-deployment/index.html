@@ -1,0 +1,748 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-14-deployment/"><!-- Primary Meta Tags --><title>服务部署与系统架构 | 大模型全书 | Maxwell</title><meta name="title" content="服务部署与系统架构 | 大模型全书 | Maxwell"><meta name="description" content="从单机到万卡集群——构建高可用、低延迟的 LLM 推理服务"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-14-deployment/"><meta property="og:title" content="服务部署与系统架构 | 大模型全书 | Maxwell"><meta property="og:description" content="从单机到万卡集群——构建高可用、低延迟的 LLM 推理服务"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-14-deployment/"><meta name="twitter:title" content="服务部署与系统架构 | 大模型全书 | Maxwell"><meta name="twitter:description" content="从单机到万卡集群——构建高可用、低延迟的 LLM 推理服务"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/llm-complete" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-amber-500/25"> 全 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"> 大模型全书 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：基础篇 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">走进大语言模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">Transformer 架构详解</span> </a> </li><li> <a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">Tokenizer 设计哲学</span> </a> </li><li> <a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">预训练数据工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：预训练 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">Scaling Laws：大模型的第一性原理</span> </a> </li><li> <a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">预训练配方</span> </a> </li><li> <a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">中训练（Mid-training）</span> </a> </li><li> <a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">分布式训练工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：后训练与对齐 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">监督微调（SFT）</span> </a> </li><li> <a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">RLHF 与偏好对齐</span> </a> </li><li> <a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">评估与 Benchmark</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：推理与部署 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">推理优化</span> </a> </li><li> <a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">量化与模型压缩</span> </a> </li><li> <a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">服务部署与系统架构</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：前沿与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">多模态大模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">Agent、工具使用与未来展望</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 14 章 / 共 16 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 走进大语言模型 </a><a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> Transformer 架构详解 </a><a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> Tokenizer 设计哲学 </a><a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 预训练数据工程 </a><a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> Scaling Laws：大模型的第一性原理 </a><a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 预训练配方 </a><a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 中训练（Mid-training） </a><a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 分布式训练工程 </a><a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 监督微调（SFT） </a><a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> RLHF 与偏好对齐 </a><a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> 评估与 Benchmark </a><a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> 推理优化 </a><a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> 量化与模型压缩 </a><a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">14.</span> 服务部署与系统架构 </a><a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 多模态大模型 </a><a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">16.</span> Agent、工具使用与未来展望 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">书架</a> <span>/</span> <a href="/books/llm-complete" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">大模型全书</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第四部分：推理与部署</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 14 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"> 第 14 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第四部分：推理与部署</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 服务部署与系统架构 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">从单机到万卡集群——构建高可用、低延迟的 LLM 推理服务</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-18T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年4月18日 </time> <span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 部署 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 服务架构 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 负载均衡 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> GPU 集群 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 成本优化 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <h2 id="llm-服务的独特挑战">LLM 服务的独特挑战</h2>
+<p>部署 LLM 不同于传统的 ML serving。核心差异：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>维度</th><th>传统 ML 服务</th><th>LLM 服务</th></tr></thead><tbody><tr><td>延迟模式</td><td>固定延迟</td><td><strong>流式输出</strong>（首 token 延迟 + 逐 token 延迟）</td></tr><tr><td>请求时长</td><td>毫秒级</td><td><strong>秒到分钟级</strong></td></tr><tr><td>资源占用</td><td>KB 级</td><td><strong>GB 级</strong>（KV Cache）</td></tr><tr><td>负载特征</td><td>均匀</td><td><strong>长尾分布</strong>（输出长度差异巨大）</td></tr><tr><td>GPU 利用率</td><td>容易达 80%+</td><td><strong>不优化只有 10-30%</strong></td></tr></tbody></table>
+<h2 id="系统架构全景">系统架构全景</h2>
+<p>一个生产级 LLM 推理系统通常包含以下层次：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────────────┐</span></span>
+<span class="line"><span>│                    客户端层                        │</span></span>
+<span class="line"><span>│         Web / Mobile / API Clients              │</span></span>
+<span class="line"><span>└───────────────────┬─────────────────────────────┘</span></span>
+<span class="line"><span>                    │</span></span>
+<span class="line"><span>┌───────────────────▼─────────────────────────────┐</span></span>
+<span class="line"><span>│                  网关层 (Gateway)                  │</span></span>
+<span class="line"><span>│   速率限制 │ 认证鉴权 │ 请求路由 │ 流量控制       │</span></span>
+<span class="line"><span>└───────────────────┬─────────────────────────────┘</span></span>
+<span class="line"><span>                    │</span></span>
+<span class="line"><span>┌───────────────────▼─────────────────────────────┐</span></span>
+<span class="line"><span>│                调度层 (Scheduler)                  │</span></span>
+<span class="line"><span>│   请求队列 │ 优先级管理 │ 模型路由 │ 负载均衡      │</span></span>
+<span class="line"><span>└───────────────────┬─────────────────────────────┘</span></span>
+<span class="line"><span>                    │</span></span>
+<span class="line"><span>┌───────────────────▼─────────────────────────────┐</span></span>
+<span class="line"><span>│                推理层 (Inference Engine)           │</span></span>
+<span class="line"><span>│   vLLM / TRT-LLM / SGLang                       │</span></span>
+<span class="line"><span>│   Batching │ KV Cache │ 量化 │ 并行策略          │</span></span>
+<span class="line"><span>└───────────────────┬─────────────────────────────┘</span></span>
+<span class="line"><span>                    │</span></span>
+<span class="line"><span>┌───────────────────▼─────────────────────────────┐</span></span>
+<span class="line"><span>│               硬件层 (GPU Cluster)                │</span></span>
+<span class="line"><span>│   H100/A100 │ NVLink │ InfiniBand │ 存储        │</span></span>
+<span class="line"><span>└─────────────────────────────────────────────────┘</span></span></code></pre>
+<h2 id="关键指标">关键指标</h2>
+<h3 id="延迟指标">延迟指标</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>指标</th><th>定义</th><th>典型目标</th></tr></thead><tbody><tr><td><strong>TTFT</strong> (Time to First Token)</td><td>从请求到首个 token</td><td>&#x3C;500ms</td></tr><tr><td><strong>TPOT</strong> (Time Per Output Token)</td><td>相邻输出 token 间隔</td><td>&#x3C;50ms</td></tr><tr><td><strong>E2E Latency</strong></td><td>请求到完整响应</td><td>取决于长度</td></tr><tr><td><strong>P99 Latency</strong></td><td>99 分位延迟</td><td>&#x3C;3x 中位数</td></tr></tbody></table>
+<h3 id="吞吐量指标">吞吐量指标</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>指标</th><th>定义</th><th>说明</th></tr></thead><tbody><tr><td><strong>QPS</strong></td><td>每秒处理请求数</td><td>整体容量</td></tr><tr><td><strong>Tokens/s</strong></td><td>每秒生成 token 数</td><td>更精确的度量</td></tr><tr><td><strong>并发数</strong></td><td>同时处理的请求数</td><td>与 KV Cache 显存相关</td></tr></tbody></table>
+<h3 id="成本指标">成本指标</h3>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>成本效率</mtext><mo>=</mo><mfrac><mtext>Tokens/s</mtext><mrow><mtext>GPU 数量</mtext><mo>×</mo><mtext>GPU 单价</mtext></mrow></mfrac></mrow><annotation encoding="application/x-tex">\text{成本效率} = \frac{\text{Tokens/s}}{\text{GPU 数量} \times \text{GPU 单价}}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6833em;"></span><span class="mord text"><span class="mord cjk_fallback">成本效率</span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.4133em;vertical-align:-0.4033em;"></span><span class="mord"><span class="mopen nulldelimiter"></span><span class="mfrac"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.01em;"><span style="top:-2.655em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">GPU </span><span class="mord cjk_fallback mtight">数量</span></span><span class="mbin mtight">×</span><span class="mord text mtight"><span class="mord mtight">GPU </span><span class="mord cjk_fallback mtight">单价</span></span></span></span></span><span style="top:-3.23em;"><span class="pstrut" style="height:3em;"></span><span class="frac-line" style="border-bottom-width:0.04em;"></span></span><span style="top:-3.485em;"><span class="pstrut" style="height:3em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord text mtight"><span class="mord mtight">Tokens/s</span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4033em;"><span></span></span></span></span></span><span class="mclose nulldelimiter"></span></span></span></span></span></p>
+<p>或者更直观的：<strong>每百万 token 的美元成本</strong>。</p>
+<h2 id="负载均衡与调度">负载均衡与调度</h2>
+<h3 id="请求特征">请求特征</h3>
+<p>LLM 请求有极大的异质性：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>请求 A: 输入 50 tokens, 输出 20 tokens   → 轻量</span></span>
+<span class="line"><span>请求 B: 输入 8000 tokens, 输出 2000 tokens → 重量</span></span>
+<span class="line"><span>请求 C: 输入 100 tokens, 输出 5000 tokens  → 生成密集</span></span></code></pre>
+<p>传统的 round-robin 或最少连接数策略不适用。更好的方法：</p>
+<h3 id="token-aware-负载均衡">Token-Aware 负载均衡</h3>
+<p>根据<strong>预估的 token 处理量</strong>（而非请求数）来分配：</p>
+<p><span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mtext>Load</mtext><mi>i</mi></msub><mo>=</mo><msub><mo>∑</mo><mrow><mi>r</mi><mo>∈</mo><mtext>active</mtext><mo stretchy="false">(</mo><mi>i</mi><mo stretchy="false">)</mo></mrow></msub><mo stretchy="false">(</mo><msub><mtext>input_len</mtext><mi>r</mi></msub><mo>+</mo><msub><mtext>estimated_output_len</mtext><mi>r</mi></msub><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\text{Load}_i = \sum_{r \in \text{active}(i)} (\text{input\_len}_r + \text{estimated\_output\_len}_r)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8444em;vertical-align:-0.15em;"></span><span class="mord"><span class="mord text"><span class="mord">Load</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3117em;"><span style="top:-2.55em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight">i</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2778em;"></span></span><span class="base"><span class="strut" style="height:1.2247em;vertical-align:-0.4747em;"></span><span class="mop"><span class="mop op-symbol small-op" style="position:relative;top:0em;">∑</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.2253em;"><span style="top:-2.4003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span><span class="mrel mtight">∈</span><span class="mord text mtight"><span class="mord mtight">active</span></span><span class="mopen mtight">(</span><span class="mord mathnormal mtight">i</span><span class="mclose mtight">)</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.4747em;"><span></span></span></span></span></span></span><span class="mopen">(</span><span class="mord"><span class="mord text"><span class="mord">input_len</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.0583em;"><span style="top:-2.3403em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3597em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2222em;"></span><span class="mbin">+</span><span class="mspace" style="margin-right:0.2222em;"></span></span><span class="base"><span class="strut" style="height:1.1097em;vertical-align:-0.3597em;"></span><span class="mord"><span class="mord text"><span class="mord">estimated_output_len</span></span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:-0.0583em;"><span style="top:-2.3403em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathnormal mtight" style="margin-right:0.02778em;">r</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.3597em;"><span></span></span></span></span></span></span><span class="mclose">)</span></span></span></span></p>
+<p>将新请求分配给 <span class="katex"><span class="katex-mathml"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mtext>Load</mtext></mrow><annotation encoding="application/x-tex">\text{Load}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.6944em;"></span><span class="mord text"><span class="mord">Load</span></span></span></span></span> 最小的 worker。</p>
+<h3 id="优先级队列">优先级队列</h3>
+<p>不同的请求可能有不同的优先级：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>高优先级: 付费 API 用户 → 保证 SLA</span></span>
+<span class="line"><span>中优先级: 免费 API 用户 → Best effort</span></span>
+<span class="line"><span>低优先级: 批处理任务    → 填充空闲 GPU</span></span></code></pre>
+<p>实现方式：多级队列 + 抢占（preemption）。低优先级请求可以被中断，保存 KV Cache 到 CPU 内存，让高优先级请求先执行。<a href="https://github.com/vllm-project/vllm">vLLM</a> 支持请求级别的抢占。</p>
+<h2 id="模型并行部署">模型并行部署</h2>
+<h3 id="tensor-parallelism-tp">Tensor Parallelism (TP)</h3>
+<p>将单个模型的权重矩阵切分到多张 GPU：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>TP=2 部署:</span></span>
+<span class="line"><span>GPU 0: 权重的前半部分    GPU 1: 权重的后半部分</span></span>
+<span class="line"><span>        ↓                        ↓</span></span>
+<span class="line"><span>    部分计算                   部分计算</span></span>
+<span class="line"><span>        └──── AllReduce ────────┘</span></span>
+<span class="line"><span>                  ↓</span></span>
+<span class="line"><span>              完整结果</span></span></code></pre>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>需要高带宽互连（NVLink，~900 GB/s）</li>
+<li>减少单卡显存占用</li>
+<li>增加通信开销（每层两次 AllReduce）</li>
+<li>适合同一节点内的 GPU</li>
+</ul>
+<h3 id="pipeline-parallelism-pp">Pipeline Parallelism (PP)</h3>
+<p>将模型的不同层放在不同 GPU 上：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>PP=2 部署:</span></span>
+<span class="line"><span>GPU 0: Layer 0-39    GPU 1: Layer 40-79</span></span>
+<span class="line"><span>         │                    │</span></span>
+<span class="line"><span>     前 40 层计算  ──→    后 40 层计算</span></span></code></pre>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>节点间通信量小（只传 hidden states）</li>
+<li>可用较低带宽的网络（InfiniBand，~400 Gb/s）</li>
+<li>有”气泡”（pipeline bubble）问题</li>
+<li>适合跨节点部署</li>
+</ul>
+<h3 id="混合并行">混合并行</h3>
+<p>生产环境通常组合使用：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>4 节点 × 8 GPU 部署 (70B 模型):</span></span>
+<span class="line"><span>  - TP=4 (节点内 NVLink)</span></span>
+<span class="line"><span>  - PP=2 (跨节点 InfiniBand)</span></span>
+<span class="line"><span>  - 剩余 GPU 做 replicas</span></span></code></pre>
+<h2 id="前缀缓存prefix-caching">前缀缓存（Prefix Caching）</h2>
+<p>很多 LLM 请求共享相同的前缀：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>系统提示 (所有请求相同):</span></span>
+<span class="line"><span>  "你是一个有帮助的 AI 助手，请用中文回答。"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>多轮对话 (前几轮相同):</span></span>
+<span class="line"><span>  "[用户第1轮] ... [助手第1轮] ... [用户第2轮] ..."</span></span>
+<span class="line"><span>  └──────────── 这部分已经计算过 ──────────────┘</span></span></code></pre>
+<p><strong>前缀缓存</strong>（也叫 prompt caching）将共享前缀的 KV Cache 缓存起来复用：</p>
+<ul>
+<li><a href="https://arxiv.org/abs/2312.07104">SGLang 的 RadixAttention</a>：用 Radix Tree 管理前缀共享</li>
+<li><a href="https://docs.vllm.ai/en/latest/automatic_prefix_caching/apc.html">vLLM 的 Automatic Prefix Caching</a>：自动检测和复用</li>
+<li>OpenAI / Anthropic / DeepSeek 的 API 都支持 prompt caching，可节省 50-90% 的 prefill 成本</li>
+</ul>
+<h3 id="推理引擎格局2026">推理引擎格局（2026）</h3>
+<p>2026 年，推理引擎从 vLLM 一家独大演变为三足鼎立。Hugging Face 已将 TGI 转为维护模式，推荐 vLLM 或 SGLang。</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>引擎</th><th>特色</th><th>适用场景</th><th>吞吐量参考（H100）</th></tr></thead><tbody><tr><td><strong><a href="https://github.com/vllm-project/vllm">vLLM</a></strong></td><td>广泛硬件支持、PagedAttention、高并发</td><td>通用 API 服务、多硬件环境</td><td>~12,500 tok/s</td></tr><tr><td><strong><a href="https://github.com/sgl-project/sglang">SGLang</a></strong></td><td>RadixAttention、原生结构化输出、prefix 密集优化</td><td>Agent（函数调用）、结构化输出、多轮对话</td><td>~16,200 tok/s（prefix-heavy 下超 vLLM 6.4x）</td></tr><tr><td><strong><a href="https://github.com/NVIDIA/TensorRT-LLM">TensorRT-LLM</a></strong></td><td>NVIDIA 深度优化、Medusa 投机解码</td><td>纯 NVIDIA 环境、极致性能</td><td>因优化级别而异</td></tr></tbody></table>
+<h3 id="结构化输出">结构化输出</h3>
+<p>Agent 时代的推理引擎需要可靠地输出<strong>结构化数据</strong>（JSON、函数调用参数、正则约束）。实现方式是<strong>constrained decoding</strong>——在采样时用正则表达式或 JSON Schema 引导 token 选择，确保输出始终符合预定义格式。SGLang 原生集成了高性能 constrained decoding，vLLM 通过 <a href="https://github.com/dottxt-ai/outlines">Outlines</a> 集成追赶。这一能力对 Agent 场景（工具调用、多步规划）至关重要。</p>
+<h2 id="分离式推理架构disaggregated-inference">分离式推理架构（Disaggregated Inference）</h2>
+<p>传统 LLM 推理将 Prefill（prompt 处理）和 Decode（token 生成）放在同一组 GPU 上执行，但两者的计算特征截然不同：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>阶段</th><th>计算特征</th><th>瓶颈</th><th>GPU 利用模式</th></tr></thead><tbody><tr><td>Prefill</td><td>Compute-bound</td><td>算力</td><td>GPU 计算单元满载</td></tr><tr><td>Decode</td><td>Memory-bound</td><td>显存带宽</td><td>大量时间等待数据读取</td></tr></tbody></table>
+<p>混合执行导致资源浪费——Prefill 的高算力需求和 Decode 的高带宽需求无法同时最优化。<strong>分离式推理</strong>将两个阶段拆分为独立的服务池：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──────────────┐     ┌───────────────────┐     ┌──────────────┐</span></span>
+<span class="line"><span>│  Prefill Pool │ ──→ │  KV Cache 传输层   │ ──→ │  Decode Pool  │</span></span>
+<span class="line"><span>│  (计算密集型)  │     │  (RDMA/NVLink)    │     │  (带宽密集型)  │</span></span>
+<span class="line"><span>└──────────────┘     └───────────────────┘     └──────────────┘</span></span></code></pre>
+<p>代表实现：</p>
+<ul>
+<li><strong><a href="https://kvcache-ai.github.io/Mooncake/">Mooncake</a></strong>（Moonshot AI，ASPLOS 2025）：将 KV Cache 提升为独立分布式存储层（KVCache-centric 架构），使用 DRAM/SSD/RDMA 构建 Transfer Engine 和 Mooncake Store，吞吐提升可达 525%</li>
+<li><strong><a href="https://arxiv.org/abs/2401.09670">DistServe</a></strong>：异构并行分离架构，TTFT 降低 40-50%，decode 吞吐提升 2-3x</li>
+<li><strong>NVIDIA 官方方案</strong>：2026 年 3 月发布 <a href="https://developer.nvidia.com/blog/deploying-disaggregated-llm-inference-workloads-on-kubernetes/">K8s 分离式推理部署方案</a>，将 Prefill、Decode、Router 拆分为独立 K8s 服务，实现细粒度资源分配</li>
+</ul>
+<p>分离式推理是 2025-2026 年 LLM 部署最重要的架构变革——它从根本上改变了”一组 GPU 做所有事”的思路。</p>
+<h2 id="推理加速投机解码speculative-decoding">推理加速：投机解码（Speculative Decoding）</h2>
+<p>Decode 阶段的逐 token 生成本质上是串行的，<strong>投机解码</strong>通过引入一个轻量级 draft 模型来打破这个串行瓶颈：</p>
+<ol>
+<li><strong>Draft 阶段</strong>：小模型（如 1B）快速生成 K 个候选 token</li>
+<li><strong>Verify 阶段</strong>：大模型一次性验证这 K 个 token（并行前向传播）</li>
+<li><strong>Accept/Reject</strong>：按概率接受匹配的 token，在首个不匹配处截断</li>
+</ol>
+<p>关键性质：投机解码在数学上保证输出分布与原始大模型<strong>完全一致</strong>（无质量损失）。</p>
+<p>生产框架支持状态：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>框架</th><th>支持方式</th><th>典型加速比</th></tr></thead><tbody><tr><td>vLLM</td><td>Draft model + Eagle/Medusa</td><td>1.5-2x（长输出）</td></tr><tr><td>SGLang</td><td>Draft model</td><td>1.5-2x（长输出）</td></tr><tr><td>TensorRT-LLM</td><td>Medusa 多头投机</td><td>1.5-2x（长输出）</td></tr></tbody></table>
+<p>需要注意：投机解码只加速 Decode 阶段，不影响 Prefill。在输出较短或 draft 模型接受率低的场景，加速效果有限甚至可能增加开销。</p>
+<h2 id="多模型管理">多模型管理</h2>
+<p>生产环境通常需要同时部署多个模型（不同大小、不同版本、不同能力）。</p>
+<h3 id="模型路由">模型路由</h3>
+<p>根据请求特征自动选择最合适的模型：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> route_request</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(request):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> request.requires_reasoning:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "deepseek-r1-671b"</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 推理任务用大模型</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> request.is_simple_qa:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "qwen-7b"</span><span style="color:#6A737D;--shiki-dark:#6A737D">          # 简单问答用小模型</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    elif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> request.language </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "code"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "deepseek-coder-33b"</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 代码任务用专用模型</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    else</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "qwen-72b"</span><span style="color:#6A737D;--shiki-dark:#6A737D">         # 默认中等模型</span></span></code></pre>
+<p><a href="https://arxiv.org/abs/2406.18665">RouteLLM</a>（LMSYS）训练了一个轻量级路由器，根据查询复杂度自动在强模型和弱模型之间路由，在保持 95% 质量的同时减少 50%+ 的成本。</p>
+<h3 id="ab-测试与灰度发布">A/B 测试与灰度发布</h3>
+<p>新模型上线流程：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>阶段 1: 影子模式（1% 流量，只记录不返回）</span></span>
+<span class="line"><span>阶段 2: 灰度发布（5% 流量，对比指标）</span></span>
+<span class="line"><span>阶段 3: 逐步放量（5% → 20% → 50% → 100%）</span></span>
+<span class="line"><span>阶段 4: 全量切换</span></span></code></pre>
+<p>关键监控指标：延迟 P50/P99、用户满意度、错误率、安全指标。</p>
+<h2 id="gpu-集群运维">GPU 集群运维</h2>
+<h3 id="硬件故障应对">硬件故障应对</h3>
+<p>大规模 GPU 集群的故障率不可忽视：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>故障类型</th><th>频率（千卡/天）</th><th>影响</th><th>应对</th></tr></thead><tbody><tr><td>GPU 掉卡</td><td>~0.1%</td><td>单卡不可用</td><td>自动驱逐 + 替换</td></tr><tr><td>NVLink 降级</td><td>~0.05%</td><td>通信变慢</td><td>降级运行 + 维修</td></tr><tr><td>内存 ECC 错误</td><td>~0.01%</td><td>计算错误</td><td>自动重启 + 替换</td></tr><tr><td>节点宕机</td><td>~0.01%</td><td>多卡不可用</td><td>请求迁移</td></tr></tbody></table>
+<p><strong>应对策略</strong>：</p>
+<ol>
+<li><strong>健康检查</strong>：每分钟探测 GPU 状态、显存、温度</li>
+<li><strong>自动故障转移</strong>：检测到异常后自动将请求路由到健康节点</li>
+<li><strong>冗余部署</strong>：N+1 或 N+2 冗余，确保单点故障不影响服务</li>
+<li><strong>优雅降级</strong>：GPU 不足时，优先保证高优先级请求</li>
+</ol>
+<h3 id="显存管理">显存管理</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>70B 模型显存分配（单卡 80GB H100, TP=4）:</span></span>
+<span class="line"><span>  模型权重:     ~35 GB (FP16, TP=4 → 每卡 ~9 GB)</span></span>
+<span class="line"><span>  KV Cache:     ~50 GB (动态分配)</span></span>
+<span class="line"><span>  临时缓冲区:    ~5 GB</span></span>
+<span class="line"><span>  CUDA 开销:    ~2 GB</span></span>
+<span class="line"><span>  可用余量:      ~14 GB (安全边际)</span></span></code></pre>
+<p>KV Cache 是 LLM 推理中最大的动态显存消耗，管理策略经历了三代演进：</p>
+<ol>
+<li><strong>静态分配</strong>（早期）：按最大序列长度预留，浪费严重</li>
+<li><strong><a href="https://arxiv.org/abs/2309.06180">PagedAttention</a></strong>（vLLM）：将 KV Cache 按”页”动态分配，类似操作系统虚拟内存，显存浪费降低至 &#x3C;4%</li>
+<li><strong>分布式 KV Store</strong>（Mooncake 等）：将 KV Cache 从 GPU 显存中解放到 DRAM/SSD，通过 RDMA 实现跨节点 KV Cache 共享和迁移——这是分离式推理架构的基础</li>
+</ol>
+<p>此外，<strong>KV Cache 复用</strong>（跨请求共享前缀的 KV Cache）已成为标准优化——前缀缓存正是这一思路的实现。</p>
+<h2 id="成本优化策略">成本优化策略</h2>
+<h3 id="1-spotpreemptible-instances">1. Spot/Preemptible Instances</h3>
+<p>云厂商的抢占式实例通常比按需实例便宜 60-70%。适合：</p>
+<ul>
+<li>批处理推理（可以被打断重试）</li>
+<li>低优先级请求</li>
+<li>非实时场景</li>
+</ul>
+<h3 id="2-混合精度部署">2. 混合精度部署</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>高峰期: FP8/INT8, TP=2 → 高吞吐</span></span>
+<span class="line"><span>低谷期: 释放 GPU → 降低成本</span></span></code></pre>
+<h3 id="3-自动扩缩容">3. 自动扩缩容</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 伪代码: 基于队列深度的扩缩容策略</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">autoscaler</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  metric</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">queue_depth_per_gpu</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  target</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#6A737D;--shiki-dark:#6A737D">  # 每张 GPU 排队 5 个请求</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  scale_up</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">    threshold</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">10</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">    cooldown</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">60s</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  scale_down</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">    threshold</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">    cooldown</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">300s</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  min_replicas</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  max_replicas</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">32</span></span></code></pre>
+<h3 id="4-请求优化">4. 请求优化</h3>
+<ul>
+<li><strong>Prompt 压缩</strong>：去除冗余的系统提示，使用更简洁的指令</li>
+<li><strong>Max tokens 限制</strong>：设置合理的最大输出长度</li>
+<li><strong>缓存复用</strong>：相似请求复用结果（语义缓存）</li>
+<li><strong>Early stopping</strong>：检测到循环或无意义输出时提前终止</li>
+</ul>
+<h2 id="可观测性">可观测性</h2>
+<h3 id="关键监控面板">关键监控面板</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>实时指标:</span></span>
+<span class="line"><span>├── QPS（当前/峰值）</span></span>
+<span class="line"><span>├── TTFT P50/P99</span></span>
+<span class="line"><span>├── TPOT P50/P99</span></span>
+<span class="line"><span>├── GPU 利用率（计算/显存）</span></span>
+<span class="line"><span>├── KV Cache 使用率</span></span>
+<span class="line"><span>├── 队列深度</span></span>
+<span class="line"><span>├── 错误率</span></span>
+<span class="line"><span>└── 每秒生成 tokens</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>告警规则:</span></span>
+<span class="line"><span>├── TTFT P99 > 2s → 告警</span></span>
+<span class="line"><span>├── GPU 利用率 &#x3C; 20% 持续 10min → 缩容提醒</span></span>
+<span class="line"><span>├── GPU 利用率 > 90% 持续 5min → 扩容告警</span></span>
+<span class="line"><span>├── 错误率 > 1% → 紧急告警</span></span>
+<span class="line"><span>└── KV Cache 使用率 > 90% → 容量告警</span></span></code></pre>
+<h3 id="分布式追踪">分布式追踪</h3>
+<p>每个请求的完整生命周期追踪：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Request → Gateway (认证, 2ms)</span></span>
+<span class="line"><span>  → Scheduler (排队, 15ms)</span></span>
+<span class="line"><span>  → Engine.prefill (计算, 120ms)</span></span>
+<span class="line"><span>  → Engine.decode (生成 200 tokens, 4000ms)</span></span>
+<span class="line"><span>  → Response streaming</span></span>
+<span class="line"><span>Total: 4137ms, 200 tokens, ~48 tok/s</span></span></code></pre>
+<h2 id="端到端部署示例">端到端部署示例</h2>
+<h3 id="方案一快速启动单卡多卡">方案一：快速启动（单卡/多卡）</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># vLLM 一键部署</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">python</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -m</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> vllm.entrypoints.openai.api_server</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --model</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> meta-llama/Llama-3-70b-instruct</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --tensor-parallel-size</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --gpu-memory-utilization</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.9</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --max-model-len</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 8192</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --port</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 8000</span></span></code></pre>
+<h3 id="方案二生产环境kubernetes">方案二：生产环境（Kubernetes）</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 简化的 K8s 部署配置</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">apiVersion</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">apps/v1</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">kind</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">Deployment</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">metadata</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">llm-inference</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">spec</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  replicas</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">4</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">  template</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">    spec</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">      containers</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="color:#22863A;--shiki-dark:#85E89D">name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">vllm</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">        image</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">vllm/vllm-openai:latest</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">        resources</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">          limits</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">            nvidia.com/gpu</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">4</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">        env</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        - </span><span style="color:#22863A;--shiki-dark:#85E89D">name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">MODEL</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">          value</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"meta-llama/Llama-3-70b-instruct"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        - </span><span style="color:#22863A;--shiki-dark:#85E89D">name</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">TENSOR_PARALLEL_SIZE</span></span>
+<span class="line"><span style="color:#22863A;--shiki-dark:#85E89D">          value</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"4"</span></span></code></pre>
+<h2 id="章节小结">章节小结</h2>
+<ol>
+<li>LLM 服务的核心挑战是<strong>长尾延迟</strong>和<strong>资源异质性</strong></li>
+<li><strong>TTFT</strong> 和 <strong>TPOT</strong> 是最关键的延迟指标</li>
+<li><strong>Token-aware 负载均衡</strong>比传统方法更适合 LLM 场景</li>
+<li><strong>分离式推理</strong>是 2025-2026 年最大的架构变革——Prefill 和 Decode 拆分为独立资源池</li>
+<li><strong>投机解码</strong>在数学上无损地加速 Decode 阶段 1.5-2x</li>
+<li>推理引擎从 vLLM 一家独大变为<strong>三足鼎立</strong>（vLLM / SGLang / TensorRT-LLM）</li>
+<li><strong>前缀缓存</strong>在多轮对话和共享系统提示场景下效果显著</li>
+<li><strong>结构化输出</strong>是 Agent 时代推理引擎的核心能力</li>
+<li><strong>模型路由</strong>可以在保持质量的同时大幅降低成本</li>
+<li><strong>可观测性</strong>是生产部署的基石——你无法优化你看不到的东西</li>
+</ol>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/llm-complete/chapter-13-quantization" class="group card p-4 hover:border-amber-300 dark:hover:border-amber-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.13</span> 量化与模型压缩 </p> </a> <a href="/books/llm-complete/chapter-15-multimodal" class="group card p-4 text-right hover:border-amber-300 dark:hover:border-amber-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.15</span> 多模态大模型 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#llm-服务的独特挑战" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> LLM 服务的独特挑战 </a><a href="#系统架构全景" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 系统架构全景 </a><a href="#关键指标" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 关键指标 </a><a href="#延迟指标" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 延迟指标 </a><a href="#吞吐量指标" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 吞吐量指标 </a><a href="#成本指标" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 成本指标 </a><a href="#负载均衡与调度" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 负载均衡与调度 </a><a href="#请求特征" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 请求特征 </a><a href="#token-aware-负载均衡" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Token-Aware 负载均衡 </a><a href="#优先级队列" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 优先级队列 </a><a href="#模型并行部署" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 模型并行部署 </a><a href="#tensor-parallelism-tp" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Tensor Parallelism (TP) </a><a href="#pipeline-parallelism-pp" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Pipeline Parallelism (PP) </a><a href="#混合并行" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 混合并行 </a><a href="#前缀缓存prefix-caching" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 前缀缓存（Prefix Caching） </a><a href="#推理引擎格局2026" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 推理引擎格局（2026） </a><a href="#结构化输出" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 结构化输出 </a><a href="#分离式推理架构disaggregated-inference" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 分离式推理架构（Disaggregated Inference） </a><a href="#推理加速投机解码speculative-decoding" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 推理加速：投机解码（Speculative Decoding） </a><a href="#多模型管理" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 多模型管理 </a><a href="#模型路由" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 模型路由 </a><a href="#ab-测试与灰度发布" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> A/B 测试与灰度发布 </a><a href="#gpu-集群运维" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> GPU 集群运维 </a><a href="#硬件故障应对" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 硬件故障应对 </a><a href="#显存管理" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 显存管理 </a><a href="#成本优化策略" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 成本优化策略 </a><a href="#1-spotpreemptible-instances" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 1. Spot/Preemptible Instances </a><a href="#2-混合精度部署" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 2. 混合精度部署 </a><a href="#3-自动扩缩容" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 3. 自动扩缩容 </a><a href="#4-请求优化" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 4. 请求优化 </a><a href="#可观测性" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 可观测性 </a><a href="#关键监控面板" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 关键监控面板 </a><a href="#分布式追踪" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 分布式追踪 </a><a href="#端到端部署示例" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 端到端部署示例 </a><a href="#方案一快速启动单卡多卡" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 方案一：快速启动（单卡/多卡） </a><a href="#方案二生产环境kubernetes" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 方案二：生产环境（Kubernetes） </a><a href="#章节小结" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 章节小结 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

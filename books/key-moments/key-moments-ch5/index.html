@@ -1,0 +1,452 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/key-moments/key-moments-ch5/"><!-- Primary Meta Tags --><title>第六章：推理革命 | 大模型的关键时刻 | Maxwell</title><meta name="title" content="第六章：推理革命 | 大模型的关键时刻 | Maxwell"><meta name="description" content="从 o1 到 DeepSeek R1：当模型学会「思考」（2024-2025）"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/key-moments/key-moments-ch5/"><meta property="og:title" content="第六章：推理革命 | 大模型的关键时刻 | Maxwell"><meta property="og:description" content="从 o1 到 DeepSeek R1：当模型学会「思考」（2024-2025）"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/key-moments/key-moments-ch5/"><meta name="twitter:title" content="第六章：推理革命 | 大模型的关键时刻 | Maxwell"><meta name="twitter:description" content="从 o1 到 DeepSeek R1：当模型学会「思考」（2024-2025）"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/key-moments" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-indigo-500/25"> 键 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors"> 大模型的关键时刻 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div>  <ul class="space-y-0.5"> <li> <a href="/books/key-moments/key-moments-preface" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">  <span class="line-clamp-1">前言：为什么写这本书</span> </a> </li><li> <a href="/books/key-moments/key-moments-index" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800">  <span class="line-clamp-1">大模型的关键时刻</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch1" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">注意力就是一切</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch2" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">ChatGPT 时刻</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch3" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">Scaling Laws 的发现与困境</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch3b" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">架构暗战</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch4" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">开源觉醒</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch5" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">推理革命</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch6" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">从对话到行动</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch6b" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">创造力的释放</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch6c" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">龙虾革命</span> </a> </li><li> <a href="/books/key-moments/key-moments-ch7" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">未完的战争</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 6 章 / 共 10 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/key-moments/key-moments-preface" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400">  前言：为什么写这本书 </a><a href="/books/key-moments/key-moments-index" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400">  大模型的关键时刻 </a><a href="/books/key-moments/key-moments-ch1" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 注意力就是一切 </a><a href="/books/key-moments/key-moments-ch2" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> ChatGPT 时刻 </a><a href="/books/key-moments/key-moments-ch3" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> Scaling Laws 的发现与困境 </a><a href="/books/key-moments/key-moments-ch3b" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 架构暗战 </a><a href="/books/key-moments/key-moments-ch4" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> 开源觉醒 </a><a href="/books/key-moments/key-moments-ch5" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">6.</span> 推理革命 </a><a href="/books/key-moments/key-moments-ch6" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 从对话到行动 </a><a href="/books/key-moments/key-moments-ch6b" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 创造力的释放 </a><a href="/books/key-moments/key-moments-ch6c" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 龙虾革命 </a><a href="/books/key-moments/key-moments-ch7" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> 未完的战争 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">书架</a> <span>/</span> <a href="/books/key-moments" class="hover:text-indigo-600 dark:hover:text-indigo-400 transition-colors">大模型的关键时刻</a> <span>/</span>  <span class="text-slate-900 dark:text-white">第 6 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-indigo-50 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800"> 第 6 章 </span>  </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> 第六章：推理革命 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">从 o1 到 DeepSeek R1：当模型学会「思考」（2024-2025）</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-03-21T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 发布于：2026年3月21日 </time> <span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> 大模型 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> AI历史 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> 推理模型 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> o1 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> DeepSeek R1 </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> GRPO </span><span class="px-2.5 py-0.5 rounded-full bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 font-medium text-xs"> 关键时刻 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <h1 id="第六章推理革命">第六章：推理革命</h1>
+<p><em>从 o1 到 DeepSeek R1：当模型学会在回答之前「思考」（2024-2025）</em></p>
+<hr>
+<h2 id="61-一个困扰行业的问题">6.1 一个困扰行业的问题</h2>
+<p>到 2024 年中，大模型遇到了一个让人不安的现象：<strong>模型越来越大，但某些能力似乎到了天花板。</strong></p>
+<p>GPT-4 发布一年半后，没有任何模型在数学推理、复杂编程和逻辑分析上有实质性突破。Claude 3.5 Sonnet、Gemini 1.5 Pro、GPT-4o——它们各有优势，但在需要多步推理的问题上，表现都在同一个水平线上反复徘徊。</p>
+<p>业内开始流传一种声音：Scaling Laws 到头了，继续堆参数和数据没用了。</p>
+<p>这种判断是错的。但它错在了一个微妙的地方——不是 Scaling 到头了，而是 <strong>Scaling 的方式需要改变。</strong></p>
+<hr>
+<h2 id="62-test-time-compute第二条-scaling-曲线">6.2 Test-Time Compute：第二条 Scaling 曲线</h2>
+<p>传统的 Scaling Laws 关注的是<strong>训练时的计算量</strong>（train-time compute）：更多的参数、更多的数据、更多的 GPU 时间。</p>
+<p>但 2024 年，一个新的维度浮出水面：<strong>推理时的计算量</strong>（test-time compute）。</p>
+<p>核心思想很简单：让模型在给出答案之前，花更多的时间”想一想”。人类解决困难问题时不是脱口而出的——我们会画图、列步骤、检查错误、尝试不同路径。如果让模型也这样做呢？</p>
+<p>Chain-of-Thought（思维链）在 2022 年就被提出了。但之前是在提示词里告诉模型”请一步一步想”——效果有限，因为模型本身没有被训练成”善于多步思考”的样子。</p>
+<p>真正的突破在于：<strong>不只是提示模型去想，而是训练模型学会怎么想。</strong></p>
+<hr>
+<h2 id="63-openai-o1推理模型的横空出世">6.3 OpenAI o1：推理模型的横空出世</h2>
+<p>2024 年 9 月 12 日，OpenAI 发布了 o1-preview。</p>
+<p>表面上看，o1 只是另一个聊天模型。但它的行为与之前所有模型都不同：给它一道数学竞赛题，它不会直接尝试给出答案，而是会产生一段很长的”思考过程”——尝试不同的解题路径，验证中间步骤，发现错误后回溯重试。</p>
+<p>这个”思考过程”不是提示工程的结果，而是通过强化学习训练出来的。o1 被训练成在回答之前进行系统性的推理，模型学会了一种内在的”慢思考”模式。</p>
+<p>结果令人震惊：</p>
+<ul>
+<li><strong>数学竞赛（AIME 2024）：</strong> o1 正确率 83.3%，约等于美国前 500 名高中生水平。之前的 GPT-4o 只有 13.4%。</li>
+<li><strong>博士级科学推理（GPQA Diamond）：</strong> o1 准确率 78%，首次超过了持有该学科博士学位的人类专家。</li>
+<li><strong>编程竞赛（Codeforces）：</strong> o1 达到第 89 百分位，约等于中等偏上的竞赛选手。</li>
+</ul>
+<p>数学能力从”高中生都不如”跳到”竞赛选手水平”，一步跨越了整个量级。</p>
+<blockquote>
+<p><strong>关键认知 #9：</strong> o1 证明了大模型性能提升的第二条路径——不是把模型变大（train-time scaling），而是让模型”想更久”（test-time scaling）。这打破了”Scaling Laws 到头了”的悲观论调，开辟了全新的优化空间。</p>
+</blockquote>
+<hr>
+<h2 id="64-关键技术从-ppo-到-grpo">6.4 关键技术：从 PPO 到 GRPO</h2>
+<p>o1 的训练方法核心是 <strong>大规模强化学习（RL）</strong>。但故事要从后训练技术的演进说起。</p>
+<h3 id="ppo-的困境">PPO 的困境</h3>
+<p>传统 RLHF 使用 PPO（Proximal Policy Optimization）算法，需要同时维护四个模型：</p>
+<ol>
+<li><strong>Policy 模型</strong>（正在训练的语言模型）</li>
+<li><strong>Reference 模型</strong>（初始模型的拷贝，KL 散度约束用）</li>
+<li><strong>Reward 模型</strong>（打分模型）</li>
+<li><strong>Critic 模型</strong>（价值估计网络，用于计算”优势函数”——某个动作到底比平均水平好多少）</li>
+</ol>
+<p>四个模型同时占用 GPU 显存，训练极其复杂。更麻烦的是，Critic 模型的训练本身就不稳定——如果 Critic 的价值估计不准确，整个 RL 训练就会走偏。</p>
+<p>在 GPT-4 之前的模型上做 RLHF 已经很痛苦了。要在 600B+ 参数的模型上做大规模 RL 来训练推理能力？用 PPO 几乎不可能——显存放不下，训练稳定性也无法保证。</p>
+<h3 id="grpo去掉-critic-的优雅方案">GRPO：去掉 Critic 的优雅方案</h3>
+<p>2024 年 2 月，DeepSeek 在 <strong>DeepSeekMath</strong> 论文中提出了 <strong>GRPO（Group Relative Policy Optimization）</strong>。</p>
+<p>GRPO 的核心想法极其简洁：<strong>不用 Critic 网络来估计”这个回答有多好”，而是让一组回答互相比较来确定相对优劣。</strong></p>
+<p>具体做法：</p>
+<ol>
+<li>对每个问题，让模型生成一组（比如 64 个）候选回答</li>
+<li>用奖励信号（比如数学题的正确性）对每个回答打分</li>
+<li>在这一组内做标准化——计算组内均值和标准差</li>
+<li>每个回答的”优势”等于它的得分减去组内均值，再除以标准差</li>
+<li>用这个相对优势来更新模型——比平均好的回答获得正向强化，比平均差的获得负向强化</li>
+</ol>
+<p>这个方案的好处是三重的：</p>
+<p><strong>第一，显存减半。</strong> 去掉了 Critic 网络，从四模型变成三模型（Policy + Reference + Reward）。对于大规模 RL 训练，这是一个巨大的工程优势。</p>
+<p><strong>第二，训练更稳定。</strong> 不再依赖 Critic 的准确性。组内相对排序天然就是一个可靠的信号——即使奖励函数不完美，“组内第一名”和”组内最后一名”的差距仍然是有意义的。</p>
+<p><strong>第三，特别适合有明确正误的任务。</strong> 数学题有标准答案，代码有单元测试，逻辑推理有正确结论——这些场景中，奖励信号是精确的，GRPO 可以直接利用。</p>
+<p>DeepSeekMath 使用 GRPO 训练后，在 GSM8K、MATH、AIME 等数学 benchmark 上创造了开源模型的新纪录。但当时人们还没有意识到这个算法的真正意义。</p>
+<hr>
+<h2 id="65-deepseek-r1rl-涌现推理能力">6.5 DeepSeek R1：RL 涌现推理能力</h2>
+<p>如果 o1 是推理革命的”iPhone 时刻”，那 DeepSeek R1 就是推理革命的”Android 时刻”。</p>
+<p>2025 年 1 月 20 日，DeepSeek 发布了 R1。它的意义在三个层面上都是突破性的。</p>
+<h3 id="第一层性能平起平坐">第一层：性能平起平坐</h3>
+<p>DeepSeek R1 在数学、编程和科学推理 benchmark 上全面追平甚至部分超越了 o1：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>Benchmark</th><th>o1-1217</th><th>DeepSeek R1</th></tr></thead><tbody><tr><td>AIME 2024</td><td>79.2%</td><td>79.8%</td></tr><tr><td>MATH-500</td><td>96.4%</td><td>97.3%</td></tr><tr><td>Codeforces Rating</td><td>1891</td><td>2029</td></tr><tr><td>GPQA Diamond</td><td>75.7%</td><td>71.5%</td></tr></tbody></table>
+<p>在最关键的数学和代码竞赛上，R1 甚至略胜一筹。</p>
+<h3 id="第二层纯-rl-的惊人发现">第二层：纯 RL 的惊人发现</h3>
+<p>DeepSeek R1 技术报告中最令人震惊的发现是 <strong>DeepSeek-R1-Zero</strong>——一个不使用任何有监督微调数据，完全通过 RL 训练出来的推理模型。</p>
+<p>过程是这样的：从 DeepSeek V3 基础模型出发，不给任何”标准答案”或”示范推理过程”，只用 GRPO 算法进行训练。奖励信号极其简单：</p>
+<ul>
+<li>数学题答对了→奖励</li>
+<li>答错了→惩罚</li>
+<li>格式正确（把思考过程放在 <code>&#x3C;think></code> 标签里）→小额奖励</li>
+</ul>
+<p>没有人类示范的推理步骤。没有 SFT。没有”请你一步一步想”的提示。</p>
+<p>结果，模型<strong>自发涌现</strong>出了以下能力：</p>
+<ul>
+<li><strong>自我验证：</strong> “让我检查一下这个结果对不对”</li>
+<li><strong>反思与回溯：</strong> “等等，这条路走不通，换个方法”</li>
+<li><strong>将复杂问题分解为子问题</strong></li>
+<li><strong>“Aha moment”：</strong> 在思考过程中突然意识到正确答案——DeepSeek 在技术报告中用这个词来描述一个令人动容的现象：模型在长长的推理链中走到死胡同，突然”顿悟”了一条新路。</li>
+</ul>
+<p>为什么 GRPO 对这个结果至关重要？因为<strong>纯 RL 训练推理能力需要极大的训练规模和极高的稳定性</strong>。模型需要在数十万个数学题上生成数百万个推理链，通过微弱但持续的奖励信号逐步学会”怎么想”。如果用 PPO 的四模型架构，显存和稳定性根本撑不住这个规模。GRPO 去掉 Critic 带来的效率提升，是 R1-Zero 实验得以实现的关键前提。</p>
+<p>这意味着：<strong>推理能力不需要人类示范——给一个基础模型足够的 RL 训练，它自己就能”学会思考”。</strong></p>
+<h3 id="第三层完全开源成本极低">第三层：完全开源，成本极低</h3>
+<p>R1 完全开源，包括模型权重、训练方法和技术细节。DeepSeek 还发布了 1.5B 到 70B 的蒸馏版本，通过让 R1 生成推理数据来训练更小的模型。蒸馏版的 R1-Distill-Qwen-32B 在数学推理上甚至超过了 OpenAI 的 o1-mini。</p>
+<p>技术栈的组合效应再次体现：</p>
+<ul>
+<li><strong>V3 的 MoE 架构</strong>→基础模型的训练成本只有 557 万美元</li>
+<li><strong>GRPO 算法</strong>→RL 训练高效且稳定</li>
+<li><strong>开源蒸馏</strong>→推理模型的能力被压缩到手机都能跑的大小</li>
+</ul>
+<blockquote>
+<p><strong>关键认知 #10：</strong> DeepSeek R1 证明了三件事：推理能力可以纯粹通过 RL 自然涌现；GRPO 让大规模 RL 训练在工程上变得可行；以及推理革命可以被开源复现。这三点加在一起，使得推理模型从 OpenAI 的独家优势变成了行业共识和基础设施。</p>
+</blockquote>
+<hr>
+<h2 id="66-推理革命的后续演进">6.6 推理革命的后续演进</h2>
+<p>R1 发布后，推理模型成为 2025 年最热门的赛道。</p>
+<p><strong>OpenAI 的迭代：</strong></p>
+<ul>
+<li><strong>o3（2025.01 预告，2025.04 发布）：</strong> o1 的升级版，在 ARC-AGI 测试中得分从 o1 的 32% 飙升到 87.5%（高算力模式），引发了”AGI 是否临近”的激烈讨论。</li>
+<li><strong>o4-mini（2025）：</strong> 更小、更快、更便宜的推理模型，让推理能力进入日常应用场景。</li>
+</ul>
+<p><strong>Claude 的跟进：</strong></p>
+<ul>
+<li>Claude 3.5 Sonnet 引入了 extended thinking 模式，支持长达数万 token 的思考过程。</li>
+<li>Claude 在代码和分析场景中成为推理模型的强劲竞争者。</li>
+</ul>
+<p><strong>Google 的回应：</strong></p>
+<ul>
+<li>Gemini 2.0 Flash Thinking 和 Gemini 2.5 Pro 引入了推理模式。</li>
+</ul>
+<p><strong>开源的爆发：</strong></p>
+<ul>
+<li>QwQ（Qwen）、Skywork-o1、各家基于 R1 蒸馏方法的推理模型纷纷涌现。GRPO 算法被广泛采用——Hugging Face 的 TRL 库、LLaMA-Factory 等开源训练框架都迅速集成了 GRPO 支持。</li>
+</ul>
+<p>到 2025 年底，“推理模型”已经不是一个新奇概念，而是大模型的标配能力。每家主要厂商都有自己的推理模式，区别只在于推理效率和成本。</p>
+<hr>
+<h2 id="67-这场革命改变了什么">6.7 这场革命改变了什么</h2>
+<p>推理革命不仅仅是 benchmark 数字的提升。它从根本上改变了人们对大模型能力边界的认知。</p>
+<p><strong>之前：</strong> 大模型擅长”快思考”——语言理解、文本生成、翻译、摘要。但在需要严密逻辑的任务上（数学证明、复杂编程、科学推理），可靠性不够。</p>
+<p><strong>之后：</strong> 大模型在”慢思考”场景也能表现出色。它们可以被用于：</p>
+<ul>
+<li>辅助科学研究（数学、物理、生物的定理推导）</li>
+<li>复杂代码工程（多文件、多步骤的架构设计和实现）</li>
+<li>需要严密逻辑的商业分析和法律推理</li>
+</ul>
+<p><strong>更深层的技术认知变化是：</strong> 后训练（特别是 RL）可以创造全新的能力维度，而不仅仅是”对齐”或”微调”。R1-Zero 证明了推理能力不在预训练数据中——它是通过 RL 训练在模型中”涌现”出来的。这意味着 <strong>模型的能力上限不只取决于预训练，还取决于后训练的方法和规模。</strong> Train-time scaling 和 test-time scaling 构成了两个独立的维度，它们的组合空间远未被探索完。</p>
+<hr>
+<h2 id="本章回顾">本章回顾</h2>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>事件</th><th>时间</th><th>为什么重要</th></tr></thead><tbody><tr><td>OpenAI o1 发布</td><td>2024.09</td><td>推理模型开山之作，证明 test-time scaling 有效</td></tr><tr><td>DeepSeek R1 发布</td><td>2025.01</td><td>开源追平 o1，GRPO + 纯 RL 涌现推理能力</td></tr><tr><td>OpenAI o3 发布</td><td>2025.04</td><td>ARC-AGI 87.5%，推理能力再上台阶</td></tr></tbody></table>
+<p><strong>如果这一章只需要记住一句话：</strong> 推理革命发现了大模型性能提升的第二条曲线——不是让模型”更大”，而是让模型”想更久”。GRPO 让这场革命在工程上可行，DeepSeek R1 让它在开源世界中可复现。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/key-moments/key-moments-ch4" class="group card p-4 hover:border-indigo-300 dark:hover:border-indigo-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.5</span> 开源觉醒 </p> </a> <a href="/books/key-moments/key-moments-ch6" class="group card p-4 text-right hover:border-indigo-300 dark:hover:border-indigo-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">下一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.7</span> 从对话到行动 </p> </a> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#61-一个困扰行业的问题" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.1 一个困扰行业的问题 </a><a href="#62-test-time-compute第二条-scaling-曲线" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.2 Test-Time Compute：第二条 Scaling 曲线 </a><a href="#63-openai-o1推理模型的横空出世" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.3 OpenAI o1：推理模型的横空出世 </a><a href="#64-关键技术从-ppo-到-grpo" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.4 关键技术：从 PPO 到 GRPO </a><a href="#ppo-的困境" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> PPO 的困境 </a><a href="#grpo去掉-critic-的优雅方案" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> GRPO：去掉 Critic 的优雅方案 </a><a href="#65-deepseek-r1rl-涌现推理能力" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.5 DeepSeek R1：RL 涌现推理能力 </a><a href="#第一层性能平起平坐" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 第一层：性能平起平坐 </a><a href="#第二层纯-rl-的惊人发现" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 第二层：纯 RL 的惊人发现 </a><a href="#第三层完全开源成本极低" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-500 dark:text-slate-500 pl-4"> 第三层：完全开源，成本极低 </a><a href="#66-推理革命的后续演进" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.6 推理革命的后续演进 </a><a href="#67-这场革命改变了什么" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 6.7 这场革命改变了什么 </a><a href="#本章回顾" class="block text-sm transition-colors duration-200 hover:text-indigo-600 dark:hover:text-indigo-400 text-slate-600 dark:text-slate-400 font-medium"> 本章回顾 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>

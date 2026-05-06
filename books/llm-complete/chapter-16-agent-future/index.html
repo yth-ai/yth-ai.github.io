@@ -1,0 +1,839 @@
+<!DOCTYPE html><html lang="zh-CN"> <head><!-- Global Metadata --><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><meta name="generator" content="Astro v5.18.1"><!-- PWA --><meta name="theme-color" content="#6366F1"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="apple-mobile-web-app-title" content="Maxwell"><meta name="mobile-web-app-capable" content="yes"><link rel="manifest" href="/manifest.webmanifest"><link rel="apple-touch-icon" href="/pwa-icons/apple-touch-icon.png"><!-- Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"><!-- KaTeX (math formula rendering) --><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.21/dist/katex.min.css" integrity="sha384-zh0CIslj3dQfGnIQmezfYJXkbc3I8jDac2rivIbZ5yUhclofEWGBg3eJKhMm0OQ5" crossorigin="anonymous"><!-- RSS Feed --><link rel="alternate" type="application/rss+xml" title="Maxwell" href="/rss.xml"><!-- Canonical URL --><link rel="canonical" href="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-16-agent-future/"><!-- Primary Meta Tags --><title>Agent、工具使用与未来展望 | 大模型全书 | Maxwell</title><meta name="title" content="Agent、工具使用与未来展望 | 大模型全书 | Maxwell"><meta name="description" content="从 Chat 到 Agent——LLM 如何从对话工具走向自主行动者"><!-- Open Graph --><meta property="og:type" content="website"><meta property="og:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-16-agent-future/"><meta property="og:title" content="Agent、工具使用与未来展望 | 大模型全书 | Maxwell"><meta property="og:description" content="从 Chat 到 Agent——LLM 如何从对话工具走向自主行动者"><meta property="og:image" content="https://maxwell-demon-ai.github.io/og-default.png"><meta property="og:site_name" content="Maxwell"><meta property="og:locale" content="zh_CN"><!-- Twitter Card --><meta name="twitter:card" content="summary_large_image"><meta name="twitter:url" content="https://maxwell-demon-ai.github.io/books/llm-complete/chapter-16-agent-future/"><meta name="twitter:title" content="Agent、工具使用与未来展望 | 大模型全书 | Maxwell"><meta name="twitter:description" content="从 Chat 到 Agent——LLM 如何从对话工具走向自主行动者"><meta name="twitter:image" content="https://maxwell-demon-ai.github.io/og-default.png"><!-- Dark mode script (prevent flash) --><script>
+  const theme = (() => {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+      return localStorage.getItem('theme');
+    }
+    if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      return 'dark';
+    }
+    return 'light';
+  })();
+  if (theme === 'dark') {
+    document.documentElement.classList.add('dark');
+  } else {
+    document.documentElement.classList.remove('dark');
+  }
+  window.localStorage.setItem('theme', theme);
+</script><link rel="stylesheet" href="/_astro/about.BUITcr3M.css">
+<link rel="stylesheet" href="/_astro/_slug_.CGRwiv8O.css"></head> <body> <header class="fixed top-0 left-0 right-0 z-50 glass"> <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between"> <!-- Logo --> <a href="/" class="flex items-center gap-2 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center text-white font-bold text-sm shadow-lg shadow-primary-500/25">
+M
+</div> <span class="text-xl font-bold text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</span> </a> <!-- Desktop Nav --> <div class="hidden md:flex items-center gap-1"> <a href="/" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页  </a><a href="/books" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 <span class="absolute bottom-0 left-1/2 -translate-x-1/2 w-6 h-0.5 bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"></span> </a><a href="/benchmarks" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测  </a><a href="/voices" class="relative px-4 py-2 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪  </a> </div> <!-- Actions --> <div class="flex items-center gap-2"> <!-- Search Button --> <button id="search-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="搜索"> <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> </button> <!-- Theme Toggle --> <button id="theme-toggle" class="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="切换主题"> <svg class="w-5 h-5 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path> </svg> <svg class="w-5 h-5 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path> </svg> </button> <!-- Mobile Menu Toggle --> <button id="mobile-menu-toggle" class="md:hidden p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-all duration-200" aria-label="菜单" aria-expanded="false" aria-controls="mobile-menu"> <!-- Hamburger icon --> <svg id="menu-icon-open" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"></path> </svg> <!-- Close (×) icon --> <svg id="menu-icon-close" class="w-5 h-5 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path> </svg> </button> </div> </nav> <!-- Mobile Menu --> <div id="mobile-menu" class="md:hidden hidden border-t border-slate-200/50 dark:border-slate-700/50"> <div class="px-4 py-3 space-y-1"> <a href="/" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 首页 </a><a href="/books" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-950/50"> 书架 </a><a href="/benchmarks" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 评测 </a><a href="/voices" class="block px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> 声浪 </a> </div> </div> </header> <!-- Search Modal --> <div id="search-modal" class="fixed inset-0 z-[100] hidden"> <!-- Backdrop --> <div id="search-backdrop" class="absolute inset-0 bg-slate-900/50 backdrop-blur-sm"></div> <!-- Dialog --> <div class="relative flex items-start justify-center pt-[15vh] px-4"> <div class="w-full max-w-2xl bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-700 overflow-hidden"> <!-- Search Header --> <div class="flex items-center gap-3 px-5 py-4 border-b border-slate-200 dark:border-slate-700"> <svg class="w-5 h-5 text-slate-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path> </svg> <input id="search-input" type="text" placeholder="搜索文章、书籍、研究…" autocomplete="off" class="flex-1 bg-transparent text-slate-900 dark:text-white text-base placeholder:text-slate-400 dark:placeholder:text-slate-500 outline-none"> <kbd class="hidden sm:inline-flex items-center gap-1 px-2 py-1 text-xs text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-700 rounded-md font-mono">ESC</kbd> </div> <!-- Search Results --> <div id="search-results" class="max-h-[60vh] overflow-y-auto p-2"> <div id="search-empty" class="py-12 text-center text-sm text-slate-400 dark:text-slate-500">
+输入关键词开始搜索
+</div> </div> <!-- Search Footer --> <div class="flex items-center justify-between px-5 py-3 border-t border-slate-200 dark:border-slate-700 text-xs text-slate-400 dark:text-slate-500"> <div class="flex items-center gap-3"> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↑↓</kbd> 导航</span> <span class="hidden sm:inline-flex items-center gap-1"><kbd class="px-1.5 py-0.5 bg-slate-100 dark:bg-slate-700 rounded font-mono">↵</kbd> 打开</span> </div> <span>Powered by Pagefind</span> </div> </div> </div> </div> <script>
+  (function() {
+    // ── Theme toggle ──
+    document.getElementById('theme-toggle').addEventListener('click', function() {
+      var isDark = document.documentElement.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ── Mobile menu ──
+    (function setupMobileMenu() {
+      var toggle = document.getElementById('mobile-menu-toggle');
+      var menu = document.getElementById('mobile-menu');
+      var iconOpen = document.getElementById('menu-icon-open');
+      var iconClose = document.getElementById('menu-icon-close');
+
+      if (!toggle || !menu || !iconOpen || !iconClose) return;
+
+      function closeMenu() {
+        menu.classList.add('hidden');
+        iconOpen.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        toggle.setAttribute('aria-expanded', 'false');
+      }
+
+      function toggleMenu() {
+        var isHidden = menu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden', !isHidden);
+        iconClose.classList.toggle('hidden', isHidden);
+        toggle.setAttribute('aria-expanded', String(!isHidden));
+      }
+
+      toggle.addEventListener('click', toggleMenu);
+
+      menu.querySelectorAll('a').forEach(function(link) {
+        link.addEventListener('click', closeMenu);
+      });
+
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && !menu.classList.contains('hidden')) {
+          closeMenu();
+        }
+      });
+    })();
+
+    // ── Search functionality ──
+    (function setupSearch() {
+      var pagefind = null;
+      var searchDebounceTimer;
+      var selectedIndex = -1;
+
+      var searchToggle = document.getElementById('search-toggle');
+      var searchModal = document.getElementById('search-modal');
+      var searchBackdrop = document.getElementById('search-backdrop');
+      var searchInput = document.getElementById('search-input');
+      var searchResults = document.getElementById('search-results');
+      var searchEmpty = document.getElementById('search-empty');
+
+      if (!searchToggle || !searchModal || !searchInput || !searchResults || !searchEmpty) {
+        console.warn('Search: some elements not found', {
+          searchToggle: !!searchToggle,
+          searchModal: !!searchModal,
+          searchInput: !!searchInput,
+          searchResults: !!searchResults,
+          searchEmpty: !!searchEmpty
+        });
+        return;
+      }
+
+      function loadPagefind() {
+        if (pagefind) return Promise.resolve(pagefind);
+        return import('/pagefind/pagefind.js').then(function(pf) {
+          pagefind = pf;
+          return pagefind.init();
+        }).then(function() {
+          return pagefind;
+        }).catch(function(e) {
+          console.warn('Pagefind not available (only works after build):', e);
+          pagefind = null;
+          return null;
+        });
+      }
+
+      function openSearch() {
+        searchModal.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+        searchInput.focus();
+        searchInput.select();
+        selectedIndex = -1;
+        loadPagefind();
+      }
+
+      function closeSearch() {
+        searchModal.classList.add('hidden');
+        document.body.style.overflow = '';
+        searchInput.value = '';
+        searchResults.innerHTML = '';
+        searchResults.appendChild(searchEmpty);
+        searchEmpty.textContent = '输入关键词开始搜索';
+        selectedIndex = -1;
+      }
+
+      // Open search on button click
+      searchToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        openSearch();
+      });
+
+      // Close on backdrop click
+      searchBackdrop.addEventListener('click', closeSearch);
+
+      // Keyboard shortcut: Cmd/Ctrl + K
+      document.addEventListener('keydown', function(e) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+          e.preventDefault();
+          if (searchModal.classList.contains('hidden')) {
+            openSearch();
+          } else {
+            closeSearch();
+          }
+        }
+        if (e.key === 'Escape' && !searchModal.classList.contains('hidden')) {
+          closeSearch();
+        }
+      });
+
+      // Search input with debounce
+      searchInput.addEventListener('input', function() {
+        clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = setTimeout(function() {
+          performSearch(searchInput.value.trim());
+        }, 200);
+      });
+
+      // Keyboard navigation in results
+      searchInput.addEventListener('keydown', function(e) {
+        var items = searchResults.querySelectorAll('.search-result-item');
+        if (!items.length) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          selectedIndex = Math.min(selectedIndex + 1, items.length - 1);
+          updateSelection(items);
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          selectedIndex = Math.max(selectedIndex - 1, 0);
+          updateSelection(items);
+        } else if (e.key === 'Enter' && selectedIndex >= 0) {
+          e.preventDefault();
+          var link = items[selectedIndex] ? items[selectedIndex].querySelector('a') : null;
+          if (link) {
+            closeSearch();
+            window.location.href = link.href;
+          }
+        }
+      });
+
+      function updateSelection(items) {
+        items.forEach(function(item, i) {
+          if (i === selectedIndex) {
+            item.classList.add('bg-primary-50', 'dark:bg-primary-950/30');
+            item.scrollIntoView({ block: 'nearest' });
+          } else {
+            item.classList.remove('bg-primary-50', 'dark:bg-primary-950/30');
+          }
+        });
+      }
+
+      function performSearch(query) {
+        selectedIndex = -1;
+
+        if (!query) {
+          searchResults.innerHTML = '';
+          searchResults.appendChild(searchEmpty);
+          searchEmpty.textContent = '输入关键词开始搜索';
+          return;
+        }
+
+        var doSearch = pagefind ? Promise.resolve(pagefind) : loadPagefind();
+
+        doSearch.then(function(pf) {
+          if (!pf) {
+            searchResults.innerHTML = '';
+            searchEmpty.textContent = '搜索功能需要先构建站点（npm run build）';
+            searchResults.appendChild(searchEmpty);
+            return;
+          }
+
+          return pf.search(query).then(function(search) {
+            return Promise.all(
+              search.results.slice(0, 12).map(function(r) { return r.data(); })
+            );
+          }).then(function(results) {
+            searchResults.innerHTML = '';
+
+            if (results.length === 0) {
+              searchEmpty.textContent = '没有找到 "' + query + '" 的相关结果';
+              searchResults.appendChild(searchEmpty);
+              return;
+            }
+
+            results.forEach(function(result) {
+              var item = document.createElement('div');
+              item.className = 'search-result-item rounded-xl transition-colors duration-150';
+              item.innerHTML =
+                '<a href="' + result.url + '" class="block px-4 py-3 group">' +
+                  '<div class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">' +
+                    (result.meta && result.meta.title ? result.meta.title : result.url) +
+                  '</div>' +
+                  '<div class="text-xs text-slate-500 dark:text-slate-400 mt-1 line-clamp-2">' +
+                    (result.excerpt || '') +
+                  '</div>' +
+                '</a>';
+              searchResults.appendChild(item);
+            });
+          });
+        }).catch(function(err) {
+          console.error('Search error:', err);
+          searchResults.innerHTML = '';
+          searchEmpty.textContent = '搜索出错，请重试';
+          searchResults.appendChild(searchEmpty);
+        });
+      }
+    })();
+  })();
+</script> <main class="pt-16 min-h-screen">  <div class="max-w-[90rem] mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="lg:grid lg:grid-cols-[240px_1fr_200px] lg:gap-8 xl:gap-12"> <!-- Left Sidebar: Chapter Navigation --> <aside class="hidden lg:block"> <div class="sticky top-20 max-h-[calc(100vh-6rem)] overflow-y-auto pb-8 pr-2 -mr-2 scrollbar-thin"> <!-- Book title --> <a href="/books/llm-complete" class="flex items-center gap-2 mb-6 group"> <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xs font-bold shadow-lg shadow-amber-500/25"> 全 </div> <span class="text-sm font-bold text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 transition-colors"> 大模型全书 </span> </a> <!-- Chapter list grouped by parts --> <nav class="space-y-5"> <div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第一部分：基础篇 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">1.</span> <span class="line-clamp-1">走进大语言模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">2.</span> <span class="line-clamp-1">Transformer 架构详解</span> </a> </li><li> <a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">3.</span> <span class="line-clamp-1">Tokenizer 设计哲学</span> </a> </li><li> <a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">4.</span> <span class="line-clamp-1">预训练数据工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第二部分：预训练 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">5.</span> <span class="line-clamp-1">Scaling Laws：大模型的第一性原理</span> </a> </li><li> <a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">6.</span> <span class="line-clamp-1">预训练配方</span> </a> </li><li> <a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">7.</span> <span class="line-clamp-1">中训练（Mid-training）</span> </a> </li><li> <a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">8.</span> <span class="line-clamp-1">分布式训练工程</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第三部分：后训练与对齐 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">9.</span> <span class="line-clamp-1">监督微调（SFT）</span> </a> </li><li> <a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">10.</span> <span class="line-clamp-1">RLHF 与偏好对齐</span> </a> </li><li> <a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">11.</span> <span class="line-clamp-1">评估与 Benchmark</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第四部分：推理与部署 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">12.</span> <span class="line-clamp-1">推理优化</span> </a> </li><li> <a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">13.</span> <span class="line-clamp-1">量化与模型压缩</span> </a> </li><li> <a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">14.</span> <span class="line-clamp-1">服务部署与系统架构</span> </a> </li> </ul> </div><div> <h5 class="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-2 px-2"> 第五部分：前沿与展望 </h5> <ul class="space-y-0.5"> <li> <a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">15.</span> <span class="line-clamp-1">多模态大模型</span> </a> </li><li> <a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-all duration-200 bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 dark:text-slate-500 mr-1.5">16.</span> <span class="line-clamp-1">Agent、工具使用与未来展望</span> </a> </li> </ul> </div> </nav> </div> </aside> <!-- Main Content --> <article class="min-w-0"> <!-- Mobile Chapter Nav --> <div class="lg:hidden mb-6"> <details class="card p-3"> <summary class="flex items-center justify-between cursor-pointer text-sm font-medium text-slate-700 dark:text-slate-300"> <span class="flex items-center gap-2"> <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"> <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"></path> </svg>
+章节导航
+</span> <span class="text-xs text-slate-500">第 16 章 / 共 16 章</span> </summary> <nav class="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700 space-y-1 max-h-80 overflow-y-auto"> <a href="/books/llm-complete/chapter-01-introduction" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">1.</span> 走进大语言模型 </a><a href="/books/llm-complete/chapter-02-transformer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">2.</span> Transformer 架构详解 </a><a href="/books/llm-complete/chapter-03-tokenizer" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">3.</span> Tokenizer 设计哲学 </a><a href="/books/llm-complete/chapter-04-data" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">4.</span> 预训练数据工程 </a><a href="/books/llm-complete/chapter-05-scaling-laws" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">5.</span> Scaling Laws：大模型的第一性原理 </a><a href="/books/llm-complete/chapter-06-pretraining-recipe" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">6.</span> 预训练配方 </a><a href="/books/llm-complete/chapter-07-midtraining" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">7.</span> 中训练（Mid-training） </a><a href="/books/llm-complete/chapter-08-distributed-training" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">8.</span> 分布式训练工程 </a><a href="/books/llm-complete/chapter-09-sft" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">9.</span> 监督微调（SFT） </a><a href="/books/llm-complete/chapter-10-alignment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">10.</span> RLHF 与偏好对齐 </a><a href="/books/llm-complete/chapter-11-evaluation" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">11.</span> 评估与 Benchmark </a><a href="/books/llm-complete/chapter-12-inference" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">12.</span> 推理优化 </a><a href="/books/llm-complete/chapter-13-quantization" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">13.</span> 量化与模型压缩 </a><a href="/books/llm-complete/chapter-14-deployment" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">14.</span> 服务部署与系统架构 </a><a href="/books/llm-complete/chapter-15-multimodal" class="block text-sm px-2 py-1.5 rounded-lg transition-colors text-slate-600 dark:text-slate-400"> <span class="text-xs text-slate-400 mr-1">15.</span> 多模态大模型 </a><a href="/books/llm-complete/chapter-16-agent-future" class="block text-sm px-2 py-1.5 rounded-lg transition-colors bg-amber-50 dark:bg-amber-950/40 text-amber-700 dark:text-amber-300 font-semibold"> <span class="text-xs text-slate-400 mr-1">16.</span> Agent、工具使用与未来展望 </a> </nav> </details> </div> <!-- Breadcrumb --> <nav class="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400 mb-6"> <a href="/books" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">书架</a> <span>/</span> <a href="/books/llm-complete" class="hover:text-amber-600 dark:hover:text-amber-400 transition-colors">大模型全书</a> <span>/</span>  <span class="text-slate-400 dark:text-slate-500">第五部分：前沿与展望</span> <span>/</span>  <span class="text-slate-900 dark:text-white">第 16 章</span> </nav> <!-- Title Area --> <header class="mb-8 pb-6 border-b border-slate-200 dark:border-slate-700"> <!-- Chapter badge --> <div class="flex items-center gap-3 mb-4"> <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-sm font-semibold border bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800"> 第 16 章 </span> <span class="text-xs text-slate-500 dark:text-slate-400">第五部分：前沿与展望</span> </div> <h1 class="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-white mb-3 text-balance"> Agent、工具使用与未来展望 </h1> <p class="text-lg text-slate-600 dark:text-slate-400 mb-4">从 Chat 到 Agent——LLM 如何从对话工具走向自主行动者</p> <div class="flex flex-wrap items-center gap-3 text-sm"> <time datetime="2026-04-18T00:00:00.000Z" class="text-slate-500 dark:text-slate-400"> 最后更新：2026年4月18日 </time> <span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> Agent </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 工具使用 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> RAG </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> MCP </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 推理模型 </span><span class="px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 font-medium text-xs"> 未来 </span> </div> <div class="mt-4"> <style>astro-island,astro-slot,astro-static-slot{display:contents}</style><script>(()=>{var e=async t=>{await(await t())()};(self.Astro||(self.Astro={})).load=e;window.dispatchEvent(new Event("astro:load"));})();</script><script>(()=>{var A=Object.defineProperty;var g=(i,o,a)=>o in i?A(i,o,{enumerable:!0,configurable:!0,writable:!0,value:a}):i[o]=a;var d=(i,o,a)=>g(i,typeof o!="symbol"?o+"":o,a);{let i={0:t=>m(t),1:t=>a(t),2:t=>new RegExp(t),3:t=>new Date(t),4:t=>new Map(a(t)),5:t=>new Set(a(t)),6:t=>BigInt(t),7:t=>new URL(t),8:t=>new Uint8Array(t),9:t=>new Uint16Array(t),10:t=>new Uint32Array(t),11:t=>1/0*t},o=t=>{let[l,e]=t;return l in i?i[l](e):void 0},a=t=>t.map(o),m=t=>typeof t!="object"||t===null?t:Object.fromEntries(Object.entries(t).map(([l,e])=>[l,o(e)]));class y extends HTMLElement{constructor(){super(...arguments);d(this,"Component");d(this,"hydrator");d(this,"hydrate",async()=>{var b;if(!this.hydrator||!this.isConnected)return;let e=(b=this.parentElement)==null?void 0:b.closest("astro-island[ssr]");if(e){e.addEventListener("astro:hydrate",this.hydrate,{once:!0});return}let c=this.querySelectorAll("astro-slot"),n={},h=this.querySelectorAll("template[data-astro-template]");for(let r of h){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("data-astro-template")||"default"]=r.innerHTML,r.remove())}for(let r of c){let s=r.closest(this.tagName);s!=null&&s.isSameNode(this)&&(n[r.getAttribute("name")||"default"]=r.innerHTML)}let p;try{p=this.hasAttribute("props")?m(JSON.parse(this.getAttribute("props"))):{}}catch(r){let s=this.getAttribute("component-url")||"<unknown>",v=this.getAttribute("component-export");throw v&&(s+=` (export ${v})`),console.error(`[hydrate] Error parsing props for component ${s}`,this.getAttribute("props"),r),r}let u;await this.hydrator(this)(this.Component,p,n,{client:this.getAttribute("client")}),this.removeAttribute("ssr"),this.dispatchEvent(new CustomEvent("astro:hydrate"))});d(this,"unmount",()=>{this.isConnected||this.dispatchEvent(new CustomEvent("astro:unmount"))})}disconnectedCallback(){document.removeEventListener("astro:after-swap",this.unmount),document.addEventListener("astro:after-swap",this.unmount,{once:!0})}connectedCallback(){if(!this.hasAttribute("await-children")||document.readyState==="interactive"||document.readyState==="complete")this.childrenConnectedCallback();else{let e=()=>{document.removeEventListener("DOMContentLoaded",e),c.disconnect(),this.childrenConnectedCallback()},c=new MutationObserver(()=>{var n;((n=this.lastChild)==null?void 0:n.nodeType)===Node.COMMENT_NODE&&this.lastChild.nodeValue==="astro:end"&&(this.lastChild.remove(),e())});c.observe(this,{childList:!0}),document.addEventListener("DOMContentLoaded",e)}}async childrenConnectedCallback(){let e=this.getAttribute("before-hydration-url");e&&await import(e),this.start()}async start(){let e=JSON.parse(this.getAttribute("opts")),c=this.getAttribute("client");if(Astro[c]===void 0){window.addEventListener(`astro:${c}`,()=>this.start(),{once:!0});return}try{await Astro[c](async()=>{let n=this.getAttribute("renderer-url"),[h,{default:p}]=await Promise.all([import(this.getAttribute("component-url")),n?import(n):()=>()=>{}]),u=this.getAttribute("component-export")||"default";if(!u.includes("."))this.Component=h[u];else{this.Component=h;for(let f of u.split("."))this.Component=this.Component[f]}return this.hydrator=p,this.hydrate},e,this)}catch(n){console.error(`[astro-island] Error hydrating ${this.getAttribute("component-url")}`,n)}}attributeChangedCallback(){this.hydrate()}}d(y,"observedAttributes",["props"]),customElements.get("astro-island")||customElements.define("astro-island",y)}})();</script><astro-island uid="Z1PwqvO" prefix="r2" component-url="/_astro/BookmarkButton.CktbX1jj.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{&quot;collection&quot;:[0,&quot;book&quot;]}" ssr client="load" opts="{&quot;name&quot;:&quot;BookmarkButton&quot;,&quot;value&quot;:true}" await-children><div style="position:relative;display:inline-flex;align-items:center"><button class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-sm font-medium transition-all duration-200 bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-700 hover:bg-amber-50 dark:hover:bg-amber-950/20 hover:text-amber-600 dark:hover:text-amber-400 hover:border-amber-200 dark:hover:border-amber-700" title="收藏此页"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg><span>收藏</span></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style></div><!--astro:end--></astro-island> </div> </header> <!-- Content --> <div class="relative">   <div class="prose-custom">  <h2 id="从对话到行动">从对话到行动</h2>
+<p>传统的 LLM 交互模式是<strong>一问一答</strong>——用户提问，模型回答。但一个真正有用的 AI 助手需要的不仅是”说”，还要能”做”：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>用户: "帮我查一下北京明天的天气，如果下雨就取消我的户外日程"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>传统 LLM: "我无法访问实时天气数据，也无法操作您的日历..."</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Agent LLM:</span></span>
+<span class="line"><span>  1. [调用天气 API] → 北京明天：小雨，14°C</span></span>
+<span class="line"><span>  2. [调用日历 API] → 发现"公园跑步"日程</span></span>
+<span class="line"><span>  3. [调用日历 API] → 取消"公园跑步"</span></span>
+<span class="line"><span>  4. 回复: "北京明天有小雨，已帮您取消公园跑步。"</span></span></code></pre>
+<p><strong>LLM Agent</strong> 是以 LLM 为”大脑”，配备工具、记忆和规划能力的自主系统。</p>
+<h2 id="agent-架构">Agent 架构</h2>
+<h3 id="核心组件">核心组件</h3>
+<p>一个完整的 Agent 系统通常包含四个核心组件：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────┐</span></span>
+<span class="line"><span>│            Agent 系统                │</span></span>
+<span class="line"><span>│                                     │</span></span>
+<span class="line"><span>│  ┌──────────┐  ┌──────────────┐    │</span></span>
+<span class="line"><span>│  │  规划器   │  │    记忆系统   │    │</span></span>
+<span class="line"><span>│  │ (Planner) │  │   (Memory)   │    │</span></span>
+<span class="line"><span>│  └────┬─────┘  └──────┬───────┘    │</span></span>
+<span class="line"><span>│       │               │            │</span></span>
+<span class="line"><span>│  ┌────▼───────────────▼────────┐   │</span></span>
+<span class="line"><span>│  │         LLM（大脑）          │   │</span></span>
+<span class="line"><span>│  └────────────┬────────────────┘   │</span></span>
+<span class="line"><span>│               │                    │</span></span>
+<span class="line"><span>│  ┌────────────▼────────────────┐   │</span></span>
+<span class="line"><span>│  │       工具集 (Tools)          │   │</span></span>
+<span class="line"><span>│  │  搜索 │ 代码 │ API │ 文件    │   │</span></span>
+<span class="line"><span>│  └─────────────────────────────┘   │</span></span>
+<span class="line"><span>└─────────────────────────────────────┘</span></span></code></pre>
+<h3 id="规划planning">规划（Planning）</h3>
+<p>Agent 需要将复杂任务分解为可执行的步骤。常见的规划策略：</p>
+<p><strong><a href="https://arxiv.org/abs/2210.03629">ReAct</a></strong>（Yao et al., 2023）——交替进行推理（Reasoning）和行动（Acting）：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Thought: 我需要查找北京明天的天气</span></span>
+<span class="line"><span>Action: weather_api(city="北京", date="明天")</span></span>
+<span class="line"><span>Observation: 小雨, 14°C, 东风3级</span></span>
+<span class="line"><span>Thought: 天气是下雨，需要检查用户的户外日程</span></span>
+<span class="line"><span>Action: calendar_search(type="outdoor", date="明天")</span></span>
+<span class="line"><span>Observation: 找到: "公园跑步" 9:00-10:00</span></span>
+<span class="line"><span>Thought: 需要取消这个户外日程</span></span>
+<span class="line"><span>Action: calendar_cancel(event_id="xxx")</span></span>
+<span class="line"><span>Observation: 已取消</span></span>
+<span class="line"><span>Thought: 任务完成，汇报结果</span></span>
+<span class="line"><span>Answer: 北京明天有小雨，已帮您取消公园跑步。</span></span></code></pre>
+<p><strong><a href="https://arxiv.org/abs/2305.04091">Plan-and-Execute</a></strong>——先制定完整计划，再逐步执行：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Plan:</span></span>
+<span class="line"><span>  1. 查询北京明天天气</span></span>
+<span class="line"><span>  2. 判断是否下雨</span></span>
+<span class="line"><span>  3. 如果下雨，搜索户外日程</span></span>
+<span class="line"><span>  4. 取消找到的户外日程</span></span>
+<span class="line"><span>  5. 汇报结果</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>Execute: [逐步执行上述计划]</span></span></code></pre>
+<p><strong><a href="https://arxiv.org/abs/2305.10601">Tree-of-Thought</a></strong>——探索多条推理路径，选择最佳：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>        [问题]</span></span>
+<span class="line"><span>       /   |   \</span></span>
+<span class="line"><span>    [路径A] [路径B] [路径C]</span></span>
+<span class="line"><span>     ↓       ↓       ↓</span></span>
+<span class="line"><span>   评估     评估     评估</span></span>
+<span class="line"><span>     ↓</span></span>
+<span class="line"><span>  [选择最优路径继续]</span></span></code></pre>
+<h3 id="记忆系统">记忆系统</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>类型</th><th>实现</th><th>用途</th></tr></thead><tbody><tr><td><strong>短期记忆</strong></td><td>上下文窗口内的对话历史</td><td>当前任务的上下文</td></tr><tr><td><strong>工作记忆</strong></td><td>结构化的 scratchpad</td><td>中间推理结果</td></tr><tr><td><strong>长期记忆</strong></td><td>向量数据库 + 检索</td><td>跨会话的知识</td></tr><tr><td><strong>外部知识</strong></td><td>RAG / 搜索引擎</td><td>实时信息获取</td></tr></tbody></table>
+<h2 id="工具使用tool-use--function-calling">工具使用（Tool Use / Function Calling）</h2>
+<h3 id="工具调用机制">工具调用机制</h3>
+<p>现代 LLM 通过 <strong>function calling</strong> 机制调用外部工具：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="json"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">// 工具定义</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  "name"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"search_web"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  "description"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"搜索互联网获取实时信息"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  "parameters"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    "type"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"object"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    "properties"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      "query"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#005CC5;--shiki-dark:#79B8FF">"type"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"string"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">"description"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"搜索关键词"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">},</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      "max_results"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span><span style="color:#005CC5;--shiki-dark:#79B8FF">"type"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"integer"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">"default"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    },</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    "required"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"query"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">// 模型输出（决定调用工具）</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">{</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  "tool_calls"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: [{</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    "function"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      "name"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"search_web"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      "arguments"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">: </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"{</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\"</span><span style="color:#032F62;--shiki-dark:#9ECBFF">query</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\"</span><span style="color:#032F62;--shiki-dark:#9ECBFF">: </span><span style="color:#005CC5;--shiki-dark:#79B8FF">\"</span><span style="color:#032F62;--shiki-dark:#9ECBFF">北京明天天气</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\"</span><span style="color:#032F62;--shiki-dark:#9ECBFF">}"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<h3 id="mcpmodel-context-protocol">MCP（Model Context Protocol）</h3>
+<p><a href="https://modelcontextprotocol.io/">MCP</a>（Anthropic, 2024）是一个标准化的 Agent-工具通信协议：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────┐     MCP      ┌─────────────┐</span></span>
+<span class="line"><span>│  LLM    │◄────────────►│  MCP Server  │</span></span>
+<span class="line"><span>│  Agent  │   标准协议     │  (工具提供者) │</span></span>
+<span class="line"><span>└─────────┘              └─────────────┘</span></span>
+<span class="line"><span>                              │</span></span>
+<span class="line"><span>                         ┌────┴────┐</span></span>
+<span class="line"><span>                    [GitHub] [Slack] [DB] ...</span></span></code></pre>
+<p>MCP 的价值：</p>
+<ul>
+<li><strong>标准化</strong>：一套协议连接所有工具，不用为每个工具写适配器</li>
+<li><strong>安全</strong>：权限控制、审计日志</li>
+<li><strong>可发现</strong>：工具可以自描述其能力</li>
+<li><strong>互操作</strong>：不同的 LLM/Agent 框架都能使用同一套工具</li>
+</ul>
+<p>2026 年，MCP 从 Anthropic 发起扩展为 Agent 基础设施标准的一部分。OpenAI、Google、Microsoft 等主要厂商均已采纳，生态工具数量已超千个。Google ADK 原生支持 MCP，意味着 MCP 已成为 Agent-工具通信的事实标准。</p>
+<h3 id="agent-协议栈从工具到协作">Agent 协议栈：从工具到协作</h3>
+<p>MCP 解决了 Agent 与工具之间的通信，但 Agent 之间如何协作？2026 年 Agent 协议栈分化为清晰的三层架构：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>层次</th><th>协议</th><th>发起方</th><th>解决的问题</th></tr></thead><tbody><tr><td>Agent↔工具/数据源</td><td><strong>MCP</strong></td><td>Anthropic（2024）</td><td>Agent 如何调用外部工具和访问数据</td></tr><tr><td>Agent↔Agent</td><td><strong><a href="https://google.github.io/A2A/">A2A</a></strong></td><td>Google（2025）</td><td>不同 Agent 如何发现和协作</td></tr><tr><td>边缘协同</td><td><strong>ACP</strong></td><td>社区</td><td>边缘设备间毫秒级 Agent 协同</td></tr></tbody></table>
+<p><strong>A2A（Agent-to-Agent Protocol）</strong> 是 Agent 互操作的关键突破。2026 年 4 月，A2A 被 <a href="https://www.linuxfoundation.org/press/a2a-protocol-surpasses-150-organizations-lands-in-major-cloud-platforms-and-sees-enterprise-production-use-in-first-year">Linux Foundation 正式收录</a>，150+ 组织支持，成为首个生产就绪的 Agent 互操作开放标准。核心机制包括：</p>
+<ul>
+<li><strong>Agent Card</strong>：Agent 的能力自描述文件，类似 API 的 OpenAPI Spec</li>
+<li><strong>任务委派</strong>：一个 Agent 可以发现并委派任务给能力匹配的另一个 Agent</li>
+<li><strong>多轮异步协商</strong>：支持复杂的跨 Agent 多步骤协作</li>
+</ul>
+<p>MCP 和 A2A 的关系是<strong>互补而非竞争</strong>——MCP 定义 Agent 怎么用工具，A2A 定义 Agent 怎么跟 Agent 协作。两者共同构成 Agent 互操作基础设施。</p>
+<h3 id="工具使用训练">工具使用训练</h3>
+<p>教模型正确使用工具需要专门的训练：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>方法</th><th>思路</th><th>代表</th></tr></thead><tbody><tr><td>SFT on tool data</td><td>在工具调用数据上微调</td><td><a href="https://arxiv.org/abs/2305.15334">Gorilla</a></td></tr><tr><td>Self-play</td><td>模型自己生成工具使用轨迹</td><td><a href="https://arxiv.org/abs/2302.04761">Toolformer</a></td></tr><tr><td>RL with tool feedback</td><td>工具执行结果作为奖励信号</td><td><a href="https://arxiv.org/abs/2404.07995">ToolRL</a></td></tr></tbody></table>
+<p><a href="https://arxiv.org/abs/2302.04761">Toolformer</a>（Schick et al., 2023, Meta）的方法特别优雅——让模型自己决定在文本中”何时”、“何处”插入工具调用，用工具返回结果是否降低 PPL 作为选择标准。</p>
+<h2 id="rag检索增强生成">RAG（检索增强生成）</h2>
+<h3 id="基本架构">基本架构</h3>
+<p><a href="https://arxiv.org/abs/2005.11401">RAG</a>（Lewis et al., 2020）将检索系统与生成模型结合，解决 LLM 的知识过时和幻觉问题：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>用户查询 → [Embedding 模型] → 查询向量</span></span>
+<span class="line"><span>                                ↓</span></span>
+<span class="line"><span>                    [向量数据库检索] → Top-K 相关文档</span></span>
+<span class="line"><span>                                ↓</span></span>
+<span class="line"><span>        [用户查询 + 检索到的文档] → LLM → 回答</span></span></code></pre>
+<h3 id="rag-系统组件">RAG 系统组件</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>组件</th><th>选项</th><th>说明</th></tr></thead><tbody><tr><td>Embedding 模型</td><td><a href="https://huggingface.co/BAAI/bge-large-en-v1.5">BGE</a>, <a href="https://arxiv.org/abs/2212.03533">E5</a>, <a href="https://huggingface.co/thenlper/gte-large">GTE</a></td><td>将文本转为向量</td></tr><tr><td>向量数据库</td><td><a href="https://milvus.io/">Milvus</a>, <a href="https://www.pinecone.io/">Pinecone</a>, <a href="https://www.trychroma.com/">Chroma</a></td><td>高效相似度搜索</td></tr><tr><td>文档处理</td><td>切分、清洗、元数据提取</td><td>预处理管线</td></tr><tr><td>重排序</td><td><a href="https://cohere.com/rerank">Cohere Reranker</a>, BGE-Reranker</td><td>精排提高质量</td></tr></tbody></table>
+<h3 id="高级-rag-技术">高级 RAG 技术</h3>
+<p><strong>Chunk 策略</strong>对 RAG 质量影响巨大：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>固定长度切分:  [512 tokens] [512 tokens] ...  → 简单但可能切断语义</span></span>
+<span class="line"><span>语义切分:     [段落A] [段落B] [段落C] ...       → 保持语义完整</span></span>
+<span class="line"><span>层次切分:     [文档摘要] → [章节摘要] → [段落]   → 多粒度检索</span></span></code></pre>
+<p><strong><a href="https://arxiv.org/abs/2310.11511">Self-RAG</a></strong>（Asai et al., 2023）让模型自己决定是否需要检索：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>生成过程中:</span></span>
+<span class="line"><span>  Token Token Token [NEED_RETRIEVE] → 触发检索</span></span>
+<span class="line"><span>  → 检索结果注入</span></span>
+<span class="line"><span>  → [IS_RELEVANT] Token Token Token [CITE] → 带引用继续生成</span></span></code></pre>
+<h2 id="代码-agent">代码 Agent</h2>
+<h3 id="coding-agent从辅助到自主">Coding Agent：从辅助到自主</h3>
+<p>2026 年，编程 Agent 从”IDE 内代码补全”演化为两个层级：</p>
+<p><strong>IDE 集成 Agent</strong>——实时辅助，嵌入在编辑器工作流中：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>系统</th><th>特点</th></tr></thead><tbody><tr><td><a href="https://cursor.sh/">Cursor</a></td><td>IDE 内代码生成/编辑/重构，工业应用最广</td></tr><tr><td><a href="https://github.com/features/copilot">GitHub Copilot</a></td><td>VS Code/JetBrains 集成，Agent 模式支持多文件编辑</td></tr></tbody></table>
+<p><strong>CLI/云端自主 Agent</strong>——异步执行完整开发任务（理解 issue → 探索代码库 → 修改代码 → 运行测试 → 提交 PR）：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>系统</th><th>特点</th><th>自主程度</th></tr></thead><tbody><tr><td><a href="https://docs.anthropic.com/en/docs/claude-code">Claude Code</a></td><td>终端原生 Agent，MCP 生态集成，从 npm 迁移到原生安装</td><td>高——可自主完成完整任务</td></tr><tr><td><a href="https://github.com/openai/codex">Codex CLI</a></td><td>OpenAI 云端异步 Coding Agent</td><td>高——异步执行，结果可审查</td></tr><tr><td><a href="https://devin.ai/">Devin</a></td><td>端到端软件工程 Agent</td><td>高——全自主开发</td></tr><tr><td><a href="https://arxiv.org/abs/2405.15793">SWE-Agent</a></td><td>自动修复 GitHub issue</td><td>中——专注 issue 修复</td></tr><tr><td><a href="https://github.com/All-Hands-AI/OpenHands">OpenHands</a></td><td>开源 Coding Agent 平台</td><td>中——社区活跃</td></tr></tbody></table>
+<h3 id="代码-agent-的工作流">代码 Agent 的工作流</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>1. 理解问题 → 阅读 issue / 用户描述</span></span>
+<span class="line"><span>2. 探索代码库 → 搜索相关文件、理解架构</span></span>
+<span class="line"><span>3. 定位问题 → 找到需要修改的文件和位置</span></span>
+<span class="line"><span>4. 编写代码 → 生成 patch / 新代码</span></span>
+<span class="line"><span>5. 测试验证 → 运行测试、检查结果</span></span>
+<span class="line"><span>6. 迭代修复 → 如果测试失败，分析原因并重试</span></span></code></pre>
+<h2 id="推理模型reasoning-models">推理模型（Reasoning Models）</h2>
+<h3 id="o1o3-与-deepseek-r1">o1/o3 与 DeepSeek R1</h3>
+<p>推理模型（Reasoning Models）代表了 LLM 的一个新范式——<strong>在推理时通过延长思考来提升能力</strong>：</p>
+<p><a href="https://openai.com/index/learning-to-reason-with-llms/">OpenAI o1</a>（2024）和 <a href="https://arxiv.org/abs/2501.12948">DeepSeek R1</a>（2025）是这一方向的标志性工作。</p>
+<p>核心思想是 <strong>Test-Time Compute Scaling</strong>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>传统模型: 输入 → [固定计算量] → 输出</span></span>
+<span class="line"><span>推理模型: 输入 → [可变计算量: 思考链可以很长] → 输出</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>简单问题: 短 CoT → 快速回答</span></span>
+<span class="line"><span>困难问题: 长 CoT (数千 token 的推理) → 仔细推导</span></span></code></pre>
+<h3 id="推理模型的训练">推理模型的训练</h3>
+<p>DeepSeek R1 的训练流程揭示了推理能力是如何涌现的：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>阶段 1: Cold Start（少量推理示例 SFT）</span></span>
+<span class="line"><span>  → 模型学会基本的 CoT 格式</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>阶段 2: RL (GRPO)</span></span>
+<span class="line"><span>  → 用数学/代码的正确性作为奖励</span></span>
+<span class="line"><span>  → 模型自发学会更长、更深入的推理</span></span>
+<span class="line"><span>  → "Aha moment"：模型学会自我纠错</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>阶段 3: Rejection Sampling + SFT</span></span>
+<span class="line"><span>  → 用 RL 模型采样高质量推理数据</span></span>
+<span class="line"><span>  → SFT 训练更稳定的推理模型</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>阶段 4: 再次 RL</span></span>
+<span class="line"><span>  → 进一步精炼</span></span></code></pre>
+<p>关键发现：<strong>推理能力可以通过 RL 自发涌现</strong>——不需要人类编写详细的推理步骤，只需要给正确答案的奖励，模型就会自己学会推理。</p>
+<h3 id="推理模型蒸馏">推理模型蒸馏</h3>
+<p>DeepSeek 发现 R1 的推理能力可以有效蒸馏到小模型：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>蒸馏模型</th><th>基座</th><th>AIME 2024</th><th>MATH-500</th></tr></thead><tbody><tr><td>R1-1.5B</td><td>Qwen2.5-1.5B</td><td>28.9%</td><td>83.9%</td></tr><tr><td>R1-7B</td><td>Qwen2.5-7B</td><td>55.5%</td><td>92.8%</td></tr><tr><td>R1-14B</td><td>Qwen2.5-14B</td><td>69.7%</td><td>93.9%</td></tr><tr><td>R1-32B</td><td>Qwen2.5-32B</td><td>72.6%</td><td>94.3%</td></tr><tr><td>R1-70B</td><td>LLaMA-3.3-70B</td><td>79.8%</td><td>94.5%</td></tr></tbody></table>
+<p>小模型通过蒸馏获得的推理能力，甚至超过了直接 RL 训练的效果。</p>
+<h2 id="multi-agent-系统">Multi-Agent 系统</h2>
+<h3 id="多-agent-协作">多 Agent 协作</h3>
+<p>复杂任务可以由多个专门化的 Agent 协作完成：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌──────────┐</span></span>
+<span class="line"><span>│ Planner  │ → 分解任务、分配给专家</span></span>
+<span class="line"><span>└─────┬────┘</span></span>
+<span class="line"><span>      │</span></span>
+<span class="line"><span>  ┌───┴───┬───────┬──────┐</span></span>
+<span class="line"><span>  ▼       ▼       ▼      ▼</span></span>
+<span class="line"><span>[Coder] [Writer] [Researcher] [Reviewer]</span></span>
+<span class="line"><span>  │       │       │            │</span></span>
+<span class="line"><span>  └───────┴───────┴────────────┘</span></span>
+<span class="line"><span>                  │</span></span>
+<span class="line"><span>            ┌─────▼─────┐</span></span>
+<span class="line"><span>            │ Integrator │ → 整合结果</span></span>
+<span class="line"><span>            └───────────┘</span></span></code></pre>
+<p>代表框架——2026 年分为两个层次：</p>
+<p><strong>官方 Agent SDK</strong>（三大厂商的第一方 Agent 开发工具）：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>SDK</th><th>厂商</th><th>特色</th></tr></thead><tbody><tr><td><a href="https://docs.anthropic.com/en/docs/agents-and-tools/claude-agent-sdk">Claude Agent SDK</a></td><td>Anthropic</td><td>MCP 原生集成，Harness 工程最佳实践</td></tr><tr><td><a href="https://github.com/openai/openai-agents-python">OpenAI Agents SDK</a></td><td>OpenAI</td><td>Swarm 的生产版本，支持 handoff（Agent 间任务移交）+ guardrails（输入输出验证）+ trace 可视化</td></tr><tr><td><a href="https://google.github.io/adk-docs/">Google ADK</a></td><td>Google</td><td>原生 A2A + MCP 双协议支持</td></tr></tbody></table>
+<p><strong>开源 Agent 框架</strong>：</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>框架</th><th>特点</th><th>适用场景</th></tr></thead><tbody><tr><td><a href="https://github.com/langchain-ai/langgraph">LangGraph</a></td><td>图结构工作流</td><td>复杂状态管理</td></tr><tr><td><a href="https://github.com/crewAIInc/crewAI">CrewAI</a></td><td>角色化 Agent 团队</td><td>业务流程</td></tr><tr><td><a href="https://github.com/microsoft/autogen">AutoGen</a></td><td>多 Agent 对话</td><td>通用协作</td></tr></tbody></table>
+<h3 id="harness-engineeringagent-工程的新维度">Harness Engineering：Agent 工程的新维度</h3>
+<p>2026 年 4 月 Claude Code 源码泄露后，一个新概念进入行业视野——<strong>Harness Engineering</strong>。它指的是包裹在模型外面的整套工程系统：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>┌─────────────────────────────────────────┐</span></span>
+<span class="line"><span>│              Harness（外壳工程）           │</span></span>
+<span class="line"><span>│                                         │</span></span>
+<span class="line"><span>│   提示词构建 │ 工具调度 │ 权限控制        │</span></span>
+<span class="line"><span>│   上下文管理 │ 错误恢复 │ Feature Flags  │</span></span>
+<span class="line"><span>│                                         │</span></span>
+<span class="line"><span>│         ┌─────────────────┐             │</span></span>
+<span class="line"><span>│         │   LLM（模型）    │             │</span></span>
+<span class="line"><span>│         └─────────────────┘             │</span></span>
+<span class="line"><span>│                                         │</span></span>
+<span class="line"><span>└─────────────────────────────────────────┘</span></span></code></pre>
+<p>Claude Code 的泄露代码揭示了 Harness 的真实复杂度：51 万行代码、42 个工具、6 种 Agent 模式、44 个 Feature Flag。Sebastian Raschka 的判断——“<strong>Harness 比 Model 更重要</strong>”——正在被行业验证。多个独立分析项目（claude-harness.dev 交互式源码分析、ClaudeCode-Leak 技术调查）围绕泄露代码形成了完整的学习生态。</p>
+<p>这标志着 Agent 领域的认知升级：从”怎么让模型更聪明”到”怎么把工程做对”。</p>
+<h3 id="agent-安全">Agent 安全</h3>
+<p>Agent 能”做事”也意味着能”搞破坏”。安全考量：</p>
+<ol>
+<li><strong>权限最小化</strong>：Agent 只应获得完成任务所需的最小权限</li>
+<li><strong>人类确认</strong>：关键操作（删除、支付、发送）前需人类确认</li>
+<li><strong>沙箱执行</strong>：代码执行在隔离环境中进行</li>
+<li><strong>审计日志</strong>：所有工具调用都需要记录</li>
+<li><strong>输入验证</strong>：防止注入攻击（prompt injection 通过工具输出注入恶意指令）</li>
+</ol>
+<h2 id="未来展望">未来展望</h2>
+<h3 id="1-更长的上下文窗口">1. 更长的上下文窗口</h3>
+<p>从 4K → 32K → 128K → 1M+ tokens，更长的上下文意味着：</p>
+<ul>
+<li>更完整的文档理解</li>
+<li>更长的对话记忆</li>
+<li>减少 RAG 的依赖（直接把文档放进上下文）</li>
+</ul>
+<p>但长上下文不是万能药——<a href="https://arxiv.org/abs/2307.03172">Lost in the Middle</a> 研究表明模型在长上下文中间部分的信息检索能力显著下降。</p>
+<h3 id="2-更高效的训练">2. 更高效的训练</h3>
+<ul>
+<li><strong>数据效率</strong>：用更少的数据达到同样的能力（合成数据、课程学习）</li>
+<li><strong>计算效率</strong>：新的架构（如 <a href="https://arxiv.org/abs/2312.00752">Mamba</a> 等 SSM）减少训练 FLOPs</li>
+<li><strong>通信效率</strong>：更好的并行策略减少 GPU 间通信开销</li>
+</ul>
+<h3 id="3-个性化与定制">3. 个性化与定制</h3>
+<p>让每个用户拥有”自己的” AI：</p>
+<ul>
+<li>长期记忆：记住用户的偏好、习惯、历史</li>
+<li>风格适应：根据用户沟通风格调整输出</li>
+<li>领域专精：通过少量数据快速适应特定领域</li>
+</ul>
+<h3 id="4-端侧模型">4. 端侧模型</h3>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>趋势</th><th>代表</th><th>意义</th></tr></thead><tbody><tr><td>手机端 LLM</td><td>Apple Intelligence, Gemini Nano</td><td>隐私保护、离线可用</td></tr><tr><td>PC 端 LLM</td><td>Copilot+ PC, 本地 Ollama</td><td>低延迟、无 API 成本</td></tr><tr><td>嵌入式 LLM</td><td>Phi-4-mini, Qwen 3-0.6B</td><td>IoT、机器人</td></tr></tbody></table>
+<h3 id="5-agent-基础设施成熟化">5. Agent 基础设施成熟化</h3>
+<p>2025-2026 年 Agent 领域最大的变化是<strong>基础设施的标准化和工程化</strong>：</p>
+<ul>
+<li><strong>协议标准化</strong>：MCP（Agent↔工具）和 A2A（Agent↔Agent）构成了 Agent 互操作的双支柱。三大厂商的官方 Agent SDK 均已支持这些协议</li>
+<li><strong>Harness Engineering</strong>：从 Claude Code 泄露事件中获得的行业共识——Agent 的竞争力不在模型本身，而在包裹模型的工程系统。提示词构建、工具调度、上下文管理、错误恢复的工程复杂度远超预期</li>
+<li><strong>自主开发 Agent</strong>：Claude Code、Codex CLI 等工具展示了 LLM 作为编程 Agent 的巨大潜力——不是”代码补全”，而是”自主完成从 issue 理解到 PR 提交的全流程”</li>
+<li><strong>多 Agent 协作</strong>：从单一 Agent 走向多 Agent 团队协作（planner + coder + reviewer），A2A 协议为跨厂商 Agent 协作提供了标准化基础</li>
+</ul>
+<h3 id="6-科学发现">6. 科学发现</h3>
+<p>LLM 正在从”工具”走向”科学家”：</p>
+<ul>
+<li><a href="https://www.nature.com/articles/s41586-021-03819-2">AlphaFold</a>（蛋白质结构预测）</li>
+<li><a href="https://www.nature.com/articles/s41586-023-06924-6">FunSearch</a>（数学发现）</li>
+<li>药物发现、材料科学、气候建模</li>
+</ul>
+<h3 id="7-安全与对齐的长期挑战">7. 安全与对齐的长期挑战</h3>
+<p>随着模型能力增强，安全问题也在升级：</p>
+<ul>
+<li><strong>Scalable Oversight</strong>：如何监督比人类更强的 AI？</li>
+<li><strong>Deceptive Alignment</strong>：模型是否可能”假装”对齐？</li>
+<li><strong>Value Lock-in</strong>：如何确保 AI 的价值观随社会演化？</li>
+<li><strong>Catastrophic Risk</strong>：如何防止高能力 AI 系统的灾难性失败？</li>
+</ul>
+<h2 id="写在最后">写在最后</h2>
+<p>大模型正处于一个<strong>技术爆炸</strong>的时代。从 GPT-3 到 GPT-5，从 Chat 到 Agent，从纯文本到多模态——每半年都有让人惊叹的进展。</p>
+<p>但在兴奋之余，有几个原则值得铭记：</p>
+<ol>
+<li><strong>基础比前沿重要</strong>：理解 Transformer 的数学、Scaling Laws 的物理、数据工程的细节，比追赶最新论文更有价值</li>
+<li><strong>工程和科学同样重要</strong>：一个好的分布式训练系统、一套可靠的评估基础设施、一条高效的数据管线——这些”不性感”的工作，往往决定了项目的成败</li>
+<li><strong>保持批判性思维</strong>：不要盲目相信 benchmark 数字，不要轻信模型的输出，不要低估安全问题的复杂性</li>
+<li><strong>动手实践</strong>：读一百篇论文不如训一个小模型。从 NanoGPT 开始，亲手体验训练的每一个环节</li>
+</ol>
+<p>这本书的目标不是让你”知道”大模型，而是让你<strong>有能力动手做</strong>。希望它能成为你在这个激动人心的领域中的可靠参考。</p>
+<blockquote>
+<p><em>“The best way to predict the future is to invent it.”</em> — Alan Kay</p>
+</blockquote>
+<p>持续更新中。有问题、建议或勘误，欢迎联系作者。</p>  </div>  </div> <script type="module">(function(){const t=document.querySelector('[data-password-gate="true"]');if(!t)return;const s=document.getElementById("pw-gate-overlay");if(!s)return;const e=document.getElementById("pw-gate-input"),i=document.getElementById("pw-gate-submit"),n=document.getElementById("pw-gate-error"),a="502",o="maxwell-protected-unlocked";if(sessionStorage.getItem(o)==="1"){s.remove();return}t.style.maxHeight="600px",t.style.overflow="hidden";function r(){!e||!s||!t||(e.value===a?(sessionStorage.setItem(o,"1"),s.style.transition="opacity 0.3s ease",s.style.opacity="0",setTimeout(()=>{s.remove(),t.style.maxHeight="",t.style.overflow=""},300)):(n?.classList.remove("hidden"),e.value="",e.focus(),e.classList.add("ring-2","ring-red-400"),setTimeout(()=>e.classList.remove("ring-2","ring-red-400"),1e3)))}i?.addEventListener("click",r),e?.addEventListener("keydown",d=>{d.key==="Enter"&&r(),n?.classList.add("hidden")}),e?.focus()})();</script> <!-- Chapter Navigation --> <nav class="mt-16 pt-8 border-t border-slate-200 dark:border-slate-700"> <div class="grid grid-cols-2 gap-4"> <a href="/books/llm-complete/chapter-15-multimodal" class="group card p-4 hover:border-amber-300 dark:hover:border-amber-600"> <span class="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">上一章</span> <p class="text-sm font-medium text-slate-900 dark:text-white group-hover:text-amber-600 dark:group-hover:text-amber-400 mt-1 line-clamp-2"> <span class="text-slate-400 mr-1">Ch.15</span> 多模态大模型 </p> </a> <div></div> </div> </nav> </article> <!-- Right Sidebar: Table of Contents --> <aside class="hidden lg:block"> <div class="sticky top-24"> <h4 class="text-sm font-semibold text-slate-900 dark:text-white mb-4 uppercase tracking-wider">
+本章目录
+</h4> <nav class="space-y-1 max-h-[calc(100vh-10rem)] overflow-y-auto"> <a href="#从对话到行动" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 从对话到行动 </a><a href="#agent-架构" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> Agent 架构 </a><a href="#核心组件" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 核心组件 </a><a href="#规划planning" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 规划（Planning） </a><a href="#记忆系统" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 记忆系统 </a><a href="#工具使用tool-use--function-calling" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 工具使用（Tool Use / Function Calling） </a><a href="#工具调用机制" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 工具调用机制 </a><a href="#mcpmodel-context-protocol" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> MCP（Model Context Protocol） </a><a href="#agent-协议栈从工具到协作" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Agent 协议栈：从工具到协作 </a><a href="#工具使用训练" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 工具使用训练 </a><a href="#rag检索增强生成" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> RAG（检索增强生成） </a><a href="#基本架构" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 基本架构 </a><a href="#rag-系统组件" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> RAG 系统组件 </a><a href="#高级-rag-技术" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 高级 RAG 技术 </a><a href="#代码-agent" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 代码 Agent </a><a href="#coding-agent从辅助到自主" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Coding Agent：从辅助到自主 </a><a href="#代码-agent-的工作流" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 代码 Agent 的工作流 </a><a href="#推理模型reasoning-models" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 推理模型（Reasoning Models） </a><a href="#o1o3-与-deepseek-r1" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> o1/o3 与 DeepSeek R1 </a><a href="#推理模型的训练" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 推理模型的训练 </a><a href="#推理模型蒸馏" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 推理模型蒸馏 </a><a href="#multi-agent-系统" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> Multi-Agent 系统 </a><a href="#多-agent-协作" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 多 Agent 协作 </a><a href="#harness-engineeringagent-工程的新维度" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Harness Engineering：Agent 工程的新维度 </a><a href="#agent-安全" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> Agent 安全 </a><a href="#未来展望" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 未来展望 </a><a href="#1-更长的上下文窗口" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 1. 更长的上下文窗口 </a><a href="#2-更高效的训练" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 2. 更高效的训练 </a><a href="#3-个性化与定制" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 3. 个性化与定制 </a><a href="#4-端侧模型" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 4. 端侧模型 </a><a href="#5-agent-基础设施成熟化" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 5. Agent 基础设施成熟化 </a><a href="#6-科学发现" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 6. 科学发现 </a><a href="#7-安全与对齐的长期挑战" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-500 dark:text-slate-500 pl-4"> 7. 安全与对齐的长期挑战 </a><a href="#写在最后" class="block text-sm transition-colors duration-200 hover:text-amber-600 dark:hover:text-amber-400 text-slate-600 dark:text-slate-400 font-medium"> 写在最后 </a> </nav> </div> </aside> </div> </div> <astro-island uid="Z2f4Qci" prefix="r3" component-url="/_astro/ContentHub.Us2hHc4m.js" component-export="default" renderer-url="/_astro/client.nc8uITnr.js" props="{}" ssr client="load" opts="{&quot;name&quot;:&quot;ContentHub&quot;,&quot;value&quot;:true}" await-children><button style="position:fixed;bottom:24px;right:24px;z-index:10000;width:48px;height:48px;border-radius:50%;border:none;background:linear-gradient(135deg, #f59e0b, #d97706);color:white;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245, 158, 11, 0.4);transition:all 0.3s" title="收藏 0 · 精读 0"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg></button><style>
+        @keyframes fadeInUp {
+          from { opacity: 0; transform: translateY(8px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      </style><!--astro:end--></astro-island>  </main> <footer class="border-t border-slate-200 dark:border-slate-800 mt-20"> <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"> <div class="flex flex-col sm:flex-row items-center justify-between gap-4"> <div class="flex items-center gap-3 text-sm text-slate-500 dark:text-slate-400"> <span>&copy; 2026</span> <a href="/" class="font-medium text-slate-700 dark:text-slate-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+Maxwell's Demon
+</a> </div> <div class="flex items-center gap-4"> <!-- 小红书 --> <a href="https://www.xiaohongshu.com/user/profile/64185dca000000000b015831" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 transition-colors" aria-label="小红书" title="小红书 @Maxwell's Demon"> <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor"> <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.5 7.5h-2v1h2v1h-2v1h2v1h-3.5V9H15V8h1.5v1.5zM8 14.5V9h1.5v4h2V9H13v5.5H8zm-1.5-7h1v7h-1V7.5z"></path> </svg> </a> <!-- GitHub --> <a href="https://github.com/maxwell-demon-ai/maxwell-demon-ai.github.io" target="_blank" rel="noopener noreferrer" class="text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors" aria-label="GitHub" title="GitHub"> <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"> <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path> </svg> </a> </div> </div> </div> </footer> </body></html>
